@@ -1,0 +1,138 @@
+# Heuristic Annotations
+
+The `heuristic` property adds semantic context to a CRADLE instance, event, or object. It associates a scenario element with a framework name and an external identifier without changing the element’s core definition.
+
+```{important}
+The current compiler preserves heuristic values as metadata. It does not verify framework names, validate identifier formats, retrieve framework records, calculate risk, or enforce where a framework may be used.
+```
+
+## Syntax
+
+```CRADLE
+heuristic("<framework>", "<identifier>")
+```
+
+The current compiler consumes two values:
+
+| Argument | Description | Example |
+| --- | --- | --- |
+| Framework | Name or key identifying the external classification system | `cve` |
+| Identifier | Identifier or framework-specific value | `CVE-2024-1086` |
+
+Use one framework–identifier pair per declaration. Repeat `heuristic` when an element needs multiple annotations.
+
+```CRADLE
+heuristic("cve", "CVE-2024-1086"),
+heuristic("cwe", "CWE-89")
+```
+
+Do not combine several identifiers into one comma-separated value. Separate declarations remain easier to validate, search, and transform.
+
+## Supported contexts
+
+The current compiler recognizes heuristic annotations on:
+
+| Context | Typical purpose |
+| --- | --- |
+| Instance | Describe a system’s vulnerability, defensive function, weakness, or scenario role. |
+| Event | Describe behavior, technique, attack phase, or risk context associated with an event. |
+| Object | Describe the capability, weakness, or classification of an artifact. |
+
+```{note}
+These are compiler contexts, not framework-enforced rules. The compiler does not reject an annotation solely because its framework is unusual for that context.
+```
+
+## Documented framework conventions
+
+The following keys are conventions used by the existing documentation and examples. They are not a compiler allowlist.
+
+| Framework key | External framework or model | Common context | Example value |
+| --- | --- | --- | --- |
+| `cve` | Common Vulnerabilities and Exposures | Instance | `CVE-2024-1086` |
+| `ttp` | MITRE ATT&CK technique or sub-technique | Event, instance | `T1059.004` |
+| `mbc` | Malware Behavior Catalog | Object | `F0002` |
+| `cwe` | Common Weakness Enumeration | Instance, object | `CWE-89` |
+| `d3fend` | MITRE D3FEND | Instance | `D3-SCA` |
+| `capec` | Common Attack Pattern Enumeration and Classification | Event, object | `CAPEC-66` |
+| `killchain` | Cyber Kill Chain phase | Event | `Exploitation` |
+| `fair` | Factor Analysis of Information Risk data | Instance, event | Framework-specific key-value text |
+
+Framework identifiers evolve independently of CRADLE. Scenario authors and reviewers are responsible for confirming that a referenced identifier exists, is current, and is appropriate for the annotated element.
+
+## Examples by context
+
+### Instance annotation
+
+```CRADLE
+instance("TargetServer") >
+    os("ubuntu", "20.04"),
+    heuristic("cve", "CVE-2024-1086"),
+    heuristic("cwe", "CWE-89").
+```
+
+### Event annotation
+
+```CRADLE
+event("1") >
+    instance("TargetServer"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("ValidationScript", ""),
+    heuristic("ttp", "T1190"),
+    description("Illustrative validation event").
+```
+
+### Object annotation
+
+```CRADLE
+object("ValidationScript") >
+    location("${uriRemote}/scripts/validate.sh"),
+    heuristic("mbc", "F0002").
+```
+
+## FAIR values
+
+Existing documentation uses the `fair` key with semicolon-separated `key=value` data:
+
+```CRADLE
+heuristic("fair", "controlStrengthMostLikely=75;primaryLossResponseMostLikely=50000")
+```
+
+The current compiler stores the entire second argument as one heuristic identifier. It does not parse the key-value pairs, validate ranges, apply distributions, perform Monte Carlo simulation, or calculate financial risk.
+
+```{note}
+FAIR parameter names, units, ranges, and calculation behavior require a separately defined and versioned contract before they can be presented as a supported analytical feature.
+```
+
+## Validation responsibilities
+
+A complete heuristic-validation layer would need to check:
+
+- whether the framework key is recognized;
+- whether the identifier matches the framework’s syntax;
+- whether the identifier exists in the selected framework version;
+- whether the annotation is appropriate for its CRADLE context;
+- whether duplicate or conflicting annotations are allowed; and
+- whether framework-specific values have valid types, units, and ranges.
+
+These checks are not performed by the current grammar or JSON Schema.
+
+## Maintenance guidance
+
+When introducing a framework convention:
+
+1. define a stable lowercase framework key;
+2. identify the authoritative external source;
+3. document valid target contexts and identifier forms;
+4. decide whether identifiers are validated locally or externally;
+5. add positive and negative test cases; and
+6. record the supported framework version or retrieval date.
+
+Heuristic annotations should provide classification context only. They must not be treated as authorization, proof that a vulnerability exists, or evidence that an event occurred.
+
+## Related documentation
+
+- [CRADLE Language Structure](sections.md)
+- [Hello World Example](helloworld.md)
+- [CRADLE Schema Reference](../schema/cradle-schema.md)
+- [Intermediary Language](../il-language/index.md)
