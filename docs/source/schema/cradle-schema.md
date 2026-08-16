@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # CRADLE Schema Reference
 
 The CRADLE JSON Schema describes the structured JSON representation of scenario metadata, instances, networks, and events, including the rules applied by JSON Schema validators. It is written for **JSON Schema Draft 7**. This page does not define the human-authored CRADLE block syntax; for that syntax and the properties recognized by the compiler, see [CRADLE Language Structure](../introduction/sections.md).

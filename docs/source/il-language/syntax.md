@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # IL Syntax and Structure
 
 The documented Intermediary Language (IL) expresses one property or relationship per line. It uses predictable phrases to make a CRADLE scenario easier to read during design and review.

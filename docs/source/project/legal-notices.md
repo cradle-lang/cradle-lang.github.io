@@ -32,8 +32,3 @@ third-party notices.
 CRADLE and associated names or marks are owned by their respective rights
 holders. Other product and organization names may be trademarks of their
 respective owners.
-
-## Legal review
-
-The final rights holder, proprietary license terms, third-party notices, and
-legal contact details must be confirmed before commercial publication.

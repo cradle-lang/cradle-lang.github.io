@@ -9,15 +9,11 @@ The project acknowledges contributions recorded in the CRADLE repository
 history from:
 
 - Anis Bin Yusof
-- 
-
-
 
 ## Research and institutional support
 
-The project team is reviewing the institutions, research groups,
-infrastructure providers, and funding programs that should be formally
-acknowledged. Confirmed acknowledgments will be added to this page.
+Institutional, infrastructure, and funding acknowledgments are not specified in
+this development snapshot.
 
 ## Third-party technologies
 

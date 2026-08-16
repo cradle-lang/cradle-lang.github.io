@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Intermediary Language Example
 
 This example shows how the documented Intermediary Language (IL) notation corresponds conceptually to formal CRADLE syntax. It describes two instances connected to one network and one event associated with an external object.

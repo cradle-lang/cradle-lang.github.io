@@ -134,5 +134,5 @@ Heuristic annotations should provide classification context only. They must not 
 
 - [CRADLE Language Structure](sections.md)
 - [Hello World Example](helloworld.md)
-- [CRADLE Schema Reference](../schema/cradle-schema.md)
-- [Intermediary Language](../il-language/index.md)
+- [Write a scenario](../user-guide/write-scenario.md)
+- [Developer schema reference](../schema/cradle-schema.md)

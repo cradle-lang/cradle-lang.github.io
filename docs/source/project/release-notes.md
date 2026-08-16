@@ -1,6 +1,8 @@
-# Release notes
+# Development snapshot
 
-This page records user-visible changes to supported CRADLE releases.
+This page summarizes the user-visible capabilities of the documentation's
+current development snapshot. A versioned public release history is not yet
+provided.
 
 ## Current capabilities
 
@@ -14,10 +16,12 @@ This page records user-visible changes to supported CRADLE releases.
 
 - Provider capabilities and host requirements differ
 - Some workflows require separately configured virtualization or cyber-range infrastructure
-- Product installation, licensing, and access procedures are still being finalized
+- Installation, licensing, and access depend on the authorized CRADLE distribution
 
-## Future releases
+See [Known limitations](../user-guide/known-limitations.md) for the complete
+user-facing summary of language, provider, runtime, extraction, and cleanup
+boundaries.
 
-Each supported release will document new capabilities, changed behavior,
-provider changes, breaking changes, resolved issues, known limitations, and
-upgrade requirements.
+When a versioned release is published, its release notes should identify new
+capabilities, behavior changes, provider changes, breaking changes, resolved
+issues, known limitations, and upgrade requirements.

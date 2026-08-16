@@ -1,32 +1,24 @@
-# Hello World Example
+# Hello World example
 
-This example introduces the main concepts in a CRADLE scenario through a small environment named `HelloWorld`. It contains two instances, one network, one reusable object, and one scheduled event.
+Hello World introduces the main CRADLE concepts through two Ubuntu instances,
+one network, one external object, and one event in each lifecycle phase.
 
-The example is intentionally compact. Its purpose is to show how CRADLE connects environment structure with scenario behavior, not to describe an operational deployment procedure.
+The example below follows the structure of the current CRADLE source scenario.
+Its artifact repository uses a public-safe placeholder; replace that value with
+an authorized repository before deployment.
 
-## Learning objectives
+## What the scenario contains
 
-After reading this page, you should be able to:
-
-- identify the main sections of a CRADLE scenario
-- follow references between instances, networks, events, and objects
-- understand how an event associates behavior with a specific instance
-- distinguish the scenario definition from provider-specific deployment details
-
-For definitions of individual properties, refer to [CRADLE Language Structure](sections.md) and the [CRADLE Schema Reference](../schema/cradle-schema.md).
-
-## Scenario at a glance
-
-| Component | Definition | Purpose |
+| Component | Name | Purpose |
 | --- | --- | --- |
-| Environment | `HelloWorld` | Identifies the scenario in its metadata. |
-| Application instance | `HelloWorld` | Represents the system associated with the example object and event. |
-| Router instance | `router` | Represents the routing component connected to the same network. |
-| Network | `lan_0` | Connects both instances using DHCP addressing. |
-| Object | `HelloWorld` | References the external script associated with the scenario. |
-| Main event | `1` | Associates the object with the `HelloWorld` instance at a scheduled time. |
+| Scenario | `HelloWorld` | Names the environment and its generated outputs. |
+| Application instance | `HelloWorld` | Runs the example object and requests monitoring configurations. |
+| Router instance | `router` | Connects the environment and requests router and monitoring configurations. |
+| Network | `lan_0` | Connects both instances through DHCP. |
+| Object | `HelloWorld` | Locates the external `HelloWorld.sh` artifact. |
+| Events | `1`, `2`, and `3` | Run the object in the pre, main, and post phases. |
 
-## CRADLE specification
+## Scenario definition
 
 ```CRADLE
 instances() >
@@ -35,12 +27,16 @@ instances() >
 
 instance("HelloWorld") >
     os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig"),
     object("HelloWorld").
 
 instance("router") >
     os("ubuntu", "20.04"),
-    config("linux-router"),
-    role("example.collection", "router", "var1=val1;var2=val2;var3=val3").
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-router").
 
 networks() >
     network("lan_0").
@@ -52,7 +48,7 @@ network("lan_0") >
 metadata() >
     name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://my-repo-url:4443"),
+    repositoryRemote("https://artifacts.example.org"),
     object("HelloWorld").
 
 events() >
@@ -60,83 +56,107 @@ events() >
     mainEvent(),
     postEvent().
 
-mainEvent() >
+preEvent() >
     event("1").
 
 event("1") >
     instance("HelloWorld"),
-    needRoot("true"),
+    needRoot("false"),
     subject("bash", ""),
     runObject("HelloWorld", ""),
     pauseBeforeRun("0"),
     pauseAfterRun("0"),
     waitfor("false"),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
-    description("HelloWorld Event").
+    description("HelloWorld pre-event").
+
+mainEvent() >
+    event("2").
+
+event("2") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld main event").
+
+postEvent() >
+    event("3").
+
+event("3") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld post-event").
 
 object("HelloWorld") >
-    location("${uriRemote}/TTP/HelloWorld/artifacts/HelloWorld.sh").
+    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
 ```
 
-## Reading the scenario
+## Read the scenario
 
-### 1. Define the systems
+### Instances
 
-The `instances()` section declares two systems: `HelloWorld` and `router`. Their individual definitions then describe their operating systems and scenario-specific associations.
+`instances()` declares `HelloWorld` and `router`. Their named blocks define the
+operating system and requested configurations. The application instance also
+associates itself with the `HelloWorld` object.
 
-The `HelloWorld` instance references the object with the same name. The `router` instance instead references a predefined configuration and role. The role variables in this introductory example are placeholders rather than production settings.
+Configuration availability depends on the selected CRADLE distribution and
+deployment provider.
 
-### 2. Connect the systems
+### Network
 
-The `networks()` section declares `lan_0`. Its definition connects both instances as endpoints and assigns their addresses through DHCP.
+`networks()` declares `lan_0`. Its definition connects both instances using
+DHCP. This source scenario does not specify a subnet, so the provider-specific
+generation path supplies or resolves the network details.
 
-This relationship is expressed separately from the instance definitions. As a result, the systems and their network topology remain visible as distinct parts of the scenario model.
+### Metadata and object
 
-### 3. Describe the scenario
+`metadata()` names the scenario, selects sequential event handling, identifies
+the artifact repository, and declares the object. The object definition uses
+`${uriRemote}` to build the complete artifact location.
 
-The `metadata()` section names the environment and declares that its events follow a sequence. It also identifies the remote repository and the object used by the scenario.
+The placeholder repository in this public example does not host the artifact.
+Use the repository supplied for your authorized CRADLE environment.
 
-`repositoryRemote` is a placeholder in this example. A CRADLE product delivery may manage the corresponding artifacts and access details separately from the scenario author.
+### Event phases
 
-### 4. Define the timeline
+The scenario defines one event in each phase:
 
-The `events()` section divides the timeline into pre-event, main-event, and post-event phases. This example defines one event in the main phase and leaves the other phases empty.
+1. event `1` runs during `preEvent`;
+2. event `2` runs during `mainEvent`; and
+3. event `3` runs during `postEvent`.
 
-Event `1` associates the `HelloWorld` object with the `HelloWorld` instance. Its properties describe the execution subject, privilege requirement, timing, pauses, dependency behavior, and human-readable purpose.
+All three events run the same object through `bash` on the `HelloWorld`
+instance without requesting root privileges.
 
-### 5. Locate the object
+## Follow the references
 
-The final definition maps the `HelloWorld` object to an external artifact location. The event refers to the object by name instead of embedding the artifact within the event definition.
+Names connect the scenario:
 
-This separation lets the scenario describe **what** participates in an event while the object definition describes **where** the corresponding artifact is located.
+1. metadata declares the `HelloWorld` object;
+2. the application instance associates itself with that object;
+3. each event selects the `HelloWorld` instance;
+4. each event selects the `HelloWorld` object through `runObject`; and
+5. the object definition supplies the artifact path.
 
-## How the references connect
+A spelling or capitalization mismatch can leave a reference unresolved.
 
-The scenario forms a small chain of named relationships:
+## Generate or deploy the example
 
-1. Metadata includes the `HelloWorld` object.
-2. The `HelloWorld` instance associates itself with that object.
-3. Event `1` selects the `HelloWorld` instance.
-4. The same event references the `HelloWorld` object through `runObject`.
-5. The object definition provides the artifact location.
+Follow the [Quick start](../getting-started/quick-start.md) to generate and
+optionally deploy the example. Use the
+[CRADLE language structure](sections.md) for property-level details, or
+[Write a scenario](../user-guide/write-scenario.md) to create your own.
 
-Names must remain consistent across these references. A mismatch can leave a scenario referring to an instance, event, network, or object that has not been defined.
-
-## Scope of this example
-
-This example focuses on the CRADLE language model. It does not demonstrate:
-
-- semantic annotations using external framework identifiers;
-- multiple dependent events or DAG-based timelines;
-- provider-specific capabilities and limitations;
-- artifact packaging or distribution; or
-- environment provisioning and operation.
-
-These concerns belong in their respective language, product-delivery, and deployment documentation.
-
-## Continue exploring
-
-- Review every language section in [CRADLE Language Structure](sections.md).
-- Learn how external classification metadata is represented in [Heuristic Annotations](heuristic.md).
-- Consult the [CRADLE Schema Reference](../schema/cradle-schema.md) for the current structured model.
-- Compare the higher-level language with the [Intermediary Language](../il-language/index.md).
+For structured-output and compiler integration details, see the
+[developer schema reference](../schema/cradle-schema.md).

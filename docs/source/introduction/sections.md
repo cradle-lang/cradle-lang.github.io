@@ -2,7 +2,10 @@
 
 A CRADLE scenario is composed of named blocks. The four principal sections describe scenario metadata, instances, networks, and events. Named object definitions connect external artifacts to the scenario.
 
-This page documents the human-authored CRADLE source language: the block syntax, declarations, references, and properties recognized by the current reference implementation. For the structured JSON representation and the rules applied by JSON Schema validators, see the [CRADLE Schema Reference](../schema/cradle-schema.md).
+This page documents the human-authored CRADLE source language: the block
+syntax, declarations, references, and properties recognized by the current
+reference implementation. Tool developers working with structured output can
+consult the [developer schema reference](../schema/cradle-schema.md).
 
 ## How to read this reference
 
@@ -224,6 +227,6 @@ Until these sources are aligned, validate both the language structure and its in
 
 - [What is CRADLE?](index.md)
 - [Hello World Example](helloworld.md)
+- [Write a scenario](../user-guide/write-scenario.md)
 - [Heuristic Annotations](heuristic.md)
-- [CRADLE Schema](../schema/cradle-schema.md)
-- [Intermediary Language](../il-language/index.md)
+- [Developer schema reference](../schema/cradle-schema.md)

@@ -24,5 +24,5 @@ information from logs before sharing them.
 ## Contact the CRADLE team
 
 Use the support or licensing contact supplied with your authorized CRADLE
-distribution. Public support contact details will be added when the product
-support model has been approved.
+distribution. This development documentation does not specify a separate public
+support channel.

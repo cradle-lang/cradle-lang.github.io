@@ -5,15 +5,14 @@ cyber-range automation, threat modeling, and reproducible infrastructure.
 
 ## How to cite CRADLE
 
-
 ```{note}
-Publication details and a preferred BibTeX citation will be added by the CRADLE project owners.
+No preferred public citation is specified in this development snapshot. Confirm
+the required citation with the CRADLE project owner before publication.
 ```
 
 ## CRADLE publications
 
-The authoritative list of CRADLE publications is currently being reviewed.
-Only papers confirmed by the project owners will be listed here.
+This development snapshot does not provide an authoritative publication list.
 
 ## Related cybersecurity frameworks
 

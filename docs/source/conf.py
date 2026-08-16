@@ -41,8 +41,9 @@ html_baseurl = 'https://cradle-website.readthedocs.io/en/latest/'
 
 html_context = {
     'site_description': (
-        'CRADLE documentation for defining structured, repeatable '
-        'cyber-environments for cybersecurity research, testing, and training.'
+        'Documentation for CRADLE, a declarative and debuggable Cyber '
+        'Experimentation As Code language for high-level, static descriptions '
+        'of computing infrastructure.'
     ),
     'site_name': 'CRADLE Documentation',
 }

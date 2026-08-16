@@ -1,76 +1,80 @@
 .. raw:: html
 
    <div class="landing-hero">
+   <p class="hero-eyebrow">Cyber Experimentation As Code</p>
 
-Build reproducible cyber environments
-=====================================
+Define repeatable cyber environments—without fragmented setup
+==============================================================
 
 .. rst-class:: landing-intro
 
-CRADLE is a domain-specific language for describing and modeling
-cyber-environments used in cybersecurity testing, research, and training.
+CRADLE is a declarative and debuggable Cyber Experimentation As Code (CEaC)
+language. It describes computing components as code to provide a high-level,
+static description of computing infrastructure.
 
 .. raw:: html
 
      <div class="hero-actions">
-       <a class="hero-primary" href="introduction/helloworld.html">Build your first environment <span aria-hidden="true">→</span></a>
+       <a class="hero-primary" href="getting-started/quick-start.html">Generate Hello World <span aria-hidden="true">→</span></a>
+       <a class="hero-secondary" href="project/business-case.html">Why use CRADLE?</a>
      </div>
    </div>
 
-Why CRADLE?
------------
+From fragmented setup to a shared scenario
+------------------------------------------
 
 Cyber environments often depend on manual configuration, scattered scripts,
-and platform-specific knowledge. CRADLE brings these elements together in a
-structured specification that is easier to review, reproduce, and maintain.
+and platform-specific knowledge held by individual team members. CRADLE makes
+the scenario itself explicit so its intent can be reviewed, versioned, reused,
+and adapted for supported infrastructure.
 
 .. grid:: 1 1 3 3
    :gutter: 2
 
-   .. grid-item-card:: Reproducible by design
+   .. grid-item-card:: Preserve scenario knowledge
 
-      Capture systems, networks, objects, and events in an explicit
-      specification that can be reviewed and reused.
+      Keep systems, networks, objects, and events together instead of relying
+      on disconnected setup instructions and undocumented expertise.
 
-   .. grid-item-card:: From scenario to deployment
+   .. grid-item-card:: Review changes with confidence
 
-      Transform a high-level CRADLE scenario into structured configuration
-      and deployment artifacts for supported infrastructure.
+      Store the scenario as structured, version-controllable source that
+      researchers, engineers, and reviewers can inspect and discuss.
 
-   .. grid-item-card:: Built for research and training
+   .. grid-item-card:: Adapt for supported targets
 
-      Preserve the conditions of a cyber scenario so teams can understand,
-      share, and repeat experiments and training exercises.
+      Generate target-specific artifacts from a common definition while
+      keeping provider capabilities and limitations visible.
 
 Choose your path
 ----------------
 
 Start with the path that best matches what you need to do.
 
-.. grid:: 1 1 3 3
+.. grid:: 1 1 2 2
    :gutter: 2
 
    .. grid-item-card:: Get started
-      :link: introduction/index
+      :link: getting-started/quick-start
       :link-type: doc
       :class-card: landing-card
 
-      **New to CRADLE?** Learn the core concepts, then build a complete
-      environment from a practical example.
+      **New to CRADLE?** Generate, deploy, and verify the included Hello World
+      scenario through one guided workflow.
 
       +++
-      Start learning →
+      Run Hello World →
 
-   .. grid-item-card:: Use the schema
-      :link: schema/cradle-schema
+   .. grid-item-card:: Write a scenario
+      :link: user-guide/write-scenario
       :link-type: doc
       :class-card: landing-card
 
-      **Building tooling?** Review the canonical metadata, instances,
-      networks, and events supported by CRADLE.
+      **Ready to create?** Define systems, networks, artifacts, and events in
+      a complete CRADLE scenario.
 
       +++
-      Open reference →
+      Start authoring →
 
 How CRADLE works
 ----------------
@@ -106,35 +110,6 @@ through a clear, repeatable workflow.
 
          <div class="workflow-step"><span>04</span><strong>Execute</strong><p>Run supported deployments and collect operational outputs for analysis and verification.</p></div>
 
-Built for cybersecurity workflows
----------------------------------
-
-CRADLE supports teams that need structured, repeatable cyber environments
-for research, training, emulation, and testing.
-
-.. grid:: 1 2 2 4
-   :gutter: 2
-
-   .. grid-item-card:: Security research
-
-      Preserve the systems, network conditions, artifacts, and event sequence
-      used in an experiment so the scenario can be reviewed and repeated.
-
-   .. grid-item-card:: Cyber-range training
-
-      Define training environments with explicit infrastructure, actions, and
-      execution sequences instead of relying on scattered setup instructions.
-
-   .. grid-item-card:: Threat emulation
-
-      Model attacker activity, defensive controls, and cybersecurity concepts
-      using structured events and recognized security frameworks.
-
-   .. grid-item-card:: Environment testing
-
-      Generate consistent multi-system deployment artifacts from a single,
-      reviewable scenario definition.
-
 Supported deployment targets
 ----------------------------
 
@@ -161,73 +136,47 @@ providers and cyber-range infrastructure.
       testbed. Workflow availability depends on the selected SPHERE portal,
       project access, and configured infrastructure.
 
-Start exploring CRADLE
-----------------------
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Getting Started
 
-New to CRADLE? Begin with the language overview, examine a complete Hello
-World environment, or review the schema used to structure CRADLE scenarios.
-
-.. grid:: 1 1 3 3
-   :gutter: 2
-
-   .. grid-item-card:: Understand CRADLE
-      :link: introduction/index
-      :link-type: doc
-      :class-card: landing-card
-
-      Learn what CRADLE is, the problem it addresses, and how its structured
-      scenario format works.
-
-      +++
-      Read the overview →
-
-   .. grid-item-card:: Explore an example
-      :link: introduction/helloworld
-      :link-type: doc
-      :class-card: landing-card
-
-      Walk through a complete CRADLE environment containing systems, a
-      network, metadata, events, and an executable object.
-
-      +++
-      View Hello World →
-
-   .. grid-item-card:: Review the schema
-      :link: schema/cradle-schema
-      :link-type: doc
-      :class-card: landing-card
-
-      Examine the supported metadata, instances, networks, events, and
-      properties used by CRADLE scenarios.
-
-      +++
-      Open the reference →
+   introduction/index
+   getting-started/prepare-host
+   getting-started/quick-start
+   introduction/helloworld
 
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: CRADLE Language
+   :caption: User Guide
 
-   introduction/index
-   introduction/sections
-   introduction/heuristic
-   introduction/helloworld
-
+   user-guide/write-scenario
+   user-guide/generate-deployment
+   user-guide/deploy-environment
+   user-guide/understand-output
+   user-guide/clean-up
+   user-guide/troubleshooting
+   user-guide/known-limitations
 
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Deployment
+   :caption: Reference
 
+   introduction/sections
+   introduction/heuristic
    deployment/supported-platforms
+   reference/command-reference
 
 .. toctree::
    :hidden:
    :maxdepth: 1
    :caption: Project
 
-   project/references
-   project/acknowledgments
+   project/business-case
    project/release-notes
+   project/references
    project/support
+   project/acknowledgments
    project/legal-notices
