@@ -314,7 +314,7 @@ function Acknowledgements(): ReactNode {
 
 
               <div>
-                <h3>Lecturer Anis Bin Yusof</h3>
+                <h3>Dr Anis Bin Yusof</h3>
                 <span>National University of Singapore</span>
               </div>
             </div>
