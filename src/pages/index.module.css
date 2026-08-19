@@ -710,29 +710,34 @@
 }
 
 .collaboratorCard {
-  padding: 22px;
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
 
   border: 1px solid #e0e4e8;
   border-radius: 10px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .collaboratorCard img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 210px;
 
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 
-  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .collaboratorCard h3 {
-  margin: 18px 0 6px;
+  margin: 0;
 
   color: #111827;
 
   font-size: 1.05rem;
+  line-height: 1.35;
 }
 
 .collaboratorCard p,

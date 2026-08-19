@@ -307,7 +307,7 @@ function Acknowledgements(): ReactNode {
 
             <div className={styles.leadCard}>
               <img
-                src="/img/collaborators/anis-yusof.jpg"
+                src="/img/collaborators/anis-yusof.jpeg"
                 alt="Lecturer Anis Bin Yusof"
                 className={styles.leadImage}
               />
@@ -328,7 +328,7 @@ function Acknowledgements(): ReactNode {
 
             <article className={styles.collaboratorCard}>
               <img
-                src="/img/collaborators/ncl.jpg"
+                src="/img/collaborators/ncl.png"
                 alt="ncl"
               />
 
@@ -337,7 +337,7 @@ function Acknowledgements(): ReactNode {
 
             <article className={styles.collaboratorCard}>
               <img
-                src="/img/collaborators/isi.jpg"
+                src="/img/collaborators/isi.png"
                 alt="USC Information Sciences Institute"
               />
 
