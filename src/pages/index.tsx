@@ -299,7 +299,7 @@ function Acknowledgements(): ReactNode {
                 className={styles.leadImage}
               />
               <div>
-                <h3>A/P Liang Zhenkai</h3>
+                <h3>Assoc. Prof. Liang Zhenkai</h3>
                 <span>National University of Singapore</span>
               </div>
 
@@ -314,7 +314,7 @@ function Acknowledgements(): ReactNode {
 
 
               <div>
-                <h3>Dr Anis Bin Yusof</h3>
+                <h3>Dr. Anis Yusof</h3>
                 <span>National University of Singapore</span>
               </div>
             </div>

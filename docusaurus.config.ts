@@ -15,15 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://cradle-dsl.github.io',
+  url: 'https://cradle-lang.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'cradle-dsl', // Usually your GitHub org/user name.
-  projectName: 'cradle-dsl.github.io', // Usually your repo name.
+  organizationName: 'cradle-lang', // Usually your GitHub org/user name.
+  projectName: 'cradle-lang.github.io', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -44,7 +44,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/cradle-dsl/cradle-dsl.github.io/tree/main/',
+            'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
         },
         blog: false,
         // blog: {
@@ -89,7 +89,7 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/cradle-dsl',
+          href: 'https://github.com/cradle-lang',
           label: 'GitHub',
           position: 'right',
         },
