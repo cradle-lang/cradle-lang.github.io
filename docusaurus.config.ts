@@ -40,7 +40,7 @@ const config: Config = {
       'classic',
       {
         docs: {
-          sidebarPath: './sidebars.ts',
+          sidebarPath: './config/sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -77,11 +77,19 @@ const config: Config = {
   //   },
   themeConfig: {
     colorMode: {
+      defaultMode: 'light',
+      disableSwitch: false,
       respectPrefersColorScheme: true,
     },
     navbar: {
       title: 'CRADLE',
+
       items: [
+        {
+          to: '/docs/getting-started/quick-start',
+          label: 'Get Started',
+          position: 'left',
+        },
         {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
@@ -97,6 +105,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
+
       links: [
         {
           title: 'Documentation',
@@ -105,16 +114,46 @@ const config: Config = {
               label: 'Getting Started',
               to: '/docs/getting-started/quick-start',
             },
+            {
+              label: 'User Guide',
+              to: '/docs/user-guide/write-scenario',
+            },
+            {
+              label: 'Language',
+              to: '/docs/il-language/',
+            },
+            {
+              label: 'Reference',
+              to: '/docs/reference/command-reference',
+            },
           ],
         },
+
         {
-          title: 'Community',
+          title: 'Project',
           items: [
-            
+            {
+              label: 'GitHub',
+              href: 'https://github.com/cradle-dsl',
+            },
+            {
+              label: 'Release Notes',
+              to: '/docs/project/release-notes',
+            },
+            {
+              label: 'Acknowledgements',
+              to: '/docs/project/acknowledgments',
+            },
+            {
+              label: 'Support',
+              to: '/docs/project/support',
+            },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+
+      copyright:
+        `Copyright © ${new Date().getFullYear()} CRADLE.`,
     },
     prism: {
       theme: prismThemes.github,

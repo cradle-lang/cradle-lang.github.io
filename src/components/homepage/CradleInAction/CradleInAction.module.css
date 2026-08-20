@@ -1,0 +1,224 @@
+.action {
+  background: var(--cradle-surface-muted);
+}
+
+.actionInner {
+  padding: 96px 0;
+}
+
+.actionHeader {
+  max-width: 760px;
+}
+
+.actionDemo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 28px;
+
+  margin-top: 52px;
+}
+
+.demoPanel,
+.environmentPanel {
+  min-width: 0;
+}
+
+.demoPanel {
+  overflow: hidden;
+
+  border: 1px solid var(--cradle-code-border);
+  border-radius: var(--cradle-radius-lg);
+
+  background: var(--cradle-code-bg);
+
+  box-shadow: var(--cradle-shadow-lg);
+}
+
+.demoHeader {
+  padding: 12px 18px;
+
+  border-bottom: 1px solid var(--cradle-code-border);
+
+  color: var(--cradle-code-muted);
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+}
+
+.demoCode {
+  margin: 0;
+  padding: 28px;
+
+  overflow-x: auto;
+
+  background: transparent;
+  color: var(--cradle-code-text);
+
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.transform {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.transformLine {
+  width: 1px;
+  height: 28px;
+
+  margin: 9px 0;
+
+  background: var(--cradle-accent);
+}
+
+.environmentPanel {
+  min-height: 290px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-lg);
+
+  background: var(--cradle-surface);
+
+  box-shadow: 0 18px 46px rgba(17, 24, 39, 0.06);
+}
+
+.environmentTitle {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.topology {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topologyNode {
+  min-width: 120px;
+
+  padding: 18px 14px;
+
+  border: 1px solid var(--cradle-border-strong);
+  border-radius: 8px;
+
+  text-align: center;
+}
+
+.topologyNode strong,
+.topologyNode span {
+  display: block;
+}
+
+.topologyNode strong {
+  color: var(--cradle-text);
+}
+
+.topologyNode span {
+  margin-top: 3px;
+
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.75rem;
+}
+
+.networkLine {
+  width: 64px;
+  height: 1px;
+
+  background: var(--cradle-accent);
+}
+
+.subnet {
+  padding-top: 15px;
+
+  border-top: 1px solid var(--cradle-border);
+
+  color: var(--cradle-text-subtle);
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.textLink {
+  display: inline-block;
+
+  margin-top: 32px;
+
+  color: var(--cradle-primary);
+
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.textLink:hover {
+  color: var(--cradle-accent);
+
+  text-decoration: none;
+}
+
+.textLink:focus-visible {
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--cradle-primary) 30%,
+    transparent
+  );
+
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .actionDemo {
+    grid-template-columns: 1fr;
+  }
+
+  .transform {
+    flex-direction: row;
+    justify-content: center;
+
+    gap: 10px;
+  }
+
+  .transformLine {
+    width: 28px;
+    height: 1px;
+
+    margin: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .actionInner {
+    padding: 72px 0;
+  }
+
+  .topology {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .networkLine {
+    width: 1px;
+    height: 36px;
+  }
+}
