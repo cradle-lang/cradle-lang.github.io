@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 
 import sharedStyles from '../Homepage.module.css';
@@ -63,34 +63,37 @@ export default function Acknowledgements(): ReactNode {
 
               <div className={styles.originOrganizations}>
                 <Link
-                  className={styles.originOrganization}
-                  href="https://curiosity.comp.nus.edu.sg/">
-                  <img
-                    src="/img/collaborators/curiosity.png"
-                    alt="NUS CuriOSity"
-                  />
-
-                  <span>NUS CuriOSity</span>
-                </Link>
-
-                <span
-                  className={styles.originDivider}
-                  aria-hidden="true">
-                  +
-                </span>
-
-                <Link
-                  className={styles.originOrganization}
+                  className={styles.originOrganizationCard}
                   href="https://ncl.sg/">
+
                   <img
                     src="/img/collaborators/ncl.png"
                     alt="National Cybersecurity R&D Laboratory"
+                    className={styles.originLogo}
                   />
 
-                  <span>
-                    National Cybersecurity R&amp;D Laboratory
-                  </span>
+                  <div className={styles.originDetails}>
+                    <h3>
+                      National Cybersecurity R&amp;D Laboratory
+                    </h3>
+                  </div>
                 </Link>
+
+                <Link
+                  className={styles.originOrganizationCard}
+                  href="https://curiosity.comp.nus.edu.sg/">
+
+                  <img
+                    src="/img/collaborators/curiosity.png"
+                    alt="NUS CuriOSity"
+                    className={styles.originLogo}
+                  />
+
+                  <div className={styles.originDetails}>
+                    <h3>NUS CuriOSity</h3>
+                  </div>
+                </Link>
+
               </div>
             </div>
           </section>
