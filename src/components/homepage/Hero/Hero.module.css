@@ -4,7 +4,7 @@
       circle at 78% 30%,
       color-mix(
         in srgb,
-        var(--cradle-accent) 7%,
+        var(--cradle-accent) 9%,
         transparent
       ),
       transparent 30%

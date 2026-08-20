@@ -5,7 +5,7 @@ import styles from './WhyCradle.module.css';
 
 export default function WhyCradle(): ReactNode {
   return (
-    <section className={`${sharedStyles.contentWidth} ${styles.why}`}>s
+    <section className={`${sharedStyles.contentWidth} ${styles.why}`}>
       <div className={sharedStyles.sectionHeader}>
         <p className={sharedStyles.sectionLabel}>Why CRADLE?</p>
 

@@ -4,6 +4,25 @@ import Link from '@docusaurus/Link';
 import sharedStyles from '../Homepage.module.css';
 import styles from './Acknowledgements.module.css';
 
+const partners = [
+  {
+    name: 'University of Southern California Information Sciences Institute',
+    logo: '/img/collaborators/isi.png',
+    url: 'https://www.isi.edu/',
+    description:
+      'Research collaboration in cybersecurity and cyber experimentation.',
+  },
+
+  // Add more partners here in the future:
+  //
+  // {
+  //   name: 'Partner Organization',
+  //   logo: '/img/collaborators/partner.png',
+  //   url: 'https://example.com/',
+  //   description: 'Short description of the collaboration.',
+  // },
+];
+
 export default function Acknowledgements(): ReactNode {
   return (
     <section className={styles.acknowledgements}>
@@ -12,90 +31,154 @@ export default function Acknowledgements(): ReactNode {
 
         <div className={sharedStyles.sectionHeader}>
           <p className={sharedStyles.sectionLabel}>
-            Acknowledgements
+            THE CRADLE COMMUNITY
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Built through collaboration.
+            The people behind the project.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            CRADLE is developed with contributions from project leads,
-            collaborators and supporting organizations.
+            Researchers, educators and cybersecurity practitioners contribute
+            to its research, development and continued evolution.
           </p>
         </div>
 
-        <div className={styles.leadSection}>
-          <p className={styles.acknowledgementLabel}>
-            Project Leads
-          </p>
+        <div className={styles.communityContent}>
+          {/* =====================================================
+              PROJECT ORIGINS
+              ===================================================== */}
 
-          <div className={styles.leadGrid}>
-            <div className={styles.leadCard}>
-              <img
-                src="/img/collaborators/liang-zhenkai.jpg"
-                alt="Associate Professor Liang Zhenkai"
-                className={styles.leadImage}
-              />
-
-              <div>
-                <h3>Assoc. Prof. Liang Zhenkai</h3>
-                <span>National University of Singapore</span>
-              </div>
+          <section className={styles.communitySection}>
+            <div className={styles.sectionMeta}>
+              <span className={styles.sectionNumber}>01</span>
+              <p>Project Origins</p>
             </div>
 
-            <div className={styles.leadCard}>
-              <img
-                src="/img/collaborators/anis-yusof.jpeg"
-                alt="Dr. Anis Yusof"
-                className={styles.leadImage}
-              />
+            <div className={styles.sectionBody}>
+              <p className={styles.sectionDescription}>
+                CRADLE began as a joint effort bringing together cybersecurity
+                research and cyber-range infrastructure.
+              </p>
 
-              <div>
-                <h3>Dr. Anis Yusof</h3>
-                <span>National University of Singapore</span>
+              <div className={styles.originOrganizations}>
+                <Link
+                  className={styles.originOrganization}
+                  href="https://curiosity.comp.nus.edu.sg/">
+                  <img
+                    src="/img/collaborators/curiosity.png"
+                    alt="NUS CuriOSity"
+                  />
+
+                  <span>NUS CuriOSity</span>
+                </Link>
+
+                <span
+                  className={styles.originDivider}
+                  aria-hidden="true">
+                  +
+                </span>
+
+                <Link
+                  className={styles.originOrganization}
+                  href="https://ncl.sg/">
+                  <img
+                    src="/img/collaborators/ncl.png"
+                    alt="National Cybersecurity R&D Laboratory"
+                  />
+
+                  <span>
+                    National Cybersecurity R&amp;D Laboratory
+                  </span>
+                </Link>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div className={styles.collaboratorSection}>
-          <p className={styles.acknowledgementLabel}>
-            Collaborating Organizations
-          </p>
+          {/* =====================================================
+              PROJECT LEADS
+              ===================================================== */}
 
-          <div className={styles.collaboratorGrid}>
-            <article className={styles.collaboratorCard}>
-              <img
-                src="/img/collaborators/ncl.png"
-                alt="National Cybersecurity R&D Laboratories"
-              />
+          <section className={styles.communitySection}>
+            <div className={styles.sectionMeta}>
+              <span className={styles.sectionNumber}>02</span>
+              <p>Project Leads</p>
+            </div>
 
-              <h3>National Cybersecurity R&D Laboratories</h3>
-            </article>
+            <div className={styles.sectionBody}>
+              <div className={styles.leadList}>
+                <div className={styles.leadItem}>
+                  <h3>Prof. Liang Zhenkai</h3>
 
-            <article className={styles.collaboratorCard}>
-              <img
-                src="/img/collaborators/isi.png"
-                alt="University of Southern California Information Sciences Institute"
-              />
+                  <p>
+                    National University of Singapore
+                  </p>
+                </div>
 
-              <h3>
-                University of Southern California Information Sciences Institute
-              </h3>
-            </article>
-          </div>
-        </div>
+                <div className={styles.leadItem}>
+                  <h3>Dr. Anis Yusof</h3>
 
-        <div className={styles.specialThanks}>
-          <p className={styles.acknowledgementLabel}>
-            Special Thanks
-          </p>
+                  <p>
+                    National University of Singapore
+                  </p>
+                </div>
+              </div>
 
-          <p>
-            We also acknowledge the contributors and organizations that
-            supported the development and evaluation of CRADLE.
-          </p>
+              <p className={styles.sectionDescription}>
+                They guide the project&apos;s research direction, system design,
+                technical development and continued work on reproducible cyber
+                experimentation.
+              </p>
+            </div>
+          </section>
+
+          {/* =====================================================
+              PARTNER ORGANIZATIONS
+              ===================================================== */}
+
+          <section className={styles.communitySection}>
+            <div className={styles.sectionMeta}>
+              <span className={styles.sectionNumber}>03</span>
+              <p>Partner Organizations</p>
+            </div>
+
+            <div className={styles.sectionBody}>
+              <p className={styles.partnerIntroduction}>
+                CRADLE works with research organizations contributing expertise
+                in cybersecurity, cyber experimentation and related research.
+              </p>
+
+              <div className={styles.partnerGrid}>
+                {partners.map((partner) => (
+                  <article
+                    key={partner.name}
+                    className={styles.partnerCard}>
+
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className={styles.partnerLogo}
+                    />
+
+                    <div className={styles.partnerDetails}>
+                      <h3>
+                        <a
+                          href={partner.url}
+                          target="_blank"
+                          rel="noopener noreferrer">
+                          {partner.name}
+                        </a>
+                      </h3>
+
+                      <p>
+                        {partner.description}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </section>

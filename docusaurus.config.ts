@@ -8,6 +8,16 @@ const config: Config = {
   title: 'Cradle',
   tagline: 'CRADLE Documentation',
   favicon: 'img/cradle-favicon.svg',
+  
+  headTags: [
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'algolia-site-verification',
+         content: 'DADEE7CC0A51CF7D',
+      },
+    },
+  ],
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -45,6 +55,30 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
+                      /*
+           * There is no published CRADLE documentation version yet.
+           *
+           * The current docs/ directory therefore remains the default
+           * documentation served at /docs/.
+           *
+           * Once the first stable release is created, we will configure:
+           *
+           * lastVersion: '1.0.0',
+           *
+           * versions: {
+           *   current: {
+           *     label: 'Next',
+           *     path: 'next',
+           *     banner: 'unreleased',
+           *   },
+           *
+           *   '1.0.0': {
+           *     label: '1.0.0',
+           *     path: '',
+           *     banner: 'none',
+           *   },
+           * },
+           */
         },
         blog: false,
         // blog: {
@@ -97,8 +131,16 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/cradle-lang',
-          label: 'GitHub',
+          to: '/releases/',
+          label: 'Releases',
+          position: 'left',
+        },
+        {
+          type: 'search',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],

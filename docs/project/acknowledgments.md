@@ -1,9 +1,14 @@
-# Acknowledgments
+# Contributors to CRADLE
 
 CRADLE has evolved through the work of researchers, developers, students,
 maintainers, and collaborating organizations.
 
-## Past contributors
+## Project lead
+
+## Founding Contributors
+CRADLE acknowledge 
+
+## Contributors
 
 The project acknowledges contributions recorded in the CRADLE repository
 history from:
