@@ -1,0 +1,51 @@
+.contentWidth {
+  width: min(
+    var(--cradle-content-width),
+    calc(100% - 48px)
+  );
+
+  margin: 0 auto;
+}
+
+.eyebrow,
+.sectionLabel {
+  margin: 0 0 16px;
+
+  color: var(--cradle-accent);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sectionHeader {
+  max-width: 790px;
+}
+
+.sectionHeading {
+  margin: 0;
+
+  color: var(--cradle-text);
+
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.sectionDescription {
+  margin: 22px 0 0;
+
+  color: var(--cradle-text-muted);
+
+  line-height: 1.75;
+}
+
+@media (max-width: 640px) {
+  .contentWidth {
+    width: min(
+      calc(100% - 32px),
+      var(--cradle-content-width)
+    );
+  }
+}
