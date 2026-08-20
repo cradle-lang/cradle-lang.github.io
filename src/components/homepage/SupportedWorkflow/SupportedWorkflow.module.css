@@ -1,7 +1,7 @@
 .supported {
   border-top: 1px solid var(--cradle-border);
 
-  background: var(--cradle-bg);
+  background: var(--cradle-surface);
 }
 
 .supportedInner {

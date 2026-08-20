@@ -1,7 +1,7 @@
 .acknowledgements {
   border-top: 1px solid var(--cradle-border);
 
-  background: var(--cradle-surface);
+  background: var(--cradle-bg);
 }
 
 .acknowledgementsInner {
@@ -90,10 +90,10 @@
 .originOrganizations {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 16px;
 
   max-width: 720px;
-  margin-top: 28px;
+  margin-top: 26px;
 }
 
 .originOrganizationCard {
@@ -105,29 +105,37 @@
   min-height: 96px;
   padding: 18px 20px;
 
-  border: 1px solid var(--cradle-border);
+  /*
+   * Match the quiet visual treatment used by the
+   * Supported Workflow pills.
+   */
+  border: 1px solid var(--cradle-border-strong);
   border-radius: var(--cradle-radius-md);
 
-  background: var(--cradle-surface);
+  background: transparent;
 
   color: inherit;
   text-decoration: none;
 
+  box-shadow: none;
+
   transition:
     border-color 140ms ease,
     background-color 140ms ease,
-    transform 140ms ease,
-    box-shadow 140ms ease;
+    transform 140ms ease;
 }
 
 .originOrganizationCard:hover {
-  border-color: var(--cradle-border-strong);
+  border-color: var(--cradle-primary);
 
-  background: var(--cradle-surface-muted);
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-surface) 24%,
+      transparent
+    );
 
   transform: translateY(-1px);
-
-  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.04);
 
   text-decoration: none;
 }
@@ -242,31 +250,35 @@
   min-height: 128px;
   padding: 20px;
 
-  border: 1px solid var(--cradle-border);
+  border: 1px solid var(--cradle-border-strong);
   border-radius: var(--cradle-radius-md);
 
-  background: var(--cradle-surface);
+  background: transparent;
+
+  box-shadow: none;
 
   transition:
     border-color 150ms ease,
-    box-shadow 150ms ease,
+    background-color 150ms ease,
     transform 150ms ease;
 }
 
-/*
- * If there is only one partner, allow it to use the full row.
- */
+.partnerCard:hover {
+  border-color: var(--cradle-primary);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-surface) 24%,
+      transparent
+    );
+
+  transform: translateY(-1px);
+}
+
 .partnerCard:only-child {
   flex-basis: 100%;
   max-width: 800px;
-}
-
-.partnerCard:hover {
-  border-color: var(--cradle-border-strong);
-
-  transform: translateY(-1px);
-
-  box-shadow: var(--cradle-shadow-md);
 }
 
 .partnerLogo {
@@ -307,12 +319,9 @@
 }
 
 .partnerDetails h3 a:focus-visible {
-  outline: 3px solid
-    color-mix(
-      in srgb,
+  outline: 3px solid color-mix(in srgb,
       var(--cradle-accent) 25%,
-      transparent
-    );
+      transparent);
 
   outline-offset: 3px;
 
@@ -380,20 +389,22 @@
   }
 
   .originOrganizations {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 18px;
+    gap: 12px;
 
     margin-top: 24px;
   }
 
-  .originDivider {
-    display: none;
+  .originOrganizationCard {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 16px;
+
+    min-height: 84px;
+    padding: 16px;
   }
 
-  .originOrganization img {
-    max-width: 82px;
-    height: 34px;
+  .originLogo {
+    max-width: 80px;
+    max-height: 42px;
   }
 
   .leadList {
@@ -434,43 +445,19 @@
   }
 }
 
-@media (max-width: 640px) {
-  .originOrganizationCard {
-    grid-template-columns: 90px minmax(0, 1fr);
-    gap: 16px;
-
-    min-height: 84px;
-    padding: 16px;
-  }
-
-  .originLogo {
-    max-width: 80px;
-    max-height: 42px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .originOrganizationCard {
-    transition: none;
-  }
-
-  .originOrganizationCard:hover {
-    transform: none;
-  }
-}
-
 
 /* =========================================================
    REDUCED MOTION
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .originOrganization,
+
+  .originOrganizationCard,
   .partnerCard {
     transition: none;
   }
 
-  .originOrganization:hover,
+  .originOrganizationCard:hover,
   .partnerCard:hover {
     transform: none;
   }
