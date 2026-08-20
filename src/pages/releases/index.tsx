@@ -82,7 +82,7 @@ export default function ReleasesPage(): ReactNode {
                             CRADLE RELEASES
                         </p>
 
-                        <h1>Release notes</h1>
+                        <h1>Release notes (Coming Soon in September 2026)</h1>
 
                         <p className={styles.pageDescription}>
                             Review published CRADLE releases, see what changed and download
