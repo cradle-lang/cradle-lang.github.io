@@ -7,6 +7,7 @@ import CradleInAction from '../components/homepage/CradleInAction/CradleInAction
 import StartLearning from '../components/homepage/StartLearning/StartLearning';
 import LatestRelease from '../components/homepage/LatestRelease/LatestRelease';
 import SupportedWorkflow from '../components/homepage/SupportedWorkflow/SupportedWorkflow';
+import EvaluateCradle from '../components/homepage/EvaluateCradle/EvaluateCradle';
 import Acknowledgements from '../components/homepage/Acknowledgements/Acknowledgements';
 
 
@@ -14,14 +15,15 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="CRADLE"
-      description="A domain-specific language and toolchain for defining and deploying reproducible cyber-range environments.">
+      description="Cyber Experimentation as Code: define structured, repeatable cyber environments and transform them for supported platforms.">
       <main>
         <Hero />
         <WhyCradle />
         <CradleInAction />
-        <StartLearning />
-        <LatestRelease />
         <SupportedWorkflow />
+        <StartLearning />
+        <EvaluateCradle />
+        <LatestRelease />
         <Acknowledgements />
       </main>
     </Layout>

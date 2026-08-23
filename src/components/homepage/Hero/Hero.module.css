@@ -1,20 +1,309 @@
 .hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
   background:
     radial-gradient(
-      circle at 78% 30%,
+      ellipse at 78% 38%,
       color-mix(
         in srgb,
-        var(--cradle-accent) 9%,
+        var(--cradle-accent) 7%,
         transparent
       ),
-      transparent 30%
+      transparent 40%
     ),
     var(--cradle-bg);
 
   border-bottom: 1px solid var(--cradle-border);
 }
 
+.topologyBackground {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 742 / 578;
+  pointer-events: none;
+  user-select: none;
+}
+
+.topologyBackground::before {
+  position: absolute;
+  z-index: -1;
+  width: 82%;
+  height: 78%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, #e76922 7%, transparent),
+    transparent 68%
+  );
+  filter: blur(18px);
+  content: '';
+}
+
+.topologyCanvas {
+  display: block;
+  flex-shrink: 0;
+  width: 100%;
+  height: auto;
+  opacity: 0.84;
+  filter: drop-shadow(0 24px 34px color-mix(in srgb, var(--cradle-text) 8%, transparent));
+}
+
+:global([data-theme='dark']) .topologyCanvas {
+  opacity: 0.94;
+}
+
+:global([data-theme='dark']) .satelliteCube polygon {
+  stroke: #66696f;
+}
+
+:global([data-theme='dark']) .satelliteCube .cubeTop {
+  fill: rgb(64 66 71 / 82%);
+}
+
+:global([data-theme='dark']) .satelliteCube .cubeLeft {
+  fill: rgb(31 33 37 / 88%);
+}
+
+:global([data-theme='dark']) .satelliteCube .cubeRight {
+  fill: rgb(43 45 50 / 88%);
+}
+
+:global([data-theme='dark']) .topologyPlatform {
+  stroke: #555a62;
+  opacity: 0.78;
+}
+
+.topologyTexture {
+  opacity: 0.5;
+}
+
+.topologyGrid {
+  stroke: var(--cradle-border-strong);
+  stroke-width: 0.75;
+  opacity: 0.09;
+}
+
+.topologyPlatform {
+  fill: color-mix(in srgb, var(--cradle-surface) 15%, transparent);
+  stroke: var(--cradle-border-strong);
+  stroke-width: 1.4;
+  opacity: 0.68;
+}
+
+.topologyPlatform .platformDepth {
+  fill: none;
+  opacity: 0.38;
+}
+
+.topologyConnections {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.topologyConnections {
+  stroke: var(--cradle-text-subtle);
+  stroke-width: 1.1;
+}
+
+.topologyRoute {
+  stroke-dasharray: 5 8;
+  animation: topology-flow 8s linear infinite;
+  opacity: 0.55;
+}
+
+.topologyDrop {
+  stroke-dasharray: 3 4;
+  opacity: 0.58;
+}
+
+.topologyJunction {
+  fill: var(--cradle-text-subtle);
+  stroke: none;
+  opacity: 0.62;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: none;
+}
+
+.networkPacket {
+  fill: #f06b22;
+  stroke: rgb(240 107 34 / 20%);
+  stroke-width: 4.5;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 0 4px rgb(240 107 34 / 58%));
+}
+
+.topologyCube polygon {
+  stroke: var(--cradle-border-strong);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.cubeTop {
+  fill: color-mix(in srgb, var(--cradle-surface) 82%, transparent);
+}
+
+.cubeLeft {
+  fill: color-mix(in srgb, var(--cradle-primary-soft) 62%, transparent);
+}
+
+.cubeRight {
+  fill: color-mix(in srgb, var(--cradle-surface-muted) 58%, transparent);
+}
+
+.satelliteCube {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: topology-float 7s ease-in-out infinite;
+}
+
+.satelliteNodes > g:nth-child(2n) {
+  animation-delay: -2.6s;
+}
+
+.satelliteNodes > g:nth-child(3n) {
+  animation-delay: -4.4s;
+}
+
+.topologyCard {
+  fill: none;
+  stroke: var(--cradle-border-strong);
+  stroke-linecap: round;
+  stroke-width: 4;
+  opacity: 0.92;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: topology-card-float 9s ease-in-out infinite;
+}
+
+.topologyCard rect {
+  stroke-width: 1.5;
+}
+
+.topologyCard line {
+  stroke-width: 1.2;
+  opacity: 0.55;
+}
+
+.topologyCard .topologyCardDivider {
+  opacity: 0.34;
+}
+
+.topologyCodeHeader,
+.topologyCode {
+  fill: color-mix(in srgb, var(--cradle-text) 78%, transparent);
+  stroke: none;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 8.25px;
+  letter-spacing: 0;
+}
+
+.topologyCodeHeader {
+  fill: var(--cradle-code-muted);
+  font-size: 9.25px;
+  letter-spacing: 0.04em;
+}
+
+.topologyCode .topologyCodeKey {
+  fill: #e76922;
+}
+
+.centralNode circle {
+  fill: #e76922;
+  filter: blur(18px);
+  opacity: 0.1;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: topology-glow 5s ease-in-out infinite;
+}
+
+.centralCube polygon {
+  stroke: #f06b22;
+  stroke-width: 2;
+}
+
+.centralCube {
+  filter: drop-shadow(0 12px 18px rgb(186 68 17 / 24%));
+}
+
+.centralCube .cubeTop {
+  fill: rgb(151 58 20 / 92%);
+}
+
+.centralCube .cubeLeft {
+  fill: rgb(91 31 12 / 92%);
+}
+
+.centralCube .cubeRight {
+  fill: rgb(119 40 13 / 92%);
+}
+
+@keyframes topology-flow {
+  to {
+    stroke-dashoffset: -52;
+  }
+}
+
+@keyframes topology-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes topology-card-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes topology-pulse {
+  0%,
+  100% {
+    opacity: 0.46;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes topology-glow {
+  0%,
+  100% {
+    opacity: 0.06;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 0.14;
+    transform: scale(1.08);
+  }
+}
+
 .heroInner {
+  position: relative;
+  z-index: 2;
+
   min-height: 620px;
 
   display: grid;
@@ -26,6 +315,8 @@
 }
 
 .heroContent {
+  width: 100%;
+  min-width: 0;
   max-width: 680px;
 }
 
@@ -40,6 +331,10 @@
   letter-spacing: -0.05em;
 }
 
+.heroTitleLine {
+  display: block;
+}
+
 .heroDescription {
   max-width: 640px;
   margin: 28px 0 0;
@@ -48,6 +343,12 @@
 
   font-size: 1.17rem;
   line-height: 1.7;
+}
+
+.heroTechnical {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  opacity: 0.72;
 }
 
 .heroActions {
@@ -111,55 +412,22 @@
   text-decoration: none;
 }
 
-.heroExample {
-  overflow: hidden;
-
-  border: 1px solid var(--cradle-code-border);
-  border-radius: var(--cradle-radius-lg);
-
-  background: var(--cradle-code-bg);
-
-  box-shadow: var(--cradle-shadow-lg);
-}
-
-.codeHeader {
-  padding: 12px 18px;
-
-  border-bottom: 1px solid var(--cradle-code-border);
-
-  color: var(--cradle-code-muted);
-
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.78rem;
-}
-
-.demoCode {
-  max-height: 420px;
-
-  margin: 0;
-  padding: 28px;
-
-  overflow-x: auto;
-
-  background: transparent;
-  color: var(--cradle-code-text);
-
-  font-size: 0.85rem;
-  line-height: 1.7;
-}
 
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible {
-  outline: 3px solid color-mix(
-    in srgb,
-    var(--cradle-primary) 30%,
-    transparent
-  );
+  outline: 3px solid color-mix(in srgb,
+      var(--cradle-primary) 30%,
+      transparent);
 
   outline-offset: 3px;
 }
 
 @media (max-width: 900px) {
+  .topologyBackground {
+    width: min(100%, 680px);
+    margin: -18px auto 0;
+  }
+
   .heroInner {
     grid-template-columns: 1fr;
 
@@ -169,7 +437,40 @@
   }
 }
 
+@media (min-width: 901px) {
+  .topologyCanvas {
+    width: 140%;
+    max-width: none;
+    transform: translateX(-1%);
+  }
+}
+
+@media (min-width: 1200px) {
+  .topologyBackground {
+    justify-content: flex-start;
+  }
+
+  .topologyCanvas {
+    width: 144%;
+    transform: translateX(-10%);
+  }
+}
+
 @media (max-width: 640px) {
+  .heroContent {
+    width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+  }
+
+  .topologyBackground {
+    width: calc(100% + 20px);
+    margin: -8px -10px -18px;
+  }
+
+  .topologyCanvas {
+    opacity: 0.68;
+  }
+
   .heroInner {
     min-height: auto;
 
@@ -177,11 +478,29 @@
   }
 
   .heroTitle {
-    font-size: 3rem;
+    max-width: 100%;
+
+    font-size: clamp(2.3rem, 11vw, 3rem);
+    line-height: 1.02;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .heroTitleLine {
+    display: inline;
   }
 
   .heroDescription {
+    max-width: 100%;
+
     font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  .heroTechnical,
+  .heroContent > :first-child {
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   .heroActions {
@@ -195,6 +514,22 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
+  .topologyRoute,
+  .topologyMeshPath,
+  .topologyWisp,
+  .topologyParticle,
+  .topologyJunction,
+  .satelliteCube,
+  .topologyCard,
+  .centralNode circle {
+    animation: none;
+  }
+
+  .networkPacket {
+    display: none;
+  }
+
   .primaryButton,
   .secondaryButton {
     transition: none;

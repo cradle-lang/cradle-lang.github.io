@@ -1,13 +1,120 @@
 .why {
+  background: var(--cradle-surface);
+}
+
+.whyInner {
   padding: 96px 0;
 }
 
+/* Problem / value proposition */
+.valueStatement {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+  gap: 64px;
+
+  margin-top: 48px;
+  padding: 40px 0;
+
+  border-top: 1px solid var(--cradle-border);
+  border-bottom: 1px solid var(--cradle-border);
+}
+
+.valueContent {
+  max-width: 680px;
+}
+
+.valueLabel,
+.conceptLabel {
+  margin: 0 0 10px;
+
+  color: var(--cradle-primary);
+
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.valueContent h3 {
+  margin: 0 0 14px;
+
+  color: var(--cradle-text);
+
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  line-height: 1.25;
+}
+
+.valueContent p {
+  margin: 0;
+
+  color: var(--cradle-text-muted);
+
+  line-height: 1.7;
+}
+
+/* Systems + networks + artifacts + events → scenario.cradle */
+.valueFlow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  align-content: center;
+}
+
+.valueFlow span,
+.valueFlow strong {
+  padding: 12px 14px;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: 8px;
+
+  background: var(--cradle-surface);
+
+  color: var(--cradle-text);
+
+  font-size: 0.88rem;
+}
+
+.valueFlow strong {
+  grid-column: 1 / -1;
+
+  position: relative;
+
+  margin-top: 18px;
+
+  border-color: var(--cradle-primary);
+
+  color: var(--cradle-primary);
+
+  font-weight: 700;
+  text-align: center;
+}
+
+.valueFlow strong::before {
+  position: absolute;
+  top: -19px;
+  left: 50%;
+
+  width: 1px;
+  height: 18px;
+
+  background: var(--cradle-border);
+
+  content: "";
+}
+
+/* CEaC concept */
+.concept {
+  margin-top: 32px;
+}
+
 .conceptNote {
+  margin: 0;
   padding: 18px 20px;
 
   border-left: 3px solid var(--cradle-primary);
 
-  background: var(--cradle-surface-muted);
+  background: var(--cradle-surface);
 
   color: var(--cradle-text-muted);
 
@@ -15,6 +122,7 @@
   line-height: 1.7;
 }
 
+/* Product principles */
 .principles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -62,6 +170,15 @@
 }
 
 @media (max-width: 900px) {
+  .valueStatement {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .valueFlow {
+    max-width: 520px;
+  }
+
   .principles {
     grid-template-columns: 1fr;
   }
@@ -73,13 +190,32 @@
     border-bottom: 1px solid var(--cradle-border);
   }
 
+  .principle:first-child {
+    padding-top: 0;
+  }
+
   .principle:last-child {
+    padding-bottom: 0;
+
     border-bottom: 0;
   }
 }
 
 @media (max-width: 640px) {
-  .why {
+  .whyInner {
     padding: 72px 0;
+  }
+
+  .valueStatement {
+    margin-top: 36px;
+    padding: 32px 0;
+  }
+
+  .valueFlow {
+    grid-template-columns: 1fr;
+  }
+
+  .valueFlow strong {
+    grid-column: auto;
   }
 }

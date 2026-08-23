@@ -1,6 +1,5 @@
 .releases {
   border-top: 1px solid var(--cradle-border);
-
   background: var(--cradle-bg);
 }
 
@@ -8,48 +7,109 @@
   padding: 96px 0;
 }
 
-.releasePanel,
-.noRelease {
-  max-width: 960px;
+/* =========================================================
+   TWO-COLUMN SECTION
+   ========================================================= */
 
-  margin-top: 52px;
+.releaseGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.92fr)
+    minmax(0, 1.08fr);
 
-  border-top: 1px solid var(--cradle-border);
-  border-bottom: 1px solid var(--cradle-border);
+  align-items: stretch;
+
+  gap: 24px;
+
+  margin-top: 44px;
 }
 
-.releaseSummary {
+/* =========================================================
+   SHARED PANEL STYLING
+   ========================================================= */
+
+.downloadPanel,
+.quickStartPanel {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 40px;
+  flex-direction: column;
 
-  padding: 34px 0;
+  min-width: 0;
+  min-height: 100%;
+
+  padding: 32px;
+
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 12%,
+      var(--cradle-border)
+    );
+
+  border-radius: var(--cradle-radius-lg);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(
+        in srgb,
+        var(--cradle-primary) 5%,
+        var(--cradle-bg)
+      ),
+      color-mix(
+        in srgb,
+        var(--cradle-primary) 2.5%,
+        var(--cradle-bg)
+      )
+    );
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.025),
+    0 12px 30px rgba(15, 23, 42, 0.04);
 }
 
-.latestLabel,
-.assetsHeading {
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.panelHeader {
+  margin-bottom: 26px;
+}
+
+.panelLabel {
   display: block;
 
-  margin: 0 0 8px;
+  margin: 0 0 9px;
 
   color: var(--cradle-accent);
 
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.1em;
+
   text-transform: uppercase;
 }
 
-.releaseSummary h3,
-.noRelease h3 {
+.panelHeader h3 {
   margin: 0;
 
   color: var(--cradle-text);
 
-  font-size: 1.55rem;
-  font-weight: 650;
-  letter-spacing: -0.025em;
+  font-size: clamp(1.4rem, 2vw, 1.72rem);
+  font-weight: 700;
+  line-height: 1.2;
+
+  letter-spacing: -0.03em;
+}
+
+.panelDescription {
+  max-width: 520px;
+
+  margin: 14px 0 0;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.94rem;
+  line-height: 1.65;
 }
 
 .releaseDate {
@@ -57,87 +117,87 @@
 
   color: var(--cradle-text-muted);
 
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 
-.releaseActions {
+/* =========================================================
+   DOWNLOAD AREA
+   ========================================================= */
+
+.downloads {
+  flex: 1;
+}
+
+.downloadsHeader {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
+  justify-content: space-between;
 
-.primaryAction,
-.secondaryAction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  gap: 16px;
 
-  min-height: 44px;
-  padding: 0 18px;
+  margin-bottom: 10px;
 
-  border-radius: var(--cradle-radius-sm);
+  color: var(--cradle-text);
 
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 650;
-
-  text-decoration: none;
 }
 
-.primaryAction {
-  background: var(--cradle-accent);
-  color: #ffffff;
-}
+.assetCount {
+  flex: 0 0 auto;
 
-.primaryAction:hover {
-  background: var(--cradle-accent-hover);
-  color: #ffffff;
+  color: var(--cradle-text-muted);
 
-  text-decoration: none;
-}
-
-.secondaryAction {
-  border: 1px solid var(--cradle-border-strong);
-
-  background: var(--cradle-surface);
-  color: var(--cradle-primary);
-}
-
-.secondaryAction:hover {
-  border-color: var(--cradle-primary);
-
-  color: var(--cradle-primary);
-
-  text-decoration: none;
-}
-
-.assets {
-  padding: 28px 0 34px;
-
-  border-top: 1px solid var(--cradle-border);
+  font-size: 0.76rem;
+  font-weight: 500;
 }
 
 .assetList {
   display: grid;
-  gap: 1px;
 
   overflow: hidden;
 
-  border: 1px solid var(--cradle-border);
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 10%,
+      var(--cradle-border)
+    );
+
   border-radius: var(--cradle-radius-md);
 
-  background: var(--cradle-border);
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 3%,
+      var(--cradle-bg)
+    );
 }
 
 .asset {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
+
   align-items: center;
-  gap: 18px;
 
-  padding: 16px 18px;
+  gap: 14px;
 
-  background: var(--cradle-surface);
+  padding: 14px 16px;
+
+  border-bottom: 1px solid
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 8%,
+      var(--cradle-border)
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-bg) 88%,
+      transparent
+    );
+
   color: var(--cradle-text);
 
   text-decoration: none;
@@ -148,10 +208,20 @@
 }
 
 .asset:hover {
-  background: var(--cradle-accent-soft);
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-accent) 8%,
+      var(--cradle-bg)
+    );
+
   color: var(--cradle-primary);
 
   text-decoration: none;
+}
+
+.asset:last-child {
+  border-bottom: 0;
 }
 
 .assetName {
@@ -160,7 +230,7 @@
   overflow: hidden;
 
   font-family: var(--ifm-font-family-monospace);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -169,59 +239,226 @@
 .assetSize {
   color: var(--cradle-text-muted);
 
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .assetArrow {
   color: var(--cradle-accent);
 
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* =========================================================
+   NO RELEASE PLACEHOLDER
+   ========================================================= */
+
+.releasePlaceholder {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 2px;
+  padding: 18px;
+
+  border: 1px dashed
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 18%,
+      var(--cradle-border)
+    );
+
+  border-radius: var(--cradle-radius-md);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 4%,
+      var(--cradle-bg)
+    );
+}
+
+.placeholderIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 10px;
+
+  background: var(--cradle-accent-soft);
+  color: var(--cradle-accent);
+
   font-size: 1rem;
+  font-weight: 700;
 }
 
-.noAssets {
-  padding: 26px 0 32px;
-
-  border-top: 1px solid var(--cradle-border);
+.releasePlaceholder strong,
+.releasePlaceholder span {
+  display: block;
 }
 
-.noAssets p {
-  margin: 0 0 8px;
-
-  color: var(--cradle-text-muted);
-}
-
-.noAssets a {
-  color: var(--cradle-primary);
+.releasePlaceholder strong {
+  color: var(--cradle-text);
 
   font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.releasePlaceholder span {
+  margin-top: 4px;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   RELEASE WITH NO ASSETS
+   ========================================================= */
+
+.emptyDownloads {
+  flex: 1;
+
+  padding: 18px;
+
+  border: 1px dashed var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-accent) 1.5%,
+      transparent
+    );
+}
+
+.emptyDownloads p {
+  margin: 0;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   QUICK START / TERMINAL
+   ========================================================= */
+
+.terminalWrapper {
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+  align-items: stretch;
+}
+
+/*
+ * Override TerminalAnimation's own max-width so it fills
+ * the Quick Start panel.
+ */
+.terminalWrapper > * {
+  width: 100%;
+  max-width: none;
+}
+
+/* =========================================================
+   PANEL FOOTERS
+   ========================================================= */
+
+.panelFooter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-top: auto;
+  padding-top: 26px;
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.primaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 0 17px;
+
+  border: 1px solid transparent;
+  border-radius: var(--cradle-radius-sm);
+
+  background: var(--cradle-accent);
+  color: #ffffff;
+
+  font-size: 0.85rem;
+  font-weight: 650;
+
+  text-decoration: none;
+
+  transition:
+    background-color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.primaryAction:hover {
+  background: var(--cradle-accent-hover);
+
+  color: #ffffff;
+  text-decoration: none;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   TEXT ACTIONS
+   ========================================================= */
+
+.textAction {
+  display: inline-flex;
+  align-items: center;
+
+  color: var(--cradle-primary);
+
+  font-size: 0.84rem;
   font-weight: 600;
 
   text-decoration: none;
+
+  transition:
+    color 140ms ease,
+    transform 140ms ease;
 }
 
-.noAssets a:hover {
+.textAction:hover {
   color: var(--cradle-accent);
+
+  text-decoration: none;
+
+  transform: translateX(1px);
 }
 
-.noRelease {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-
-  padding: 34px 0;
-}
-
-.noRelease p {
-  margin: 10px 0 0;
-
-  color: var(--cradle-text-muted);
-
-  line-height: 1.65;
-}
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
 
 .primaryAction:focus-visible,
-.secondaryAction:focus-visible,
+.textAction:focus-visible,
 .asset:focus-visible {
   outline: 3px solid
     color-mix(
@@ -233,22 +470,126 @@
   outline-offset: 3px;
 }
 
-@media (max-width: 760px) {
-  .releaseSummary,
-  .noRelease {
-    align-items: flex-start;
-    flex-direction: column;
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1180px) {
+  .releaseGrid {
+    gap: 28px;
   }
 
-  .releaseActions {
-    width: 100%;
+  .downloadPanel,
+  .quickStartPanel {
+    padding: 36px;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 940px) {
+  .releaseGrid {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+  }
+
+  .downloadPanel,
+  .quickStartPanel {
+    padding: 28px;
+  }
+
+  .panelHeader {
+    margin-bottom: 24px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .releasesInner {
+    padding: 72px 0;
+  }
+
+  .releaseGrid {
+    gap: 16px;
+
+    margin-top: 36px;
+  }
+
+  .downloadPanel,
+  .quickStartPanel {
+    padding: 22px;
+
+    border-radius: var(--cradle-radius-md);
+  }
+
+  .panelHeader {
+    margin-bottom: 22px;
+  }
+
+  .panelHeader h3 {
+    font-size: 1.4rem;
+  }
+
+  .panelDescription {
+    font-size: 0.9rem;
   }
 
   .asset {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 12px;
+
+    padding: 13px 14px;
   }
 
   .assetSize {
     display: none;
+  }
+
+  .releasePlaceholder {
+    align-items: flex-start;
+
+    padding: 16px;
+  }
+
+  .placeholderIcon {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 9px;
+  }
+
+  .panelFooter {
+    gap: 14px;
+
+    padding-top: 22px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 440px) {
+  .downloadPanel,
+  .quickStartPanel {
+    padding: 20px;
+  }
+
+  .panelFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .primaryAction {
+    width: 100%;
   }
 }

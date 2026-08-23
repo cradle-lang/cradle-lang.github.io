@@ -6,7 +6,7 @@ import styles from './CradleInAction.module.css';
 
 export default function CradleInAction(): ReactNode {
   return (
-    <section className={styles.action}>
+    <section id="how-cradle-works" className={styles.action}>
       <div className={`${sharedStyles.contentWidth} ${styles.actionInner}`}>
         <div className={styles.actionHeader}>
           <p className={sharedStyles.sectionLabel}>CRADLE in action</p>
@@ -51,7 +51,7 @@ network("lan_0") >
           </div>
 
           <div className={styles.environmentPanel}>
-            <div className={styles.environmentTitle}>Generated Environment</div>
+            <div className={styles.environmentTitle}>Generated environment</div>
 
             <div className={styles.topology}>
               <div className={styles.topologyNode}>
@@ -71,11 +71,20 @@ network("lan_0") >
           </div>
         </div>
 
-        <Link
-          className={styles.textLink}
-          to="/docs/user-guide/write-scenario">
-          Learn how scenarios are written →
-        </Link>
+        <div className={styles.actionLinks}>
+          <Link className={styles.workbenchLink} to="/workbench/">
+            Explore in the Workbench
+          </Link>
+          <p className={styles.safetyNote}>
+            Browser-based inspection only. The Workbench does not start virtual
+            machines or deploy infrastructure.
+          </p>
+          <Link
+            className={styles.textLink}
+            to="/docs/user-guide/write-scenario">
+            Learn how scenarios are written →
+          </Link>
+        </div>
       </div>
     </section>
   );

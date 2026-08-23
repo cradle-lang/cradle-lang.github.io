@@ -1,10 +1,11 @@
-import type {ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 
 import releases from '../../../data/releases.json';
 
 import sharedStyles from '../Homepage.module.css';
 import styles from './LatestRelease.module.css';
+import TerminalAnimation from './TerminalAnimation';
 
 type ReleaseAsset = {
   id: number;
@@ -25,8 +26,7 @@ type Release = {
   assets: ReleaseAsset[];
 };
 
-const GITHUB_REPOSITORY =
-  'https://github.com/cradle-lang/cradle-release';
+const QUICK_START_URL = '/docs/getting-started/quick-start';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) {
@@ -44,6 +44,14 @@ function formatFileSize(bytes: number): string {
   return `${megabytes.toFixed(1)} MB`;
 }
 
+function formatReleaseDate(date: string): string {
+  return new Date(date).toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 export default function LatestRelease(): ReactNode {
   const releaseData = releases as Release[];
 
@@ -54,11 +62,11 @@ export default function LatestRelease(): ReactNode {
   return (
     <section className={styles.releases}>
       <div
-        className={`${sharedStyles.contentWidth} ${styles.releasesInner}`}>
-
+        className={`${sharedStyles.contentWidth} ${styles.releasesInner}`}
+      >
         <div className={sharedStyles.sectionHeader}>
           <p className={sharedStyles.sectionLabel}>
-            GET CRADLE
+            Get CRADLE
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
@@ -66,119 +74,184 @@ export default function LatestRelease(): ReactNode {
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            Get the latest packaged release, review what changed or explore
-            the project source on GitHub.
+            Get the latest packaged version of CRADLE for your
+            environment.
           </p>
         </div>
 
-        {latestRelease ? (
-          <div className={styles.releasePanel}>
-            <div className={styles.releaseSummary}>
-              <div>
-                <span className={styles.latestLabel}>
-                  Latest release
-                </span>
+        <div className={styles.releaseGrid}>
+          {/* =====================================================
+              DOWNLOAD
+              ===================================================== */}
 
-                <h3>{latestRelease.name}</h3>
+          <div className={styles.downloadPanel}>
+            {latestRelease ? (
+              <>
+                <div className={styles.panelHeader}>
+                  <span className={styles.panelLabel}>
+                    Latest release
+                  </span>
 
-                {latestRelease.publishedAt && (
-                  <p className={styles.releaseDate}>
-                    {new Date(
-                      latestRelease.publishedAt,
-                    ).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                )}
-              </div>
+                  <h3>
+                    {latestRelease.name ||
+                      latestRelease.tagName}
+                  </h3>
 
-              <div className={styles.releaseActions}>
-                <Link
-                  className={styles.primaryAction}
-                  to="/releases/">
-                  Release notes
-                </Link>
-
-                <a
-                  className={styles.secondaryAction}
-                  href={latestRelease.htmlUrl}
-                  target="_blank"
-                  rel="noopener noreferrer">
-                  View on GitHub ↗
-                </a>
-              </div>
-            </div>
-
-            {latestRelease.assets.length > 0 ? (
-              <div className={styles.assets}>
-                <p className={styles.assetsHeading}>
-                  Downloads
-                </p>
-
-                <div className={styles.assetList}>
-                  {latestRelease.assets.map((asset) => (
-                    <a
-                      key={asset.id}
-                      className={styles.asset}
-                      href={asset.downloadUrl}>
-
-                      <span className={styles.assetName}>
-                        {asset.name}
-                      </span>
-
-                      <span className={styles.assetSize}>
-                        {formatFileSize(asset.size)}
-                      </span>
-
-                      <span
-                        className={styles.assetArrow}
-                        aria-hidden="true">
-                        ↓
-                      </span>
-                    </a>
-                  ))}
+                  {latestRelease.publishedAt && (
+                    <p className={styles.releaseDate}>
+                      Released{' '}
+                      {formatReleaseDate(
+                        latestRelease.publishedAt,
+                      )}
+                    </p>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <div className={styles.noAssets}>
-                <p>
-                  This release does not currently provide packaged binaries.
-                </p>
 
-                <a
-                  href={latestRelease.htmlUrl}
-                  target="_blank"
-                  rel="noopener noreferrer">
-                  View the release on GitHub →
-                </a>
-              </div>
+                {latestRelease.assets.length > 0 ? (
+                  <div className={styles.downloads}>
+                    <div className={styles.downloadsHeader}>
+                      <span>Downloads</span>
+
+                      <span className={styles.assetCount}>
+                        {latestRelease.assets.length}{' '}
+                        {latestRelease.assets.length === 1
+                          ? 'asset'
+                          : 'assets'}
+                      </span>
+                    </div>
+
+                    <div className={styles.assetList}>
+                      {latestRelease.assets.map((asset) => (
+                        <a
+                          key={asset.id}
+                          className={styles.asset}
+                          href={asset.downloadUrl}
+                        >
+                          <span className={styles.assetName}>
+                            {asset.name}
+                          </span>
+
+                          <span className={styles.assetSize}>
+                            {formatFileSize(asset.size)}
+                          </span>
+
+                          <span
+                            className={styles.assetArrow}
+                            aria-hidden="true"
+                          >
+                            ↓
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className={styles.emptyDownloads}>
+                    <p>
+                      No packaged files are available for this
+                      release yet.
+                    </p>
+                  </div>
+                )}
+
+                <div className={styles.panelFooter}>
+                  <Link
+                    className={styles.primaryAction}
+                    to="/releases/"
+                  >
+                    Release notes →
+                  </Link>
+
+                  <a
+                    className={styles.textAction}
+                    href={latestRelease.htmlUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View on GitHub ↗
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={styles.panelHeader}>
+                  <span className={styles.panelLabel}>
+                    Packaged release
+                  </span>
+
+                  <h3>
+                    No release available yet.
+                  </h3>
+
+                  <p className={styles.panelDescription}>
+                    The first packaged CRADLE release has not
+                    been published yet.
+                  </p>
+                </div>
+
+                <div className={styles.releasePlaceholder}>
+                  <div className={styles.placeholderIcon}>
+                    ↓
+                  </div>
+
+                  <div>
+                    <strong>
+                      Packaged downloads coming soon
+                    </strong>
+
+                    <span>
+                      Release assets will appear here when
+                      published.
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.panelFooter}>
+                  <Link
+                    className={styles.primaryAction}
+                    to="/releases/"
+                  >
+                    View releases →
+                  </Link>
+                </div>
+              </>
             )}
           </div>
-        ) : (
-          <div className={styles.noRelease}>
-            <div>
-              <span className={styles.latestLabel}>
-                Source repository
+
+          {/* =====================================================
+              QUICK START
+              ===================================================== */}
+
+          <div className={styles.quickStartPanel}>
+            <div className={styles.panelHeader}>
+              <span className={styles.panelLabel}>
+                Quick Start
               </span>
 
-              <h3>No packaged releases yet.</h3>
+              <h3>
+                Run CRADLE.
+              </h3>
 
-              <p>
-                CRADLE is currently available from its GitHub repository.
+              <p className={styles.panelDescription}>
+                Follow the introductory workflow and generate
+                your first CRADLE deployment.
               </p>
             </div>
 
-            <a
-              className={styles.primaryAction}
-              href={GITHUB_REPOSITORY}
-              target="_blank"
-              rel="noopener noreferrer">
-              View GitHub Repository ↗
-            </a>
+            <div className={styles.terminalWrapper}>
+              <TerminalAnimation />
+            </div>
+
+            <div className={styles.panelFooter}>
+              <Link
+                className={styles.textAction}
+                to={QUICK_START_URL}
+              >
+                Open Quick Start →
+              </Link>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

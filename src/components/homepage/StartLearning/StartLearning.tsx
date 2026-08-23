@@ -11,40 +11,43 @@ export default function StartLearning(): ReactNode {
         <div className={sharedStyles.sectionHeader}>
           <p className={sharedStyles.sectionLabel}>Start learning</p>
           <h2 className={sharedStyles.sectionHeading}>
-            Choose the path that matches what you need.
+            Start with the outcome you need.
           </h2>
         </div>
 
         <div className={styles.learningGrid}>
           <Link
             className={styles.learningCard}
-            to="/docs/getting-started/quick-start">
+            to="/docs/introduction/">
             <span className={styles.cardNumber}>01</span>
-            <h3>Getting Started</h3>
+            <h3>Understand the approach</h3>
             <p>
-              Prepare CRADLE and work through your first documented scenario.
+              Learn the problem CRADLE addresses, what a scenario captures and
+              where the product boundaries are.
             </p>
             <span className={styles.cardArrow}>→</span>
           </Link>
 
           <Link
             className={styles.learningCard}
-            to="/docs/user-guide/write-scenario">
+            to="/docs/introduction/helloworld">
             <span className={styles.cardNumber}>02</span>
-            <h3>User Guide</h3>
+            <h3>Explore a scenario</h3>
             <p>
-              Learn how to author, generate, deploy and inspect complete
-              scenarios.
+              Follow the instances, network, object and scheduled event in the
+              compact HelloWorld example.
             </p>
             <span className={styles.cardArrow}>→</span>
           </Link>
 
-          <Link className={styles.learningCard} to="/docs/il-language/">
+          <Link
+            className={styles.learningCard}
+            to="/docs/introduction/sections">
             <span className={styles.cardNumber}>03</span>
-            <h3>Language</h3>
+            <h3>Model a scenario</h3>
             <p>
-              Understand CRADLE syntax, language concepts and documented
-              examples.
+              Review the metadata, objects, instances, networks and events that
+              make up the human-authored language.
             </p>
             <span className={styles.cardArrow}>→</span>
           </Link>

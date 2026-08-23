@@ -5,29 +5,57 @@ import styles from './WhyCradle.module.css';
 
 export default function WhyCradle(): ReactNode {
   return (
-    <section className={`${sharedStyles.contentWidth} ${styles.why}`}>
+    <section className={styles.why}>
+      <div className={`${sharedStyles.contentWidth} ${styles.whyInner}`}>
       <div className={sharedStyles.sectionHeader}>
         <p className={sharedStyles.sectionLabel}>Why CRADLE?</p>
 
         <h2 className={sharedStyles.sectionHeading}>
-          Bring your cyber-range environment into one structured description.
+          Bring scattered configuration and scenario knowledge into one
+          structured specification.
         </h2>
 
         <p className={sharedStyles.sectionDescription}>
-          CRADLE brings systems, networks, artifacts and event sequences into
-          one structured scenario definition. Instead of spreading environment
-          intent across configuration files, scripts, infrastructure settings
-          and individual knowledge, teams can describe what a cyber environment
-          should contain and how its events should progress in one place. The
-          resulting static description can be reviewed, maintained and
-          transformed for supported deployment environments.
+          Cyber environments often depend on manual configuration, scattered
+          scripts, infrastructure settings and platform-specific knowledge.
+          As they evolve, it becomes harder to understand what changed or
+          recreate the same scenario elsewhere.
         </p>
-        <p className={styles.conceptNote}>
-          CRADLE follows a Cyber Experimentation As Code (CEaC) approach, representing
-          computing components and scenario intent as code rather than as disconnected
-          setup instructions.
-        </p>
+      </div>
 
+      <div className={styles.valueStatement}>
+        <div className={styles.valueContent}>
+          <p className={styles.valueLabel}>One structured description</p>
+
+          <h3>
+            Keep the environment and scenario intent together.
+          </h3>
+
+          <p>
+            CRADLE represents the systems, networks, artifacts and event
+            sequence of a cyber experiment in a structured scenario definition.
+            That definition can be reviewed, maintained and transformed for
+            supported deployment environments.
+          </p>
+        </div>
+
+        <div className={styles.valueFlow} aria-label="CRADLE scenario model">
+          <span>Systems</span>
+          <span>Networks</span>
+          <span>Artifacts</span>
+          <span>Events</span>
+          <strong>scenario.cradle</strong>
+        </div>
+      </div>
+
+      <div className={styles.concept}>
+        <p className={styles.conceptLabel}>Cyber Experimentation as Code</p>
+
+        <p className={styles.conceptNote}>
+          CRADLE describes computing components as code, providing a static,
+          high-level environment description that teams can review, compare
+          and maintain.
+        </p>
       </div>
 
       <div className={styles.principles}>
@@ -35,19 +63,17 @@ export default function WhyCradle(): ReactNode {
           <span className={styles.number}>01</span>
           <h3>Declarative</h3>
           <p>
-            Describe the intended systems, networks, artifacts and event
-            timeline without tying the scenario to the implementation details
-            of one deployment platform.
+            Describe the intended systems, networks, artifacts and events in a
+            high-level specification instead of platform setup steps.
           </p>
         </article>
 
         <article className={styles.principle}>
           <span className={styles.number}>02</span>
-          <h3>Reproducible</h3>
+          <h3>Repeatable</h3>
           <p>
-            Keep the environment and event sequence in a structured source
-            description that can be transformed again for supported deployment
-            targets.
+            Preserve experiment intent as version-controlled text that can be
+            compared, maintained and generated again for supported targets.
           </p>
         </article>
 
@@ -55,10 +81,11 @@ export default function WhyCradle(): ReactNode {
           <span className={styles.number}>03</span>
           <h3>Debuggable</h3>
           <p>
-            Make environment intent inspectable so teams can review changes,
-            understand scenario structure and diagnose issues more easily.
+            Inspect the authored scenario, intermediary representation and
+            generated provider material when diagnosing a workflow.
           </p>
         </article>
+      </div>
       </div>
     </section>
   );
