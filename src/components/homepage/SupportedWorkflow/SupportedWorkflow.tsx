@@ -34,19 +34,60 @@ export default function SupportedWorkflow(): ReactNode {
 
         <div className={styles.platforms}>
           <article className={styles.platform}>
-            <span className={styles.supportedStatus}>✓ Integrated workflow</span>
-            <h3>libvirt</h3>
-            <p>Local artifact generation and scenario execution.</p>
+            <div className={styles.platformHeader}>
+              <h3>libvirt</h3>
+
+              <span className={styles.supportedStatus}>
+                <span className={styles.statusIcon}>✓</span>
+                Integrated workflow
+              </span>
+            </div>
+
+            <p>
+              Local artifact generation and scenario execution.
+            </p>
+
+            <div className={styles.platformMeta}>
+              Local workflow
+            </div>
           </article>
+
           <article className={styles.platform}>
-            <span className={styles.supportedStatus}>✓ Integrated workflow</span>
-            <h3>VirtualBox</h3>
-            <p>Local artifact generation and scenario execution.</p>
+            <div className={styles.platformHeader}>
+              <h3>VirtualBox</h3>
+
+              <span className={styles.supportedStatus}>
+                <span className={styles.statusIcon}>✓</span>
+                Integrated workflow
+              </span>
+            </div>
+
+            <p>
+              Local artifact generation and scenario execution.
+            </p>
+
+            <div className={styles.platformMeta}>
+              Local workflow
+            </div>
           </article>
-          <article className={styles.platform}>
-            <span className={styles.partialStatus}>△ Environment-dependent</span>
-            <h3>SPHERE</h3>
-            <p>Artifact generation with project-specific operation.</p>
+
+          <article className={`${styles.platform} ${styles.platformPartial}`}>
+            <div className={styles.platformHeader}>
+              <h3>SPHERE</h3>
+
+              <span className={styles.partialStatus}>
+                <span className={styles.statusIcon}>△</span>
+                Environment-dependent
+              </span>
+            </div>
+
+            <p>
+              Artifact generation with project-specific operation.
+            </p>
+
+            <div className={styles.platformMeta}>
+              Research environment
+            </div>
           </article>
         </div>
       </div>

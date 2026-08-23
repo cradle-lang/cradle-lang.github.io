@@ -1,46 +1,166 @@
 .supported {
+  position: relative;
+
   border-top: 1px solid var(--cradle-border);
 
-  background: var(--cradle-surface);
+  background:
+    linear-gradient(
+      180deg,
+      var(--cradle-surface),
+      color-mix(
+        in srgb,
+        var(--cradle-primary) 1.5%,
+        var(--cradle-surface)
+      )
+    );
 }
 
 .supportedInner {
   display: grid;
-  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
-  align-items: start;
-  gap: 70px;
 
-  padding: 72px 0;
+  grid-template-columns:
+    minmax(300px, 0.72fr)
+    minmax(0, 1.28fr);
+
+  align-items: center;
+
+  gap: clamp(48px, 6vw, 88px);
+
+  padding: 78px 0;
 }
 
 .supportedContent {
-  max-width: 720px;
+  max-width: 600px;
 }
 
+.supportLink {
+  display: inline-flex;
+  align-items: center;
+
+  margin-top: 26px;
+
+  color: var(--cradle-primary);
+
+  font-weight: 700;
+  text-decoration: none;
+
+  transition:
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.supportLink:hover {
+  color: var(--cradle-accent);
+
+  text-decoration: none;
+
+  transform: translateX(2px);
+}
+
+.supportLink:focus-visible {
+  outline:
+    3px solid
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 30%,
+      transparent
+    );
+
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Platform matrix
+   ========================================================= */
+
 .platforms {
+  position: relative;
+
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+
+  gap: 0;
+
+  overflow: hidden;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-lg);
+
+  background: var(--cradle-surface);
+
+  box-shadow:
+    0 18px 46px
+    rgba(17, 24, 39, 0.045);
 }
 
 .platform {
+  position: relative;
+
   min-width: 0;
-  padding: 22px;
+  min-height: 220px;
 
-  border: 1px solid var(--cradle-border);
-  border-radius: var(--cradle-radius-md);
+  display: flex;
+  flex-direction: column;
 
-  background: var(--cradle-surface);
+  padding: 26px 24px 22px;
+
+  border-right: 1px solid var(--cradle-border);
+
+  background: transparent;
+
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
 }
 
-.platform span {
-  display: block;
+.platform:last-child {
+  border-right: 0;
 }
 
-.platform span {
-  margin-bottom: 15px;
+.platform:hover {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 2.5%,
+      var(--cradle-surface)
+    );
+}
 
-  font-size: 0.72rem;
+.platformHeader {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.platform h3 {
+  margin: 0;
+
+  color: var(--cradle-text);
+
+  font-size: 1.15rem;
+  font-weight: 750;
+}
+
+.platform p {
+  margin: 18px 0 0;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.supportedStatus,
+.partialStatus {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  width: fit-content;
+
+  font-size: 0.7rem;
   font-weight: 750;
 }
 
@@ -52,63 +172,108 @@
   color: var(--cradle-warning);
 }
 
-.platform h3 {
-  margin: 0;
+.statusIcon {
+  font-family: var(--ifm-font-family-monospace);
 
-  color: var(--cradle-text);
-
-  font-size: 1rem;
+  font-size: 0.74rem;
 }
 
-.platform p {
-  margin: 9px 0 0;
+.platformMeta {
+  margin-top: auto;
+  padding-top: 22px;
 
-  color: var(--cradle-text-muted);
+  color: var(--cradle-text-subtle);
 
-  font-size: 0.82rem;
-  line-height: 1.55;
-}
-
-.supportLink {
-  display: inline-block;
-
-  margin-top: 24px;
-
-  color: var(--cradle-primary);
-
+  font-size: 0.66rem;
   font-weight: 700;
-  text-decoration: none;
+
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
 }
 
-.supportLink:hover {
-  color: var(--cradle-accent);
-
-  text-decoration: none;
+/*
+ * Subtle difference for SPHERE without turning
+ * the card into a warning block.
+ */
+.platformPartial {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(
+        in srgb,
+        var(--cradle-warning) 2.5%,
+        transparent
+      ),
+      transparent
+    );
 }
 
-.supportLink:focus-visible {
-  outline: 3px solid color-mix(
-    in srgb,
-    var(--cradle-primary) 30%,
-    transparent
-  );
-  outline-offset: 3px;
-}
+/* =========================================================
+   Tablet
+   ========================================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
   .supportedInner {
     grid-template-columns: 1fr;
 
-    gap: 30px;
+    align-items: start;
+
+    gap: 38px;
   }
 
+  .supportedContent {
+    max-width: 720px;
+  }
+}
+
+/* =========================================================
+   Smaller tablet
+   ========================================================= */
+
+@media (max-width: 760px) {
   .platforms {
     grid-template-columns: 1fr;
   }
+
+  .platform {
+    min-height: auto;
+
+    border-right: 0;
+    border-bottom: 1px solid var(--cradle-border);
+  }
+
+  .platform:last-child {
+    border-bottom: 0;
+  }
 }
+
+/* =========================================================
+   Mobile
+   ========================================================= */
 
 @media (max-width: 640px) {
   .supportedInner {
-    padding: 56px 0;
+    gap: 32px;
+
+    padding: 60px 0;
+  }
+
+  .platform {
+    padding: 22px 20px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .platform,
+  .supportLink {
+    transition: none;
+  }
+
+  .supportLink:hover {
+    transform: none;
   }
 }
