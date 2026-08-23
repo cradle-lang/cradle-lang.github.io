@@ -53,8 +53,8 @@ const config: Config = {
           sidebarPath: './config/sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
+          // editUrl:
+          //   'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
           /*
 * There is no published CRADLE documentation version yet.
 *
