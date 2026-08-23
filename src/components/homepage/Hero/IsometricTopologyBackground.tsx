@@ -1,4 +1,4 @@
-import type {CSSProperties, ReactNode} from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import styles from './Hero.module.css';
 
@@ -14,7 +14,7 @@ function polygonPoints(points: Array<[number, number]>) {
   return points.map(([x, y]) => `${x},${y}`).join(' ');
 }
 
-function Cube({centerX, centerY, size, depth, className = ''}: CubeProps): ReactNode {
+function Cube({ centerX, centerY, size, depth, className = '' }: CubeProps): ReactNode {
   const halfWidth = size / 2;
   const halfHeight = size * 0.285;
   const top: [number, number] = [centerX, centerY - halfHeight];
@@ -35,11 +35,11 @@ function Cube({centerX, centerY, size, depth, className = ''}: CubeProps): React
 }
 
 const nodes = [
-  {centerX: 98, centerY: 198, size: 64, depth: 38, groundX: 210, groundY: 322},
-  {centerX: 500, centerY: 126, size: 64, depth: 38, groundX: 500, groundY: 290},
-  {centerX: 646, centerY: 198, size: 64, depth: 38, groundX: 566, groundY: 322},
-  {centerX: 584, centerY: 401, size: 64, depth: 38, groundX: 584, groundY: 466},
-  {centerX: 148, centerY: 350, size: 64, depth: 38, groundX: 148, groundY: 414},
+  { centerX: 98, centerY: 198, size: 64, depth: 38, groundX: 210, groundY: 322 },
+  { centerX: 500, centerY: 126, size: 64, depth: 38, groundX: 500, groundY: 290 },
+  { centerX: 646, centerY: 198, size: 64, depth: 38, groundX: 566, groundY: 322 },
+  { centerX: 584, centerY: 401, size: 64, depth: 38, groundX: 584, groundY: 466 },
+  { centerX: 148, centerY: 350, size: 64, depth: 38, groundX: 148, groundY: 414 },
 ];
 
 export function IsometricTopologyBackground(): ReactNode {
@@ -48,6 +48,8 @@ export function IsometricTopologyBackground(): ReactNode {
       <svg
         className={styles.topologyCanvas}
         viewBox="0 0 742 578"
+        width="742"
+        height="578"
         preserveAspectRatio="xMidYMid meet"
         focusable="false">
         <defs>
@@ -98,10 +100,10 @@ export function IsometricTopologyBackground(): ReactNode {
 
         <g className={styles.topologyConnections}>
           <path className={styles.topologyRoute} d="M210 322 L398 338" />
-          <path className={styles.topologyRoute} d="M500 290 L398 338" style={{animationDelay: '-1.2s'} as CSSProperties} />
-          <path className={styles.topologyRoute} d="M566 322 L398 338" style={{animationDelay: '-2.4s'} as CSSProperties} />
-          <path className={styles.topologyRoute} d="M584 466 L398 338" style={{animationDelay: '-3.6s'} as CSSProperties} />
-          <path className={styles.topologyRoute} d="M148 414 L398 338" style={{animationDelay: '-4.8s'} as CSSProperties} />
+          <path className={styles.topologyRoute} d="M500 290 L398 338" style={{ animationDelay: '-1.2s' } as CSSProperties} />
+          <path className={styles.topologyRoute} d="M566 322 L398 338" style={{ animationDelay: '-2.4s' } as CSSProperties} />
+          <path className={styles.topologyRoute} d="M584 466 L398 338" style={{ animationDelay: '-3.6s' } as CSSProperties} />
+          <path className={styles.topologyRoute} d="M148 414 L398 338" style={{ animationDelay: '-4.8s' } as CSSProperties} />
 
           {nodes.map((node, index) => {
             const cubeBottom = node.centerY + node.size * 0.285 + node.depth;
