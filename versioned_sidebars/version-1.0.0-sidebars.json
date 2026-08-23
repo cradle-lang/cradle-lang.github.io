@@ -1,0 +1,77 @@
+{
+  "docsSidebar": [
+    {
+      "type": "doc",
+      "id": "index",
+      "label": "Documentation Home"
+    },
+    {
+      "type": "category",
+      "label": "Getting Started",
+      "collapsed": false,
+      "items": [
+        "getting-started/quick-start",
+        "getting-started/prepare-host"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Introduction",
+      "items": [
+        "introduction/index",
+        "introduction/helloworld",
+        "introduction/sections",
+        "introduction/heuristic"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "User Guide",
+      "items": [
+        "user-guide/write-scenario",
+        "user-guide/generate-deployment",
+        "user-guide/deploy-environment",
+        "user-guide/understand-output",
+        "user-guide/clean-up",
+        "user-guide/troubleshooting",
+        "user-guide/known-limitations"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Language",
+      "items": [
+        "il-language/index",
+        "il-language/syntax",
+        "il-language/example"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Deployment",
+      "items": [
+        "deployment/supported-platforms"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Reference",
+      "items": [
+        "reference/command-reference",
+        "schema/cradle-schema"
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Project",
+      "items": [
+        "project/business-case",
+        "project/release-notes",
+        "project/support",
+        "project/acknowledgments",
+        "project/legal-notices",
+        "project/references"
+      ]
+    }
+  ]
+}

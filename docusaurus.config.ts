@@ -5,16 +5,16 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Cradle',
-  tagline: 'CRADLE Documentation',
+  title: 'CRADLE',
+  tagline: 'Cyber Experimentation as Code',
   favicon: 'img/cradle-favicon.svg',
-  
+
   headTags: [
     {
       tagName: 'meta',
       attributes: {
         name: 'algolia-site-verification',
-         content: 'DADEE7CC0A51CF7D',
+        content: 'DADEE7CC0A51CF7D',
       },
     },
   ],
@@ -25,7 +25,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://cradle-lang.github.io',
+  url: 'https://cradle-lang.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -55,30 +55,46 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
-                      /*
-           * There is no published CRADLE documentation version yet.
-           *
-           * The current docs/ directory therefore remains the default
-           * documentation served at /docs/.
-           *
-           * Once the first stable release is created, we will configure:
-           *
-           * lastVersion: '1.0.0',
-           *
-           * versions: {
-           *   current: {
-           *     label: 'Next',
-           *     path: 'next',
-           *     banner: 'unreleased',
-           *   },
-           *
-           *   '1.0.0': {
-           *     label: '1.0.0',
-           *     path: '',
-           *     banner: 'none',
-           *   },
-           * },
-           */
+          /*
+* There is no published CRADLE documentation version yet.
+*
+* The current docs/ directory therefore remains the default
+* documentation served at /docs/.
+*
+* Once the first stable release is created, we will configure:
+*
+* lastVersion: '1.0.0',
+*
+* versions: {
+*   current: {
+*     label: 'Next',
+*     path: 'next',
+*     banner: 'unreleased',
+*   },
+*
+*   '1.0.0': {
+*     label: '1.0.0',
+*     path: '',
+*     banner: 'none',
+*   },
+* },
+*/
+          // TODO: Set to false after the first stable documentation version
+          // has been created.
+          includeCurrentVersion: true,
+
+          lastVersion: 'current',
+
+          versions: {
+            current: {
+              label: 'Current',
+            },
+            '1.0.0': {
+              label: '1.0.0',
+              path: '1.0.0',
+              banner: 'none',
+            },
+          },
         },
         blog: false,
         // blog: {
@@ -115,6 +131,16 @@ const config: Config = {
       disableSwitch: false,
       respectPrefersColorScheme: true,
     },
+
+    algolia: {
+      appId: 'WUIVATUVJB',
+      apiKey: 'a2a4011346dd4abf6957d9fc6702683b',
+      indexName: 'cradle-lang',
+
+      contextualSearch: true,
+      searchPagePath: 'search',
+    },
+
     navbar: {
       title: 'CRADLE',
 
@@ -131,9 +157,18 @@ const config: Config = {
           label: 'Documentation',
         },
         {
+          to: '/workbench/',
+          label: 'Workbench',
+          position: 'left',
+        },
+        {
           to: '/releases/',
           label: 'Releases',
           position: 'left',
+        },
+        {
+          type: 'custom-version-dropdown',
+          position: 'right',
         },
         {
           type: 'search',
