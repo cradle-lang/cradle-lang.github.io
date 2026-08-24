@@ -14,8 +14,8 @@
 .releaseGrid {
   display: grid;
   grid-template-columns:
-    minmax(0, 0.92fr)
-    minmax(0, 1.08fr);
+    minmax(0, 0.96fr)
+    minmax(0, 1.04fr);
 
   align-items: stretch;
 
@@ -28,7 +28,7 @@
    SHARED PANEL STYLING
    ========================================================= */
 
-.downloadPanel,
+.installPanel,
 .quickStartPanel {
   display: flex;
   flex-direction: column;
@@ -102,7 +102,7 @@
 }
 
 .panelDescription {
-  max-width: 520px;
+  max-width: 540px;
 
   margin: 14px 0 0;
 
@@ -112,50 +112,30 @@
   line-height: 1.65;
 }
 
-.releaseDate {
-  margin: 8px 0 0;
-
-  color: var(--cradle-text-muted);
-
-  font-size: 0.86rem;
-}
-
 /* =========================================================
-   DOWNLOAD AREA
+   INSTALLATION STEPS
    ========================================================= */
 
-.downloads {
-  flex: 1;
-}
-
-.downloadsHeader {
+.installSteps {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 
-  gap: 16px;
+  flex: 1;
 
-  margin-bottom: 10px;
+  gap: 0;
 
-  color: var(--cradle-text);
-
-  font-size: 0.78rem;
-  font-weight: 650;
+  margin-top: 4px;
 }
 
-.assetCount {
-  flex: 0 0 auto;
-
-  color: var(--cradle-text-muted);
-
-  font-size: 0.76rem;
-  font-weight: 500;
-}
-
-.assetList {
+.installStep {
   display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
 
-  overflow: hidden;
+  align-items: start;
+
+  gap: 14px;
+
+  padding: 16px 18px;
 
   border: 1px solid
     color-mix(
@@ -174,117 +154,10 @@
     );
 }
 
-.asset {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-
-  align-items: center;
-
-  gap: 14px;
-
-  padding: 14px 16px;
-
-  border-bottom: 1px solid
-    color-mix(
-      in srgb,
-      var(--cradle-primary) 8%,
-      var(--cradle-border)
-    );
-
-  background:
-    color-mix(
-      in srgb,
-      var(--cradle-bg) 88%,
-      transparent
-    );
-
-  color: var(--cradle-text);
-
-  text-decoration: none;
-
-  transition:
-    background-color 140ms ease,
-    color 140ms ease;
-}
-
-.asset:hover {
-  background:
-    color-mix(
-      in srgb,
-      var(--cradle-accent) 8%,
-      var(--cradle-bg)
-    );
-
-  color: var(--cradle-primary);
-
-  text-decoration: none;
-}
-
-.asset:last-child {
-  border-bottom: 0;
-}
-
-.assetName {
-  min-width: 0;
-
-  overflow: hidden;
-
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.82rem;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.assetSize {
-  color: var(--cradle-text-muted);
-
-  font-size: 0.78rem;
-}
-
-.assetArrow {
-  color: var(--cradle-accent);
-
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-/* =========================================================
-   NO RELEASE PLACEHOLDER
-   ========================================================= */
-
-.releasePlaceholder {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-
-  margin-top: 2px;
-  padding: 18px;
-
-  border: 1px dashed
-    color-mix(
-      in srgb,
-      var(--cradle-primary) 18%,
-      var(--cradle-border)
-    );
-
-  border-radius: var(--cradle-radius-md);
-
-  background:
-    color-mix(
-      in srgb,
-      var(--cradle-primary) 4%,
-      var(--cradle-bg)
-    );
-}
-
-.placeholderIcon {
+.stepNumber {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  flex: 0 0 auto;
 
   width: 40px;
   height: 40px;
@@ -294,59 +167,76 @@
   background: var(--cradle-accent-soft);
   color: var(--cradle-accent);
 
-  font-size: 1rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
-.releasePlaceholder strong,
-.releasePlaceholder span {
+.installStep strong,
+.installStep span,
+.installStep code {
   display: block;
 }
 
-.releasePlaceholder strong {
+.installStep strong {
+  margin-top: 1px;
+
   color: var(--cradle-text);
 
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 650;
   line-height: 1.4;
 }
 
-.releasePlaceholder span {
-  margin-top: 4px;
+.installStep span {
+  margin-top: 5px;
 
   color: var(--cradle-text-muted);
 
-  font-size: 0.8rem;
+  font-size: 0.81rem;
   line-height: 1.5;
 }
 
-/* =========================================================
-   RELEASE WITH NO ASSETS
-   ========================================================= */
+.installStep code {
+  width: fit-content;
 
-.emptyDownloads {
-  flex: 1;
+  margin-top: 7px;
+  padding: 4px 7px;
 
-  padding: 18px;
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 10%,
+      var(--cradle-border)
+    );
 
-  border: 1px dashed var(--cradle-border);
-  border-radius: var(--cradle-radius-md);
+  border-radius: 6px;
 
   background:
     color-mix(
       in srgb,
-      var(--cradle-accent) 1.5%,
-      transparent
+      var(--cradle-primary) 5%,
+      var(--cradle-bg)
     );
+
+  color: var(--cradle-text);
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
 }
 
-.emptyDownloads p {
-  margin: 0;
+.stepConnector {
+  width: 1px;
+  height: 14px;
 
-  color: var(--cradle-text-muted);
+  margin-left: 38px;
 
-  font-size: 0.88rem;
-  line-height: 1.6;
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-accent) 30%,
+      var(--cradle-border)
+    );
 }
 
 /* =========================================================
@@ -362,10 +252,6 @@
   align-items: stretch;
 }
 
-/*
- * Override TerminalAnimation's own max-width so it fills
- * the Quick Start panel.
- */
 .terminalWrapper > * {
   width: 100%;
   max-width: none;
@@ -458,8 +344,7 @@
    ========================================================= */
 
 .primaryAction:focus-visible,
-.textAction:focus-visible,
-.asset:focus-visible {
+.textAction:focus-visible {
   outline: 3px solid
     color-mix(
       in srgb,
@@ -479,7 +364,7 @@
     gap: 28px;
   }
 
-  .downloadPanel,
+  .installPanel,
   .quickStartPanel {
     padding: 36px;
   }
@@ -496,7 +381,7 @@
     gap: 20px;
   }
 
-  .downloadPanel,
+  .installPanel,
   .quickStartPanel {
     padding: 28px;
   }
@@ -521,7 +406,7 @@
     margin-top: 36px;
   }
 
-  .downloadPanel,
+  .installPanel,
   .quickStartPanel {
     padding: 22px;
 
@@ -540,31 +425,25 @@
     font-size: 0.9rem;
   }
 
-  .asset {
-    grid-template-columns:
-      minmax(0, 1fr)
-      auto;
+  .installStep {
+    grid-template-columns: 38px minmax(0, 1fr);
 
     gap: 12px;
 
-    padding: 13px 14px;
+    padding: 15px;
   }
 
-  .assetSize {
-    display: none;
-  }
-
-  .releasePlaceholder {
-    align-items: flex-start;
-
-    padding: 16px;
-  }
-
-  .placeholderIcon {
+  .stepNumber {
     width: 36px;
     height: 36px;
 
     border-radius: 9px;
+  }
+
+  .stepConnector {
+    height: 12px;
+
+    margin-left: 33px;
   }
 
   .panelFooter {
@@ -579,7 +458,7 @@
    ========================================================= */
 
 @media (max-width: 440px) {
-  .downloadPanel,
+  .installPanel,
   .quickStartPanel {
     padding: 20px;
   }

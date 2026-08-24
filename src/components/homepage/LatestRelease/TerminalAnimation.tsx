@@ -9,27 +9,25 @@ type TerminalStep = {
 
 const TERMINAL_STEPS: TerminalStep[] = [
   {
-    command: 'sudo apt update',
-  },
-  {
-    command: 'sudo apt install cxc',
-    output: ['Setting up cxc...'],
-  },
-  {
     command: 'cxc --version',
     output: [
-      'cxc <version>',
+      'CradleXC <version>',
     ],
   },
   {
     command: 'cxc doctor',
-    output: ['Checking available dependencies...'],
+    output: [
+      'Checking CRADLE environment...',
+      '✓ CradleXC',
+      '✓ Required dependencies',
+      'Environment ready.',
+    ],
   },
 ];
 
 const TYPE_SPEED = 30;
 const COMMAND_PAUSE = 420;
-const OUTPUT_PAUSE = 650;
+const OUTPUT_PAUSE = 900;
 const LOOP_PAUSE = 3600;
 
 export default function TerminalAnimation() {
@@ -105,7 +103,7 @@ export default function TerminalAnimation() {
   return (
     <div
       className={styles.terminalContainer}
-      aria-label="CRADLE Quick Start terminal example"
+      aria-label="CradleXC environment verification example"
     >
       <div className={styles.terminalHeader}>
         <div
@@ -118,7 +116,7 @@ export default function TerminalAnimation() {
         </div>
 
         <span className={styles.terminalTitle}>
-          bash — HelloWorld
+          bash — CradleXC
         </span>
       </div>
 
@@ -147,7 +145,12 @@ export default function TerminalAnimation() {
               {step.output?.map((outputLine) => (
                 <p
                   key={outputLine}
-                  className={styles.outputLine}
+                  className={
+                    outputLine.startsWith('✓') ||
+                    outputLine === 'Environment ready.'
+                      ? styles.outputSuccess
+                      : styles.outputLine
+                  }
                 >
                   {outputLine}
                 </p>
@@ -180,7 +183,12 @@ export default function TerminalAnimation() {
               currentStep.output?.map((outputLine) => (
                 <p
                   key={outputLine}
-                  className={styles.outputLine}
+                  className={
+                    outputLine.startsWith('✓') ||
+                    outputLine === 'Environment ready.'
+                      ? styles.outputSuccess
+                      : styles.outputLine
+                  }
                 >
                   {outputLine}
                 </p>
