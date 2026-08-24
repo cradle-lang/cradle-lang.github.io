@@ -18,7 +18,7 @@ export default function StartLearning(): ReactNode {
         <div className={styles.learningGrid}>
           <Link
             className={styles.learningCard}
-            to="/docs/introduction/">
+            to="/docs/overview/what-is-cradle">
             <span className={styles.cardNumber}>01</span>
             <h3>Understand the approach</h3>
             <p>
@@ -30,7 +30,7 @@ export default function StartLearning(): ReactNode {
 
           <Link
             className={styles.learningCard}
-            to="/docs/introduction/helloworld">
+            to="/docs/getting-started/first-scenario">
             <span className={styles.cardNumber}>02</span>
             <h3>Explore a scenario</h3>
             <p>
@@ -42,7 +42,7 @@ export default function StartLearning(): ReactNode {
 
           <Link
             className={styles.learningCard}
-            to="/docs/introduction/sections">
+            to="/docs/overview/what-is-cradle">
             <span className={styles.cardNumber}>03</span>
             <h3>Model a scenario</h3>
             <p>

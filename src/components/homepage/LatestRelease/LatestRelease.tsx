@@ -27,6 +27,7 @@ type Release = {
 };
 
 const QUICK_START_URL = '/docs/getting-started/quick-start';
+const INSTALL_URL = '/docs/getting-started/install-cradlexc';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) {
@@ -70,12 +71,12 @@ export default function LatestRelease(): ReactNode {
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Download the latest release.
+            Install CradleXC from the APT repository.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            Get the latest packaged version of CRADLE for your
-            environment.
+            Add the CRADLE APT repository, install the `cxc` package, and
+            verify that your environment is ready.
           </p>
         </div>
 
@@ -89,7 +90,7 @@ export default function LatestRelease(): ReactNode {
               <>
                 <div className={styles.panelHeader}>
                   <span className={styles.panelLabel}>
-                    Latest release
+                    Latest release information
                   </span>
 
                   <h3>
@@ -159,7 +160,7 @@ export default function LatestRelease(): ReactNode {
                     className={styles.primaryAction}
                     to="/releases/"
                   >
-                    Release notes →
+                    View release notes →
                   </Link>
 
                   <a
@@ -176,16 +177,16 @@ export default function LatestRelease(): ReactNode {
               <>
                 <div className={styles.panelHeader}>
                   <span className={styles.panelLabel}>
-                    Packaged release
+                  APT installation
                   </span>
 
                   <h3>
-                    No release available yet.
+                    Install CradleXC with APT.
                   </h3>
 
                   <p className={styles.panelDescription}>
-                    The first packaged CRADLE release has not
-                    been published yet.
+                    Follow the installation guide to add the CRADLE APT
+                    repository and install `cxc`.
                   </p>
                 </div>
 
@@ -196,12 +197,12 @@ export default function LatestRelease(): ReactNode {
 
                   <div>
                     <strong>
-                      Packaged downloads coming soon
+                      Installation guide
                     </strong>
 
                     <span>
-                      Release assets will appear here when
-                      published.
+                      Configure the APT repository before installing the
+                      package.
                     </span>
                   </div>
                 </div>
@@ -209,9 +210,9 @@ export default function LatestRelease(): ReactNode {
                 <div className={styles.panelFooter}>
                   <Link
                     className={styles.primaryAction}
-                    to="/releases/"
+                    to={INSTALL_URL}
                   >
-                    View releases →
+                    Open installation guide →
                   </Link>
                 </div>
               </>
@@ -229,12 +230,12 @@ export default function LatestRelease(): ReactNode {
               </span>
 
               <h3>
-                Run CRADLE.
+                Verify CradleXC.
               </h3>
 
               <p className={styles.panelDescription}>
-                Follow the introductory workflow and generate
-                your first CRADLE deployment.
+                Install the CLI, confirm it is available, and check local
+                dependencies before writing your first scenario.
               </p>
             </div>
 

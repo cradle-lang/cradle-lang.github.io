@@ -9,21 +9,21 @@ type TerminalStep = {
 
 const TERMINAL_STEPS: TerminalStep[] = [
   {
-    command: 'source venv/bin/activate',
+    command: 'sudo apt update',
   },
   {
-    command: "sed -n '1,220p' files/input/HelloWorld.cradle",
+    command: 'sudo apt install cxc',
+    output: ['Setting up cxc...'],
   },
   {
-    command: './cradle.sh HelloWorld libvirt',
+    command: 'cxc --version',
     output: [
-      'Generating HelloWorld...',
-      'Deployment files generated.',
+      'cxc <version>',
     ],
   },
   {
-    command: 'ls files/output/HelloWorld.yml',
-    output: ['files/output/HelloWorld.yml'],
+    command: 'cxc doctor',
+    output: ['Checking available dependencies...'],
   },
 ];
 

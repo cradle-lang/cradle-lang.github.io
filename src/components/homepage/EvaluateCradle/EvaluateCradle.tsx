@@ -32,7 +32,7 @@ export default function EvaluateCradle(): ReactNode {
 
           <Link
             className={styles.evidenceCard}
-            to="/docs/introduction/helloworld">
+            to="/docs/getting-started/first-scenario">
             <span className={styles.cardLabel}>Documented example</span>
             <h3>Follow the HelloWorld scenario</h3>
             <p>

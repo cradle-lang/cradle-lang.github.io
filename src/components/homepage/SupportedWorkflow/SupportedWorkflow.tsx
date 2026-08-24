@@ -16,37 +16,37 @@ export default function SupportedWorkflow(): ReactNode {
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Check the target before you begin.
+            Choose a backend before you generate files.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            The reference implementation generates artifacts for all three
-            targets. libvirt and VirtualBox have integrated local workflows;
-            SPHERE operation depends on the selected research environment.
+            CradleXC uses external backend plugins to render target-specific
+            files. Available targets and requirements are determined by the
+            backend you install, rather than built into CradleXC itself.
           </p>
 
           <Link
             className={styles.supportLink}
-            to="/docs/deployment/supported-platforms">
-            Compare requirements and capabilities →
+            to="/docs/guides/backends/overview">
+            Learn about backend plugins →
           </Link>
         </div>
 
         <div className={styles.platforms}>
           <article className={styles.platform}>
-            <span className={styles.supportedStatus}>✓ Integrated workflow</span>
-            <h3>libvirt</h3>
-            <p>Local artifact generation and scenario execution.</p>
+            <span className={styles.supportedStatus}>01 Choose</span>
+            <h3>Select a backend</h3>
+            <p>Find published plugins in the CRADLE release repository.</p>
           </article>
           <article className={styles.platform}>
-            <span className={styles.supportedStatus}>✓ Integrated workflow</span>
-            <h3>VirtualBox</h3>
-            <p>Local artifact generation and scenario execution.</p>
+            <span className={styles.supportedStatus}>02 Verify</span>
+            <h3>Check discovery</h3>
+            <p>Use <code>cxc backend list</code> to confirm it is available locally.</p>
           </article>
           <article className={styles.platform}>
-            <span className={styles.partialStatus}>△ Environment-dependent</span>
-            <h3>SPHERE</h3>
-            <p>Artifact generation with project-specific operation.</p>
+            <span className={styles.partialStatus}>03 Generate</span>
+            <h3>Render target files</h3>
+            <p>Use <code>cxc emit</code> with the selected backend and inspect its output.</p>
           </article>
         </div>
       </div>
