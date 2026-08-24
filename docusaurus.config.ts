@@ -193,15 +193,15 @@ const config: Config = {
             },
             {
               label: 'User Guide',
-              to: '/docs/user-guide/write-scenario',
+              to: '/docs/guides/write-a-scenario',
             },
             {
               label: 'Language',
-              to: '/docs/il-language/',
+              to: '/docs/language/overview',
             },
             {
               label: 'Reference',
-              to: '/docs/reference/command-reference',
+              to: '/docs/cli/command-reference',
             },
           ],
         },
@@ -210,27 +210,41 @@ const config: Config = {
           title: 'Project',
           items: [
             {
-              label: 'GitHub',
-              href: 'https://github.com/cradle-dsl',
+              label: 'Releases',
+              to: '/releases/',
             },
             {
-              label: 'Release Notes',
-              to: '/docs/project/release-notes',
+              label: 'Support',
+              to: '/docs/project/support',
             },
             {
               label: 'Acknowledgements',
               to: '/docs/project/acknowledgments',
             },
+          ],
+        },
+
+        {
+          title: 'Legal',
+          items: [
             {
-              label: 'Support',
-              to: '/docs/project/support',
+              label: 'Legal Notices',
+              to: '/docs/project/legal-notices',
+            },
+            {
+              label: 'Copyright',
+              to: '/docs/project/COPYRIGHT',
+            },
+            {
+              label: 'Licence',
+              to: '/docs/project/LICENCE',
             },
           ],
         },
       ],
 
       copyright:
-        `Copyright © ${new Date().getFullYear()} CRADLE.`,
+        `Copyright © ${new Date().getFullYear()} National Cybersecurity R&D Lab (NCL). All rights reserved.`,
     },
     prism: {
       theme: prismThemes.github,

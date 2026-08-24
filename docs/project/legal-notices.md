@@ -80,7 +80,7 @@ Use of a documented CRADLE interface does not, by itself:
 - grant access to non-public CRADLE source code
 - grant permission to redistribute proprietary CRADLE software
 - grant rights in confidential or non-public implementation materials
-- transfer ownership of independently developed software to NCL
+- transfer to NCL any ownership rights in software independently developed by a user or third party
 - cause independently developed software to become proprietary CRADLE software
 - grant a right to represent independently developed software as an official CRADLE component
 

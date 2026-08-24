@@ -132,9 +132,9 @@ Where generated output contains CRADLE-owned source code, templates, libraries, 
 
 Copyright in a contribution to CRADLE remains with the relevant contributor or other rights holder unless:
 
-copyright ownership is validly transferred
-the work was created under circumstances in which copyright is owned by another person or entity under applicable law
-another applicable written agreement provides otherwise
+- copyright ownership is validly transferred
+- the work was created under circumstances in which copyright is owned by another person or entity under applicable law
+- another applicable written agreement provides otherwise
 
 Nothing in this `COPYRIGHT.md` file alone transfers copyright in a contribution.
 
