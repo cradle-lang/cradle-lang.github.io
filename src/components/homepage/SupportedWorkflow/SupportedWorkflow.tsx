@@ -4,6 +4,8 @@ import Link from '@docusaurus/Link';
 import sharedStyles from '../Homepage.module.css';
 import styles from './SupportedWorkflow.module.css';
 
+const BACKEND_REPOSITORY_URL = 'https://github.com/cradle-lang/cradle-release';
+
 export default function SupportedWorkflow(): ReactNode {
   return (
     <section className={styles.supported}>
@@ -16,13 +18,14 @@ export default function SupportedWorkflow(): ReactNode {
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Choose a backend before you generate files.
+            Build for the environment you need.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            CradleXC uses external backend plugins to render target-specific
-            files. Available targets and requirements are determined by the
-            backend you install, rather than built into CradleXC itself.
+            CradleXC keeps scenario logic independent from
+             target-specific generation. Backend plugins translate 
+             your CRADLE scenario into the files required by each 
+             environment.
           </p>
 
           <Link
@@ -32,21 +35,85 @@ export default function SupportedWorkflow(): ReactNode {
           </Link>
         </div>
 
-        <div className={styles.platforms}>
-          <article className={styles.platform}>
-            <span className={styles.supportedStatus}>01 Choose</span>
-            <h3>Select a backend</h3>
-            <p>Find published plugins in the CRADLE release repository.</p>
+        <div className={styles.workflowGrid}>
+
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              01 Choose
+            </span>
+
+            <h3>
+              Select a backend
+            </h3>
+
+            <p>
+              Browse published backend plugins and choose one for your
+              target environment.
+            </p>
+
+            <a
+              className={styles.repositoryLink}
+              href={BACKEND_REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer">
+              <span>
+                Backend repository
+              </span>
+
+              <span aria-hidden="true">
+                ↗
+              </span>
+            </a>
           </article>
-          <article className={styles.platform}>
-            <span className={styles.supportedStatus}>02 Verify</span>
-            <h3>Check discovery</h3>
-            <p>Use <code>cxc backend list</code> to confirm it is available locally.</p>
+
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              02 Install
+            </span>
+
+            <h3>
+              Install the backend
+            </h3>
+
+            <p>
+              Install the selected backend plugin with the CradleXC CLI.
+            </p>
+
+            <code className={styles.command}>
+              cxc plugin install &lt;plugin_name&gt;
+            </code>
+
           </article>
-          <article className={styles.platform}>
-            <span className={styles.partialStatus}>03 Generate</span>
-            <h3>Render target files</h3>
-            <p>Use <code>cxc emit</code> with the selected backend and inspect its output.</p>
+
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              03 Verify
+            </span>
+
+            <h3>
+              Check discovery
+            </h3>
+
+            <p>
+              Use <code>cxc backend list</code> to confirm that CradleXC
+              detects the installed backend.
+            </p>
+          </article>
+
+          <article className={styles.workflowStep}>
+            <span
+              className={`${styles.stepLabel} ${styles.generateLabel}`}>
+              04 Generate
+            </span>
+
+            <h3>
+              Render target files
+            </h3>
+
+            <p>
+              Use <code>cxc emit</code> with the selected backend to
+              generate target-specific output.
+            </p>
           </article>
         </div>
       </div>
