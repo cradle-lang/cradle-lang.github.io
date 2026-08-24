@@ -153,7 +153,7 @@ A spelling or capitalization mismatch can leave a reference unresolved.
 
 ## Generate or deploy the example
 
-Follow the [Quick start](../getting-started/quick-start.md) to generate and
+Follow the [Quick Start](../getting-started/quick-start) to generate and
 optionally deploy the example. Use the
 [CRADLE language structure](sections.md) for property-level details, or
 [Write a scenario](../user-guide/write-scenario.md) to create your own.

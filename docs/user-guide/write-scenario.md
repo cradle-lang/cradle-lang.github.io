@@ -6,7 +6,7 @@ scenario and checks that CRADLE can generate deployment files from it.
 
 ## Before you begin
 
-- Complete the [Quick start](../getting-started/quick-start.md).
+- Complete the [Quick start](../getting-started/quick-start).
 - Open a terminal in the CRADLE project root.
 - Choose an authorized artifact repository and a test artifact.
 
