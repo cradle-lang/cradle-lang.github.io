@@ -1,0 +1,528 @@
+---
+sidebar_position: 3
+title: First Scenario
+---
+
+# First Scenario
+
+This guide introduces the main CRADLE concepts through the `HelloWorld` scenario.
+
+The scenario defines:
+
+- two Ubuntu instances
+- one network
+- one external object
+- one event in each lifecycle phase
+
+By the end of this guide, you should be able to identify the main parts of a CRADLE scenario and understand how they reference one another.
+
+## What the scenario contains
+
+| Component | Name | Purpose |
+| --- | --- | --- |
+| Scenario | `HelloWorld` | Names the environment and its generated outputs. |
+| Application instance | `HelloWorld` | Runs the example object and requests monitoring configurations. |
+| Router instance | `router` | Connects the environment and requests router and monitoring configurations. |
+| Network | `lan_0` | Connects both instances through DHCP. |
+| Object | `HelloWorld` | Locates the external `HelloWorld.sh` artifact. |
+| Events | `1`, `2` and `3` | Run the object in the pre, main and post phases. |
+
+## Create the scenario file
+
+Create a file named:
+
+```text
+HelloWorld.cradle
+```
+
+For example, you can store it under a `scenarios` directory:
+
+```text
+scenarios/
+└── HelloWorld.cradle
+```
+
+## Scenario definition
+
+Add the following CRADLE source to `HelloWorld.cradle`:
+
+```CRADLE
+instances() >
+    instance("HelloWorld"),
+    instance("router").
+
+instance("HelloWorld") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig"),
+    object("HelloWorld").
+
+instance("router") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-router").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    endpoint("HelloWorld", "DHCP"),
+    endpoint("router", "DHCP").
+
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+preEvent() >
+    event("1").
+
+event("1") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld pre-event").
+
+mainEvent() >
+    event("2").
+
+event("2") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld main event").
+
+postEvent() >
+    event("3").
+
+event("3") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld post-event").
+
+object("HelloWorld") >
+    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+```
+
+:::note
+The artifact repository uses a public-safe placeholder. Replace `https://artifacts.example.org` with an authorized artifact repository when working with an environment that requires the example object.
+:::
+
+## Read the scenario
+
+The scenario is made up of declarations connected through names and references.
+
+<div className="architecture-flow">
+
+  <div>Instances</div>
+
+  <span>↓</span>
+
+  <div>Networks</div>
+
+  <span>↓</span>
+
+  <div>Metadata and objects</div>
+
+  <span>↓</span>
+
+  <div>Event phases</div>
+
+</div>
+
+The following sections walk through each part.
+
+## Instances
+
+The scenario begins by declaring two instances:
+
+```CRADLE
+instances() >
+    instance("HelloWorld"),
+    instance("router").
+```
+
+These declarations introduce:
+
+```text
+HelloWorld
+router
+```
+
+Each instance is then configured in its own block.
+
+### `HelloWorld` instance
+
+```CRADLE
+instance("HelloWorld") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig"),
+    object("HelloWorld").
+```
+
+The `HelloWorld` instance:
+
+- uses Ubuntu 20.04
+- requests the `linux-tcpdump` configuration
+- requests the `ubuntu-focal-auditd` configuration
+- requests the `linux-sysdig` configuration
+- associates itself with the `HelloWorld` object
+
+### `router` instance
+
+```CRADLE
+instance("router") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-router").
+```
+
+The `router` instance also uses Ubuntu 20.04 and requests configurations for monitoring and routing.
+
+:::note
+Configuration availability depends on the CRADLE environment and the backend used to generate target-specific files.
+:::
+
+## Network
+
+The scenario declares one network:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+The network is then defined as:
+
+```CRADLE
+network("lan_0") >
+    endpoint("HelloWorld", "DHCP"),
+    endpoint("router", "DHCP").
+```
+
+Both instances are connected to `lan_0` using DHCP.
+
+The source scenario does not specify a subnet. Target-specific network details can therefore depend on the selected backend and its configuration.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>HelloWorld</div>
+
+  <span>↓</span>
+
+  <div>lan_0</div>
+
+  <span>↓</span>
+
+  <div>router</div>
+
+</div>
+
+## Metadata
+
+The `metadata()` block defines scenario-level information:
+
+```CRADLE
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+```
+
+This metadata:
+
+- names the scenario `HelloWorld`
+- selects sequential event handling
+- defines the remote artifact repository
+- declares the `HelloWorld` object
+
+The repository URL is also used when resolving the object's artifact location.
+
+## Object
+
+The scenario defines one external object:
+
+```CRADLE
+object("HelloWorld") >
+    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+```
+
+The object is named:
+
+```text
+HelloWorld
+```
+
+Its location uses:
+
+```text
+${uriRemote}
+```
+
+to reference the remote repository declared in `metadata()`.
+
+Given the placeholder repository in this example, the resulting path is based on:
+
+```text
+https://artifacts.example.org/HelloWorld/object/HelloWorld.sh
+```
+
+:::important
+The placeholder repository used in this public example does not provide the `HelloWorld.sh` artifact. Use an authorized artifact repository when running a scenario that requires the object.
+:::
+
+## Event lifecycle
+
+The scenario defines three lifecycle phases:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+These phases organize when scenario events occur.
+
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>preEvent</strong>
+      <span>Runs event <code>1</code>.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>mainEvent</strong>
+      <span>Runs event <code>2</code>.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">3</div>
+    <div className="cradle-lifecycle-content">
+      <strong>postEvent</strong>
+      <span>Runs event <code>3</code>.</span>
+    </div>
+  </div>
+
+</div>
+
+### Pre-event
+
+The pre-event phase contains event `1`:
+
+```CRADLE
+preEvent() >
+    event("1").
+```
+
+Its definition is:
+
+```CRADLE
+event("1") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld pre-event").
+```
+
+### Main event
+
+The main event phase contains event `2`:
+
+```CRADLE
+mainEvent() >
+    event("2").
+```
+
+It runs the same `HelloWorld` object on the same instance:
+
+```CRADLE
+event("2") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld main event").
+```
+
+### Post-event
+
+The post-event phase contains event `3`:
+
+```CRADLE
+postEvent() >
+    event("3").
+```
+
+Its definition is:
+
+```CRADLE
+event("3") >
+    instance("HelloWorld"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld post-event").
+```
+
+All three events:
+
+- run on the `HelloWorld` instance
+- use `bash`
+- run the `HelloWorld` object
+- do not request root privileges
+- have no pause before or after execution
+- use the same scheduled execution timestamp
+
+## Follow the references
+
+CRADLE uses names to connect declarations throughout the scenario.
+
+For this example, the important references are:
+
+1. `metadata()` declares the `HelloWorld` object.
+2. `instance("HelloWorld")` associates itself with the `HelloWorld` object.
+3. each event references `instance("HelloWorld")`.
+4. each event references the `HelloWorld` object through `runObject("HelloWorld", "")`.
+5. `object("HelloWorld")` defines the artifact location.
+
+The relationship can be viewed as:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>object("HelloWorld")</div>
+
+  <span>↓</span>
+
+  <div>instance("HelloWorld")</div>
+
+  <span>↓</span>
+
+  <div>events 1, 2 and 3</div>
+
+</div>
+
+:::important
+Names are used to connect declarations. Keep spelling and capitalization consistent when referencing instances, networks, objects and events.
+:::
+
+## Validate the scenario
+
+Once the file has been saved, validate its syntax with:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+CradleXC reports any syntax errors that need to be corrected.
+
+## Compile the scenario
+
+After validation succeeds, compile the scenario:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+This produces:
+
+```text
+HelloWorld.yml
+```
+
+The YAML file contains the compiled representation of the CRADLE scenario.
+
+## Inspect the intermediate representation
+
+You can also inspect the intermediate representation produced by CradleXC:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This step is optional during normal use but can help when inspecting how CradleXC interpreted the source scenario.
+
+## Where backend generation fits
+
+Validation and compilation do not require a backend plugin.
+
+When target-specific files are required, a compatible backend plugin processes the scenario through:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o /path/to/output
+```
+
+The resulting files can then be used with the corresponding tools in your own testbed environment.
+
+CradleXC does not automatically execute the generated target-specific files.
+
+Backend installation and configuration are covered separately in [Use a Backend](./use-a-backend).
+
+## Next steps
+
+- Learn how to [validate and compile](./validate-and-compile) CRADLE scenarios in more detail.
+- Learn how to [inspect compiler output](./inspect-output).
+- Learn how to [use a backend plugin](./use-a-backend) to generate target-specific files.
+- Continue to the CRADLE language documentation for detailed information about instances, networks, objects and events.

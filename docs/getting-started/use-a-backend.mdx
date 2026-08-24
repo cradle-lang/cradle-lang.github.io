@@ -1,0 +1,395 @@
+---
+sidebar_position: 6
+title: Use a Backend
+---
+
+# Use a Backend
+
+CradleXC uses external backend plugins to generate target-specific files from CRADLE scenarios.
+
+Backend plugins are separate from CradleXC itself.
+
+CradleXC does not include a built-in backend.
+
+A backend plugin is used only when you need output for a specific target.
+
+The general workflow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Target-specific files</div>
+
+</div>
+
+## Backend plugins
+
+Compatible backend plugins are external executables that follow this naming convention:
+
+```text
+cxc-backend-<name>
+```
+
+For example:
+
+```text
+cxc-backend-vagrant
+```
+
+Each backend determines which target-specific files it generates and which configuration options it supports.
+
+:::note
+Backend capabilities vary between implementations. A backend only supports the features and targets implemented by that plugin.
+:::
+
+## Find available backend plugins
+
+Available CRADLE backend plugins are maintained separately from CradleXC.
+
+See the [CRADLE release repository](https://github.com/cradle-lang/cradle-release) for the full list of plugins available for installation.
+
+## Install a backend plugin
+
+Install a backend plugin with:
+
+```bash
+cxc plugin install <plugin_name>
+```
+
+For example:
+
+```bash
+cxc plugin install vagrant
+```
+
+The exact plugin name depends on the backend you want to use. The release repository is the authoritative list of published plugin names.
+
+## List installed backends
+
+After installing a backend plugin, check whether CradleXC can discover it:
+
+```bash
+cxc backend list
+```
+
+The command lists compatible backend plugins currently available to CradleXC.
+
+If the expected backend does not appear, see [Troubleshooting](../guides/troubleshooting).
+
+## Backend discovery
+
+CradleXC discovers compatible backend executables from:
+
+```text
+PATH
+```
+
+and:
+
+```text
+~/.cxc/plugins/
+```
+
+A backend executable must follow the expected naming convention:
+
+```text
+cxc-backend-<name>
+```
+
+For example:
+
+```text
+cxc-backend-vagrant
+```
+
+The corresponding backend target can then be selected when generating target-specific output.
+
+## Generate target-specific files
+
+Use `cxc emit` to generate files for a selected backend.
+
+The general command is:
+
+```bash
+cxc emit \
+  -i <scenario.cradle> \
+  --target <plugin_name> \
+  -o <output_directory>
+```
+
+For example, using the Hello World scenario:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+This passes the scenario through the selected backend and writes the generated target-specific files to:
+
+```text
+./output
+```
+
+## Backend generation workflow
+
+A normal backend workflow is:
+
+1. Write the CRADLE scenario.
+2. Validate the scenario.
+3. Install the required backend plugin.
+4. Confirm that CradleXC discovers the backend.
+5. Generate target-specific files with `cxc emit`.
+6. Review the generated files.
+7. Use the generated files with the corresponding tools in your testbed environment.
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+
+cxc backend list
+
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>HelloWorld.cradle</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div>Backend discovery</div>
+
+  <span>↓</span>
+
+  <div><code>cxc emit</code></div>
+
+  <span>↓</span>
+
+  <div>Generated target files</div>
+
+</div>
+
+## Backend configuration
+
+Each backend can expose its own target-specific configuration.
+
+This configuration is separate from the CRADLE language itself.
+
+For example, a Vagrant backend can generate configuration for a provider such as libvirt.
+
+In this architecture:
+
+```text
+CRADLE
+   ↓
+CradleXC
+   ↓
+Vagrant backend
+   ↓
+libvirt provider configuration
+```
+
+The provider is configured through the backend rather than being built directly into CRADLE or CradleXC.
+
+Refer to the documentation for the selected backend for its supported options and requirements.
+
+## Backend-specific dependencies
+
+Some backends can require additional software or tools.
+
+Before generating target-specific files, check your environment with:
+
+```bash
+cxc doctor
+```
+
+If installation guidance is available for missing dependencies, use:
+
+```bash
+cxc install-deps
+```
+
+Backend-specific documentation can contain additional requirements that are not part of the core CradleXC installation.
+
+## Validate before generating output
+
+Validate the scenario before running `cxc emit`:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Then generate the backend-specific output:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o ./output
+```
+
+This helps identify CRADLE syntax problems before backend processing begins.
+
+## Inspect generated files
+
+After `cxc emit` completes, inspect the output directory:
+
+```bash
+ls -la ./output
+```
+
+The files produced depend on the selected backend.
+
+For example, one backend might generate configuration files while another backend could generate a different target-specific structure.
+
+:::note
+Do not assume that different backend plugins produce the same files or directory layout.
+:::
+
+## CradleXC does not execute generated files
+
+Backend-generated files are output artifacts.
+
+CradleXC does not automatically execute them.
+
+The complete workflow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE scenario</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Generated target files</div>
+
+  <span>↓</span>
+
+  <div>User's testbed tools</div>
+
+</div>
+
+After generation, use the output with the corresponding tools in your own testbed environment.
+
+How those files are used depends on the selected backend and target tooling.
+
+## Example with the Hello World scenario
+
+Assume the project contains:
+
+```text
+.
+└── scenarios/
+    └── HelloWorld.cradle
+```
+
+First, validate the scenario:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Check the available backend plugins:
+
+```bash
+cxc backend list
+```
+
+Then generate target-specific files:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o ./output
+```
+
+The project can then look like:
+
+```text
+.
+├── output/
+│   └── ...
+└── scenarios/
+    └── HelloWorld.cradle
+```
+
+The contents under `output/` depend on the selected backend plugin.
+
+## Backend plugin not detected
+
+If `cxc backend list` does not show the expected plugin, confirm that:
+
+- the plugin has been installed
+- the executable uses the `cxc-backend-<name>` naming convention
+- the executable is available through the system `PATH` or `~/.cxc/plugins/`
+
+You can reinstall a backend plugin with:
+
+```bash
+cxc plugin install <plugin_name>
+```
+
+Then run:
+
+```bash
+cxc backend list
+```
+
+again.
+
+See [Troubleshooting](../guides/troubleshooting) for additional diagnostic steps.
+
+## Separation between CradleXC and backends
+
+CradleXC handles CRADLE source processing.
+
+Backend plugins handle target-specific generation.
+
+This separation keeps the core workflow independent of a specific target or provider.
+
+| Component | Responsibility |
+| --- | --- |
+| CRADLE source | Defines the scenario. |
+| CradleXC | Validates and processes the scenario. |
+| Backend plugin | Generates target-specific files. |
+| Target tooling | Uses the generated files in the user's testbed. |
+
+A CRADLE scenario therefore does not need to be rewritten simply because a different compatible backend is selected.
+
+## Next steps
+
+- Review [Inspect Output](./inspect-output) to understand CradleXC-generated output.
+- See the backend plugin repository for available backend implementations.
+- Continue to the CRADLE language documentation to learn how to write more complex scenarios.
+- See [Troubleshooting](../guides/troubleshooting) if a backend cannot be discovered or target-specific generation fails.

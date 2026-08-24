@@ -1,0 +1,142 @@
+---
+sidebar_position: 2
+title: Install CradleXC
+---
+
+# Install CradleXC
+
+CradleXC provides the `cxc` command-line interface used to validate, compile and process CRADLE scenarios.
+
+This guide covers installing CradleXC, verifying the installation and checking the dependencies available on your system.
+
+## Install from the CRADLE APT repository
+
+CradleXC is distributed as a prebuilt binary through the CRADLE APT repository.
+
+Add the repository to your system:
+
+```bash
+echo "deb <CRADLE_APT_REPOSITORY_URL>" \
+  | sudo tee /etc/apt/sources.list.d/cradle.list
+```
+
+Update the local package index:
+
+```bash
+sudo apt update
+```
+
+Install CradleXC:
+
+```bash
+sudo apt install cxc
+```
+
+The final CRADLE APT repository URL will be added once the package repository is published.
+
+## Verify the installation
+
+Confirm that the `cxc` executable is available:
+
+```bash
+cxc --version
+```
+
+If the command succeeds, CradleXC is installed and available on your system `PATH`.
+
+You can also confirm its location with:
+
+```bash
+which cxc
+```
+
+## Check dependencies
+
+Run the built-in dependency check:
+
+```bash
+cxc doctor
+```
+
+`cxc doctor` checks the dependencies required by CradleXC and any backend plugins 
+currently available to it.
+
+If dependencies are missing, display the installation guidance with:
+
+```bash
+cxc install-deps
+```
+
+:::important
+Resolve any required dependency issues reported by `cxc doctor` before using the 
+affected functionality.
+:::
+
+## View the current configuration
+
+To inspect the configuration currently used by CradleXC, run:
+
+```bash
+cxc config
+```
+
+This is useful when checking local paths, repository configuration or 
+other settings used by the CLI.
+
+## Update CradleXC
+
+CradleXC is updated through APT.
+
+Refresh the package index:
+
+```bash
+sudo apt update
+```
+
+Upgrade CradleXC:
+
+```bash
+sudo apt install --only-upgrade cxc
+```
+
+Confirm the installed version:
+
+```bash
+cxc --version
+```
+
+## Troubleshooting
+
+`cxc: command not found`
+
+Confirm that CradleXC is installed:
+
+```bash
+which cxc
+```
+
+If no path is returned, verify the installation and ensure the location containing the 
+`cxc` binary is included in your system `PATH`.
+
+## Missing dependencies
+
+Run:
+
+```bash
+cxc doctor
+```
+
+Then view the corresponding installation guide:
+
+```bash
+cxc install-deps
+```
+
+## Next steps
+
+- Follow the [Quick Start](./quick-start) for the basic CRADLE workflow.
+- Build your [first CRADLE scenario](./first-scenario).
+- Learn how to [validate and compile](./validate-and-compile) a scenario.
+- Learn how to [inspect compiler output](./inspect-output).
+- Learn how to [use a backend plugin](./use-a-backend) to generate target-specific files.
+- See [Troubleshooting](../guides/troubleshooting) if you encounter installation or configuration issues.

@@ -1,0 +1,724 @@
+---
+sidebar_position: 2
+title: Syntax and Types
+---
+
+# Syntax and Types
+
+CRADLE scenarios use a block-oriented syntax for declaring scenario components, defining named elements and assigning properties.
+
+This page describes the core syntax of the human-authored CRADLE language.
+
+For a broader introduction to the language, see [Language Overview](./overview).
+
+## Core syntax
+
+A CRADLE file is composed of blocks.
+
+Blocks can declare collections, define named components or assign properties to a scenario section.
+
+The main forms are:
+
+| Element | Form | Purpose |
+| --- | --- | --- |
+| Simple block | `identifier() > ... .` | Defines a section without a name. |
+| Named block | `identifier("name") > ... .` | Defines a named component. |
+| Property | `identifier("value")` | Assigns one or more values to a block. |
+| Reference | `identifier()` or `identifier("name")` | Refers to another section or named component. |
+| Separator | `,` | Separates entries inside a block. |
+| Terminator | `.` | Ends a block. |
+| Comment | `// comment text` | Adds a comment to the end of the line. |
+
+A typical block looks like:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence").
+```
+
+The block begins with:
+
+```text
+metadata()
+```
+
+The `>` operator introduces the contents of the block.
+
+Properties are separated with commas:
+
+```text
+,
+```
+
+The final property is followed by a period:
+
+```text
+.
+```
+
+## Simple blocks
+
+A simple block uses an identifier followed by empty parentheses:
+
+```CRADLE
+identifier() >
+    ...
+```
+
+For example:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Here, `networks()` declares the networks used by the scenario.
+
+Other common simple blocks include:
+
+```text
+metadata()
+instances()
+networks()
+events()
+preEvent()
+mainEvent()
+postEvent()
+```
+
+## Named blocks
+
+Named blocks identify a specific component using a quoted name.
+
+The general form is:
+
+```CRADLE
+identifier("name") >
+    ...
+```
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+The name:
+
+```text
+Client
+```
+
+identifies this particular instance.
+
+The same pattern is used for other named components, including networks, objects and events.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client", "DHCP").
+```
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+```CRADLE
+event("1") >
+    instance("Client").
+```
+
+## Properties
+
+Properties appear inside blocks.
+
+The general form is:
+
+```CRADLE
+property("value")
+```
+
+For example:
+
+```CRADLE
+name("ExampleEnvironment")
+```
+
+Properties can accept more than one argument:
+
+```CRADLE
+os("ubuntu", "20.04")
+```
+
+or:
+
+```CRADLE
+endpoint("Client", "DHCP")
+```
+
+Arguments are comma-separated and enclosed in parentheses.
+
+The properties accepted by a block depend on the type of component being defined.
+
+## Multiple properties
+
+A block can contain multiple properties.
+
+Separate them with commas:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+```
+
+Do not place a comma after the final property.
+
+The block ends with a period:
+
+```text
+.
+```
+
+## Strings
+
+CRADLE values are written as double-quoted strings.
+
+For example:
+
+```CRADLE
+name("HelloWorld")
+```
+
+```CRADLE
+needRoot("false")
+```
+
+```CRADLE
+pauseBeforeRun("0")
+```
+
+```CRADLE
+description("Initialize the example client")
+```
+
+String values can contain spaces.
+
+For example:
+
+```CRADLE
+description("Initialize the example client")
+```
+
+Escaped characters are also supported by the grammar.
+
+## Identifiers
+
+Identifiers are used for block and property names.
+
+An identifier can contain:
+
+- letters
+- digits
+- underscores
+
+The first character must be:
+
+- a letter, or
+- an underscore
+
+Examples of identifiers include:
+
+```text
+metadata
+instance
+runObject
+pauseBeforeRun
+repositoryRemote
+lan_0
+```
+
+:::note
+Named CRADLE elements such as instances and networks are usually referenced through quoted string values rather than used directly as grammar identifiers.
+:::
+
+## Block terminators
+
+Every CRADLE block ends with a period.
+
+For example:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+The period terminates the entire block.
+
+It does not terminate each individual property.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+```
+
+There is only one terminating period.
+
+## Separators
+
+Entries inside a block are separated by commas.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+The comma separates the first entry from the second.
+
+The final entry is followed by the block terminator instead.
+
+## Comments
+
+CRADLE supports line comments using:
+
+```text
+//
+```
+
+For example:
+
+```CRADLE
+// Define the systems participating in the scenario
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+A comment continues until the end of the line.
+
+Comments do not form part of the scenario definition.
+
+## Declarations and definitions
+
+A common CRADLE pattern is to declare named components first and define them separately.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+This declares two instances.
+
+Their definitions then appear in separate blocks:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+```
+
+The same pattern applies to networks.
+
+Declare:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Then define:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+It also applies to events.
+
+Declare an event within a phase:
+
+```CRADLE
+mainEvent() >
+    event("1").
+```
+
+Then define it:
+
+```CRADLE
+event("1") >
+    instance("Client"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+```
+
+## Named references
+
+Names connect declarations and definitions across a CRADLE scenario.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+references:
+
+```CRADLE
+instance("Client") >
+    ...
+```
+
+Similarly:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client", "DHCP").
+```
+
+references the instance named:
+
+```text
+Client
+```
+
+An event can reference both an instance and an object:
+
+```CRADLE
+event("1") >
+    instance("Client"),
+    runObject("InitializationScript", "").
+```
+
+Those names should resolve to corresponding declarations elsewhere in the scenario.
+
+:::important
+CRADLE names are cross-references. Use consistent spelling and capitalization whenever an instance, network, object or event is referenced.
+:::
+
+## Top-level scenario structure
+
+A CRADLE scenario commonly contains these principal sections:
+
+| Section | Purpose |
+| --- | --- |
+| `metadata()` | Defines scenario-level information and artifact repositories. |
+| `instances()` | Declares systems participating in the scenario. |
+| `networks()` | Declares networks used by the scenario. |
+| `events()` | Declares the event lifecycle phases. |
+| `object("name")` | Defines an external artifact referenced by the scenario. |
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+
+instances() >
+    instance("Client"),
+    instance("Router").
+
+networks() >
+    network("lan_0").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+The named components are then defined elsewhere in the same scenario.
+
+## Value conventions
+
+Most values in CRADLE source are represented as quoted strings.
+
+The meaning of those strings depends on the property.
+
+Examples include:
+
+| Property | Example value |
+| --- | --- |
+| Scenario name | `"HelloWorld"` |
+| Operating system | `"ubuntu"` |
+| Version | `"20.04"` |
+| Boolean-like value | `"false"` |
+| Duration | `"0"` |
+| Address | `"DHCP"` |
+| CIDR range | `"192.168.10.0/24"` |
+| Date-time | `"2026-01-15T10:00:00+00:00"` |
+| Description | `"Initialize the example client"` |
+
+For example:
+
+```CRADLE
+event("1") >
+    needRoot("false"),
+    pauseBeforeRun("0"),
+    scheduleExecution("2026-01-15T10:00:00+00:00").
+```
+
+The grammar treats these as quoted arguments.
+
+The compiler determines how a particular property interprets its values.
+
+## Boolean-like values
+
+Some CRADLE properties use the strings:
+
+```text
+"true"
+"false"
+```
+
+For example:
+
+```CRADLE
+needRoot("false")
+```
+
+and:
+
+```CRADLE
+waitfor("false")
+```
+
+These values are written as quoted arguments in CRADLE source.
+
+## Numeric values
+
+Values such as durations are also represented as quoted arguments.
+
+For example:
+
+```CRADLE
+pauseBeforeRun("0")
+```
+
+```CRADLE
+pauseAfterRun("10")
+```
+
+The compiler interprets the value according to the property being processed.
+
+## Date and time values
+
+Scheduled event times use ISO 8601 date-time values.
+
+For example:
+
+```CRADLE
+scheduleExecution("2026-01-15T10:00:00+00:00")
+```
+
+Use a time-zone designator when specifying scheduled execution times.
+
+## Parameter strings
+
+Some properties accept a parameter string as an additional argument.
+
+For example:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+or:
+
+```CRADLE
+role("example.collection", "router", "lan=lan_0")
+```
+
+Where multiple parameters are represented inside a single argument, they can use semicolon-separated `key=value` pairs when supported by that property.
+
+For example:
+
+```text
+key1=value1;key2=value2
+```
+
+The interpretation of parameter strings depends on the property using them.
+
+## Interpolation
+
+CRADLE values can contain interpolated references.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+Here:
+
+```text
+${uriRemote}
+```
+
+references the configured remote repository location.
+
+Interpolation is covered in more detail in [Objects and Interpolation](./objects-and-interpolation).
+
+## Property validation
+
+The CRADLE grammar defines the general structure of a valid source file.
+
+This includes:
+
+- blocks
+- identifiers
+- quoted arguments
+- separators
+- terminators
+- comments
+
+The grammar alone does not determine whether every property name or property value is meaningful.
+
+CradleXC performs additional processing when it interprets the source.
+
+For example, the grammar can recognize the general structure:
+
+```CRADLE
+exampleProperty("value")
+```
+
+without the grammar itself determining whether `exampleProperty` is valid for the surrounding CRADLE component.
+
+## Language, compiler and schema
+
+CRADLE currently has several related sources that describe language behavior:
+
+| Source | Responsibility |
+| --- | --- |
+| Grammar | Defines the valid structural form of CRADLE source. |
+| CradleXC | Recognizes supported CRADLE properties and processes their values. |
+| JSON Schema | Describes the expected structured representation and its properties. |
+
+These sources are related but are not currently identical in every case.
+
+For example, the compiler can recognize properties or defaults that are not represented in the current schema.
+
+The detailed differences are documented separately rather than treated as core syntax rules.
+
+:::note
+Do not rely on the grammar alone to determine whether a scenario has the intended meaning. Validate the scenario with CradleXC against the CRADLE release you are using.
+:::
+
+## Validate the syntax
+
+Use:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Validation checks the CRADLE source and reports syntax errors that need to be corrected.
+
+For the full validation workflow, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## Example
+
+The following example demonstrates several core syntax features:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+
+instances() >
+    instance("Client"),
+    instance("Router").
+
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("1").
+
+event("1") >
+    instance("Client"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2026-01-15T10:00:00+00:00"),
+    description("Initialize the example client").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+This example contains:
+
+- a simple `metadata()` block
+- an `instances()` declaration block
+- a named `instance("Client")` definition
+- a network declaration and definition
+- lifecycle declarations
+- a named event definition
+- an external object definition
+- cross-references between named elements
+
+## Related language pages
+
+Continue with the detailed language pages:
+
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Networks and Routing](./networks-and-routing)
+- [Events and Dependencies](./events-and-dependencies)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Includes](./includes)
+- [Heuristics](./heuristics)
+- [Diagnostics](./diagnostics)
+
+For a complete working scenario, see [First Scenario](../getting-started/first-scenario).

@@ -1,0 +1,12 @@
+---
+sidebar_position: 2
+title: Plugin Model
+---
+
+# Plugin Model
+
+CradleXC discovers backend executables from `PATH` and `~/.cxc/plugins/`. A plugin is named `cxc-backend-<name>` and advertises its compatibility through a manifest.
+
+The CLI owns scenario parsing, validation, lowering, compatibility checks, and invocation. The plugin owns target-specific rendering and declares its dependencies. This means a new backend does not require a CradleXC fork or a compiler rebuild.
+
+Use `cxc backend list` to confirm that a plugin can be discovered.

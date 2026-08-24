@@ -1,0 +1,41 @@
+---
+sidebar_position: 3
+title: Event Dependencies
+---
+
+# Event Dependencies
+
+Events belong to `preEvent`, `mainEvent`, or `postEvent`. Use semantic names and `dependsOn()` to express an ordering requirement.
+
+```cradle
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+preEvent() >
+    event("prepare_target").
+
+mainEvent() >
+    event("run_test").
+
+postEvent() >
+    event("collect_logs").
+
+event("prepare_target") >
+    instance("target"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("prepare", ""),
+    scheduleExecution("2024-01-01T00:00:00+00:00").
+
+event("run_test") >
+    instance("target"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("test", ""),
+    dependsOn("prepare_target"),
+    scheduleExecution("2024-01-01T00:01:00+00:00").
+```
+
+Omit `dependsOn()` when no explicit dependency is needed. The v1 `waitfor()` form is not used in new scenarios.

@@ -1,0 +1,15 @@
+---
+sidebar_position: 5
+title: Building a Backend
+---
+
+# Building a Backend
+
+1. Choose a backend name and create an executable named `cxc-backend-<name>`.
+2. Implement the manifest required by the plugin protocol.
+3. Accept serialized Deployment IR and an output directory for rendering.
+4. Render target-specific files without modifying CRADLE source.
+5. Place the executable on `PATH` or in `~/.cxc/plugins/`.
+6. Verify discovery with `cxc backend list` and rendering with `cxc emit`.
+
+Use the plugin protocol source document and the `cradle-backend-api` crate as the implementation authority. Build tests around a fixed IR fixture so rendering remains repeatable across compiler releases.

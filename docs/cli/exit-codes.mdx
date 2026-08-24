@@ -1,0 +1,12 @@
+---
+sidebar_position: 6
+title: Exit Codes
+---
+
+# Exit Codes
+
+CradleXC uses a zero exit status for success and a nonzero exit status for failure. Do not rely on undocumented numeric values beyond that distinction.
+
+For automation, check the exit status and capture standard error with the command output. Use `cxc <command> --help` and the diagnostics themselves to identify the failing operation.
+
+Backend plugins also report rendering failure through a nonzero exit status. Their textual output is backend-specific.
