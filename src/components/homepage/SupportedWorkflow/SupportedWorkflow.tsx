@@ -4,6 +4,8 @@ import Link from '@docusaurus/Link';
 import sharedStyles from '../Homepage.module.css';
 import styles from './SupportedWorkflow.module.css';
 
+const BACKEND_REPOSITORY_URL = 'https://github.com/cradle-lang/cradle-release';
+
 export default function SupportedWorkflow(): ReactNode {
   return (
     <section className={styles.supported}>
@@ -16,78 +18,102 @@ export default function SupportedWorkflow(): ReactNode {
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Check the target before you begin.
+            Build for the environment you need.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            The reference implementation generates artifacts for all three
-            targets. libvirt and VirtualBox have integrated local workflows;
-            SPHERE operation depends on the selected research environment.
+            CradleXC keeps scenario logic independent from
+             target-specific generation. Backend plugins translate 
+             your CRADLE scenario into the files required by each 
+             environment.
           </p>
 
           <Link
             className={styles.supportLink}
-            to="/docs/deployment/supported-platforms">
-            Compare requirements and capabilities →
+            to="/docs/guides/backends/overview">
+            Learn about backend plugins →
           </Link>
         </div>
 
-        <div className={styles.platforms}>
-          <article className={styles.platform}>
-            <div className={styles.platformHeader}>
-              <h3>libvirt</h3>
+        <div className={styles.workflowGrid}>
 
-              <span className={styles.supportedStatus}>
-                <span className={styles.statusIcon}>✓</span>
-                Integrated workflow
-              </span>
-            </div>
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              01 Choose
+            </span>
+
+            <h3>
+              Select a backend
+            </h3>
 
             <p>
-              Local artifact generation and scenario execution.
+              Browse published backend plugins and choose one for your
+              target environment.
             </p>
 
-            <div className={styles.platformMeta}>
-              Local workflow
-            </div>
+            <a
+              className={styles.repositoryLink}
+              href={BACKEND_REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer">
+              <span>
+                Backend repository
+              </span>
+
+              <span aria-hidden="true">
+                ↗
+              </span>
+            </a>
           </article>
 
-          <article className={styles.platform}>
-            <div className={styles.platformHeader}>
-              <h3>VirtualBox</h3>
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              02 Install
+            </span>
 
-              <span className={styles.supportedStatus}>
-                <span className={styles.statusIcon}>✓</span>
-                Integrated workflow
-              </span>
-            </div>
+            <h3>
+              Install the backend
+            </h3>
 
             <p>
-              Local artifact generation and scenario execution.
+              Install the selected backend plugin with the CradleXC CLI.
             </p>
 
-            <div className={styles.platformMeta}>
-              Local workflow
-            </div>
+            <code className={styles.command}>
+              cxc plugin install &lt;plugin_name&gt;
+            </code>
+
           </article>
 
-          <article className={`${styles.platform} ${styles.platformPartial}`}>
-            <div className={styles.platformHeader}>
-              <h3>SPHERE</h3>
+          <article className={styles.workflowStep}>
+            <span className={styles.stepLabel}>
+              03 Verify
+            </span>
 
-              <span className={styles.partialStatus}>
-                <span className={styles.statusIcon}>△</span>
-                Environment-dependent
-              </span>
-            </div>
+            <h3>
+              Check discovery
+            </h3>
 
             <p>
-              Artifact generation with project-specific operation.
+              Use <code>cxc backend list</code> to confirm that CradleXC
+              detects the installed backend.
             </p>
+          </article>
 
-            <div className={styles.platformMeta}>
-              Research environment
-            </div>
+          <article className={styles.workflowStep}>
+            <span
+              className={`${styles.stepLabel} ${styles.generateLabel}`}>
+              04 Generate
+            </span>
+
+            <h3>
+              Render target files
+            </h3>
+
+            <p>
+              Use <code>cxc emit</code> with the selected backend to
+              generate target-specific output.
+            </p>
           </article>
         </div>
       </div>

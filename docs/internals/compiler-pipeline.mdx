@@ -1,0 +1,16 @@
+---
+sidebar_position: 1
+title: Compiler Pipeline
+---
+
+# Compiler Pipeline
+
+CradleXC treats a scenario as a checked program before it reaches an external backend.
+
+```text
+.cradle source → parser → AST → semantic validation → HIR → Deployment IR → backend
+```
+
+The parser reads v2 grammar and local includes. Validation checks references, supported values, networks, event dependencies, and other semantic constraints. HIR is the resolved scenario model; Deployment IR contains backend-ready planning data such as interfaces, routes, artifacts, event order, and boot order.
+
+Use `cxc dump-hir` and `cxc dump-ir` to inspect the two lower-level representations.

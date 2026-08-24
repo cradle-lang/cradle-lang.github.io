@@ -1,0 +1,516 @@
+---
+sidebar_position: 3
+title: CLI Configuration
+---
+
+# CLI Configuration
+
+CradleXC uses a local configuration file for settings that apply to the CLI environment.
+
+The default configuration file is:
+
+```text
+~/.cxc/config.toml
+```
+
+Use `cxc config` to inspect the configuration currently available to CradleXC:
+
+```bash
+cxc config
+```
+
+Configuration is separate from the CRADLE scenario itself. Scenario-specific values remain in the `.cradle` source, while local environment settings belong in the CradleXC configuration.
+
+## Configuration file
+
+The default configuration file is:
+
+```text
+~/.cxc/config.toml
+```
+
+If the configuration directory does not yet exist, create it with:
+
+```bash
+mkdir -p ~/.cxc
+```
+
+A configuration file can then be created at:
+
+```text
+~/.cxc/config.toml
+```
+
+For example:
+
+```toml
+forensic_dir = "/home/cdl/forensic"
+dataset_dir = "/mnt/hdd/cradle/dataset"
+artifact_repo = "/home/cdl/artifact"
+artifact_dir = "/home/cdl/artifact"
+```
+
+:::note
+Paths shown in this documentation are examples. Use paths appropriate for your own CradleXC environment.
+:::
+
+## Core configuration
+
+The current configuration includes settings for forensic resources, datasets and artifacts.
+
+| Setting | Purpose |
+| --- | --- |
+| `forensic_dir` | Location containing forensic tools and supporting files. |
+| `dataset_dir` | Location where extracted datasets are stored. |
+| `artifact_repo` | HTTP(S) base or local directory used as the artifact repository fallback. |
+| `artifact_dir` | Local staging directory for artifacts. |
+
+## Forensic directory
+
+Use `forensic_dir` to specify where forensic tools and supporting files are stored.
+
+For example:
+
+```toml
+forensic_dir = "/home/cdl/forensic"
+```
+
+This directory can contain resources required by supported forensic workflows.
+
+An environment might contain files such as:
+
+```text
+forensic/
+├── audit.rules
+├── the-sysmon-config.xml
+├── extract_logs.sh
+└── extract_logs.ps1
+```
+
+The exact files required depend on the workflow and environment being used.
+
+## Dataset directory
+
+Use `dataset_dir` to define where extracted datasets are stored.
+
+For example:
+
+```toml
+dataset_dir = "/mnt/hdd/cradle/dataset"
+```
+
+This separates generated or extracted dataset content from the CRADLE source files themselves.
+
+Conceptually:
+
+```text
+CRADLE scenario
+      │
+      ▼
+CradleXC processing
+      │
+      ▼
+Extracted data
+      │
+      ▼
+dataset_dir
+```
+
+## Artifact repository
+
+Use `artifact_repo` to configure the default artifact repository available to CradleXC.
+
+For example:
+
+```toml
+artifact_repo = "/home/cdl/artifact"
+```
+
+The repository can represent an HTTP(S) base location or a local artifact directory where supported.
+
+### Relationship with `repositoryRemote`
+
+A CRADLE scenario can define its own remote artifact repository:
+
+```CRADLE
+metadata() >
+    repositoryRemote("https://example.com/repository").
+```
+
+When `repositoryRemote` is defined by the scenario, that scenario-level value provides the repository information used by the scenario.
+
+The CradleXC configuration also provides:
+
+```toml
+artifact_repo = "/home/cdl/artifact"
+```
+
+which can be used as the artifact repository fallback when scenario metadata does not define `repositoryRemote`.
+
+The relationship can be viewed as:
+
+<div className="architecture-flow">
+
+  <div>Scenario repositoryRemote</div>
+
+  <span>↓</span>
+
+  <div>Artifact repository resolution</div>
+
+  <span>↑</span>
+
+  <div>Configured artifact_repo fallback</div>
+
+</div>
+
+This is relevant to object locations that use:
+
+```text
+${uriRemote}
+```
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+For language-level repository behavior, see [Objects and Interpolation](../language/objects-and-interpolation).
+
+## Artifact directory
+
+Use `artifact_dir` to configure the local artifact staging directory.
+
+For example:
+
+```toml
+artifact_dir = "/home/cdl/artifact"
+```
+
+`artifact_repo` and `artifact_dir` serve different roles:
+
+| Setting | Purpose |
+| --- | --- |
+| `artifact_repo` | Defines the artifact repository or repository fallback. |
+| `artifact_dir` | Defines the local staging location for artifacts. |
+
+They can point to the same location, but they do not represent the same configuration concept.
+
+## Deployment-related configuration
+
+The current configuration format also contains a `[deployment]` section for environment and provider-related settings.
+
+For example:
+
+```toml
+[deployment]
+timezone = "Asia/Singapore"
+windows_timezone = "Singapore Standard Time"
+dns_server = "192.168.56.2"
+disable_windows_defender = true
+disable_default_adapter = true
+use_nfs = false
+vagrant_vm_provider = "virtualbox"
+```
+
+:::note
+The `[deployment]` configuration name is retained by the current configuration format. CradleXC itself does not automatically execute generated backend files. Target-specific generation and execution remain separate stages.
+:::
+
+## Time zone
+
+Use:
+
+```toml
+timezone = "Asia/Singapore"
+```
+
+to define the time zone used for supported Linux environments.
+
+A separate Windows time-zone value can be configured with:
+
+```toml
+windows_timezone = "Singapore Standard Time"
+```
+
+These values allow different operating-system naming conventions to be represented separately.
+
+## DNS server
+
+Use:
+
+```toml
+dns_server = "192.168.56.2"
+```
+
+to provide a DNS server value for supported Windows environment generation.
+
+Whether this setting affects generated files depends on the selected backend and target.
+
+## Windows Defender setting
+
+The configuration can contain:
+
+```toml
+disable_windows_defender = true
+```
+
+This indicates whether supported generated Windows configuration should request Windows Defender to be disabled.
+
+:::important
+Disabling security controls changes the security posture of the resulting testbed. Use this setting only in an authorized and isolated cyber range or test environment where it is required by the scenario.
+:::
+
+## Default network adapter
+
+The configuration can contain:
+
+```toml
+disable_default_adapter = true
+```
+
+This controls whether supported Windows generation disables the default adapter normally provided by the target environment.
+
+The exact effect depends on the backend and provider being used.
+
+## NFS artifact sharing
+
+Use:
+
+```toml
+use_nfs = false
+```
+
+to control whether supported workflows use NFS for artifact sharing.
+
+For example:
+
+```toml
+use_nfs = true
+```
+
+can be used in an environment configured to provide NFS-based artifact sharing.
+
+Additional host dependencies can be required when this option is enabled.
+
+## Vagrant VM provider
+
+The configuration can specify the Vagrant provider:
+
+```toml
+vagrant_vm_provider = "virtualbox"
+```
+
+This is a provider-specific setting used by workflows that generate Vagrant-compatible output.
+
+Conceptually:
+
+```text
+CRADLE scenario
+      ↓
+CradleXC
+      ↓
+Vagrant backend
+      ↓
+Provider configuration
+```
+
+The provider remains a backend concern rather than a built-in CRADLE language concept.
+
+For backend-specific behavior, see [Use a Backend](../getting-started/use-a-backend).
+
+## Example configuration
+
+A complete example configuration is:
+
+```toml
+# CradleXC configuration
+
+# Forensic tools and supporting files
+forensic_dir = "/home/cdl/forensic"
+
+# Extracted datasets
+dataset_dir = "/mnt/hdd/cradle/dataset"
+
+# Default artifact repository
+artifact_repo = "/home/cdl/artifact"
+
+# Local artifact staging directory
+artifact_dir = "/home/cdl/artifact"
+
+[deployment]
+
+# Environment time zones
+timezone = "Asia/Singapore"
+windows_timezone = "Singapore Standard Time"
+
+# DNS configuration
+dns_server = "192.168.56.2"
+
+# Windows environment options
+disable_windows_defender = true
+disable_default_adapter = true
+
+# Artifact sharing
+use_nfs = false
+
+# Vagrant provider
+vagrant_vm_provider = "virtualbox"
+```
+
+Replace the example paths and values with settings appropriate for your environment.
+
+## View the current configuration
+
+Use:
+
+```bash
+cxc config
+```
+
+to inspect the configuration available to CradleXC.
+
+This is useful when:
+
+- checking configured paths
+- diagnosing artifact lookup problems
+- confirming dataset locations
+- investigating forensic tool paths
+- checking environment-specific settings
+- troubleshooting backend-related behavior
+
+## Check configuration and dependencies
+
+Configuration inspection and dependency checks serve different purposes.
+
+Inspect configuration with:
+
+```bash
+cxc config
+```
+
+Check dependencies with:
+
+```bash
+cxc doctor
+```
+
+If dependency installation guidance is required:
+
+```bash
+cxc install-deps
+```
+
+A useful environment check is:
+
+```bash
+cxc --version
+cxc config
+cxc doctor
+```
+
+## Scenario configuration and CLI configuration
+
+Keep scenario configuration separate from local CradleXC configuration.
+
+For example, this belongs in the `.cradle` scenario:
+
+```CRADLE
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+```
+
+These belong in:
+
+```text
+~/.cxc/config.toml
+```
+
+```toml
+forensic_dir = "/home/cdl/forensic"
+dataset_dir = "/mnt/hdd/cradle/dataset"
+artifact_repo = "/home/cdl/artifact"
+artifact_dir = "/home/cdl/artifact"
+```
+
+The distinction is:
+
+| Configuration | Scope |
+| --- | --- |
+| CRADLE source | Defines scenario behavior and scenario-level values. |
+| `~/.cxc/config.toml` | Defines local CradleXC environment settings. |
+| Backend configuration | Defines settings specific to a backend or target. |
+
+## Configuration and backends
+
+Some configuration values only become relevant when a particular backend or target uses them.
+
+For example:
+
+```toml
+vagrant_vm_provider = "virtualbox"
+```
+
+is relevant to Vagrant-compatible generation.
+
+The CRADLE language itself does not require a Vagrant provider.
+
+This separation allows the same CRADLE scenario to remain independent of target-specific implementation details.
+
+## Security
+
+Do not store unnecessary credentials or secrets in CRADLE source or configuration files.
+
+Avoid embedding values such as:
+
+- passwords
+- API tokens
+- repository access tokens
+- private keys
+- credentials inside repository URLs
+
+:::important
+Protect `~/.cxc/config.toml` according to the sensitivity of the values stored in your environment.
+:::
+
+## Troubleshooting
+
+If CradleXC does not appear to use the expected configuration, start with:
+
+```bash
+cxc config
+```
+
+Then check:
+
+```bash
+cxc doctor
+```
+
+Confirm that:
+
+- `~/.cxc/config.toml` exists
+- configured directories exist where required
+- configured paths are correct
+- the current user can access the required directories
+- backend-specific settings match the selected backend environment
+
+For additional guidance, see [Troubleshooting](../guides/troubleshooting).
+
+## Related documentation
+
+- [CLI Overview](./overview)
+- [Command Reference](./command-reference)
+- [Backend Discovery](./backend-discovery)
+- [Objects and Interpolation](../language/objects-and-interpolation)
+- [Install CradleXC](../getting-started/install-cradlexc)
+- [Use a Backend](../getting-started/use-a-backend)
+- [Troubleshooting](../guides/troubleshooting)
+
+## Next steps
+
+Continue with [Backend Discovery](./backend-discovery) to learn how CradleXC locates compatible backend plugins.

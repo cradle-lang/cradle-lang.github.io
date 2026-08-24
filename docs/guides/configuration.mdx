@@ -1,0 +1,48 @@
+---
+sidebar_position: 2
+title: Configuration
+---
+
+# Configuration
+
+CradleXC reads local settings from `~/.cxc/config.toml` by default. Pass `--config <path>` to use another file, or run `cxc config` to inspect the configuration in use.
+
+## Core paths
+
+```toml
+# Base repository used when a scenario does not set repositoryRemote.
+artifact_repo = "/srv/cradle/artifacts"
+
+# Local staging directory for resolved artifacts.
+artifact_dir = "/srv/cradle/staging"
+
+# Supporting forensic resources and extracted datasets.
+forensic_dir = "/srv/cradle/forensic"
+dataset_dir = "/srv/cradle/datasets"
+```
+
+`artifact_repo` is a fallback source location. `artifact_dir` is a local working location; it is not the same thing as the repository itself.
+
+## Backend settings
+
+The `[deployment]` table contains defaults that a backend may use while rendering target files. Available settings and their effects depend on the selected backend.
+
+```toml
+[deployment]
+timezone = "Asia/Singapore"
+windows_timezone = "Singapore Standard Time"
+dns_server = "192.168.56.2"
+use_nfs = false
+```
+
+Do not place credentials or secrets in scenario source. Use the backend's documented configuration mechanism where credentials are required.
+
+## Check configuration
+
+```bash
+cxc config
+cxc --config ./config.toml config
+cxc doctor
+```
+
+See [Artifact Repositories](./artifact-repositories) for how local settings interact with scenario metadata.

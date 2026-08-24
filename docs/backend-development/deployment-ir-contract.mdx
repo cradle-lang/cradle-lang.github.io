@@ -1,0 +1,17 @@
+---
+sidebar_position: 4
+title: Deployment IR Contract
+---
+
+# Deployment IR Contract
+
+Deployment IR is the JSON contract between CradleXC and a backend plugin. It contains resolved, backend-neutral scenario information rather than source syntax or provider-specific template values.
+
+Plugins should:
+
+- declare a compatible minimum IR version in their manifest;
+- parse the JSON permissively and ignore unknown additive fields;
+- avoid assuming provider-specific fields that are not part of the IR; and
+- retain the IR path reported on failures for reproducible debugging.
+
+The Rust `DeploymentIR` type in CradleXC is the field-by-field authority. Do not treat this documentation page as a schema duplicate.

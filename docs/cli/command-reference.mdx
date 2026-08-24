@@ -1,0 +1,669 @@
+---
+sidebar_position: 2
+title: Command Reference
+---
+
+# Command Reference
+
+This page provides a reference for the main commands available through the CradleXC `cxc` command-line interface.
+
+For the command list available in your installed version, run:
+
+```bash
+cxc --help
+```
+
+For command-specific options, use:
+
+```bash
+cxc <command> --help
+```
+
+For example:
+
+```bash
+cxc compile --help
+```
+
+:::note
+Command options can change between CradleXC releases. Use the built-in `--help` output when you need the exact options supported by the installed version.
+:::
+
+## Command summary
+
+| Command | Purpose |
+| --- | --- |
+| `cxc validate` | Validate CRADLE source syntax. |
+| `cxc parse` | Parse CRADLE source and print its AST as JSON. |
+| `cxc check` | Parse and validate CRADLE source with detailed diagnostics. |
+| `cxc compile` | Compile CRADLE source into structured YAML. |
+| `cxc dump-hir` | Display CradleXC's high-level intermediate representation. |
+| `cxc dump-ir` | Display CradleXC's intermediate representation. |
+| `cxc emit` | Generate target-specific files through a backend plugin. |
+| `cxc backend list` | List backend plugins discovered by CradleXC. |
+| `cxc plugin install` | Install a backend plugin. |
+| `cxc import` | Import supported external definitions into CRADLE source. |
+| `cxc migrate` | Migrate supported older CRADLE source. |
+| `cxc extract` | Perform supported extraction workflows. |
+| `cxc generate-artifacts` | Perform supported artifact-generation workflows. |
+| `cxc doctor` | Check dependencies and environment readiness. |
+| `cxc install-deps` | Display dependency installation guidance. |
+| `cxc config` | Inspect the current CradleXC configuration. |
+| `cxc completions` | Generate supported shell completions. |
+
+## `cxc validate`
+
+Validates the syntax of a CRADLE scenario.
+
+### Usage
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+### Example
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Use this command before compilation to identify syntax problems in the source scenario.
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+---
+
+## `cxc parse`
+
+Parses a scenario and prints its abstract syntax tree as JSON.
+
+```bash
+cxc parse -i <scenario.cradle>
+```
+
+Use this when investigating how source text is parsed. It does not replace semantic validation.
+
+---
+
+## `cxc check`
+
+Parses and validates a scenario with detailed diagnostics.
+
+```bash
+cxc check -i <scenario.cradle>
+cxc check -i <scenario.cradle> --json
+```
+
+Use `--json` when a tool needs diagnostics in a structured form.
+
+---
+
+## `cxc compile`
+
+Compiles a CRADLE scenario into structured YAML.
+
+### Usage
+
+```bash
+cxc compile \
+  -i <scenario.cradle> \
+  -o <output.yml>
+```
+
+### Example
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+The input is the human-authored `.cradle` scenario.
+
+The output is the compiled YAML representation produced by CradleXC.
+
+### Common arguments
+
+| Argument | Purpose |
+| --- | --- |
+| `-i` | Specifies the input `.cradle` file. |
+| `-o` | Specifies the output YAML file. |
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+---
+
+## `cxc dump-hir`
+
+Displays the validated high-level intermediate representation as JSON.
+
+```bash
+cxc dump-hir -i <scenario.cradle>
+```
+
+HIR is useful for compiler debugging. Backend plugins consume Deployment IR, which is shown by `cxc dump-ir`.
+
+---
+
+## `cxc dump-ir`
+
+Displays the intermediate representation produced by CradleXC.
+
+### Usage
+
+```bash
+cxc dump-ir -i <scenario.cradle>
+```
+
+### Example
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This command is useful when:
+
+- inspecting how CradleXC interpreted a scenario
+- diagnosing unexpected compiler output
+- investigating compiler behavior
+- developing or debugging backend integration
+
+`cxc dump-ir` does not replace validation or compilation.
+
+For more information, see [Inspect Output](../getting-started/inspect-output).
+
+---
+
+## `cxc emit`
+
+Generates target-specific files through a compatible backend plugin.
+
+### Usage
+
+```bash
+cxc emit \
+  -i <scenario.cradle> \
+  --target <plugin_name> \
+  -o <output_directory>
+```
+
+### Example
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+### Arguments used in this workflow
+
+| Argument | Purpose |
+| --- | --- |
+| `-i` | Specifies the input `.cradle` scenario. |
+| `--target` | Selects the backend target. |
+| `-o` | Specifies the output location for generated target-specific files. |
+
+A compatible backend plugin must be available for the selected target.
+
+:::important
+`cxc emit` generates target-specific files. CradleXC does not automatically execute those files.
+:::
+
+Use the generated files with the corresponding tools in your own testbed environment.
+
+For backend installation and configuration, see [Use a Backend](../getting-started/use-a-backend).
+
+---
+
+## `cxc backend list`
+
+Lists compatible backend plugins currently discovered by CradleXC.
+
+### Usage
+
+```bash
+cxc backend list
+```
+
+Backend executables follow the naming convention:
+
+```text
+cxc-backend-<name>
+```
+
+CradleXC discovers compatible backend executables from:
+
+```text
+PATH
+```
+
+or:
+
+```text
+~/.cxc/plugins/
+```
+
+Use this command after installing a backend to confirm that CradleXC can discover it.
+
+For more information, see [Backend Discovery](./backend-discovery).
+
+---
+
+## `cxc plugin install`
+
+Installs a backend plugin.
+
+### Usage
+
+```bash
+cxc plugin install <plugin_name>
+```
+
+### Example
+
+```bash
+cxc plugin install vagrant
+```
+
+After installation, check whether the backend is available:
+
+```bash
+cxc backend list
+```
+
+The exact plugin names available depend on the backend plugins published for CRADLE.
+
+For more information, see [Use a Backend](../getting-started/use-a-backend).
+
+---
+
+## `cxc import`
+
+Imports supported external definitions into CRADLE source.
+
+The current workflow includes supported Vagrant and Ansible imports.
+
+Because the available options depend on the input format and CradleXC release, inspect the command interface with:
+
+```bash
+cxc import --help
+```
+
+Import workflows are documented separately under the CRADLE guides.
+
+:::note
+Do not assume that every Vagrant or Ansible feature has a direct CRADLE equivalent. Review imported `.cradle` source before relying on it.
+:::
+
+---
+
+## `cxc migrate`
+
+Migrates supported older CRADLE source to the current format.
+
+The current migration workflow includes migration from CRADLE v1 to v2.
+
+View the available options with:
+
+```bash
+cxc migrate --help
+```
+
+After migration, validate the generated source:
+
+```bash
+cxc validate -i <migrated-scenario.cradle>
+```
+
+Review the migrated scenario before using it as the authoritative source.
+
+---
+
+## `cxc extract`
+
+Provides supported extraction functionality.
+
+View the interface for the installed CradleXC release with:
+
+```bash
+cxc extract --help
+```
+
+The exact inputs and outputs should be taken from the command help for the release being used.
+
+:::note
+This reference does not prescribe additional `extract` arguments until their supported forms are documented.
+:::
+
+---
+
+## `cxc generate-artifacts`
+
+Provides supported artifact-generation functionality.
+
+View its command-specific options with:
+
+```bash
+cxc generate-artifacts --help
+```
+
+The exact workflow depends on the CradleXC release and artifact configuration being used.
+
+:::note
+This reference does not prescribe additional `generate-artifacts` arguments until their supported forms are documented.
+:::
+
+---
+
+## `cxc doctor`
+
+Checks dependencies and the current CradleXC environment.
+
+### Usage
+
+```bash
+cxc doctor
+```
+
+Use this command when:
+
+- setting up CradleXC
+- checking required dependencies
+- diagnosing environment problems
+- investigating backend-related dependency problems
+
+If required dependencies are missing, use:
+
+```bash
+cxc install-deps
+```
+
+For troubleshooting guidance, see [Troubleshooting](../guides/troubleshooting).
+
+---
+
+## `cxc install-deps`
+
+Displays dependency installation guidance.
+
+### Usage
+
+```bash
+cxc install-deps
+```
+
+A typical dependency workflow is:
+
+```bash
+cxc doctor
+cxc install-deps
+cxc doctor
+```
+
+The first `cxc doctor` identifies dependency problems.
+
+`cxc install-deps` provides installation guidance.
+
+Run `cxc doctor` again after resolving the reported issues.
+
+---
+
+## `cxc config`
+
+Displays the current CradleXC configuration.
+
+### Usage
+
+```bash
+cxc config
+```
+
+Use this command when checking:
+
+- local CradleXC settings
+- configured paths
+- repository-related configuration
+- other CLI configuration values
+
+Detailed configuration behavior is covered in [CLI Configuration](./configuration).
+
+---
+
+## `cxc completions`
+
+Generates shell completion information for supported shells.
+
+View the supported options with:
+
+```bash
+cxc completions --help
+```
+
+The available shells and installation procedure depend on the CradleXC release being used.
+
+---
+
+## Global help
+
+Display the main CLI help:
+
+```bash
+cxc --help
+```
+
+Display the installed version:
+
+```bash
+cxc --version
+```
+
+For command-specific help:
+
+```bash
+cxc <command> --help
+```
+
+Examples:
+
+```bash
+cxc validate --help
+```
+
+```bash
+cxc compile --help
+```
+
+```bash
+cxc emit --help
+```
+
+```bash
+cxc migrate --help
+```
+
+## Typical scenario workflow
+
+For normal CRADLE scenario development:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Then compile:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+If you need to inspect the intermediate representation:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+If target-specific files are required, confirm the backend:
+
+```bash
+cxc backend list
+```
+
+Then generate the files:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o ./output
+```
+
+The overall workflow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div><code>cxc compile</code></div>
+
+  <span>↓</span>
+
+  <div>Compiled representation</div>
+
+  <span>↓</span>
+
+  <div><code>cxc emit</code></div>
+
+  <span>↓</span>
+
+  <div>Target-specific files</div>
+
+</div>
+
+## Command groups
+
+### Scenario processing
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Validate CRADLE source syntax.
+    </div>
+    <code>cxc validate</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Compile CRADLE source into YAML.
+    </div>
+    <code>cxc compile</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Inspect the intermediate representation.
+    </div>
+    <code>cxc dump-ir</code>
+  </div>
+
+</div>
+
+### Backend plugins
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      List discovered backend plugins.
+    </div>
+    <code>cxc backend list</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Install a backend plugin.
+    </div>
+    <code>cxc plugin install</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Generate target-specific files.
+    </div>
+    <code>cxc emit</code>
+  </div>
+
+</div>
+
+### Conversion
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Import supported external definitions.
+    </div>
+    <code>cxc import</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Migrate supported older CRADLE source.
+    </div>
+    <code>cxc migrate</code>
+  </div>
+
+</div>
+
+### Environment
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Check the current environment.
+    </div>
+    <code>cxc doctor</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Display dependency installation guidance.
+    </div>
+    <code>cxc install-deps</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Inspect CradleXC configuration.
+    </div>
+    <code>cxc config</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Generate shell completions.
+    </div>
+    <code>cxc completions</code>
+  </div>
+
+</div>
+
+## Related documentation
+
+- [CLI Overview](./overview)
+- [CLI Configuration](./configuration)
+- [Backend Discovery](./backend-discovery)
+- [CLI Outputs](./outputs)
+- [Validate and Compile](../getting-started/validate-and-compile)
+- [Inspect Output](../getting-started/inspect-output)
+- [Use a Backend](../getting-started/use-a-backend)
+- [Troubleshooting](../guides/troubleshooting)

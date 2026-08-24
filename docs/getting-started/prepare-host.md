@@ -113,5 +113,5 @@ Verify these dependencies before running `odyssey.sh`.
 
 ## Next step
 
-Continue to the [Quick start](quick-start.md) to generate and, on the prepared
+Continue to the [Quick Start](quick-start) to generate and, on the prepared
 host, run Hello World.

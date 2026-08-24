@@ -1,0 +1,25 @@
+---
+sidebar_position: 1
+title: Backend Overview
+---
+
+# Backend Overview
+
+A backend is an external executable that renders target-specific files from CradleXC's backend-neutral representation. CradleXC has no built-in backend.
+
+Backends use the executable name:
+
+```text
+cxc-backend-<name>
+```
+
+CradleXC discovers them on `PATH` and in `~/.cxc/plugins/`.
+
+```bash
+cxc backend list
+cxc plugin install <name>
+```
+
+Discovery confirms that CradleXC can find a compatible plugin. It does not guarantee that the plugin supports every scenario, host, or target capability. Use `cxc doctor` to review dependencies contributed by discovered plugins.
+
+For the command-level details, see [Backend Discovery](../../cli/backend-discovery).

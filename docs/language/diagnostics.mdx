@@ -1,0 +1,614 @@
+---
+sidebar_position: 10
+title: Diagnostics
+---
+
+# Diagnostics
+
+CradleXC reports diagnostics when it encounters problems while reading, validating or processing CRADLE source.
+
+Diagnostics help identify where a scenario is malformed or where a referenced element does not match the surrounding scenario definition.
+
+For syntax checking, use:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+## What diagnostics are for
+
+Diagnostics can help identify problems such as:
+
+- malformed CRADLE syntax
+- invalid block structure
+- missing separators or block terminators
+- unresolved references
+- inconsistent names
+- unsupported properties
+- invalid values
+- compiler processing errors
+
+The exact diagnostic format depends on the CradleXC release being used.
+
+## Validate first
+
+When a scenario does not behave as expected, start with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+If validation reports an error, correct the source and run the command again.
+
+A typical workflow is:
+
+<div className="architecture-flow">
+
+  <div>Edit CRADLE source</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div>Review diagnostics</div>
+
+  <span>↓</span>
+
+  <div>Correct the source</div>
+
+  <span>↓</span>
+
+  <div>Validate again</div>
+
+</div>
+
+## Syntax errors
+
+CRADLE blocks follow a defined structure.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+Properties and references are separated with commas and the block ends with a period.
+
+A malformed block such as:
+
+```CRADLE
+instances() >
+    instance("Client")
+    instance("Router")
+```
+
+is missing:
+
+- the comma between entries
+- the terminating period
+
+The corrected form is:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+## Missing block terminators
+
+Every CRADLE block ends with:
+
+```text
+.
+```
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence").
+```
+
+If the final period is missing, the block is incomplete.
+
+Incorrect:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence")
+```
+
+Correct:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence").
+```
+
+## Missing separators
+
+Entries inside a block are separated by commas.
+
+Incorrect:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04")
+    object("InitializationScript").
+```
+
+Correct:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+```
+
+## Quoted values
+
+CRADLE property values are written as quoted strings.
+
+For example:
+
+```CRADLE
+name("HelloWorld")
+```
+
+and:
+
+```CRADLE
+os("ubuntu", "20.04")
+```
+
+Incorrectly quoted or unterminated values can cause parsing failures.
+
+Incorrect:
+
+```CRADLE
+name("HelloWorld)
+```
+
+Correct:
+
+```CRADLE
+name("HelloWorld")
+```
+
+## Unresolved instance references
+
+Names connect declarations and definitions.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+should correspond to:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+If the definition uses another name:
+
+```CRADLE
+instance("client") >
+    os("ubuntu", "20.04").
+```
+
+the reference is inconsistent.
+
+Use matching spelling and capitalization:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+## Unresolved network references
+
+A network declared as:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+should have a matching definition:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client", "DHCP").
+```
+
+Avoid:
+
+```CRADLE
+network("lan0") >
+    endpoint("Client", "DHCP").
+```
+
+if the declared name is `lan_0`.
+
+## Unresolved endpoint references
+
+An endpoint should reference a declared instance.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Router", "DHCP").
+```
+
+requires a corresponding instance declaration such as:
+
+```CRADLE
+instances() >
+    instance("Router").
+```
+
+If the instance does not exist, the endpoint reference cannot resolve correctly.
+
+## Unresolved object references
+
+Objects can be referenced from metadata, instances and events.
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+with:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+and:
+
+```CRADLE
+event("1") >
+    runObject("InitializationScript", "").
+```
+
+A mismatch such as:
+
+```CRADLE
+runObject("InitScript", "")
+```
+
+references a different name.
+
+Keep object names consistent throughout the scenario.
+
+## Unresolved event references
+
+Events are declared within lifecycle phases.
+
+For example:
+
+```CRADLE
+mainEvent() >
+    event("1").
+```
+
+The corresponding event definition should exist:
+
+```CRADLE
+event("1") >
+    instance("Client"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+```
+
+If an event is referenced but never defined, review the event declaration and definition names.
+
+## Dependency references
+
+`waitfor()` can reference another event in compiler-supported dependency behavior.
+
+For example:
+
+```CRADLE
+event("2") >
+    waitfor("1").
+```
+
+The referenced event should exist:
+
+```CRADLE
+event("1") >
+    ...
+```
+
+If the event identifier is misspelled or missing, the dependency does not resolve correctly.
+
+:::note
+The current schema and compiler behavior do not represent `waitfor` in exactly the same way. Validate dependency behavior against the CradleXC release being used.
+:::
+
+## Inspect the intermediate representation
+
+When the source validates but the result is not what you expected, inspect the intermediate representation:
+
+```bash
+cxc dump-ir -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This can help you compare the authored source with the structure interpreted by CradleXC.
+
+A useful diagnostic flow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div><code>cxc dump-ir</code></div>
+
+  <span>↓</span>
+
+  <div><code>cxc compile</code></div>
+
+</div>
+
+`cxc dump-ir` is optional during normal use.
+
+## Inspect compiled output
+
+After validation succeeds, compile the scenario:
+
+```bash
+cxc compile \
+  -i <scenario.cradle> \
+  -o <output.yml>
+```
+
+For example:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+Inspecting the generated YAML can help determine whether the scenario was interpreted as expected.
+
+See [Inspect Output](../getting-started/inspect-output) for the full inspection workflow.
+
+## Grammar, compiler and schema differences
+
+CRADLE currently has several related sources of language behavior:
+
+| Source | Role |
+| --- | --- |
+| Grammar | Defines valid structural syntax. |
+| CradleXC | Recognizes supported properties and processes their values. |
+| JSON Schema | Describes the expected structured representation. |
+
+These sources are not completely aligned.
+
+As a result, a scenario can expose differences between:
+
+- grammar validation
+- compiler defaults
+- compiler extensions
+- schema-required properties
+- schema value representations
+
+Examples documented in the current language reference include:
+
+- `eventType` is required by the schema while CradleXC can default it to `sequence`
+- instance architecture can default to `AMD64`
+- network subnet handling differs between the schema and compiler
+- endpoint addressing can default to `DHCP`
+- `repositoryLocal` is recognized as a compiler extension
+- `config`, `io`, `description`, `heuristic` and `executionFlow` include compiler-specific behavior
+- `waitfor` differs between the schema and existing compiler behavior
+
+:::important
+Do not treat grammar validation, compiler processing and JSON Schema validation as identical checks.
+:::
+
+## Unsupported or unexpected properties
+
+The grammar can recognize the general shape of a property:
+
+```CRADLE
+exampleProperty("value")
+```
+
+without the grammar itself determining whether the property is meaningful in the surrounding block.
+
+CradleXC performs additional processing when interpreting the scenario.
+
+If a property is not behaving as expected:
+
+1. confirm that the property is documented for that CRADLE element
+2. confirm the expected argument count
+3. confirm the expected values
+4. check whether it is a compiler extension
+5. validate against the CradleXC release being used
+
+## Defaults can affect output
+
+CradleXC currently supplies defaults for some properties.
+
+Documented examples include:
+
+| Property | Current default behavior |
+| --- | --- |
+| `eventType` | `sequence` when omitted |
+| Instance architecture | `AMD64` when omitted |
+| Endpoint address | `DHCP` when omitted |
+| `needRoot` | `false` when omitted |
+| `pauseBeforeRun` | `0` when omitted |
+| `pauseAfterRun` | `0` when omitted |
+
+If compiled output contains a value that was not explicitly written in the source, check whether CradleXC supplied a documented default.
+
+## Backend-related diagnostics
+
+A CRADLE scenario can validate successfully while backend-specific generation still fails.
+
+This is because validation and backend generation are separate stages.
+
+The workflow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>CradleXC validation</div>
+
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Target-specific generation</div>
+
+</div>
+
+A backend can have its own:
+
+- feature limitations
+- configuration requirements
+- dependencies
+- provider requirements
+- diagnostics
+
+For backend-related problems, see [Use a Backend](../getting-started/use-a-backend) and [Troubleshooting](../guides/troubleshooting).
+
+## Recommended diagnostic workflow
+
+When a scenario produces an error or unexpected output:
+
+1. Run `cxc validate`.
+2. Correct any syntax problems.
+3. Check named references for spelling and capitalization.
+4. Inspect compiler defaults and extensions relevant to the scenario.
+5. Use `cxc dump-ir` if the interpreted structure needs further inspection.
+6. Compile the scenario and inspect the generated YAML.
+7. If the problem occurs only during target-specific generation, investigate the selected backend separately.
+
+The corresponding commands are:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+## Common checks
+
+Before investigating a more complex problem, confirm that:
+
+- every block ends with a period
+- entries inside blocks are comma-separated
+- property values are correctly quoted
+- instance declarations have matching definitions
+- network declarations have matching definitions
+- endpoint names match declared instances
+- object declarations have matching definitions
+- `runObject()` references match declared objects
+- events belong to lifecycle phases
+- event references are unique and consistent
+- dependency references resolve
+- repository values are valid for the intended environment
+- compiler extensions are supported by the CradleXC release being used
+
+## Report a problem
+
+If a problem cannot be resolved, collect enough information to reproduce it.
+
+Useful information includes:
+
+- CradleXC version
+- the command used
+- complete diagnostic output
+- the relevant `.cradle` source
+- compiled output where relevant
+- backend name and version where relevant
+- operating system and environment information
+
+Check the CradleXC version with:
+
+```bash
+cxc --version
+```
+
+For environment-related issues, also include:
+
+```bash
+cxc doctor
+```
+
+:::important
+Review diagnostic output and scenario files before sharing them. Remove credentials, tokens and other sensitive information that is not required to reproduce the issue.
+:::
+
+## Related documentation
+
+- [Syntax and Types](./syntax-and-types)
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Networks and Routing](./networks-and-routing)
+- [Events and Dependencies](./events-and-dependencies)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Heuristic Annotations](./heuristics)
+- [Validate and Compile](../getting-started/validate-and-compile)
+- [Inspect Output](../getting-started/inspect-output)
+- [Troubleshooting](../guides/troubleshooting)
+- [Developer Schema Reference](../schema/cradle-schema)

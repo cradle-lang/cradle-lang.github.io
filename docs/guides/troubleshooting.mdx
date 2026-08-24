@@ -1,0 +1,293 @@
+---
+sidebar_position: 6
+title: Troubleshooting
+---
+
+# Troubleshooting
+
+This guide covers common issues that can occur while installing and using CradleXC.
+
+When diagnosing dependency or environment problems, start with:
+
+```bash
+cxc doctor
+```
+
+## `cxc` command not found
+
+If your shell cannot find `cxc`, confirm whether the executable is installed:
+
+```bash
+which cxc
+```
+
+If no path is returned, verify that CradleXC was installed successfully through APT.
+
+Refresh the package index:
+
+```bash
+sudo apt update
+```
+
+Install CradleXC:
+
+```bash
+sudo apt install cxc
+```
+
+Then confirm the installation:
+
+```bash
+cxc --version
+```
+
+If `cxc` is installed but still cannot be found, confirm that the directory containing the executable is included in your system `PATH`.
+
+## Missing dependencies
+
+Run the built-in dependency check:
+
+```bash
+cxc doctor
+```
+
+If required dependencies are missing, display the available installation guidance:
+
+```bash
+cxc install-deps
+```
+
+Resolve the reported dependency issues, then run:
+
+```bash
+cxc doctor
+```
+
+again to confirm that the required dependencies are available.
+
+## Configuration issues
+
+If CradleXC appears to be using an unexpected configuration value, inspect the current configuration:
+
+```bash
+cxc config
+```
+
+Review the reported settings before retrying the command that failed.
+
+## Scenario validation errors
+
+Validate a CRADLE scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Validation checks whether the CRADLE syntax is valid and reports syntax errors that need to be corrected.
+
+Fix the reported errors in the `.cradle` file, then run validation again.
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## Compilation errors
+
+Validate the scenario before compiling it:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+If validation succeeds, compile the scenario:
+
+```bash
+cxc compile -i <scenario.cradle> -o <output.yml>
+```
+
+For example:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+If compilation fails, review the diagnostics returned by CradleXC.
+
+You can also inspect the intermediate representation produced from the scenario:
+
+```bash
+cxc dump-ir -i <scenario.cradle>
+```
+
+This provides additional information about how CradleXC interpreted the scenario.
+
+For more information, see [Inspect Output](../getting-started/inspect-output).
+
+## Backend plugin is not detected
+
+List the backend plugins currently discovered by CradleXC:
+
+```bash
+cxc backend list
+```
+
+Compatible backend executables follow the naming convention:
+
+```text
+cxc-backend-<name>
+```
+
+CradleXC discovers compatible backend executables from the system `PATH` or from:
+
+```text
+~/.cxc/plugins/
+```
+
+If the expected backend is not listed, confirm that:
+
+- the backend plugin is installed
+- the backend executable follows the `cxc-backend-<name>` naming convention
+- the executable is available on the system `PATH` or under `~/.cxc/plugins/`
+
+Backend plugins can be installed with:
+
+```bash
+cxc plugin install <plugin_name>
+```
+
+After installation, check backend discovery again:
+
+```bash
+cxc backend list
+```
+
+For more information, see [Use a Backend](../getting-started/use-a-backend).
+
+## Target-specific output is not generated
+
+First, confirm that the required backend plugin is available:
+
+```bash
+cxc backend list
+```
+
+Then validate the scenario:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+Generate the target-specific files with:
+
+```bash
+cxc emit \
+  -i <scenario.cradle> \
+  --target <plugin_name> \
+  -o /path/to/output
+```
+
+For example:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+If generation fails, review the diagnostics returned by CradleXC and the selected backend plugin.
+
+:::note
+Backend capabilities depend on the backend implementation. A CRADLE scenario that passes validation does not necessarily use only features supported by every backend.
+:::
+
+## Generated files do not work in the testbed
+
+CradleXC and its backend plugins generate target-specific files.
+
+CradleXC does not automatically execute these files.
+
+If the generated files fail when used with the corresponding tools in your testbed, check the following:
+
+1. Confirm that the correct backend plugin was selected.
+2. Review the generated target-specific files.
+3. Verify the target tool configuration.
+4. Verify any provider-specific configuration.
+5. Check that required backend and target-tool dependencies are installed.
+6. Review errors reported by the target tool.
+
+Problems at this stage can originate from the generated files, backend configuration, provider configuration or the testbed environment.
+
+## Check the installed CradleXC version
+
+To check the currently installed version:
+
+```bash
+cxc --version
+```
+
+If you need to update CradleXC, refresh the package index:
+
+```bash
+sudo apt update
+```
+
+Then upgrade the installed package:
+
+```bash
+sudo apt install --only-upgrade cxc
+```
+
+Confirm the version after updating:
+
+```bash
+cxc --version
+```
+
+## Collect information for a bug report
+
+If you need to report an issue, include enough information to reproduce the problem.
+
+Where relevant, include:
+
+- the CradleXC version
+- the command that was executed
+- the complete error or diagnostic output
+- the relevant `.cradle` scenario
+- the backend plugin name and version
+- the generated target files involved in the issue
+- relevant configuration
+- the operating system and environment
+
+You can obtain the CradleXC version with:
+
+```bash
+cxc --version
+```
+
+You can also include the output of:
+
+```bash
+cxc doctor
+```
+
+when reporting dependency or environment-related problems.
+
+:::important
+Review files and command output before sharing them. Remove credentials, tokens, private repository details or other sensitive information that is not required to reproduce the issue.
+:::
+
+## Get additional help
+
+If the issue cannot be resolved using this guide:
+
+- review the [Getting Started](../getting-started/quick-start) documentation
+- review the [CLI documentation](../cli/overview)
+- review [Use a Backend](../getting-started/use-a-backend) for backend-related issues
+- see the [Support](../project/support) page for available support channels

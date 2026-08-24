@@ -1,0 +1,63 @@
+---
+sidebar_position: 1
+title: Hello World
+---
+
+# Hello World
+
+This complete v2 scenario defines two Ubuntu instances, one network, one object, and one event.
+
+```cradle
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("hello").
+
+instances() >
+    instance("vm1"),
+    instance("router").
+
+instance("vm1") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    object("hello").
+
+instance("router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+
+networks() >
+    network("lan").
+
+network("lan") >
+    subnet("192.168.56.0/24"),
+    endpoint("vm1", "DHCP"),
+    endpoint("router", "192.168.56.254").
+
+events() >
+    mainEvent().
+
+mainEvent() >
+    event("run_hello").
+
+event("run_hello") >
+    instance("vm1"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("hello", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2024-01-01T00:00:00+00:00"),
+    description("Run the Hello World script").
+
+object("hello") >
+    location("${uriRemote}/HelloWorld/hello.sh").
+```
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
+```
+
+Replace the example repository and object location with an accessible artifact before rendering target files.

@@ -225,7 +225,7 @@ Until these sources are aligned, validate both the language structure and its in
 
 ## Related documentation
 
-- [What is CRADLE?](index.md)
+- [What is CRADLE?](../overview/what-is-cradle)
 - [Hello World Example](helloworld.md)
 - [Write a scenario](../user-guide/write-scenario.md)
 - [Heuristic Annotations](heuristic.md)

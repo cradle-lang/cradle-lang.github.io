@@ -1,64 +1,14 @@
 import type { ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 
-import releases from '../../../data/releases.json';
-
 import sharedStyles from '../Homepage.module.css';
 import styles from './LatestRelease.module.css';
 import TerminalAnimation from './TerminalAnimation';
 
-type ReleaseAsset = {
-  id: number;
-  name: string;
-  size: number;
-  downloadCount: number;
-  downloadUrl: string;
-};
-
-type Release = {
-  id: number;
-  tagName: string;
-  name: string;
-  body: string;
-  publishedAt: string | null;
-  htmlUrl: string;
-  prerelease: boolean;
-  assets: ReleaseAsset[];
-};
-
 const QUICK_START_URL = '/docs/getting-started/quick-start';
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-
-  const kilobytes = bytes / 1024;
-
-  if (kilobytes < 1024) {
-    return `${kilobytes.toFixed(1)} KB`;
-  }
-
-  const megabytes = kilobytes / 1024;
-
-  return `${megabytes.toFixed(1)} MB`;
-}
-
-function formatReleaseDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-GB', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+const INSTALL_URL = '/docs/getting-started/install-cradlexc';
 
 export default function LatestRelease(): ReactNode {
-  const releaseData = releases as Release[];
-
-  const latestRelease = releaseData.find(
-    (release) => !release.prerelease,
-  );
-
   return (
     <section className={styles.releases}>
       <div
@@ -70,171 +20,119 @@ export default function LatestRelease(): ReactNode {
           </p>
 
           <h2 className={sharedStyles.sectionHeading}>
-            Download the latest release.
+            Install CradleXC.
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            Get the latest packaged version of CRADLE for your
-            environment.
+            Install CradleXC through the official CRADLE package
+            repository, verify your environment and start writing your
+            first scenario.
           </p>
         </div>
 
         <div className={styles.releaseGrid}>
-          {/* =====================================================
-              DOWNLOAD
-              ===================================================== */}
 
-          <div className={styles.downloadPanel}>
-            {latestRelease ? (
-              <>
-                <div className={styles.panelHeader}>
-                  <span className={styles.panelLabel}>
-                    Latest release
+          <div className={styles.installPanel}>
+            <div className={styles.panelHeader}>
+              <span className={styles.panelLabel}>
+                APT · Ubuntu / Debian
+              </span>
+
+              <h3>
+                Install from the CRADLE repository.
+              </h3>
+
+              <p className={styles.panelDescription}>
+                Configure the official CRADLE APT repository once, then
+                install and update CradleXC through your system package
+                manager.
+              </p>
+            </div>
+
+            <div className={styles.installSteps}>
+              <div className={styles.installStep}>
+                <span className={styles.stepNumber}>
+                  01
+                </span>
+
+                <div>
+                  <strong>
+                    Add the repository
+                  </strong>
+
+                  <span>
+                    Configure the CRADLE package source.
                   </span>
-
-                  <h3>
-                    {latestRelease.name ||
-                      latestRelease.tagName}
-                  </h3>
-
-                  {latestRelease.publishedAt && (
-                    <p className={styles.releaseDate}>
-                      Released{' '}
-                      {formatReleaseDate(
-                        latestRelease.publishedAt,
-                      )}
-                    </p>
-                  )}
                 </div>
+              </div>
 
-                {latestRelease.assets.length > 0 ? (
-                  <div className={styles.downloads}>
-                    <div className={styles.downloadsHeader}>
-                      <span>Downloads</span>
+              <div className={styles.stepConnector} />
 
-                      <span className={styles.assetCount}>
-                        {latestRelease.assets.length}{' '}
-                        {latestRelease.assets.length === 1
-                          ? 'asset'
-                          : 'assets'}
-                      </span>
-                    </div>
+              <div className={styles.installStep}>
+                <span className={styles.stepNumber}>
+                  02
+                </span>
 
-                    <div className={styles.assetList}>
-                      {latestRelease.assets.map((asset) => (
-                        <a
-                          key={asset.id}
-                          className={styles.asset}
-                          href={asset.downloadUrl}
-                        >
-                          <span className={styles.assetName}>
-                            {asset.name}
-                          </span>
+                <div>
+                  <strong>
+                    Install CradleXC
+                  </strong>
 
-                          <span className={styles.assetSize}>
-                            {formatFileSize(asset.size)}
-                          </span>
-
-                          <span
-                            className={styles.assetArrow}
-                            aria-hidden="true"
-                          >
-                            ↓
-                          </span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.emptyDownloads}>
-                    <p>
-                      No packaged files are available for this
-                      release yet.
-                    </p>
-                  </div>
-                )}
-
-                <div className={styles.panelFooter}>
-                  <Link
-                    className={styles.primaryAction}
-                    to="/releases/"
-                  >
-                    Release notes →
-                  </Link>
-
-                  <a
-                    className={styles.textAction}
-                    href={latestRelease.htmlUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View on GitHub ↗
-                  </a>
+                  <code>
+                    sudo apt install cxc
+                  </code>
                 </div>
-              </>
-            ) : (
-              <>
-                <div className={styles.panelHeader}>
-                  <span className={styles.panelLabel}>
-                    Packaged release
+              </div>
+
+              <div className={styles.stepConnector} />
+
+              <div className={styles.installStep}>
+                <span className={styles.stepNumber}>
+                  03
+                </span>
+
+                <div>
+                  <strong>
+                    Keep it updated
+                  </strong>
+
+                  <span>
+                    Future releases are delivered through APT.
                   </span>
-
-                  <h3>
-                    No release available yet.
-                  </h3>
-
-                  <p className={styles.panelDescription}>
-                    The first packaged CRADLE release has not
-                    been published yet.
-                  </p>
                 </div>
+              </div>
+            </div>
 
-                <div className={styles.releasePlaceholder}>
-                  <div className={styles.placeholderIcon}>
-                    ↓
-                  </div>
+            <div className={styles.panelFooter}>
+              <Link
+                className={styles.primaryAction}
+                to={INSTALL_URL}
+              >
+                View installation guide →
+              </Link>
 
-                  <div>
-                    <strong>
-                      Packaged downloads coming soon
-                    </strong>
-
-                    <span>
-                      Release assets will appear here when
-                      published.
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.panelFooter}>
-                  <Link
-                    className={styles.primaryAction}
-                    to="/releases/"
-                  >
-                    View releases →
-                  </Link>
-                </div>
-              </>
-            )}
+              <Link
+                className={styles.textAction}
+                to="/releases/"
+              >
+                View release notes →
+              </Link>
+            </div>
           </div>
-
-          {/* =====================================================
-              QUICK START
-              ===================================================== */}
 
           <div className={styles.quickStartPanel}>
             <div className={styles.panelHeader}>
               <span className={styles.panelLabel}>
-                Quick Start
+                Ready to build
               </span>
 
               <h3>
-                Run CRADLE.
+                Check your environment.
               </h3>
 
               <p className={styles.panelDescription}>
-                Follow the introductory workflow and generate
-                your first CRADLE deployment.
+                Confirm that CradleXC is available and verify the local
+                dependencies required by your CRADLE environment.
               </p>
             </div>
 
@@ -244,10 +142,10 @@ export default function LatestRelease(): ReactNode {
 
             <div className={styles.panelFooter}>
               <Link
-                className={styles.textAction}
+                className={styles.primaryAction}
                 to={QUICK_START_URL}
               >
-                Open Quick Start →
+                Write your first scenario →
               </Link>
             </div>
           </div>

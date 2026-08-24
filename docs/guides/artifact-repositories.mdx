@@ -1,0 +1,46 @@
+---
+sidebar_position: 3
+title: Artifact Repositories
+---
+
+# Artifact Repositories
+
+CRADLE scenarios describe artifacts; CradleXC resolves their locations before output is generated. Keep the three layers distinct.
+
+| Layer | Purpose |
+| --- | --- |
+| Scenario metadata | Selects a repository for that scenario with `repositoryRemote()` or `repositoryLocal()`. |
+| Local configuration | Provides the `artifact_repo` fallback and the `artifact_dir` staging location. |
+| Object definition | Gives each artifact its `location()`, commonly using interpolation. |
+
+## Scenario repository
+
+```cradle
+metadata() >
+    name("Example"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("setup").
+
+object("setup") >
+    location("${uriRemote}/Example/setup.sh").
+```
+
+`repositoryRemote()` overrides the local `artifact_repo` fallback. A scenario can instead use `repositoryLocal()` when its artifacts are available on the host.
+
+## Local fallback and staging
+
+```toml
+artifact_repo = "/srv/cradle/artifacts"
+artifact_dir = "/srv/cradle/staging"
+```
+
+CradleXC checks resolved object locations before rendering. Ensure every referenced object exists and that the process can read or download it.
+
+## Authoring checklist
+
+- Declare every object in `metadata()`.
+- Define a matching `object("name")` block.
+- Use the same object name in instances and `runObject()` calls.
+- Prefer `${uriRemote}` or `${uriLocal}` to repeated absolute paths.
+- Validate after changing object references.

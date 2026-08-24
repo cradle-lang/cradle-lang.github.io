@@ -437,7 +437,7 @@ export default function CradleInAction(): ReactNode {
 
           <Link
             className={styles.textLink}
-            to="/docs/user-guide/write-scenario">
+            to="/docs/getting-started/first-scenario">
             Learn how scenarios are written →
           </Link>
         </div>

@@ -1,0 +1,175 @@
+---
+sidebar_position: 8
+title: Includes
+---
+
+# Includes
+
+Includes let a scenario compose definitions from other local CRADLE files.
+
+```cradle
+include "common/attacker.cradle".
+include "networks/corporate-lan.cradle".
+```
+
+Included paths are resolved relative to the file that contains the `include` statement. Their instances, networks, objects, and events are merged into the main scenario; metadata in the main file takes precedence.
+
+## Current documentation status
+
+The current CRADLE language supports:
+
+- metadata
+- instances
+- networks
+- events
+- objects
+- cross-references between named elements
+- repository interpolation
+- heuristic annotations
+- local include statements
+
+## Scenario composition
+
+Use includes for reusable definitions, but keep the top-level scenario metadata in the main file.
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+
+instances() >
+    instance("Client").
+
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    endpoint("Client", "DHCP").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("1").
+
+event("1") >
+    instance("Client"),
+    needRoot("false"),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    description("Initialize the example client").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+This keeps the scenario declarations and their definitions together in one source file.
+
+## Cross-references still apply
+
+Even when scenario composition features are introduced, CRADLE names remain important cross-references.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+must correspond to:
+
+```CRADLE
+instance("Client") >
+    ...
+```
+
+Similarly:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+must correspond to:
+
+```CRADLE
+object("InitializationScript") >
+    ...
+```
+
+and an event reference such as:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+must use the same object name.
+
+:::important
+Splitting scenario definitions across files should not change the requirement for named references to resolve consistently.
+:::
+
+## Validate composed scenarios
+
+If a CradleXC release provides scenario composition or include functionality, validate the resulting scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Validation should be used to confirm that the source structure is accepted by the CradleXC release being used.
+
+## Future documentation
+
+This page should be expanded once the supported include mechanism is confirmed.
+
+The completed documentation should define:
+
+- the exact include syntax
+- supported path formats
+- relative path resolution
+- absolute path behaviour
+- duplicate declarations
+- name conflicts
+- processing order
+- nested includes
+- circular include handling
+- validation behaviour
+- compiler diagnostics
+- any restrictions on included files
+
+Until these behaviours are confirmed, they should not be documented as supported CRADLE features.
+
+## Related documentation
+
+- [Language Overview](./overview)
+- [Syntax and Types](./syntax-and-types)
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Networks and Routing](./networks-and-routing)
+- [Events and Dependencies](./events-and-dependencies)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Validate and Compile](../getting-started/validate-and-compile)
+
+## Next steps
+
+Continue with [Heuristics](./heuristics) to learn how classification metadata can be associated with supported CRADLE elements.
