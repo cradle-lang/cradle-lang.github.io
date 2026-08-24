@@ -121,7 +121,7 @@ The documentation identifies CRADLE as suitable for:
 
 Prospective users can inspect the documented approach directly:
 
-- the [Quick start](../getting-started/quick-start.md) generates and optionally
+- the [Quick start](../getting-started/quick-start) generates and optionally
   runs the included Hello World environment;
 - the [Hello World example](../introduction/helloworld.md) explains the
   scenario's systems, network, object, and events;
@@ -145,7 +145,7 @@ so each intended provider must be generated and validated separately.
 
 ## Evaluate CRADLE
 
-1. [Generate and run Hello World](../getting-started/quick-start.md).
+1. [Generate and run Hello World](../getting-started/quick-start).
 2. [Write a scenario](../user-guide/write-scenario.md).
 3. [Compare supported platforms](../deployment/supported-platforms.md).
 4. [Review the generated output](../user-guide/understand-output.md).
