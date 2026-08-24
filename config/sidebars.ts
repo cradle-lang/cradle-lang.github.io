@@ -107,6 +107,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'project/business-case',
         'project/support',
+        'project/acknowledgments',
+        'project/references',
         {
           type: 'category',
           label: 'Legal',
@@ -116,7 +118,6 @@ const sidebars: SidebarsConfig = {
             'project/LICENCE',
           ],
         },
-        'project/acknowledgments',
       ],
     },
   ],
