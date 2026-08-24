@@ -42,7 +42,7 @@ export default function StartLearning(): ReactNode {
 
           <Link
             className={styles.learningCard}
-            to="docs/getting-started/first-scenario">
+            to="/docs/guides/write-a-scenario">
             <span className={styles.cardNumber}>03</span>
             <h3>Model a scenario</h3>
             <p>
