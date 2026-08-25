@@ -1,14 +1,19 @@
-# Research and references
+---
+title: Research and References
+description: Review CRADLE research context, citation status, related cybersecurity frameworks, and reproducibility guidance.
+---
+
+# Research and References
 
 CRADLE builds on established practices in cybersecurity experimentation,
 cyber-range automation, threat modeling, and reproducible infrastructure.
 
 ## How to cite CRADLE
 
-```{note}
+:::note
 No preferred public citation is specified in this development snapshot. Confirm
 the required citation with the CRADLE project owner before publication.
-```
+:::
 
 ## CRADLE publications
 

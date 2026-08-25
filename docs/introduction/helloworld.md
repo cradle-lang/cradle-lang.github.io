@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Hello World example
 
 Hello World introduces the main CRADLE concepts through two Ubuntu instances,
@@ -156,7 +160,7 @@ A spelling or capitalization mismatch can leave a reference unresolved.
 Follow the [Quick Start](../getting-started/quick-start) to generate and
 optionally deploy the example. Use the
 [CRADLE language structure](sections.md) for property-level details, or
-[Write a scenario](../user-guide/write-scenario.md) to create your own.
+[Write a scenario](../guides/write-a-scenario) to create your own.
 
 For structured-output and compiler integration details, see the
 [developer schema reference](../schema/cradle-schema.md).

@@ -200,7 +200,7 @@
     var(--cradle-text);
 
   font-size:
-    0.68rem;
+    0.75rem;
   font-weight: 650;
 
   cursor: pointer;
@@ -218,6 +218,15 @@
     );
 }
 
+.workbench button:focus-visible,
+.toggle input:focus-visible {
+  outline:
+    2px solid
+    var(--cradle-accent);
+
+  outline-offset: 2px;
+}
+
 .primaryButton {
   border-color:
     var(--cradle-accent) !important;
@@ -232,6 +241,10 @@
 .primaryButton:hover {
   background:
     var(--cradle-accent-hover) !important;
+}
+
+:global([data-theme='dark']) .primaryButton {
+  color: var(--cradle-surface) !important;
 }
 
 .dangerButton {
@@ -269,6 +282,10 @@
   min-height: 0;
 
   overflow: hidden;
+}
+
+.mobilePaneTabs {
+  display: none;
 }
 
 .sourcePane,
@@ -348,7 +365,7 @@
     var(--cradle-text);
 
   font-size:
-    0.72rem;
+    0.75rem;
   font-weight: 650;
 }
 
@@ -382,7 +399,7 @@
     var(--ifm-font-family-monospace);
 
   font-size:
-    0.62rem;
+    0.7rem;
 
   text-overflow:
     ellipsis;
@@ -414,7 +431,6 @@
     16px 18px;
 
   border: 0;
-  outline: 0;
 
   background:
     var(--cradle-code-bg);
@@ -426,7 +442,7 @@
     var(--ifm-font-family-monospace);
 
   font-size:
-    0.76rem;
+    0.8rem;
 
   line-height:
     1.6;
@@ -438,6 +454,14 @@
   box-shadow:
     inset 2px 0 0
     var(--cradle-accent);
+}
+
+.editor textarea:focus-visible {
+  outline:
+    2px solid
+    var(--cradle-accent);
+
+  outline-offset: -2px;
 }
 
 /* =========================================================
@@ -494,7 +518,7 @@
     var(--cradle-text-muted);
 
   font-size:
-    0.58rem;
+    0.7rem;
 
   letter-spacing:
     0.08em;
@@ -519,7 +543,7 @@
     var(--cradle-text);
 
   font-size:
-    0.68rem;
+    0.72rem;
 }
 
 .consoleBody {
@@ -539,6 +563,43 @@
 
   margin-bottom:
     3px;
+}
+
+.consoleBody > .errorGuidance {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-bottom: 10px;
+  padding: 9px 10px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--ifm-color-danger) 55%,
+      var(--cradle-border)
+    );
+
+  border-radius: 5px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--ifm-color-danger) 7%,
+      var(--cradle-surface)
+    );
+}
+
+.errorGuidance strong {
+  color: var(--cradle-danger);
+}
+
+.errorGuidance code {
+  overflow-wrap: anywhere;
+
+  padding: 4px 6px;
 }
 
 .consoleBody > div > span:first-child {
@@ -565,7 +626,7 @@
     var(--cradle-code-text);
 
   font-size:
-    0.62rem;
+    0.7rem;
 
   white-space:
     pre-wrap;
@@ -631,7 +692,7 @@
     var(--cradle-text-muted);
 
   font-size:
-    0.5rem;
+    0.62rem;
 
   letter-spacing:
     0.05em;
@@ -687,7 +748,7 @@
     var(--cradle-text-muted);
 
   font-size:
-    0.66rem;
+    0.72rem;
 }
 
 .toggle input {
@@ -795,9 +856,75 @@
     grid-template-columns:
       1fr;
 
-    grid-template-rows:
-      720px
-      720px;
+    grid-template-rows: minmax(720px, 1fr);
+  }
+
+  .mobilePaneTabs {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 4px;
+
+    padding: 7px 10px;
+
+    border-bottom: 1px solid var(--cradle-border);
+
+    background: var(--cradle-surface);
+  }
+
+  .mobilePaneTab,
+  .mobilePaneTabActive {
+    min-height: 44px;
+  }
+
+  .mobilePaneTabActive {
+    border-color: var(--cradle-primary) !important;
+    background: var(--cradle-primary) !important;
+    color: #ffffff !important;
+  }
+
+  :global([data-theme='dark']) .mobilePaneTabActive {
+    color: var(--cradle-surface) !important;
+  }
+
+  .workbench[data-mobile-pane='source'] .visualPane,
+  .workbench[data-mobile-pane='visualization'] .sourcePane,
+  .workbench[data-mobile-pane='inspector'] .visualPane {
+    display: none;
+  }
+
+  .workbench[data-mobile-pane='source'] .inspectorPanel {
+    display: none;
+  }
+
+  .workbench[data-mobile-pane='source'] .bottomPanels {
+    grid-template-columns: 1fr;
+  }
+
+  .workbench[data-mobile-pane='source'] .consolePanel {
+    border-right: 0;
+  }
+
+  .workbench[data-mobile-pane='inspector'] .sourcePane {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .workbench[data-mobile-pane='inspector'] .paneHeader,
+  .workbench[data-mobile-pane='inspector'] .editor,
+  .workbench[data-mobile-pane='inspector'] .consolePanel,
+  .workbench[data-mobile-pane='inspector'] .metrics {
+    display: none;
+  }
+
+  .workbench[data-mobile-pane='inspector'] .bottomPanels {
+    display: block;
+
+    border-top: 0;
+  }
+
+  .workbench[data-mobile-pane='inspector'] .inspectorPanel {
+    height: 100%;
   }
 
   .sourcePane {
@@ -815,5 +942,11 @@
         220px,
         0.7fr
       );
+  }
+
+  .topActions button,
+  .paneActions button,
+  .viewActions button {
+    min-height: 44px;
   }
 }

@@ -362,6 +362,8 @@ export default function TopologyView({
       ref={svgRef}
       viewBox="0 0 1200 800"
       preserveAspectRatio="xMidYMid meet"
+      role="group"
+      aria-labelledby="workbench-topology-title workbench-topology-description"
       onWheel={handleWheel}
       onPointerDown={
         handlePointerDown
@@ -378,6 +380,14 @@ export default function TopologyView({
         touchAction: 'none',
       }}
     >
+      <title id="workbench-topology-title">
+        CRADLE network topology
+      </title>
+
+      <desc id="workbench-topology-description">
+        Interactive network and instance diagram. Use Tab to move between selectable items and Enter or Space to inspect one.
+      </desc>
+
       <defs>
         <marker
           id="topology-arrow"

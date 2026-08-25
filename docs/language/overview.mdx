@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Language Overview
+description: Explore the structure and required ordering of CRADLE metadata, instances, networks, events, and objects.
 ---
 
 # Language Overview
@@ -430,7 +431,7 @@ CRADLE supports references that can be used when constructing values.
 The Hello World scenario uses:
 
 ```CRADLE
-location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 Here:
@@ -447,49 +448,19 @@ Detailed interpolation behavior is covered in [Objects and Interpolation](./obje
 
 ## Source file example
 
-A simplified view of the Hello World scenario structure is:
+The canonical HelloWorld-Win source is maintained on the
+[HelloWorld-Win example page](../examples/hello-world). Its top-level sections
+appear in this order:
 
-```CRADLE
-instances() >
-    instance("HelloWorld"),
-    instance("router").
+1. `metadata()`
+2. `instances()` followed by the instance definitions
+3. `networks()` followed by the network definitions
+4. `events()` followed by the event-phase and event definitions
+5. the final `object()` definition
 
-instance("HelloWorld") >
-    os("ubuntu", "20.04"),
-    object("HelloWorld").
-
-networks() >
-    network("lan_0").
-
-network("lan_0") >
-    endpoint("HelloWorld", "DHCP"),
-    endpoint("router", "DHCP").
-
-metadata() >
-    name("HelloWorld"),
-    eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
-    object("HelloWorld").
-
-events() >
-    preEvent(),
-    mainEvent(),
-    postEvent().
-
-preEvent() >
-    event("1").
-
-event("1") >
-    instance("HelloWorld"),
-    runObject("HelloWorld", "").
-
-object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
-```
-
-:::note
-This shortened example demonstrates the relationships between the major language elements. See [First Scenario](../getting-started/first-scenario) for the complete Hello World scenario.
-:::
+Use that complete example when learning the file structure. The shorter code
+fragments in this language reference demonstrate individual language concepts
+and are not intended to be complete standalone scenarios.
 
 ## Language and backend responsibilities
 

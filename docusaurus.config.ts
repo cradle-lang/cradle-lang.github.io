@@ -22,6 +22,8 @@ const config: Config = {
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    // Use Webpack until the Rspack development-server panic is resolved.
+    faster: false,
   },
 
   // Set the production url of your site here
@@ -214,12 +216,24 @@ const config: Config = {
               to: '/releases/',
             },
             {
-              label: 'Support',
+              label: 'Support and Feedback',
               to: '/docs/project/support',
+            },
+            {
+              label: 'Research and References',
+              to: '/docs/project/references',
             },
             {
               label: 'Acknowledgements',
               to: '/docs/project/acknowledgments',
+            },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/cradle-lang/cradle-lang.github.io',
+            },
+            {
+              label: 'Report a Website Issue',
+              href: 'https://github.com/cradle-lang/cradle-lang.github.io/issues',
             },
           ],
         },

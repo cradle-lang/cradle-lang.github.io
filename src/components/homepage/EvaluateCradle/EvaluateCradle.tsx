@@ -27,19 +27,23 @@ export default function EvaluateCradle(): ReactNode {
               Edit CRADLE source and inspect its topology and event flow without
               deploying infrastructure.
             </p>
-            <span className={styles.cardLink}>Open the Workbench →</span>
+            <span className={styles.cardLink}>
+              Try CRADLE in the Workbench →
+            </span>
           </Link>
 
           <Link
             className={styles.evidenceCard}
             to="/docs/getting-started/first-scenario">
             <span className={styles.cardLabel}>Documented example</span>
-            <h3>Follow the HelloWorld scenario</h3>
+            <h3>Follow the HelloWorld-Win scenario</h3>
             <p>
-              Trace instances, a network, an object and scheduled events
+              Trace instances, a network, an object and a scheduled event
               through a compact scenario definition.
             </p>
-            <span className={styles.cardLink}>Explore HelloWorld →</span>
+            <span className={styles.cardLink}>
+              View the HelloWorld-Win scenario →
+            </span>
           </Link>
 
           <Link
@@ -51,7 +55,7 @@ export default function EvaluateCradle(): ReactNode {
               Examine the documented metadata, instances, networks and events,
               together with known schema and compiler differences.
             </p>
-            <span className={styles.cardLink}>Open the schema reference →</span>
+            <span className={styles.cardLink}>Read the schema reference →</span>
           </Link>
         </div>
       </div>

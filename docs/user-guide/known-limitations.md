@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Known limitations
 
 This page summarizes the current boundaries of the public CRADLE workflow.
@@ -37,7 +41,7 @@ Providers do not offer identical capabilities or infrastructure.
 - A scenario that generates for one provider is not guaranteed to generate or
   run successfully on another.
 
-See [Supported platforms](../deployment/supported-platforms.md) for the current
+See the [backend overview](../guides/backends/overview) for the current
 capability matrix.
 
 ## Host and dependency requirements
@@ -140,7 +144,7 @@ does not:
 - calculate risk from FAIR-style values.
 
 Scenario authors are responsible for checking external identifiers and their
-applicability. See [Heuristic annotations](../introduction/heuristic.md).
+applicability. See [Heuristic annotations](../language/heuristics).
 
 ## Public examples
 

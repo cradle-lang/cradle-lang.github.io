@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Write a Scenario
+description: Learn the required CRADLE source order and define metadata, instances, networks, events, and objects.
 ---
 
 # Write a Scenario
@@ -322,7 +323,7 @@ This leaves additional network details to the target-specific generation path.
 
 For more information, see [Networks and Routing](../language/networks-and-routing).
 
-## Define the object
+## Plan the object definition
 
 Objects describe external artifacts used by the scenario.
 
@@ -332,6 +333,10 @@ For example:
 object("InitializationScript") >
     location("${uriRemote}/scripts/initialize.sh").
 ```
+
+In the complete source, place this final object definition after the event
+declarations and definitions. The object name is introduced earlier through
+`metadata()` and its instance association.
 
 `${uriRemote}` references the remote artifact repository defined by:
 
@@ -741,14 +746,16 @@ A practical scenario-authoring workflow is:
 3. Define scenario metadata.
 4. Declare and define instances.
 5. Declare and define networks.
-6. Declare and define objects.
+6. Confirm that objects are declared in metadata and associated with the
+   intended instances.
 7. Define the event lifecycle.
 8. Add events and dependencies.
-9. Check every named reference.
-10. Validate the scenario.
-11. Inspect the intermediate representation if required.
-12. Compile the scenario.
-13. Generate target-specific files only when required.
+9. Finish with the object definitions.
+10. Check every named reference.
+11. Validate the scenario.
+12. Inspect the intermediate representation if required.
+13. Compile the scenario.
+14. Generate target-specific files only when required.
 
 <div className="architecture-flow">
 

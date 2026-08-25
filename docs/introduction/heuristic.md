@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Heuristic Annotations
 
 The `heuristic` property adds semantic context to a CRADLE instance, event, or object. It associates a scenario element with a framework name and an external identifier without changing the element’s core definition.
@@ -134,5 +138,5 @@ Heuristic annotations should provide classification context only. They must not 
 
 - [CRADLE Language Structure](sections.md)
 - [Hello World Example](helloworld.md)
-- [Write a scenario](../user-guide/write-scenario.md)
+- [Write a scenario](../guides/write-a-scenario)
 - [Developer schema reference](../schema/cradle-schema.md)

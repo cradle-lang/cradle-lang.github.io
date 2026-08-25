@@ -1,11 +1,19 @@
 ---
 sidebar_position: 1
 title: Backend Overview
+description: Understand CRADLE backend discovery, compatibility layers, public availability, and target-file generation boundaries.
 ---
 
 # Backend Overview
 
-A backend is an external executable that renders target-specific files from CradleXC's backend-neutral representation. CradleXC has no built-in backend.
+A backend is an external executable that renders target-specific files from
+CradleXC's backend-neutral representation. CradleXC has no built-in backend.
+
+This separation keeps provider-specific behavior outside the CRADLE language
+and the core compiler. The backend determines which target it supports, which
+files it generates, and which external tools or services those files require.
+
+## Backend discovery
 
 Backends use the executable name:
 
@@ -20,6 +28,100 @@ cxc backend list
 cxc plugin install <name>
 ```
 
-Discovery confirms that CradleXC can find a compatible plugin. It does not guarantee that the plugin supports every scenario, host, or target capability. Use `cxc doctor` to review dependencies contributed by discovered plugins.
+Discovery confirms that CradleXC can find the plugin and recognize its
+manifest. It does not, by itself, guarantee that the plugin supports every
+scenario feature, host configuration, provider, or target version.
 
-For the command-level details, see [Backend Discovery](../../cli/backend-discovery).
+## What compatibility means
+
+Backend compatibility has several separate layers:
+
+| Layer | What to confirm |
+| --- | --- |
+| CradleXC compatibility | The backend supports the plugin protocol and Deployment IR versions used by the installed CradleXC release. |
+| Scenario compatibility | The backend implements the CRADLE features used by the scenario. |
+| Host compatibility | The host provides the operating system, executables, permissions, and resources required by the backend. |
+| Target compatibility | The generated files match the intended provider, platform, API, or tool version. |
+| Runtime compatibility | Images, networks, artifacts, credentials, capacity, and external services required by the generated environment are available. |
+
+A successful `cxc backend list` result confirms discovery. A successful
+`cxc doctor` result confirms only the dependency checks reported by CradleXC
+and the discovered plugins. Neither command proves that a particular scenario
+can be rendered or operated successfully on every target.
+
+## Find supported backends
+
+Backend plugins are released separately from CradleXC. Use the
+[CRADLE release repository](https://github.com/cradle-lang/cradle-release) to
+find published plugin names, then consult the selected plugin's documentation
+for its supported targets, versions, features, and prerequisites.
+
+This page intentionally does not maintain a fixed platform matrix. Backend
+availability and compatibility can change independently of the CRADLE
+documentation site, so the plugin release and its accompanying documentation
+are the authoritative sources for those details.
+
+## Public evaluation and availability
+
+Different parts of CRADLE can be evaluated independently:
+
+| Capability | Public evaluation path | Boundary |
+| --- | --- | --- |
+| Language and documentation | Read the language guide and canonical HelloWorld-Win example. | Documentation explains the model but does not deploy infrastructure. |
+| Browser Workbench | Edit a scenario and inspect its topology, event flow, or text summary. | The Workbench is an inspection tool and does not run CradleXC or start virtual machines. |
+| Validation and compilation | Use `cxc validate` and `cxc compile` with an available CradleXC distribution. | Availability of the compiler distribution is separate from backend availability. |
+| Target-file generation | Install a published, compatible plugin and use `cxc emit`. | Do not assume a backend is publicly available unless it appears in the release repository with its own compatibility documentation. |
+| Deployment or execution | Review generated files and use the selected target tooling in an authorized testbed. | CradleXC does not automatically deploy or execute the generated files. |
+
+If the release repository does not list a backend release for the required
+target, treat that target as unavailable for public evaluation. Do not infer
+support from an example command or from successful plugin discovery alone.
+
+## Compatibility checklist
+
+Before generating target-specific files:
+
+1. Identify the target platform, provider, or tool that must consume the
+   generated output.
+2. Select a published backend that documents support for that target.
+3. Confirm that the backend supports the installed CradleXC protocol and
+   Deployment IR versions.
+4. Install the backend and verify discovery with `cxc backend list`.
+5. Run `cxc doctor` and resolve required host dependencies.
+6. Validate the scenario with `cxc validate`.
+7. Generate output with `cxc emit`.
+8. Inspect and validate the generated files using the target tool before
+   operating them in a testbed.
+
+:::important
+CRADLE validation confirms that the scenario is valid for the language and
+compiler. It does not guarantee that every backend implements every scenario
+feature or that the target environment has the required capacity, images,
+artifacts, permissions, or network configuration.
+:::
+
+## Generate with a backend
+
+After selecting and installing a compatible backend, use:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+cxc backend list
+cxc doctor
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o ./output
+```
+
+CradleXC writes target-specific files to the output directory. It does not
+automatically execute those files or deploy infrastructure. Review the output
+and follow the selected backend's documentation for any subsequent steps.
+
+## Related documentation
+
+- [Use a Backend](../../getting-started/use-a-backend)
+- [Generate Target Files](./generate-target-files)
+- [Backend Discovery](../../cli/backend-discovery)
+- [Backend Development](../../backend-development/overview)
+- [Troubleshooting](../troubleshooting)

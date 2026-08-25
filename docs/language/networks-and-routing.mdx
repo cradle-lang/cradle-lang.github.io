@@ -226,8 +226,9 @@ The Hello World example uses DHCP for both instances:
 
 ```CRADLE
 network("lan_0") >
-    endpoint("HelloWorld", "DHCP"),
-    endpoint("router", "DHCP").
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
 ```
 
 In that scenario, no explicit subnet is defined.
@@ -450,7 +451,7 @@ network("lan_0") >
 This connects:
 
 ```text
-HelloWorld
+win7
 router
 ```
 
@@ -460,11 +461,7 @@ to:
 lan_0
 ```
 
-using DHCP.
-
-The scenario does not specify a subnet.
-
-As a result, target-specific network details can be supplied or resolved by the selected backend.
+using the addresses declared in the `192.168.56.0/24` subnet.
 
 ## Network declarations and definitions
 

@@ -1,5 +1,5 @@
 ---
-orphan: true
+draft: true
 ---
 
 # Intermediary Language
@@ -78,5 +78,5 @@ Until an IL implementation is supplied and tested:
 
 - Review the documented forms in [IL Syntax and Structure](syntax.md).
 - Compare both representations in the [Intermediary Language Example](example.md).
-- Consult [CRADLE Language Structure](../introduction/sections.md) for the formal language.
+- Consult the [CRADLE Language Overview](../language/overview) for the formal language.
 - Review the [CRADLE Schema Reference](../schema/cradle-schema.md) for the structured model and current limitations.

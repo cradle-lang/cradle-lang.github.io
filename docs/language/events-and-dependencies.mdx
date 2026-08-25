@@ -690,7 +690,8 @@ event 3
 postEvent
 ```
 
-The Hello World scenario follows this structure.
+The canonical HelloWorld-Win scenario declares all three phases and currently
+places one event in the main phase.
 
 ## Hello World events
 
@@ -703,38 +704,33 @@ events() >
     postEvent().
 ```
 
-The pre-event phase contains:
-
-```CRADLE
-preEvent() >
-    event("1").
-```
-
 The main phase contains:
 
 ```CRADLE
 mainEvent() >
-    event("2").
+    event("1").
 ```
 
-The post-event phase contains:
+The event definition:
 
 ```CRADLE
-postEvent() >
-    event("3").
+event("1") >
+    instance("router"),
+    needRoot("true"),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
 ```
 
-All three events:
+This event:
 
-- reference `instance("HelloWorld")`
-- use `bash`
-- run the `HelloWorld` object
-- do not request root privileges
-- use zero-second pauses
-- use `waitfor("false")`
-- use the same scheduled execution timestamp
-
-The descriptions distinguish the lifecycle phases.
+- references `instance("router")`
+- requests root privileges
+- uses zero-second pauses
+- does not wait for another event
+- records an explicit execution timestamp
 
 ## Cross-references
 

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 title: Quick Start
+description: Install CradleXC, validate a CRADLE scenario, and compile the canonical HelloWorld-Win example to YAML.
 ---
 
 # Quick Start
@@ -11,11 +12,9 @@ You will:
 
 1. install CradleXC
 2. verify that `cxc` is available
-3. check the required dependencies
-4. work with a CRADLE scenario
-5. validate the scenario
-6. inspect its intermediate representation
-7. compile it to YAML
+3. obtain a CRADLE scenario
+4. validate the scenario
+5. compile it to YAML
 
 No backend plugin is required for validation or compilation.
 
@@ -36,7 +35,7 @@ Before starting, make sure you have:
 
 2. Add the CRADLE package repository, update your package index and install CradleXC.
 
-For example: 
+For example:
 
 ```bash
 echo "deb  <CRADLE_APT_REPOSITORY_URL> | sudo tee /etc/apt/sources.list.d/cradle.list
@@ -67,11 +66,13 @@ Resolve any required dependency issues reported by `cxc doctor` before continuin
 :::
 
 
-## Choose a CRADLE scenario
+## Obtain a CRADLE scenario
 
-Use an existing `.cradle` scenario or create one for testing.
+Use an existing `.cradle` scenario or follow the
+[First Scenario](./first-scenario) guide to create one.
 
 For example:
+
 ```text
 scenarios/HelloWorld.cradle
 ```
@@ -86,32 +87,22 @@ Validate the scenario before compiling it:
 cxc validate -i scenarios/HelloWorld.cradle
 ```
 
-Validation checks whether the CRADLE syntax is valid 
+Validation checks whether the CRADLE syntax is valid
 and reports any syntax errors that need to be fixed.
 
 :::note
 Fix any reported validation errors before continuing.
 :::
 
-## Inspect the intermediate representation (IR)
-
-To inspect how CradleXC has interpreted the scenario, run:
-
-```bash
-cxc dump-ir -i scenarios/HelloWorld.cradle
-```
-
-`cxc dump-ir` displays the intermediate representation produced from the CRADLE scenario.
-This is useful when troubleshooting a scenario or inspecting the result of CradleXC's parsing
-and semantic processing.
-
 ## Compile the scenario
 
 Compile the validated scenario to YAML:
+
 ```bash
 cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
 ```
-CradleXC processes the scenario and writes the compiled output to `HelloWorld.yml`
+
+CradleXC processes the scenario and writes the compiled output to `HelloWorld.yml`.
 
 You have now completed the basic CRADLE workflow:
 
@@ -130,7 +121,21 @@ You have now completed the basic CRADLE workflow:
 
 </div>
 
-## Generate target-specific output
+## Optional next steps
+
+### Inspect the intermediate representation
+
+To inspect how CradleXC interpreted the scenario, run:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This command displays the intermediate representation produced from the
+CRADLE scenario. It is useful for troubleshooting or reviewing CradleXC's
+parsing and semantic processing.
+
+### Generate target-specific output
 
 Backend plugins provide target-specific rendering functionality.
 
@@ -155,7 +160,7 @@ cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
 The backend plugin generates the files required by its target.
-These files are not automatically executed by CradleXC. 
+These files are not automatically executed by CradleXC.
 You can use the generated files with the corresponding tools in your own testbed environment.
 
 ## Next steps

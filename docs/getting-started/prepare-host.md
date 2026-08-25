@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Prepare a deployment host
 
 Prepare a local CRADLE host before running the complete deployment workflow.
@@ -31,7 +35,7 @@ managed deployment.
 | `virtualbox` | Install and validate VirtualBox only. |
 | `both` | Install and validate both local providers. |
 
-See [Supported platforms](../deployment/supported-platforms.md) before choosing
+See the [backend overview](../guides/backends/overview) before choosing
 a provider.
 
 ## Run host preparation

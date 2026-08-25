@@ -1,6 +1,8 @@
 import {
   useMemo,
   useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
@@ -55,6 +57,9 @@ export default function NetworkGroup({
   onNodeMove,
   onSelect,
 }: Props) {
+  const [headerFocused, setHeaderFocused] =
+    useState(false);
+
   const dragRef = useRef<{
     pointerId: number;
     startX: number;
@@ -190,6 +195,24 @@ export default function NetworkGroup({
     }
   }
 
+  function selectNetworkFromKeyboard(
+    event: ReactKeyboardEvent<SVGGElement>,
+  ): void {
+    if (
+      event.key !== 'Enter' &&
+      event.key !== ' '
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect({
+      type: 'network',
+      id: network.id,
+    });
+  }
+
   return (
     <g
       transform={`
@@ -204,12 +227,25 @@ export default function NetworkGroup({
         height={height}
         rx={16}
         fill="var(--workbench-network-bg)"
-        stroke="var(--workbench-network)"
-        strokeWidth={1.5}
+        stroke={
+          headerFocused
+            ? 'var(--cradle-accent)'
+            : 'var(--workbench-network)'
+        }
+        strokeWidth={
+          headerFocused ? 3 : 1.5
+        }
       />
 
       {/* Network drag handle */}
       <g
+        role="button"
+        tabIndex={0}
+        aria-label={
+          network.subnet
+            ? `Network ${network.id}, subnet ${network.subnet}`
+            : `Network ${network.id}`
+        }
         onPointerDown={
           handleHeaderPointerDown
         }
@@ -219,6 +255,15 @@ export default function NetworkGroup({
         onPointerUp={finishNetworkDrag}
         onPointerCancel={
           finishNetworkDrag
+        }
+        onKeyDown={
+          selectNetworkFromKeyboard
+        }
+        onFocus={() =>
+          setHeaderFocused(true)
+        }
+        onBlur={() =>
+          setHeaderFocused(false)
         }
         style={{
           cursor: 'grab',

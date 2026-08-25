@@ -1,32 +1,80 @@
 # CRADLE Proprietary Software Licence
 
-Version 1.0
+Version 1.1
+
+Effective date: 25 August 2026
 
 Copyright © 2026 National Cybersecurity R&D Lab (NCL). All rights reserved.
+
+IMPORTANT: PLEASE READ THIS LICENCE CAREFULLY.
+
+By downloading, installing, accessing or using the Software, the Licensee agrees to be bound by this Licence.
+
+If an individual accepts this Licence on behalf of an organisation, that individual represents that they have authority to bind that organisation.
+
+If the Licensee does not agree to this Licence, the Licensee must not download, install, access or use the Software.
 
 ## 1. Definitions
 
 For the purposes of this Licence:
 
-**"CRADLE"** means the CRADLE software project.
+"Authorised Purpose" means:
 
-**"Licensor"** means National Cybersecurity R&D Lab (NCL), or another person or entity duly authorised to license the relevant CRADLE software.
+- non-commercial academic research
+- teaching and educational activities
+- internal testing and evaluation
+- development and testing of independent Plugins through documented CRADLE Interfaces
+- authorised cyber-range, laboratory or testbed activities conducted for any of the purposes above
 
-**"Software"** means the proprietary CRADLE compiler, assembler and any other proprietary executable, implementation material or CRADLE-owned component supplied under this Licence.
+"Authorised System" means a workstation, server, laboratory system, cyber range, testbed, authorised CI/CD environment or authorised cloud environment on which the Licensee is permitted to install or execute the Software.
 
-**"Licensee"** means the individual or organisation authorised to use the Software.
+"Authorised User" means an individual authorised by the Licensee to access or use the Software for an Authorised Purpose and within the scope of this Licence.
 
-**"Authorised User"** means an individual authorised by the Licensee and permitted under this Licence to access or use the Software.
+"Commercial Use" means use primarily intended for commercial advantage or monetary compensation, including:
 
-**"CRADLE Interface"** means CRADLE language syntax, a documented CRADLE Intermediate Representation, API, plugin interface, schema or other interoperability mechanism expressly made available for authorised use.
+- production deployment
+- enterprise operations other than internal evaluation
+- paid consultancy or training
+- commercial service provision
+- managed services
+- customer-facing services
+- resale
+- rental or leasing
+- sublicensing
+- commercial redistribution
 
-**"Plugin"** means software developed independently of the proprietary CRADLE compiler and assembler that interoperates with CRADLE through a documented CRADLE Interface.
+"CRADLE" means the CRADLE software project.
 
-**"Plugin Owner"** means the author, copyright owner or other person or entity having sufficient rights to license a Plugin.
+"CRADLE Interface" means CRADLE language syntax, a documented CRADLE Intermediate Representation, API, plugin interface, extension interface, schema or other interoperability mechanism expressly made available by NCL for authorised use.
 
-**"Generated Output"** means configuration files, deployment files, scripts, data or other materials generated through authorised use of the Software.
+"Documentation" means the user guides, reference materials, specifications and other documentation supplied by NCL for use with the Software.
 
-**"Release"** means a particular version or distribution of CRADLE.
+"Generated Output" means configuration files, deployment files, scripts, data or other materials generated through authorised use of the Software.
+
+"Licence" means this CRADLE Proprietary Software Licence.
+
+"Licence Materials" means:
+
+- this Licence
+- an applicable licence schedule
+- the CRADLE Copyright Notice
+- release-specific terms
+- an applicable `NOTICE` file
+- any other document expressly incorporated into this Licence
+
+"Licensee" means the individual or organisation that accepts this Licence and is authorised to use the Software.
+
+"Licensor" means National Cybersecurity R&D Lab (NCL), or another person or entity expressly identified as having authority to license the relevant Software.
+
+"NCL" means National Cybersecurity R&D Lab.
+
+"Plugin" means software developed independently of the proprietary CRADLE compiler and assembler that interoperates with CRADLE through a documented CRADLE Interface.
+
+"Plugin Owner" means the author, copyright owner or other person or entity possessing sufficient rights to license a Plugin.
+
+"Release" means a particular version or distribution of CRADLE.
+
+"Software" means the proprietary CRADLE compiler, assembler and any other proprietary executable, implementation material or CRADLE-owned component supplied under this Licence.
 
 ## 2. Ownership
 
@@ -48,16 +96,18 @@ The copyright framework applicable to CRADLE is described in [`COPYRIGHT.md`](./
 
 ## 3. Licence Grant
 
-Subject to the Licensee's compliance with this Licence and any applicable licence schedule or written agreement, the Licensor grants the Licensee a limited, non-exclusive, non-transferable and non-sublicensable licence to:
+Subject to the Licensee's continuing compliance with this Licence, NCL grants the Licensee a limited, revocable, non-exclusive, non-transferable and non-sublicensable licence to:
 
-- install the Software on authorised systems
-- execute and use the Software for authorised purposes
-- create, edit, validate and process `.cradle` files
+- install the Software on Authorised Systems
+- execute and use the Software solely for an Authorised Purpose
+- create, edit, validate, compile, assemble and process `.cradle` files
 - use documented CRADLE Interfaces for authorised interoperability
-- develop independent Plugins through documented CRADLE Interfaces
-- use Generated Output in accordance with this Licence and any applicable third-party rights
+- develop and test independent Plugins through documented CRADLE Interfaces
+- use Generated Output as permitted by this Licence
+- make copies reasonably necessary for authorised installation, backup and recovery
+- reproduce Documentation internally for Authorised Users where reasonably necessary to use the Software
 
-No right to access or obtain the non-public source code of the proprietary CRADLE compiler or assembler is granted unless expressly provided under a separate written agreement.
+No right to access or obtain non-public CRADLE source code is granted unless expressly provided in a separate written agreement.
 
 No right is granted except as expressly stated in this Licence, another applicable written agreement or applicable law.
 
@@ -95,33 +145,44 @@ Internal use does not, by itself, grant permission to:
 - resell CRADLE
 - make CRADLE available as a separately distributed product
 
-## 7. Research and Academic Use
+## 7. Research, Education and Evaluation
 
-Where CRADLE is supplied under research or academic terms, the Software may be used for the research, teaching, testing or educational activities authorised under the relevant licence or agreement.
+The Licensee may use the Software for:
 
-Permission for research or academic use does not, by itself, grant permission for:
+- non-commercial academic research
+- teaching and educational activities
+- internal testing
+- internal technical evaluation
+- authorised cyber-range, laboratory and testbed experiments
+- development and testing of independent Plugins
 
-- commercial redistribution
-- resale
-- sublicensing
-- provision of copies to unauthorised third parties
+The Licensee may publish research findings and benchmark results obtained through authorised use, provided that the publication:
 
-## 8. Commercial Use
+- does not disclose confidential or non-public CRADLE information
+- does not distribute the proprietary Software
+- does not misrepresent the methodology or results
+- does not imply NCL endorsement
+- complies with applicable research, ethical and legal requirements
 
-Commercial use of the Software is permitted only to the extent expressly authorised under the applicable licence arrangement or another written agreement.
+## 8. Commercial and Production Use
 
-Commercial licensing may distinguish between:
+This Licence does not permit Commercial Use or production deployment.
 
-- internal commercial use
-- enterprise use
+Without NCL's prior written authorisation, the Licensee must not use the Software for:
+
+- production operations
+- enterprise deployment other than internal evaluation
+- paid consultancy or training
 - commercial service provision
-- commercial redistribution
+- managed services
+- customer-facing services
 - resale
 - sublicensing
+- rental or leasing
+- commercial redistribution
+- providing access to the Software for the benefit of an unauthorised third party
 
-Permission for one form of commercial activity does not imply permission for another.
-
-In particular, permission for internal commercial use does not, by itself, grant permission to redistribute CRADLE to customers.
+Commercial or production use requires a separate written agreement or licence schedule issued or approved by NCL.
 
 ## 9. Restrictions
 
@@ -147,18 +208,19 @@ The Licensee may make copies of the Software only to the extent reasonably neces
 
 Any permitted copy must retain applicable copyright, proprietary and legal notices.
 
-## 11. Reverse Engineering
+## 11. Reverse Engineering and Mandatory Computer-Program Rights
 
-Except to the extent permitted by applicable law, the Licensee must not:
+Except to the extent expressly permitted by applicable law, the Licensee must not:
 
-- reverse engineer the proprietary CRADLE Software
-- decompile the proprietary CRADLE Software
-- disassemble the proprietary CRADLE Software
-- otherwise attempt to derive non-public source code or internal implementation information from proprietary CRADLE Software
+- reverse engineer the Software
+- decompile the Software
+- disassemble the Software
+- attempt to derive non-public source code or implementation information
+- use information obtained through unauthorised analysis to reproduce proprietary CRADLE implementation materials
 
-Nothing in this Licence excludes or restricts a permitted use or statutory right that cannot lawfully be excluded or restricted by contract.
+Nothing in this Licence excludes or restricts a permitted use or statutory right that cannot lawfully be excluded or restricted.
 
-For the avoidance of doubt, this section is intended to operate subject to section 187 and the applicable computer-program permitted-use provisions of the Copyright Act 2021 of Singapore.
+This section is intended to operate subject to sections 238 to 240 of the Copyright Act 2021 of Singapore and any other applicable mandatory provisions.
 
 ## 12. CRADLE Interfaces and Interoperability
 
@@ -285,11 +347,27 @@ The Licensee is responsible for complying with applicable third-party terms aris
 
 ## 21. Confidentiality
 
-Any non-public CRADLE source code, implementation documentation, algorithms, architecture, credentials, development materials or other information provided under circumstances giving rise to an obligation of confidentiality must be treated as confidential.
+"Confidential Information" means non-public CRADLE source code, credentials, implementation documentation, security information, development materials and other information identified as confidential or which a reasonable person would understand to be confidential from the circumstances of disclosure.
 
-The Licensee must use reasonable measures to prevent unauthorised disclosure or access.
+Confidential Information does not include information that the Licensee demonstrates:
 
-This Licence does not, by itself, authorise disclosure of confidential CRADLE materials.
+- is lawfully public through no breach of an obligation
+- was lawfully known without restriction before disclosure
+- was independently developed without use of Confidential Information
+- was lawfully received from a third party without a confidentiality restriction
+
+The Licensee must:
+
+- use Confidential Information only for the Authorised Purpose
+- protect it using at least reasonable care
+- disclose it only to Authorised Users who need access and are subject to appropriate confidentiality obligations
+- notify NCL promptly of any known unauthorised access or disclosure
+
+Where disclosure is required by law, the Licensee must, where legally permitted, give NCL prompt notice and disclose only the information legally required.
+
+On request or termination, the Licensee must return or securely destroy Confidential Information, except where retention is required by law.
+
+These confidentiality obligations survive termination for as long as the information remains confidential.
 
 ## 22. Notices
 
@@ -390,13 +468,26 @@ A change to the licence applicable to a future Release does not, by itself, amen
 
 ## 28. Termination
 
-The Licensor may terminate the rights granted under this Licence if the Licensee materially breaches this Licence and, where an applicable agreement provides a cure period, fails to remedy that breach within the applicable period.
+NCL may terminate this Licence by written notice if the Licensee materially breaches it and fails to remedy a remediable breach within 14 days after receiving notice.
 
-The Licensor may terminate the Licence immediately where the Licensee uses, or knowingly permits the use of, CRADLE for unlawful, malicious, fraudulent, abusive or otherwise unauthorised purposes where such conduct constitutes a material breach.
+NCL may terminate this Licence immediately where the Licensee:
 
-Upon termination, the Licensee must cease use of the proprietary Software and delete or return copies in its possession or control, except to the extent that retention is required by applicable law.
+- unlawfully distributes or discloses the Software
+- materially breaches confidentiality obligations
+- circumvents technical access controls
+- uses the Software for unlawful, malicious, fraudulent or unauthorised activity
+- commits another material breach that cannot reasonably be remedied
 
-Termination does not affect rights or obligations that accrued before termination.
+Upon termination, the Licensee must:
+
+- immediately cease using the Software
+- delete or return all copies within its possession or control
+- ensure that its Authorised Users cease using the Software
+- confirm deletion or return in writing if reasonably requested
+
+The Licensee may retain a copy only where required by applicable law. A retained copy must not be used and remains subject to this Licence.
+
+Termination does not affect rights or liabilities accrued before termination.
 
 ## 29. Effect of Termination on Independent Materials
 
@@ -412,55 +503,50 @@ However, termination may prevent continued use of CRADLE itself where a valid CR
 
 ## 30. Disclaimer of Warranty
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED **"AS IS"** AND **"AS AVAILABLE"**, WITHOUT WARRANTIES, REPRESENTATIONS OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED OR STATUTORY.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" AND "AS AVAILABLE".
 
-TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL:
+NCL DISCLAIMS ALL EXPRESS, IMPLIED AND STATUTORY WARRANTIES, REPRESENTATIONS AND CONDITIONS TO THE MAXIMUM EXTENT PERMITTED BY LAW, INCLUDING WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, NON-INFRINGEMENT AND SECURITY.
 
-- be error-free
-- operate without interruption
-- be free from security vulnerabilities
-- meet the Licensee's particular requirements
-- be compatible with every cyber range, testbed or environment
-- remain compatible with third-party Plugins or software
+NCL DOES NOT WARRANT THAT THE SOFTWARE WILL:
 
-Nothing in this section excludes any warranty, condition, right or liability that cannot lawfully be excluded.
+- BE ERROR-FREE OR UNINTERRUPTED
+- BE FREE FROM VULNERABILITIES
+- IDENTIFY OR PREVENT EVERY SECURITY ISSUE
+- MEET THE LICENSEE'S REQUIREMENTS
+- PRODUCE COMPLETE OR ERROR-FREE OUTPUT
+- REMAIN COMPATIBLE WITH THIRD-PARTY SOFTWARE, PLUGINS OR INFRASTRUCTURE
+- BE SUITABLE FOR PRODUCTION, SAFETY-CRITICAL OR MISSION-CRITICAL USE
+
+THE LICENSEE IS RESPONSIBLE FOR REVIEWING AND TESTING ALL CONFIGURATIONS, SCRIPTS AND GENERATED OUTPUT BEFORE USE.
+
+Nothing in this section excludes any warranty, right or liability that cannot lawfully be excluded.
 
 ## 31. Limitation of Liability
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSOR SHALL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE OR CONSEQUENTIAL LOSS ARISING OUT OF OR IN CONNECTION WITH THE SOFTWARE OR ITS USE.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NCL SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE OR CONSEQUENTIAL LOSS ARISING OUT OF OR IN CONNECTION WITH THE SOFTWARE, DOCUMENTATION, GENERATED OUTPUT OR THIS LICENCE.
 
-This may include, to the extent permitted by applicable law:
+THIS INCLUDES LOSS OF PROFITS, REVENUE, BUSINESS, OPPORTUNITY, GOODWILL, DATA OR USE, AND INTERRUPTION OF OPERATIONS.
 
-- loss of profits
-- loss of revenue
-- loss of business opportunity
-- loss of data
-- loss of use
-- interruption of operations
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, NCL'S TOTAL AGGREGATE LIABILITY ARISING OUT OF OR IN CONNECTION WITH THIS LICENCE SHALL NOT EXCEED:
 
-Any additional financial cap, limitation or allocation of liability may be specified under the applicable commercial, research, enterprise or other written agreement.
+- THE TOTAL AMOUNT PAID BY THE LICENSEE TO NCL FOR THE RELEVANT SOFTWARE DURING THE 12 MONTHS BEFORE THE EVENT GIVING RISE TO LIABILITY
 
-Nothing in this Licence excludes or limits liability to the extent that such exclusion or limitation is prohibited by applicable law.
+WHICHEVER APPLIES.
 
-## 32. Lawful Use
+The limitations in this section apply regardless of the legal basis of the claim and even where a party was advised that loss was possible.
 
-The Licensee is responsible for using CRADLE in compliance with applicable law.
+Nothing in this Licence excludes or limits liability where exclusion or limitation is prohibited by applicable law.
 
-The Licensee must obtain any authority, consent or permission required before using CRADLE to access or interact with:
+## 32. Indemnity for Misuse
 
-- computer systems
-- networks
-- services
-- accounts
-- devices
-- infrastructure
-- data
-- cyber ranges
-- testbeds
+To the extent permitted by applicable law, the Licensee shall indemnify NCL against third-party claims, losses, liabilities, penalties and reasonable costs arising directly from:
 
-The grant of this Licence does not constitute authorisation to access, test, interfere with, disrupt or modify any third-party system without lawful authority.
+- the Licensee's unlawful, malicious, fraudulent or unauthorised use of CRADLE
+- the Licensee's unauthorised distribution of the Software
+- the Licensee's material breach of confidentiality
+- content, data or materials supplied by the Licensee that infringe third-party rights
 
-Availability of CRADLE functionality does not constitute permission to use that functionality against a system for which the Licensee lacks lawful authority.
+This section does not require the Licensee to indemnify NCL for loss caused by NCL's own fraud, wilful misconduct or liability that cannot lawfully be excluded.
 
 ## 33. Compliance with Law
 
@@ -518,21 +604,23 @@ A particular CRADLE Release or component may contain additional or different leg
 
 Where a Release contains or references a specific licence, `NOTICE` file, copyright notice or other expressly applicable terms, those terms govern the relevant Release or component.
 
-## 40. Governing Law
+## 40. Governing Law and Jurisdiction
 
-This Licence is governed by and shall be construed in accordance with the laws of the Republic of Singapore.
+This Licence is governed by the laws of the Republic of Singapore.
 
-Where another written agreement expressly specifies a different governing law for a particular distribution or arrangement, the governing-law provision in that agreement shall apply to the extent specified.
+The Licensee and NCL irrevocably submit to the exclusive jurisdiction of the courts of Singapore in relation to any dispute arising out of or in connection with this Licence, the Software or its use.
 
-Nothing in this Licence excludes the operation of any mandatory provision of applicable law.
+A separately executed written agreement may specify different governing-law or dispute-resolution terms for the arrangement governed by that agreement.
+
+Nothing in this Licence excludes the operation of a mandatory provision of applicable law.
 
 ## 41. Mandatory Rights
 
-Nothing in this Licence is intended to exclude, restrict or waive any right, defence, exception, permitted use or other protection that cannot lawfully be excluded, restricted or waived under applicable law.
+Nothing in this Licence excludes, restricts or waives any right, defence, exception, permitted use or protection that cannot lawfully be excluded, restricted or waived.
 
-If a provision of this Licence is inconsistent with a mandatory provision of applicable law, that provision shall apply only to the maximum extent permitted by law.
+If a provision is inconsistent with a mandatory rule, that provision applies only to the maximum extent permitted by law.
 
-In particular, this Licence is intended to operate subject to section 187 of the Copyright Act 2021 of Singapore and the permitted uses to which that section applies.
+This Licence is intended to operate subject to sections 238 to 240 of the Copyright Act 2021 of Singapore and any other applicable mandatory provisions.
 
 ## 42. Contact
 
@@ -542,6 +630,57 @@ Licensing and permission enquiries may be directed to:
 Website: `https://ncl.sg/`
 
 Any designated CRADLE licensing contact may also be identified in the relevant CRADLE distribution or project documentation.
+
+## Legal Notices
+
+A legal notice under this Licence must be in writing.
+
+Notices to NCL must be sent to the legal or licensing contact identified in the applicable licence schedule, Release or CRADLE project documentation.
+
+A notice is treated as received:
+
+- when delivered personally
+- two business days after dispatch by registered post
+- when electronic delivery is acknowledged by the receiving party
+
+This section does not govern copyright, attribution or proprietary notices embedded in the Software.
+
+## Assignment
+
+The Licensee must not assign, transfer, delegate or otherwise dispose of this Licence or any right under it without NCL's prior written consent.
+
+NCL may assign or transfer this Licence together with the relevant Software or intellectual property rights to a successor, affiliate or entity acquiring or administering the relevant CRADLE rights.
+
+Any attempted assignment contrary to this section is ineffective to the extent permitted by law.
+
+## Survival
+
+The provisions concerning ownership, restrictions, confidentiality, termination, disclaimers, limitation of liability, indemnity, governing law, jurisdiction and accrued rights survive termination or expiry to the extent necessary to give them effect.
+
+## Entire Agreement and Order of Precedence
+
+This Licence and the applicable Licence Materials constitute the agreement governing the Licensee's use of the relevant Software, unless a separately executed written agreement applies.
+
+In the event of an inconsistency, the following order of precedence applies:
+
+1. a separately executed written agreement
+2. an applicable licence schedule or order form
+3. release-specific licence terms
+4. this Licence
+5. an applicable `NOTICE` file
+6. the Copyright Notice
+7. the general Legal Notice
+8. the Documentation
+
+A higher-ranking document prevails only to the extent of the inconsistency.
+
+No amendment or waiver is effective unless made in writing by a person authorised to bind the party against whom it is asserted.
+
+## Third-Party Rights
+
+Except for a person expressly identified in this Licence as entitled to enforce a particular provision, a person who is not a party to this Licence has no right under the Contracts (Rights of Third Parties) Act 2001 of Singapore to enforce any term of this Licence.
+
+NCL's applicable copyright holders, licensors, developers, contributors, maintainers and distributors may rely on and enforce provisions that expressly protect them, including the warranty disclaimers and limitations of liability.
 
 ---
 

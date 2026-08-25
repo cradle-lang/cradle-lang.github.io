@@ -427,7 +427,7 @@ export default function CradleInAction(): ReactNode {
           <Link
             className={styles.workbenchLink}
             to="/workbench/">
-            Explore in the Workbench
+            Try CRADLE in the Workbench
           </Link>
 
           <p className={styles.safetyNote}>
@@ -438,7 +438,7 @@ export default function CradleInAction(): ReactNode {
           <Link
             className={styles.textLink}
             to="/docs/getting-started/first-scenario">
-            Learn how scenarios are written →
+            View the HelloWorld-Win scenario →
           </Link>
         </div>
       </div>

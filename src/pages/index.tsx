@@ -20,9 +20,9 @@ export default function Home(): ReactNode {
         <Hero />
         <WhyCradle />
         <CradleInAction />
+        <EvaluateCradle />
         <SupportedWorkflow />
         <StartLearning />
-        <EvaluateCradle />
         <LatestRelease />
         <Acknowledgements />
       </main>

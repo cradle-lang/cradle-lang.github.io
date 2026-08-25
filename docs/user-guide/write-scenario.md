@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Write a scenario
 
 A CRADLE scenario is a text file that describes the systems, networks,
@@ -88,7 +92,7 @@ keys in a `.cradle` file.
 | `object("SetupScript")` | Resolves the external artifact used by the event. |
 
 For every supported property, see the
-[CRADLE language structure](../introduction/sections.md).
+[CRADLE language overview](../language/overview).
 
 ## 4. Check named references
 

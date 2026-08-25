@@ -18,6 +18,25 @@ type BlockHeader = {
   arg: string | null;
 };
 
+export class WorkbenchParseError extends Error {
+  line: number;
+  sourceLine: string;
+  suggestion: string;
+
+  constructor(
+    line: number,
+    sourceLine: string,
+    reason: string,
+    suggestion: string,
+  ) {
+    super(reason);
+    this.name = 'WorkbenchParseError';
+    this.line = line;
+    this.sourceLine = sourceLine;
+    this.suggestion = suggestion;
+  }
+}
+
 function stripComment(line: string): string {
   let quoted = false;
   let escaped = false;
@@ -242,6 +261,15 @@ function getOrCreateObject(
 export function parseCradleForWorkbench(
   code: string,
 ): ParsedCradle {
+  if (!code.trim()) {
+    throw new WorkbenchParseError(
+      1,
+      '',
+      'The source is empty.',
+      'Load HelloWorld-Win or add a metadata() block to begin.',
+    );
+  }
+
   const lines = code.split(/\r?\n/);
 
   const instances = new Map<string, CradleInstance>();
@@ -263,6 +291,26 @@ export function parseCradleForWorkbench(
   let currentBlock: BlockHeader | null = null;
 
   lines.forEach((line, lineIndex) => {
+    const sourceLine =
+      stripComment(line).trim();
+
+    if (!sourceLine) {
+      return;
+    }
+
+    const quoteCount =
+      (sourceLine.match(/(?<!\\)"/g) ?? [])
+        .length;
+
+    if (quoteCount % 2 !== 0) {
+      throw new WorkbenchParseError(
+        lineIndex + 1,
+        sourceLine,
+        'This line contains an unmatched quotation mark.',
+        'Close the quoted value and end the property with a comma or period.',
+      );
+    }
+
     const block = parseHeader(line);
 
     if (block) {
@@ -334,7 +382,12 @@ export function parseCradleForWorkbench(
     const parsedCall = parseCall(line);
 
     if (!parsedCall) {
-      return;
+      throw new WorkbenchParseError(
+        lineIndex + 1,
+        sourceLine,
+        'The Workbench could not recognize this line as a block or property.',
+        'Use block() > for a section header and property("value"), or property("value"). for its contents.',
+      );
     }
 
     if (currentBlock?.kind === 'metadata') {

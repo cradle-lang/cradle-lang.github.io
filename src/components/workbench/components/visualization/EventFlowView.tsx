@@ -92,11 +92,21 @@ export default function EventFlowView({
   return (
     <svg
       viewBox="0 0 1200 800"
+      role="group"
+      aria-labelledby="workbench-event-flow-title workbench-event-flow-description"
       style={{
         width: '100%',
         height: '100%',
       }}
     >
+      <title id="workbench-event-flow-title">
+        CRADLE event flow
+      </title>
+
+      <desc id="workbench-event-flow-description">
+        Interactive event dependency diagram. Use Tab to move between events and Enter or Space to inspect one.
+      </desc>
+
       <defs>
         <marker
           id="event-arrow"

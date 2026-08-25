@@ -20,7 +20,7 @@ export default function StartLearning(): ReactNode {
             className={styles.learningCard}
             to="/docs/overview/what-is-cradle">
             <span className={styles.cardNumber}>01</span>
-            <h3>Understand the approach</h3>
+            <h3>Understand CRADLE</h3>
             <p>
               Learn the problem CRADLE addresses, what a scenario captures and
               where the product boundaries are.
@@ -32,7 +32,7 @@ export default function StartLearning(): ReactNode {
             className={styles.learningCard}
             to="/docs/getting-started/first-scenario">
             <span className={styles.cardNumber}>02</span>
-            <h3>Explore a scenario</h3>
+            <h3>Follow HelloWorld-Win</h3>
             <p>
               Follow the instances, network, object and scheduled event in the
               compact HelloWorld example.
@@ -44,7 +44,7 @@ export default function StartLearning(): ReactNode {
             className={styles.learningCard}
             to="/docs/guides/write-a-scenario">
             <span className={styles.cardNumber}>03</span>
-            <h3>Model a scenario</h3>
+            <h3>Write a scenario</h3>
             <p>
               Review the metadata, objects, instances, networks and events that
               make up the human-authored language.

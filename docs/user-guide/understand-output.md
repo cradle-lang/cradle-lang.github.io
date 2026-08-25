@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Understand the output
 
 CRADLE produces different outputs during compilation, generation, and runtime

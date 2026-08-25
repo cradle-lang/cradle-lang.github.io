@@ -1,5 +1,5 @@
 ---
-orphan: true
+draft: true
 ---
 
 # IL Syntax and Structure
@@ -203,5 +203,5 @@ When translating an IL document into formal CRADLE, verify that:
 
 - [Intermediary Language](index.md)
 - [Intermediary Language Example](example.md)
-- [CRADLE Language Structure](../introduction/sections.md)
+- [CRADLE Language Overview](../language/overview)
 - [CRADLE Schema Reference](../schema/cradle-schema.md)

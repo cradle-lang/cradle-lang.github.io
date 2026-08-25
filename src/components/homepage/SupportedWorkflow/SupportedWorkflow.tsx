@@ -31,7 +31,7 @@ export default function SupportedWorkflow(): ReactNode {
           <Link
             className={styles.supportLink}
             to="/docs/guides/backends/overview">
-            Learn about backend plugins →
+            Read backend compatibility guidance →
           </Link>
         </div>
 

@@ -213,14 +213,23 @@ instance("Client") >
     config("linux-sysdig").
 ```
 
-The Hello World scenario uses this pattern:
+The canonical HelloWorld-Win scenario uses two instance definitions. The
+Windows instance declares its operating system and configurations:
 
 ```CRADLE
-instance("HelloWorld") >
-    os("ubuntu", "20.04"),
-    config("linux-tcpdump"),
-    config("ubuntu-focal-auditd"),
-    config("linux-sysdig"),
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+```
+
+The router associates the object used by the scenario:
+
+```CRADLE
+instance("router") >
+    os("linux", "20.04"),
     object("HelloWorld").
 ```
 

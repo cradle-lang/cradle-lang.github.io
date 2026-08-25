@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Supported platforms
 
 CRADLE can generate deployment files for libvirt, VirtualBox, and SPHERE. The
@@ -119,8 +123,8 @@ Provider support does not guarantee that:
 
 ## Related guides
 
-- [Generate deployment files](../user-guide/generate-deployment.md)
-- [Deploy an environment](../user-guide/deploy-environment.md)
-- [Understand the output](../user-guide/understand-output.md)
-- [Troubleshooting](../user-guide/troubleshooting.md)
-- [Known limitations](../user-guide/known-limitations.md)
+- [Generate target files](../guides/backends/generate-target-files)
+- [Use a backend](../getting-started/use-a-backend)
+- [Inspect output](../getting-started/inspect-output)
+- [Troubleshooting](../guides/troubleshooting)
+- [Backend overview](../guides/backends/overview)

@@ -80,7 +80,7 @@ The Hello World scenario uses this form:
 
 ```CRADLE
 metadata() >
-    name("HelloWorld"),
+    name("HelloWorld-Win"),
     eventType("sequence"),
     repositoryRemote("https://artifacts.example.org"),
     object("HelloWorld").
@@ -275,7 +275,7 @@ The Hello World example uses:
 
 ```CRADLE
 metadata() >
-    name("HelloWorld"),
+    name("HelloWorld-Win"),
     eventType("sequence"),
     repositoryRemote("https://artifacts.example.org"),
     object("HelloWorld").
@@ -283,7 +283,7 @@ metadata() >
 
 This:
 
-1. names the scenario `HelloWorld`
+1. names the scenario `HelloWorld-Win`
 2. selects sequential event handling
 3. defines the remote artifact repository
 4. declares the `HelloWorld` object
@@ -292,7 +292,7 @@ The corresponding object is:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 :::note

@@ -121,13 +121,13 @@ The documentation identifies CRADLE as suitable for:
 
 Prospective users can inspect the documented approach directly:
 
-- the [Quick start](../getting-started/quick-start) generates and optionally
-  runs the included Hello World environment;
-- the [Hello World example](../introduction/helloworld.md) explains the
+- the [Quick start](../getting-started/quick-start) walks through validation
+  and compilation using the Hello World scenario;
+- the [Hello World example](../examples/hello-world) explains the
   scenario's systems, network, object, and events;
-- the [supported-platform matrix](../deployment/supported-platforms.md)
-  distinguishes generation and execution coverage;
-- the [language structure](../introduction/sections.md) documents the
+- the [backend overview](../guides/backends/overview) explains the boundary
+  between CradleXC and target-specific generation;
+- the [language overview](../language/overview) documents the
   human-authored scenario format; and
 - the [developer schema reference](../schema/cradle-schema.md) records the
   current structured model and its limitations.
@@ -145,9 +145,9 @@ so each intended provider must be generated and validated separately.
 
 ## Evaluate CRADLE
 
-1. [Generate and run Hello World](../getting-started/quick-start).
-2. [Write a scenario](../user-guide/write-scenario.md).
-3. [Compare supported platforms](../deployment/supported-platforms.md).
-4. [Review the generated output](../user-guide/understand-output.md).
-5. Consult the [troubleshooting guide](../user-guide/troubleshooting.md) when a
+1. [Follow the Hello World Quick Start](../getting-started/quick-start).
+2. [Write a scenario](../guides/write-a-scenario).
+3. [Review the backend model](../guides/backends/overview).
+4. [Review the generated output](../getting-started/inspect-output).
+5. Consult the [troubleshooting guide](../guides/troubleshooting) when a
    workflow does not produce the expected result.

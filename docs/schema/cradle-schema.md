@@ -4,7 +4,7 @@ orphan: true
 
 # CRADLE Schema Reference
 
-The CRADLE JSON Schema describes the structured JSON representation of scenario metadata, instances, networks, and events, including the rules applied by JSON Schema validators. It is written for **JSON Schema Draft 7**. This page does not define the human-authored CRADLE block syntax; for that syntax and the properties recognized by the compiler, see [CRADLE Language Structure](../introduction/sections.md).
+The CRADLE JSON Schema describes the structured JSON representation of scenario metadata, instances, networks, and events, including the rules applied by JSON Schema validators. It is written for **JSON Schema Draft 7**. This page does not define the human-authored CRADLE block syntax; for that syntax and the properties recognized by the compiler, see the [CRADLE language overview](../language/overview).
 
 ```{important}
 The current schema is a preview reference. It is not yet fully aligned with the CRADLE grammar and active compiler output, so it should not be treated as the sole validation authority for a product release.
@@ -208,8 +208,8 @@ Until that decision is approved, this documentation describes the schema but doe
 
 ## Related documentation
 
-- [CRADLE Language Structure](../introduction/sections.md)
-- [Hello World Example](../introduction/helloworld.md)
-- [Heuristic Annotations](../introduction/heuristic.md)
-- [Intermediary Language](../il-language/index.md)
-- [Supported Platforms](../deployment/supported-platforms.md)
+- [CRADLE Language Overview](../language/overview)
+- [Hello World Example](../examples/hello-world)
+- [Heuristic Annotations](../language/heuristics)
+- [Compiler Pipeline](../internals/compiler-pipeline)
+- [Backend Overview](../guides/backends/overview)

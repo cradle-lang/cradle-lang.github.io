@@ -36,13 +36,13 @@ export default function Hero(): ReactNode {
             <Link
               className={styles.primaryButton}
               to="/workbench/">
-              Explore an Example
+              Try CRADLE in the Workbench
             </Link>
 
             <Link
               className={styles.secondaryButton}
               to="/docs/getting-started/quick-start">
-              Run the Quick Start
+              Follow the Quick Start
             </Link>
           </div>
         </div>

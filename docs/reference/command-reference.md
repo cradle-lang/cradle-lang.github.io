@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Command reference
 
 This page summarizes the public commands used to prepare, generate, deploy,
@@ -86,7 +90,7 @@ Deployment profiles can change managed-host paths.
 
 ## Related guides
 
-- [Generate deployment files](../user-guide/generate-deployment.md)
-- [Deploy an environment](../user-guide/deploy-environment.md)
-- [Clean up an environment](../user-guide/clean-up.md)
-- [Troubleshooting](../user-guide/troubleshooting.md)
+- [Generate target files](../guides/backends/generate-target-files)
+- [Use a backend](../getting-started/use-a-backend)
+- [Inspect output](../getting-started/inspect-output)
+- [Troubleshooting](../guides/troubleshooting)

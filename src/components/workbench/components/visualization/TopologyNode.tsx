@@ -1,5 +1,7 @@
 import {
   useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
@@ -53,6 +55,9 @@ export default function TopologyNode({
   onMove,
   onSelect,
 }: Props) {
+  const [focused, setFocused] =
+    useState(false);
+
   const dragRef = useRef<{
     pointerId: number;
     startX: number;
@@ -145,13 +150,38 @@ export default function TopologyNode({
     }
   }
 
+  function handleKeyDown(
+    event: ReactKeyboardEvent<SVGGElement>,
+  ): void {
+    if (
+      event.key !== 'Enter' &&
+      event.key !== ' '
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect();
+  }
+
   return (
     <g
       transform={`translate(${x} ${y})`}
+      role="button"
+      tabIndex={0}
+      aria-label={
+        subtitle
+          ? `${title}, ${subtitle}`
+          : title
+      }
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={finishDrag}
       onPointerCancel={finishDrag}
+      onKeyDown={handleKeyDown}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       style={{
         cursor: 'grab',
         touchAction: 'none',
@@ -162,8 +192,14 @@ export default function TopologyNode({
         height={height}
         rx={8}
         fill="var(--workbench-node-bg)"
-        stroke={colour}
-        strokeWidth={1.5}
+        stroke={
+          focused
+            ? 'var(--cradle-accent)'
+            : colour
+        }
+        strokeWidth={
+          focused ? 3 : 1.5
+        }
       />
 
       <rect

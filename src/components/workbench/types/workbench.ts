@@ -1,4 +1,7 @@
-export type WorkbenchView = 'topology' | 'events';
+export type WorkbenchView =
+  | 'topology'
+  | 'events'
+  | 'summary';
 
 export type Point = {
   x: number;

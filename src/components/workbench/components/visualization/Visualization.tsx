@@ -1,4 +1,5 @@
 import EventFlowView from './EventFlowView';
+import ScenarioSummary from './ScenarioSummary';
 import TopologyView from './TopologyView';
 
 import type {
@@ -45,6 +46,12 @@ export default function Visualization({
   onNetworkMove,
   onSelect,
 }: Props) {
+  if (view === 'summary') {
+    return (
+      <ScenarioSummary parsed={parsed} />
+    );
+  }
+
   if (view === 'events') {
     return (
       <EventFlowView

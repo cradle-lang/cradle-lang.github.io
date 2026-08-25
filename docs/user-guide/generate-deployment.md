@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Generate deployment files
 
 Use `cradle.sh` to compile a scenario and create provider-specific deployment

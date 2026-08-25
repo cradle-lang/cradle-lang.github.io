@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # CRADLE Language Structure
 
 A CRADLE scenario is composed of named blocks. The four principal sections describe scenario metadata, instances, networks, and events. Named object definitions connect external artifacts to the scenario.
@@ -227,6 +231,6 @@ Until these sources are aligned, validate both the language structure and its in
 
 - [What is CRADLE?](../overview/what-is-cradle)
 - [Hello World Example](helloworld.md)
-- [Write a scenario](../user-guide/write-scenario.md)
+- [Write a scenario](../guides/write-a-scenario)
 - [Heuristic Annotations](heuristic.md)
 - [Developer schema reference](../schema/cradle-schema.md)

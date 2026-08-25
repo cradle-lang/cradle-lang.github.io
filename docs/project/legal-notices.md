@@ -2,33 +2,19 @@
 
 Last updated: 14 August 2026
 
-This Legal Notice applies to the CRADLE project, including the CRADLE compiler, assembler, language specifications, Intermediate Representation, documentation, interfaces, associated software components and other materials made available as part of or in connection with CRADLE.
+This Legal Notice provides general information concerning the ownership, licensing and permitted use of the CRADLE project.
 
-The legal terms applicable to a particular CRADLE release, distribution or component may also be specified in a separate licence agreement, repository notice, release notice, `NOTICE` file or other applicable written terms.
+The legally binding terms governing use of the proprietary CRADLE Software are contained in the [CRADLE Proprietary Software Licence](./LICENCE.md). Copyright ownership and attribution information is contained in the [CRADLE Copyright Notice](./COPYRIGHT.md).
 
-Where such terms apply, they shall govern the relevant release, distribution or component to the extent specified.
+A particular CRADLE release, distribution or component may include additional or different terms in a licence schedule, release notice, `NOTICE` file or written agreement. Where specific terms expressly apply, those terms prevail over this general Legal Notice to the extent of any inconsistency.
 
 ## Proprietary Software
 
-CRADLE, including the CRADLE compiler, assembler and associated implementation materials, is proprietary software.
+The CRADLE compiler, assembler and associated proprietary implementation materials are proprietary software owned or lawfully controlled by National Cybersecurity R&D Lab (NCL).
 
-The proprietary CRADLE software is licensed, not sold.
+The proprietary CRADLE Software is licensed, not sold. Access to or possession of the Software does not transfer ownership or any intellectual property right.
 
-The source code and non-public implementation materials of the proprietary CRADLE compiler and assembler are not made available to the general public except where expressly authorised by the relevant rights holder.
-
-Except as expressly authorised under the applicable CRADLE licence, another written agreement or applicable law, no right is granted to:
-
-- copy or reproduce the proprietary CRADLE software
-- modify, patch or alter the proprietary CRADLE compiler or assembler
-- distribute, publish, upload or otherwise make the proprietary CRADLE software available to an unauthorised third party
-- sublicense, resell, lease, rent or commercially redistribute the proprietary CRADLE software
-- remove, obscure or alter copyright, proprietary or legal notices
-- disclose non-public CRADLE source code or confidential implementation materials
-- represent any unauthorised modification, plugin or integration as an official CRADLE component
-
-Permission for one form of use does not imply permission for another.
-
-In particular, permission to use CRADLE does not, by itself, grant permission to redistribute, sublicense or resell CRADLE.
+Except as expressly permitted by the applicable CRADLE licence, another written agreement or applicable law, users must not copy, modify, distribute, sublicense, resell, rent, lease, disclose or reverse engineer the proprietary CRADLE Software.
 
 All rights not expressly granted are reserved.
 
@@ -58,105 +44,35 @@ Publication of binaries, specifications, APIs, Intermediate Representation forma
 
 Nothing in this Legal Notice grants any right to use the CRADLE or NCL name, logo, trade mark, service mark, domain name or other source identifier except as expressly authorised by the relevant rights holder or applicable law.
 
-## Interoperability and Independent Development
+## Interfaces, Plugins and Independent Development
 
-CRADLE may provide documented mechanisms through which independently developed software may interoperate with CRADLE.
+CRADLE may provide documented language syntax, Intermediate Representation formats, APIs, schemas, plugin interfaces and other interoperability mechanisms.
 
-These mechanisms may include:
+Subject to the applicable CRADLE licence, users may develop independent software that interoperates with CRADLE through these documented mechanisms.
 
-- CRADLE language syntax
-- CRADLE Intermediate Representation formats
-- application programming interfaces
-- plugin interfaces
-- extension mechanisms
-- schemas
-- testbed integration interfaces
+Unless otherwise agreed in writing, an independently developed Plugin does not become the property of NCL merely because it interoperates with CRADLE. Copyright and other rights in independently authored Plugin code remain with the Plugin's author or other lawful rights holder.
 
-Subject to the applicable CRADLE licence and any terms applicable to the relevant interface, users may develop independent software that interoperates with CRADLE through those documented mechanisms.
+The Plugin owner may select a lawful licence for independently developed Plugin code, subject to any obligations applying to CRADLE-owned or third-party material incorporated into that Plugin.
 
-Use of a documented CRADLE interface does not, by itself:
+Permission to develop or distribute an independent Plugin does not include permission to copy, distribute, sublicense or resell the proprietary CRADLE Software.
 
-- grant ownership of the CRADLE compiler or assembler
-- grant access to non-public CRADLE source code
-- grant permission to redistribute proprietary CRADLE software
-- grant rights in confidential or non-public implementation materials
-- transfer to NCL any ownership rights in software independently developed by a user or third party
-- cause independently developed software to become proprietary CRADLE software
-- grant a right to represent independently developed software as an official CRADLE component
+## User Materials and Generated Output
 
-Nothing in this Legal Notice is intended to prevent independent development of compatible software where such development is authorised under the applicable CRADLE licence or permitted by applicable law.
+Unless otherwise agreed in writing, rights in independently authored `.cradle` files remain with their respective authors or lawful rights holders.
 
-## Independent Plugins and Extensions
+Use of CRADLE to create, edit, validate, compile, assemble or process a `.cradle` file does not, by itself, transfer ownership of that file to NCL.
 
-CRADLE distinguishes the proprietary CRADLE software from independently developed plugins and extensions.
+Subject to the applicable licence, users may use Generated Output produced through authorised use of CRADLE.
 
-A plugin, adapter, integration, library or other extension developed independently of the proprietary CRADLE compiler and assembler does not become the property of NCL solely because it:
+Where a `.cradle` file or Generated Output contains CRADLE-owned code, templates, libraries, runtime components or third-party materials, those portions remain subject to their respective licence terms.
 
-- uses CRADLE language syntax
-- consumes a documented CRADLE Intermediate Representation
-- produces a documented CRADLE Intermediate Representation where permitted
-- communicates through a documented CRADLE API
-- uses a documented CRADLE plugin interface
-- integrates CRADLE with a cyber range, testbed or other system
-- receives output generated by CRADLE
+## Reverse Engineering and Statutory Rights
 
-Unless otherwise agreed in writing, copyright and other rights in an independently developed plugin remain with the plugin's respective author or other lawful rights holder.
+Except as expressly permitted by the applicable CRADLE licence, another written agreement or applicable law, users must not reverse engineer, decompile, disassemble or otherwise attempt to derive the non-public source code or internal implementation of proprietary CRADLE components.
 
-## Licensing of Independent Plugins
+Nothing in this Legal Notice excludes or restricts any permitted use, statutory exception or right that cannot lawfully be excluded or restricted.
 
-The licence applicable to independently developed plugin code is determined by the plugin's respective rights holder.
-
-Subject to any separate licence obligations applicable to CRADLE-owned or third-party material incorporated into the plugin, the plugin owner may select an open-source, proprietary, commercial, internal-use or other lawful licence.
-
-The proprietary licence governing the CRADLE compiler and assembler does not, solely by reason of interoperability, require independently developed plugin code to be licensed under the CRADLE Proprietary Software Licence.
-
-For example, an independent plugin may be distributed under an MIT, Apache License 2.0, Mozilla Public License 2.0, GPL, BSD or proprietary licence where selected by its lawful rights holder.
-
-This does not grant the plugin owner any right to redistribute, sublicense or resell the proprietary CRADLE compiler or assembler.
-
-## Commercial Plugins
-
-An independently developed plugin may be commercially licensed or distributed by its rights holder, subject to applicable law and any licence obligations applicable to material incorporated into that plugin.
-
-Commercial distribution of an independent plugin does not include a licence to commercially redistribute CRADLE itself.
-
-A user of a plugin remains responsible for obtaining any separate CRADLE licence required for that user's use of the proprietary CRADLE software.
-
-## CRADLE SDK and Development Materials
-
-Where CRADLE provides an SDK, library, schema, template or other development material, the licence expressly applicable to that material governs its use.
-
-Where such development material is proprietary, it remains proprietary notwithstanding its authorised use for plugin development.
-
-Permission to use proprietary CRADLE development material does not, by itself, transfer ownership of independently authored plugin code to NCL.
-
-Where a plugin incorporates, reproduces, modifies or derives from CRADLE-owned code or other separately licensed material, that material remains subject to its applicable licence.
-
-## User-Created `.cradle` Files
-
-Unless otherwise agreed in writing, copyright and other rights in independently authored `.cradle` files remain with their respective authors or rights holders.
-
-Use of CRADLE to create, edit, validate, compile, assemble or otherwise process a `.cradle` file does not, by itself, transfer ownership of that file to NCL.
-
-The proprietary CRADLE licence does not, solely because a `.cradle` file is processed using CRADLE, become the licence governing independently authored content in that file.
-
-## Generated Output
-
-Unless otherwise provided under an applicable licence or written agreement, use of CRADLE does not, by itself, cause independently generated deployment, configuration or testbed-specific output to become proprietary CRADLE software.
-
-Where generated output contains CRADLE-owned code, templates, libraries, runtime components or other separately licensed materials, those portions remain subject to their respective applicable licences.
-
-Third-party material contained in generated output remains subject to any applicable third-party terms.
-
-## Reverse Engineering and Analysis
-
-Except to the extent expressly permitted under an applicable licence, written agreement or applicable law, users must not reverse engineer, decompile, disassemble or otherwise attempt to derive the non-public source code or internal implementation of the proprietary CRADLE compiler, assembler or other proprietary components.
-
-Users must not use information obtained through unauthorised reverse engineering or analysis to reproduce proprietary CRADLE implementation materials or otherwise infringe applicable intellectual property rights.
-
-Nothing in this Legal Notice is intended to exclude, restrict or prevent any permitted use, statutory exception or other right that cannot lawfully be excluded or restricted by contract.
-
-In particular, this Legal Notice is intended to operate subject to section 187 and the applicable computer-program permitted-use provisions of the Copyright Act 2021 of Singapore.
+This Legal Notice is intended to operate subject to sections 238 to 240 of the Copyright Act 2021 of Singapore and any other applicable mandatory provisions.
 
 ## Confidential and Non-Public Materials
 
@@ -230,25 +146,21 @@ A change in the licence applicable to a future CRADLE release does not, by itsel
 
 Nothing in this Legal Notice constitutes a representation, undertaking or commitment that any future CRADLE release will be distributed under a particular licensing model.
 
-## Unlawful Use and User Responsibility
+## Lawful and Authorised Use
 
-CRADLE is provided as a general-purpose software development, modelling, simulation and cyber-range technology.
+CRADLE is a general-purpose software development, modelling, simulation and cyber-range technology.
 
-Users are responsible for ensuring that their access to and use of CRADLE complies with all applicable laws, regulations, contractual obligations, authorisations, policies and other legal requirements.
+Users are responsible for ensuring that their access to and use of CRADLE complies with applicable laws, regulations, contractual obligations, policies, authorisations and permissions.
 
-CRADLE must not be used for any unlawful purpose or in any manner that infringes the rights of another person or organisation.
+CRADLE must not be used to access, test, interfere with, disrupt, damage, compromise or otherwise interact with any system, network, service, account, device, infrastructure or data without lawful authority and all required permissions.
 
-Users must not use CRADLE to access, interfere with, disrupt, damage, compromise, exploit or otherwise interact with any computer system, network, service, account, device, data or infrastructure without lawful authority or any permission required under applicable law.
+The availability of any CRADLE feature, example, configuration, interface or capability does not constitute permission or legal authorisation to use it against a third-party environment.
 
-Availability of any CRADLE functionality, interface, configuration, example, simulation capability, documentation or technical feature does not constitute authorisation to use that capability against a third-party system, network, service or environment.
+NCL does not authorise, direct, encourage or endorse unlawful, malicious, fraudulent, abusive or otherwise unauthorised use of CRADLE.
 
-Users are responsible for determining whether they possess all necessary authority, consent and permissions before using CRADLE in connection with any system, network, infrastructure, data or environment.
+To the maximum extent permitted by applicable law, NCL and the applicable CRADLE rights holders, developers, contributors, maintainers and distributors are not responsible for consequences arising from a user's independent unlawful, malicious, abusive or unauthorised conduct.
 
-## Liability
-
-To the maximum extent permitted by applicable law, the applicable CRADLE copyright holders, licensors, contributors, maintainers, developers and distributors shall not be responsible or liable for any loss, damage, claim, liability, penalty, investigation, prosecution, proceeding, cost or other consequence arising from or relating to unlawful, unauthorised, fraudulent, abusive or otherwise prohibited use of CRADLE.
-
-Nothing in this Legal Notice excludes, restricts or limits liability to the extent that such liability cannot lawfully be excluded, restricted or limited.
+Nothing in this Legal Notice excludes or limits liability that cannot lawfully be excluded or limited.
 
 ## CRADLE Name and Branding
 
@@ -297,20 +209,16 @@ In the event of an inconsistency between this general Legal Notice and a licence
 
 ## Governing Law
 
-This Legal Notice, and any CRADLE licence or agreement that expressly incorporates this Legal Notice, shall be governed by and construed in accordance with the laws of the Republic of Singapore, without prejudice to any mandatory rule of law that applies irrespective of the parties' choice of law.
+This Legal Notice and any CRADLE agreement that expressly incorporates it are governed by the laws of the Republic of Singapore.
 
-Where a separate written agreement applicable to a particular CRADLE distribution expressly specifies a different governing law, the governing-law provision contained in that agreement shall prevail in relation to that distribution.
+A separate written agreement may specify different governing-law or dispute-resolution terms for the distribution or arrangement governed by that agreement.
 
 ## Mandatory Rights
 
-Nothing in this Legal Notice is intended to exclude, restrict or waive any right, defence, exception, permitted use or other protection that cannot lawfully be excluded, restricted or waived under applicable law.
-
-If any provision of this Legal Notice is inconsistent with a mandatory provision of applicable law, that provision shall apply only to the maximum extent permitted by law.
+Nothing in this Legal Notice excludes, restricts or waives any right, defence, exception, permitted use or protection that cannot lawfully be excluded, restricted or waived.
 
 ---
 
 Copyright © 2026 National Cybersecurity R&D Lab (NCL). All rights reserved.
 
 CRADLE is proprietary software and is licensed, not sold.
-
-Independent plugins remain subject to the copyright and licence selected by their respective lawful rights holders unless otherwise agreed in writing.

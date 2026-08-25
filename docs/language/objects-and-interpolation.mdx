@@ -339,20 +339,17 @@ The Hello World scenario declares its object in metadata:
 
 ```CRADLE
 metadata() >
-    name("HelloWorld"),
+    name("HelloWorld-Win"),
     eventType("sequence"),
     repositoryRemote("https://artifacts.example.org"),
     object("HelloWorld").
 ```
 
-The object is then associated with the application instance:
+The object is then associated with the router instance:
 
 ```CRADLE
-instance("HelloWorld") >
-    os("ubuntu", "20.04"),
-    config("linux-tcpdump"),
-    config("ubuntu-focal-auditd"),
-    config("linux-sysdig"),
+instance("router") >
+    os("linux", "20.04"),
     object("HelloWorld").
 ```
 
@@ -360,13 +357,7 @@ The object definition is:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
-```
-
-Each event references the same object:
-
-```CRADLE
-runObject("HelloWorld", "")
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 The complete reference path is therefore:
@@ -381,11 +372,7 @@ The complete reference path is therefore:
 
   <span>↓</span>
 
-  <div>instance("HelloWorld") associates the object</div>
-
-  <span>↓</span>
-
-  <div>Events use runObject("HelloWorld", "")</div>
+  <div>instance("router") associates the object</div>
 
 </div>
 

@@ -108,7 +108,7 @@ export default function LatestRelease(): ReactNode {
                 className={styles.primaryAction}
                 to={INSTALL_URL}
               >
-                View installation guide →
+                Read the installation guide →
               </Link>
 
               <Link
@@ -145,7 +145,7 @@ export default function LatestRelease(): ReactNode {
                 className={styles.primaryAction}
                 to={QUICK_START_URL}
               >
-                Write your first scenario →
+                Follow the Quick Start →
               </Link>
             </div>
           </div>

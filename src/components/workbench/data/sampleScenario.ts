@@ -1,4 +1,4 @@
-export const SAMPLE_SCENARIO = `metadata() >
+export const ADVANCED_SAMPLE_SCENARIO = `metadata() >
     name("SmeEnv3RiskComplex"),
     eventType("DAG"), # Changed to DAG to support concurrency and dependencies
     repositoryRemote("https://172.18.178.10:4443").
@@ -209,3 +209,58 @@ event("4") >
     description("Data Exfiltration"),
     heuristic("ttp", "T1048"),
     heuristic("killchain", "Exfiltration").`;
+
+export const SAMPLE_SCENARIO = `metadata() >
+    name("HelloWorld-Win"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+
+instances() >
+    instance("win7"),
+    instance("router").
+
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld"),
+    config("linux-vsftpd"),
+    config("linux-auditd"),
+    config("linux-mail"),
+    config("linux-python3"),
+    config("python3-pip"),
+    config("linux-router").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("1").
+
+event("1") >
+    instance("router"),
+    needRoot("true"),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
+
+object("HelloWorld") >
+    location("\${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").`;

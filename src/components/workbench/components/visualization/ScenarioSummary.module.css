@@ -1,0 +1,78 @@
+.summary {
+  height: 100%;
+
+  overflow: auto;
+
+  padding: clamp(18px, 3vw, 34px);
+
+  background: var(--cradle-surface);
+  color: var(--cradle-text);
+}
+
+.summary header,
+.summary section {
+  width: min(100%, 920px);
+  margin-inline: auto;
+}
+
+.summary header {
+  margin-bottom: 28px;
+}
+
+.summary header > p:first-child {
+  margin-bottom: 5px;
+
+  color: var(--cradle-primary);
+
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary h2,
+.summary h3,
+.summary p {
+  margin-top: 0;
+}
+
+.summary h2 {
+  margin-bottom: 8px;
+}
+
+.summary section {
+  margin-bottom: 28px;
+}
+
+.tableScroll {
+  overflow-x: auto;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: 6px;
+}
+
+.summary table {
+  width: 100%;
+  margin: 0;
+}
+
+.summary th,
+.summary td {
+  padding: 10px 12px;
+
+  text-align: left;
+  vertical-align: top;
+}
+
+.summary thead th {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-primary) 6%,
+      var(--cradle-surface)
+    );
+}
+
+.summary tbody th {
+  white-space: nowrap;
+}

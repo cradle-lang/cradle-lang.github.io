@@ -1,3 +1,7 @@
+---
+draft: true
+---
+
 # Clean up an environment
 
 The integrated workflow leaves the newly provisioned Vagrant environment

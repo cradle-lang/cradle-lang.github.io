@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from 'react';
 
@@ -15,6 +16,7 @@ import Visualization from './components/visualization/Visualization';
 
 import {
   parseCradleForWorkbench,
+  WorkbenchParseError,
 } from './utils/cradleParser';
 
 import {
@@ -22,6 +24,7 @@ import {
 } from './utils/download';
 
 import {
+  ADVANCED_SAMPLE_SCENARIO,
   SAMPLE_SCENARIO,
 } from './data/sampleScenario';
 
@@ -38,6 +41,41 @@ import styles from './Workbench.module.css';
 const SOURCE_STORAGE =
   'cradleWorkbenchSource';
 
+type WorkbenchErrorGuidance = {
+  title: string;
+  detail: string;
+  sourceLine?: string;
+  suggestion: string;
+};
+
+type MobileWorkbenchPane =
+  | 'source'
+  | 'visualization'
+  | 'inspector';
+
+function describeWorkbenchError(
+  error: unknown,
+): WorkbenchErrorGuidance {
+  if (error instanceof WorkbenchParseError) {
+    return {
+      title: `Check line ${error.line}`,
+      detail: error.message,
+      sourceLine: error.sourceLine,
+      suggestion: error.suggestion,
+    };
+  }
+
+  return {
+    title: 'The scenario could not be processed',
+    detail:
+      error instanceof Error
+        ? error.message
+        : String(error),
+    suggestion:
+      'Review the source and compare its section order with the HelloWorld-Win example.',
+  };
+}
+
 export default function Workbench(): ReactNode {
   const [source, setSource] =
     useState('');
@@ -47,10 +85,19 @@ export default function Workbench(): ReactNode {
       null,
     );
 
+  const [visualizedSource, setVisualizedSource] =
+    useState<string | null>(null);
+
+  const [sourceLoaded, setSourceLoaded] =
+    useState(false);
+
   const [view, setView] =
     useState<WorkbenchView>(
       'topology',
     );
+
+  const [mobilePane, setMobilePane] =
+    useState<MobileWorkbenchPane>('source');
 
   const [selection, setSelection] =
     useState<Selection>(null);
@@ -78,6 +125,11 @@ export default function Workbench(): ReactNode {
   const [messages, setMessages] =
     useState<ConsoleMessage[]>(
       [],
+    );
+
+  const [parseError, setParseError] =
+    useState<WorkbenchErrorGuidance | null>(
+      null,
     );
 
   const fileInputRef =
@@ -119,11 +171,11 @@ export default function Workbench(): ReactNode {
           parseCradleForWorkbench(source);
 
         setParsed(result);
-
-        window.localStorage.setItem(
-          SOURCE_STORAGE,
-          source,
-        );
+        setVisualizedSource(source);
+        setSelection(null);
+        setNodePositions({});
+        setNetworkPositions({});
+        setParseError(null);
 
         log(
           `Generated ${
@@ -141,13 +193,18 @@ export default function Workbench(): ReactNode {
             : 'success',
         );
       } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : String(error);
+        const guidance =
+          describeWorkbenchError(error);
+
+        setParsed(null);
+        setVisualizedSource(null);
+        setSelection(null);
+        setNodePositions({});
+        setNetworkPositions({});
+        setParseError(guidance);
 
         log(
-          `Parser error: ${message}`,
+          `${guidance.title}: ${guidance.detail} ${guidance.suggestion}`,
           'error',
         );
       }
@@ -163,21 +220,109 @@ export default function Workbench(): ReactNode {
       saved || SAMPLE_SCENARIO;
 
     setSource(initialSource);
+    setSourceLoaded(true);
 
     try {
-      setParsed(
+      const result =
         parseCradleForWorkbench(
           initialSource,
-        ),
-      );
-    } catch {
+        );
+
+      setParsed(result);
+      setVisualizedSource(initialSource);
+      setParseError(null);
+    } catch (error) {
+      const guidance =
+        describeWorkbenchError(error);
+
       setParsed(null);
+      setVisualizedSource(null);
+      setParseError(guidance);
+
+      log(
+        `${guidance.title}: ${guidance.detail} ${guidance.suggestion}`,
+        'error',
+      );
     }
 
-    log(
-      'Workbench ready. Edit or import a CRADLE scenario.',
-    );
+    log('Workbench ready. Edit or import a CRADLE scenario.');
   }, [log]);
+
+  useEffect(() => {
+    if (!sourceLoaded) {
+      return;
+    }
+
+    if (source) {
+      window.localStorage.setItem(
+        SOURCE_STORAGE,
+        source,
+      );
+    } else {
+      window.localStorage.removeItem(
+        SOURCE_STORAGE,
+      );
+    }
+  }, [source, sourceLoaded]);
+
+  const confirmReplacement =
+    useCallback(
+      (
+        nextSource: string,
+        action: string,
+      ): boolean => {
+        if (
+          !source.trim() ||
+          source === nextSource
+        ) {
+          return true;
+        }
+
+        return window.confirm(
+          `${action} will replace the current source. Export it first if you want to keep a separate copy. Continue?`,
+        );
+      },
+      [source],
+    );
+
+  const loadSample =
+    useCallback(
+      (
+        nextSource: string,
+        label: string,
+      ): void => {
+        if (
+          !confirmReplacement(
+            nextSource,
+            `Loading ${label}`,
+          )
+        ) {
+          log(
+            `Canceled loading ${label}.`,
+          );
+          return;
+        }
+
+        const result =
+          parseCradleForWorkbench(
+            nextSource,
+          );
+
+        setSource(nextSource);
+        setParsed(result);
+        setVisualizedSource(nextSource);
+        setSelection(null);
+        setNodePositions({});
+        setNetworkPositions({});
+        setParseError(null);
+
+        log(
+          `Loaded ${label}.`,
+          'success',
+        );
+      },
+      [confirmReplacement, log],
+    );
 
   const handleImport =
     useCallback(
@@ -195,35 +340,54 @@ export default function Workbench(): ReactNode {
           const content =
             await file.text();
 
-          setSource(content);
-
-          setNodePositions({});
-          setNetworkPositions({});
-
           const result =
             parseCradleForWorkbench(content);
 
+          if (
+            !confirmReplacement(
+              content,
+              `Importing ${file.name}`,
+            )
+          ) {
+            log(
+              `Canceled importing ${file.name}.`,
+            );
+            return;
+          }
+
+          setSource(content);
           setParsed(result);
+          setVisualizedSource(content);
+          setSelection(null);
+          setNodePositions({});
+          setNetworkPositions({});
+          setParseError(null);
 
           log(
             `Imported ${file.name}.`,
             'success',
           );
         } catch (error) {
+          const guidance =
+            describeWorkbenchError(error);
+
+          setParseError(guidance);
+
           log(
-            `Import failed: ${
-              error instanceof Error
-                ? error.message
-                : String(error)
-            }`,
+            `Import failed. ${guidance.title}: ${guidance.detail} ${guidance.suggestion}`,
             'error',
           );
         } finally {
           event.target.value = '';
         }
       },
-      [log],
+      [confirmReplacement, log],
     );
+
+  const visualizationOutdated =
+    parsed !== null &&
+    visualizedSource !== null &&
+    source !== visualizedSource;
 
   function handleExport(): void {
     const rawName =
@@ -280,11 +444,57 @@ export default function Workbench(): ReactNode {
     );
   }
 
+  function handleViewTabKeyDown(
+    event: ReactKeyboardEvent<HTMLButtonElement>,
+  ): void {
+    if (
+      event.key !== 'ArrowLeft' &&
+      event.key !== 'ArrowRight' &&
+      event.key !== 'Home' &&
+      event.key !== 'End'
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const views: WorkbenchView[] = [
+      'topology',
+      'events',
+      'summary',
+    ];
+
+    const currentIndex =
+      views.indexOf(view);
+
+    const nextIndex =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? views.length - 1
+          : event.key === 'ArrowRight'
+            ? (currentIndex + 1) % views.length
+            : (currentIndex - 1 + views.length) % views.length;
+
+    const nextView = views[nextIndex];
+
+    setView(nextView);
+
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById(
+          `visualization-tab-${nextView}`,
+        )
+        ?.focus();
+    });
+  }
+
   return (
     <main
       className={
         styles.workbench
       }
+      data-mobile-pane={mobilePane}
     >
       <header
         className={
@@ -324,15 +534,19 @@ export default function Workbench(): ReactNode {
           className={
             styles.status
           }
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
         >
           <span
             className={
               styles.statusDot
             }
+            aria-hidden="true"
           />
 
           {parsed
-            ? `${parsed.instances.length} instances · ${parsed.networks.length} networks · ${parsed.events.length} events`
+            ? `${parsed.instances.length} instances · ${parsed.networks.length} networks · ${parsed.events.length} events${visualizationOutdated ? ' · Changes not visualized' : ''}`
             : 'Ready'}
         </div>
 
@@ -381,6 +595,33 @@ export default function Workbench(): ReactNode {
         </div>
       </header>
 
+      <nav
+        className={styles.mobilePaneTabs}
+        aria-label="Workbench panel"
+      >
+        {(
+          [
+            ['source', 'Source'],
+            ['visualization', 'Visualization'],
+            ['inspector', 'Inspector'],
+          ] as const
+        ).map(([pane, label]) => (
+          <button
+            key={pane}
+            type="button"
+            aria-pressed={mobilePane === pane}
+            className={
+              mobilePane === pane
+                ? styles.mobilePaneTabActive
+                : styles.mobilePaneTab
+            }
+            onClick={() => setMobilePane(pane)}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
       <div
         className={
           styles.workspace
@@ -421,46 +662,33 @@ export default function Workbench(): ReactNode {
             >
               <button
                 type="button"
-                onClick={() => {
-                  setSource(
+                onClick={() =>
+                  loadSample(
                     SAMPLE_SCENARIO,
-                  );
-
-                  setNodePositions(
-                    {},
-                  );
-
-                  setNetworkPositions(
-                    {},
-                  );
-
-                  window.setTimeout(
-                    () => {
-                      const result =
-                        parseCradleForWorkbench(
-                          SAMPLE_SCENARIO,
-                        );
-
-                      setParsed(
-                        result,
-                      );
-                    },
-                    0,
-                  );
-
-                  log(
-                    'Loaded sample scenario.',
-                  );
-                }}
+                    'HelloWorld-Win sample',
+                  )
+                }
               >
-                Load sample
+                Load Hello World
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  loadSample(
+                    ADVANCED_SAMPLE_SCENARIO,
+                    'advanced SME sample',
+                  )
+                }
+              >
+                Load advanced sample
               </button>
 
               <button
                 type="button"
                 onClick={generateVisualization}
               >
-                Format
+                Refresh visualization
               </button>
 
               <button
@@ -469,8 +697,21 @@ export default function Workbench(): ReactNode {
                   styles.dangerButton
                 }
                 onClick={() => {
+                  if (
+                    !confirmReplacement(
+                      '',
+                      'Creating a new scenario',
+                    )
+                  ) {
+                    log(
+                      'Canceled creating a new scenario.',
+                    );
+                    return;
+                  }
+
                   setSource('');
                   setParsed(null);
+                  setVisualizedSource(null);
                   setSelection(null);
                   setNodePositions(
                     {},
@@ -478,6 +719,7 @@ export default function Workbench(): ReactNode {
                   setNetworkPositions(
                     {},
                   );
+                  setParseError(null);
 
                   log(
                     'Created new scenario.',
@@ -520,7 +762,30 @@ export default function Workbench(): ReactNode {
                 className={
                   styles.consoleBody
                 }
+                role="log"
+                aria-live="polite"
+                aria-relevant="additions"
               >
+                {parseError && (
+                  <div
+                    className={styles.errorGuidance}
+                    role="alert"
+                  >
+                    <strong>{parseError.title}</strong>
+                    <span>{parseError.detail}</span>
+                    {parseError.sourceLine && (
+                      <code>{parseError.sourceLine}</code>
+                    )}
+                    <span>
+                      Next: {parseError.suggestion}{' '}
+                      <a href="/docs/guides/write-a-scenario">
+                        Review the scenario guide
+                      </a>
+                      .
+                    </span>
+                  </div>
+                )}
+
                 <WorkbenchConsole
                   messages={
                     messages
@@ -606,9 +871,22 @@ export default function Workbench(): ReactNode {
                 className={
                   styles.tabs
                 }
+                role="tablist"
+                aria-label="Visualization view"
               >
                 <button
                   type="button"
+                  id="visualization-tab-topology"
+                  role="tab"
+                  aria-selected={
+                    view === 'topology'
+                  }
+                  aria-controls="workbench-visualization-panel"
+                  tabIndex={
+                    view === 'topology'
+                      ? 0
+                      : -1
+                  }
                   className={
                     view ===
                     'topology'
@@ -620,12 +898,26 @@ export default function Workbench(): ReactNode {
                       'topology',
                     )
                   }
+                  onKeyDown={(event) =>
+                    handleViewTabKeyDown(event)
+                  }
                 >
                   Topology
                 </button>
 
                 <button
                   type="button"
+                  id="visualization-tab-events"
+                  role="tab"
+                  aria-selected={
+                    view === 'events'
+                  }
+                  aria-controls="workbench-visualization-panel"
+                  tabIndex={
+                    view === 'events'
+                      ? 0
+                      : -1
+                  }
                   className={
                     view ===
                     'events'
@@ -637,8 +929,29 @@ export default function Workbench(): ReactNode {
                       'events',
                     )
                   }
+                  onKeyDown={(event) =>
+                    handleViewTabKeyDown(event)
+                  }
                 >
                   Event flow
+                </button>
+
+                <button
+                  type="button"
+                  id="visualization-tab-summary"
+                  role="tab"
+                  aria-selected={view === 'summary'}
+                  aria-controls="workbench-visualization-panel"
+                  tabIndex={view === 'summary' ? 0 : -1}
+                  className={
+                    view === 'summary'
+                      ? styles.activeTab
+                      : styles.tab
+                  }
+                  onClick={() => setView('summary')}
+                  onKeyDown={handleViewTabKeyDown}
+                >
+                  Text summary
                 </button>
               </div>
 
@@ -691,8 +1004,13 @@ export default function Workbench(): ReactNode {
           </header>
 
           <div
+            id="workbench-visualization-panel"
             className={
               styles.canvas
+            }
+            role="tabpanel"
+            aria-labelledby={
+              `visualization-tab-${view}`
             }
           >
             {parsed && (

@@ -1,5 +1,5 @@
 ---
-orphan: true
+draft: true
 ---
 
 # Intermediary Language Example
@@ -152,6 +152,6 @@ Even a direct-looking mapping requires human review because:
 
 - [Intermediary Language](index.md)
 - [IL Syntax and Structure](syntax.md)
-- [CRADLE Language Structure](../introduction/sections.md)
-- [Hello World Example](../introduction/helloworld.md)
+- [CRADLE Language Overview](../language/overview)
+- [Hello World Example](../examples/hello-world)
 - [CRADLE Schema Reference](../schema/cradle-schema.md)

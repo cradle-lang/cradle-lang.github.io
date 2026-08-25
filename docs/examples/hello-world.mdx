@@ -1,63 +1,80 @@
 ---
 sidebar_position: 1
 title: Hello World
+description: View the canonical, valid HelloWorld-Win CRADLE scenario used throughout the onboarding documentation and Workbench.
 ---
 
 # Hello World
 
-This complete v2 scenario defines two Ubuntu instances, one network, one object, and one event.
+This complete scenario defines a Windows instance, a Linux router, one
+network, one external object, and one main event.
+
+The public example uses a placeholder artifact repository. Replace it with an
+authorized repository when running the scenario in your environment.
 
 ```cradle
 metadata() >
-    name("HelloWorld"),
+    name("HelloWorld-Win"),
     eventType("sequence"),
     repositoryRemote("https://artifacts.example.org"),
-    object("hello").
+    object("HelloWorld").
 
 instances() >
-    instance("vm1"),
+    instance("win7"),
     instance("router").
 
-instance("vm1") >
-    os("ubuntu", "20.04"),
-    config("linux-tcpdump"),
-    object("hello").
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
 
 instance("router") >
-    os("ubuntu", "20.04"),
+    os("linux", "20.04"),
+    object("HelloWorld"),
+    config("linux-vsftpd"),
+    config("linux-auditd"),
+    config("linux-mail"),
+    config("linux-python3"),
+    config("python3-pip"),
     config("linux-router").
 
 networks() >
-    network("lan").
+    network("lan_0").
 
-network("lan") >
+network("lan_0") >
     subnet("192.168.56.0/24"),
-    endpoint("vm1", "DHCP"),
-    endpoint("router", "192.168.56.254").
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
 
 events() >
-    mainEvent().
+    preEvent(),
+    mainEvent(),
+    postEvent().
 
 mainEvent() >
-    event("run_hello").
+    event("1").
 
-event("run_hello") >
-    instance("vm1"),
-    needRoot(false),
-    subject("bash", ""),
-    runObject("hello", ""),
-    pauseBeforeRun(0),
-    pauseAfterRun(0),
-    scheduleExecution("2024-01-01T00:00:00+00:00"),
-    description("Run the Hello World script").
+event("1") >
+    instance("router"),
+    needRoot("true"),
+    pauseBeforeRun("0"),
+    pauseAfterRun("0"),
+    waitfor("false"),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
 
-object("hello") >
-    location("${uriRemote}/HelloWorld/hello.sh").
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
+
+Save the source as `scenarios/HelloWorld.cradle`, then validate and compile it:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
 cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
 ```
 
-Replace the example repository and object location with an accessible artifact before rendering target files.
+Configuration and artifact availability depend on the selected CRADLE
+environment and backend.
