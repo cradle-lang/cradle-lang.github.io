@@ -7,9 +7,12 @@ title: Backend Example
 
 Backends transform a validated scenario into files for a particular target.
 
-```text
-.cradle source → cxc emit → external backend → target-specific files
-```
+<div className="architecture-chain">
+    <div>.cradle source </div> <span>→</span>
+    <div>cxc emit</div> <span>→</span>
+    <div>external backend</div> <span>→</span>
+    <div>target-specific files</div>
+</div>
 
 ```bash
 cxc validate -i scenarios/Example.cradle

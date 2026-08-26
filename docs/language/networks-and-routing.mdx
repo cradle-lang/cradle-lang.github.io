@@ -417,17 +417,33 @@ network("lan_1") >
 
 The intended topology is:
 
-```text
-Client
-  │
-  │ lan_0
-  │
-Router
-  │
-  │ lan_1
-  │
-Server
-```
+<div
+  className="scenarioTopology scenarioTopologyConverging"
+  role="img"
+  aria-label="Client connects to Router through lan_0, and Server connects to Router through lan_1"
+>
+  <div className="scenarioTopologyNode">
+    <strong>Client</strong>
+  </div>
+
+  <div className="scenarioTopologyConnection" aria-hidden="true">
+    <code className="scenarioTopologyConnectionLabel">lan_0</code>
+    <span className="scenarioTopologyArrow">→</span>
+  </div>
+
+  <div className="scenarioTopologyNode">
+    <strong>Router</strong>
+  </div>
+
+  <div className="scenarioTopologyConnection" aria-hidden="true">
+    <code className="scenarioTopologyConnectionLabel">lan_1</code>
+    <span className="scenarioTopologyArrow">←</span>
+  </div>
+
+  <div className="scenarioTopologyNode">
+    <strong>Server</strong>
+  </div>
+</div>
 
 The `Router` instance participates in both networks.
 

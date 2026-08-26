@@ -57,15 +57,27 @@ For example:
 
 A simple topology might be:
 
-```text
-Client
-  │
-  │
-lan_0
-  │
-  │
-Router
-```
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="Client connects to Router through the lan_0 network"
+>
+  <div className="scenarioTopologyNode">
+    <strong>Client</strong>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNetwork">
+    <code>lan_0</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNode">
+    <strong>Router</strong>
+  </div>
+</div>
 
 The scenario will then connect these components through named references.
 
@@ -291,17 +303,29 @@ The endpoint names reference the instances declared earlier.
 
 Conceptually:
 
-```text
-Client
- DHCP
-   │
-   ▼
-192.168.10.0/24
-   ▲
-   │
-192.168.10.1
- Router
-```
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="Client uses DHCP and Router uses 192.168.10.1 on the 192.168.10.0/24 subnet"
+>
+  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
+    <strong>Client</strong>
+    <code>DHCP</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNetwork">
+    <code>192.168.10.0/24</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">←</span>
+
+  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
+    <strong>Router</strong>
+    <code>192.168.10.1</code>
+  </div>
+</div>
 
 :::important
 Endpoint names must match declared instance names exactly.
@@ -346,13 +370,27 @@ repositoryRemote("https://example.com/repository")
 
 Conceptually:
 
-```text
-repositoryRemote
-       +
-object-relative path
-       ↓
-complete artifact location
-```
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="repositoryRemote plus the object-relative path produces the complete artifact location"
+>
+  <div className="scenarioTopologyValue">
+    <code>repositoryRemote</code>
+  </div>
+
+  <span className="scenarioTopologyOperator" aria-hidden="true">+</span>
+
+  <div className="scenarioTopologyValue">
+    <code>object-relative path</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyValue">
+    <code>complete artifact location</code>
+  </div>
+</div>
 
 The object name should remain consistent across:
 
@@ -417,13 +455,7 @@ mainEvent() >
     event("1").
 ```
 
-The event name is:
-
-```text
-1
-```
-
-It should have a matching event definition.
+The event name is `1`. It should have a matching event definition.
 
 ## Define the event
 
@@ -524,11 +556,21 @@ event("2") >
 
 Conceptually:
 
-```text
-event 1
-   ↓
-event 2
-```
+<div
+  className="scenarioTopology scenarioTopologyTwoStep"
+  role="img"
+  aria-label="Event 2 waits for event 1"
+>
+  <div className="scenarioTopologyValue">
+    <code>event 1</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyValue">
+    <code>event 2</code>
+  </div>
+</div>
 
 :::note
 The current JSON Schema and compiler behavior do not represent `waitfor` in exactly the same way. Validate dependency behavior against the CradleXC release you are using.

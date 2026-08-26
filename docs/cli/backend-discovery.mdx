@@ -270,23 +270,26 @@ A backend can generate configuration for another target or provider.
 
 For example:
 
-```text
-CRADLE scenario
-      ↓
-CradleXC
-      ↓
-Vagrant backend
-      ↓
-Provider configuration
-```
+<div className="architecture-flow">
 
-A Vagrant backend could generate configuration for a provider such as:
+  <div>CRADLE scenario</div>
 
-```text
-libvirt
-```
+  <span>↓</span>
 
-or another provider supported by that backend.
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Vagrant backend</div>
+
+  <span>↓</span>
+
+  <div>Provider configuration</div>
+
+</div>
+
+A Vagrant backend could generate configuration for a provider such as 
+`libvirt` or another provider supported by that backend.
 
 The provider is therefore configured through the backend rather than being built directly into CRADLE or CradleXC.
 

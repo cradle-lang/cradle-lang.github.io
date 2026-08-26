@@ -469,22 +469,190 @@ body {
    ========================================================= */
 
 .theme-doc-markdown a {
-  color: var(--cradle-primary);
-
-  text-decoration-color: color-mix(
+  color: color-mix(
     in srgb,
-    var(--cradle-primary) 40%,
-    transparent
+    var(--cradle-primary) 82%,
+    var(--cradle-accent)
   );
 
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  font-weight: 550;
+
+  text-decoration: none;
+
+  transition: color 140ms ease;
 }
 
 .theme-doc-markdown a:hover {
   color: var(--cradle-accent);
 
-  text-decoration-color: var(--cradle-accent);
+  text-decoration: none;
+}
+
+.theme-doc-markdown a:focus-visible {
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--cradle-accent) 28%,
+    transparent
+  );
+
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+
+/* =========================================================
+   DOCUMENTATION - SCENARIO TOPOLOGY
+   ========================================================= */
+
+.scenarioTopology {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr) auto minmax(150px, 1fr);
+  align-items: center;
+
+  gap: 0.8rem;
+
+  margin: 1.5rem 0 2rem;
+
+  overflow-x: auto;
+}
+
+.scenarioTopologyTwoStep {
+  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+}
+
+.scenarioTopologyNode,
+.scenarioTopologyNetwork,
+.scenarioTopologyValue {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 1rem 1.25rem;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-lg);
+
+  background: var(--cradle-surface-raised);
+}
+
+.scenarioTopologyNode strong {
+  color: var(--cradle-text-strong);
+
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.scenarioTopologyEndpoint {
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 0.2rem;
+}
+
+.theme-doc-markdown .scenarioTopologyEndpoint code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-muted);
+
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.theme-doc-markdown .scenarioTopologyNetwork code,
+.theme-doc-markdown .scenarioTopologyValue code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-strong);
+
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.scenarioTopologyOperator {
+  color: var(--cradle-text-muted);
+
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.scenarioTopologyArrow {
+  color: var(--cradle-accent);
+
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.scenarioReferenceFlow {
+  display: flex;
+  align-items: stretch;
+
+  gap: 0.55rem;
+
+  margin: 1.25rem 0 2rem;
+  padding-bottom: 0.25rem;
+
+  overflow-x: auto;
+}
+
+.scenarioReferenceFlow .scenarioTopologyArrow {
+  align-self: center;
+  flex: 0 0 auto;
+}
+
+.scenarioReferenceStep {
+  flex: 1 0 104px;
+  justify-content: center;
+
+  min-width: 104px;
+  padding: 0.85rem 0.55rem;
+
+  text-align: center;
+}
+
+.theme-doc-markdown .scenarioReferenceStep code {
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.scenarioTopologyConverging {
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(90px, auto)
+    minmax(150px, 1fr)
+    minmax(90px, auto)
+    minmax(150px, 1fr);
+}
+
+.scenarioTopologyConnection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 90px;
+}
+
+.theme-doc-markdown .scenarioTopologyConnectionLabel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--cradle-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 

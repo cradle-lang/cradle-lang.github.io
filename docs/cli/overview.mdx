@@ -13,7 +13,6 @@ The CLI is used to:
 - compile scenarios
 - inspect intermediate output
 - import existing definitions
-- migrate older CRADLE source
 - inspect configuration
 - manage dependencies
 - discover backend plugins
@@ -234,72 +233,6 @@ cxc plugin install vagrant
 
 Backend installation and discovery are documented in [Use a Backend](../getting-started/use-a-backend).
 
-## Import existing definitions
-
-Use `cxc import` to convert supported existing definitions into CRADLE source.
-
-The exact import options depend on the source format supported by the installed CradleXC release.
-
-Start by viewing:
-
-```bash
-cxc import --help
-```
-
-The current workflow includes importing supported Vagrant or Ansible definitions into `.cradle` source.
-
-Detailed import workflows are documented separately in the import guides.
-
-## Migrate older CRADLE source
-
-Use `cxc migrate` to migrate supported older CRADLE source to the current format.
-
-View the available options with:
-
-```bash
-cxc migrate --help
-```
-
-The current migration workflow includes migration from CRADLE v1 to v2.
-
-Migration guidance is covered separately in the migration guide.
-
-## Extract data
-
-CradleXC provides:
-
-```bash
-cxc extract
-```
-
-for supported extraction workflows.
-
-Because extraction behavior can depend on the input and CradleXC release, inspect the installed command interface with:
-
-```bash
-cxc extract --help
-```
-
-before use.
-
-## Generate artifacts
-
-CradleXC also provides:
-
-```bash
-cxc generate-artifacts
-```
-
-for supported artifact-generation workflows.
-
-View the command-specific options with:
-
-```bash
-cxc generate-artifacts --help
-```
-
-Artifact handling is covered separately in the user guides where applicable.
-
 ## Check dependencies
 
 Use:
@@ -332,23 +265,6 @@ Configuration can include values used by the CLI and local environment.
 
 Detailed configuration documentation is provided in [CLI Configuration](./configuration).
 
-## Shell completions
-
-CradleXC provides:
-
-```bash
-cxc completions
-```
-
-for supported shell completion generation.
-
-Use:
-
-```bash
-cxc completions --help
-```
-
-to see the shells and options supported by the installed CradleXC release.
 
 ## Command groups
 
@@ -408,25 +324,6 @@ The current CLI can be thought of in several groups.
 
 </div>
 
-### Migration and import
-
-<div className="cxc-command-grid">
-
-  <div className="cxc-command-card">
-    <div className="cxc-command-description">
-      Convert supported existing definitions into CRADLE source.
-    </div>
-    <code>cxc import</code>
-  </div>
-
-  <div className="cxc-command-card">
-    <div className="cxc-command-description">
-      Migrate supported older CRADLE source.
-    </div>
-    <code>cxc migrate</code>
-  </div>
-
-</div>
 
 ### Environment and utilities
 
@@ -453,13 +350,6 @@ The current CLI can be thought of in several groups.
     <code>cxc config</code>
   </div>
 
-  <div className="cxc-command-card">
-    <div className="cxc-command-description">
-      Generate supported shell completions.
-    </div>
-    <code>cxc completions</code>
-  </div>
-
 </div>
 
 ## CLI responsibilities
@@ -471,7 +361,6 @@ The CLI sits between CRADLE source and the other CradleXC processing stages.
 | Source validation | Check CRADLE syntax. |
 | Compilation | Produce the compiled representation. |
 | Inspection | Expose intermediate representation and diagnostics. |
-| Migration | Convert supported older CRADLE source. |
 | Import | Convert supported external definitions into CRADLE source. |
 | Backend discovery | Locate compatible external backend plugins. |
 | Backend generation | Pass a scenario to a selected backend for target-specific output. |

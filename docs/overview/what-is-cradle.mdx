@@ -192,15 +192,6 @@ The `cxc` command-line interface provides commands for different stages of the C
     <code>cxc emit</code>
   </div>
 
-  <div className="cxc-command-card">
-    <h3>Import and migrate</h3>
-    <div className="cxc-command-description">
-      Bring external or earlier scenario definitions into the current workflow.
-    </div>
-
-    <code>cxc import</code>
-    <code>cxc migrate</code>
-  </div>
 
 </div>
 
@@ -218,13 +209,6 @@ They are used to validate CRADLE syntax, compile scenarios and inspect the inter
 `cxc emit` uses a compatible backend plugin to generate target-specific files from a CRADLE scenario.
 
 These files are not automatically executed by CradleXC. They can be used with the corresponding tools in the user's own testbed environment.
-
-
-### Import and migration
-
-`cxc import` and `cxc migrate` support workflows for importing supported external definitions and migrating earlier CRADLE scenarios to the current language generation.
-
-The exact behavior, arguments and available options for each command are documented in the CLI reference.
 
 ## Backend architecture
 
@@ -279,11 +263,11 @@ This separation helps distinguish problems in the CRADLE scenario from problems 
 
 CRADLE is intended for teams that need cyber-environments to be understandable, repeatable, and maintainable, including:
 
-- cybersecurity researchers conducting controlled experiments
-- educators and exercise designers developing repeatable training scenarios
-- security teams modeling threat activity or validating defensive capabilities
-- engineers responsible for cyber-range and test-environment definitions
-- developers maintaining or extending the CRADLE language and toolchain
+- **cybersecurity researchers** conducting controlled experiments
+- **educators and exercise designers** developing repeatable training scenarios
+- **security teams modeling** threat activity or validating defensive capabilities
+- **engineers** responsible for cyber-range and test-environment definitions
+- **developers** maintaining or extending the CRADLE language and toolchain
 
 ## Suitable use cases
 

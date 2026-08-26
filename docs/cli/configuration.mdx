@@ -103,18 +103,23 @@ This separates generated or extracted dataset content from the CRADLE source fil
 
 Conceptually:
 
-```text
-CRADLE scenario
-      │
-      ▼
-CradleXC processing
-      │
-      ▼
-Extracted data
-      │
-      ▼
-dataset_dir
-```
+<div className="architecture-flow">
+
+  <div>CRADLE scenario</div>
+
+  <span>↓</span>
+
+  <div>CradleXC processing</div>
+
+  <span>↓</span>
+
+  <div>Extracted data</div>
+
+  <span>↓</span>
+
+  <div>dataset_dir</div>
+
+</div>
 
 ## Artifact repository
 
@@ -306,15 +311,23 @@ This is a provider-specific setting used by workflows that generate Vagrant-comp
 
 Conceptually:
 
-```text
-CRADLE scenario
-      ↓
-CradleXC
-      ↓
-Vagrant backend
-      ↓
-Provider configuration
-```
+<div className="architecture-flow">
+
+  <div>CRADLE scenario</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Vagrant backend</div>
+
+  <span>↓</span>
+
+  <div>Provider configuration</div>
+
+</div>
 
 The provider remains a backend concern rather than a built-in CRADLE language concept.
 
