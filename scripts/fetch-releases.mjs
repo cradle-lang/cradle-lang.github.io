@@ -10,7 +10,10 @@ const API_URL =
 const TOKEN = process.env.CRADLE_RELEASES_TOKEN;
 
 if (!TOKEN) {
-  throw new Error('TOKEN is not set.');
+  console.warn(
+    'Release token is not set. Skipping private GitHub release fetch.'
+  );
+  process.exit(0);
 }
 
 async function fetchReleases() {
