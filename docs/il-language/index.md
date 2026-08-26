@@ -6,7 +6,6 @@ draft: true
 
 The Intermediary Language (IL) is a documented, human-readable notation for expressing CRADLE scenario concepts as short declarative statements. It is intended to help people review and discuss an environment before working with the formal CRADLE block syntax.
 
-
 ## Why IL exists
 
 Formal CRADLE syntax is precise, but it can be unfamiliar to non-developers. IL represents many of the same relationships using statements such as:

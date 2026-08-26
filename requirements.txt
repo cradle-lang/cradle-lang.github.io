@@ -1,7 +1,0 @@
-sphinx
-sphinx-rtd-theme
-sphinx_markdown_tables
-myst-parser
-furo
-sphinx-design
-sphinx_copybutton
