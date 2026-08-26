@@ -22,11 +22,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check Markdown quality
+      - name: Check Markdown and MDX quality
         uses: DavidAnson/markdownlint-cli2-action@v20
         with:
           globs: |
             **/*.md
+            **/*.mdx
             #node_modules/**
             #build/**
             #.docusaurus/**

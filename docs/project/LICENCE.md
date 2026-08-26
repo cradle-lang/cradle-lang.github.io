@@ -626,7 +626,7 @@ This Licence is intended to operate subject to sections 238 to 240 of the Copyri
 
 Licensing and permission enquiries may be directed to:
 
-**National Cybersecurity R&D Lab (NCL)**  
+**National Cybersecurity R&D Lab (NCL)**
 Website: `https://ncl.sg/`
 
 Any designated CRADLE licensing contact may also be identified in the relevant CRADLE distribution or project documentation.

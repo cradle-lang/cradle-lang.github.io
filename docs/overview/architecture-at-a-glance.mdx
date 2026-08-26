@@ -5,7 +5,7 @@ title: Architecture at a glance
 
 # Architecture at a glance
 
-CRADLE separates scenario definition, compilation and target-specific rendering 
+CRADLE separates scenario definition, compilation and target-specific rendering
 into distinct layers.
 
 The CRADLE language describes the intended cyber environment and experiment.
@@ -133,7 +133,7 @@ Depending on the backend, generated output can include:
 - infrastructure definitions
 - other files required by the target platform
 
-The user is responsible for installing the required backend and any provider-specific 
+The user is responsible for installing the required backend and any provider-specific
 dependencies or configuration it requires.
 
 :::important
@@ -162,10 +162,11 @@ In this example:
 3. The Vagrant backend generates Vagrant-specific files
 4. libvirt is configured within that backend
 
-libvirt is therefore a provider used by the backend 
+libvirt is therefore a provider used by the backend
 rather than functionality built directly into CRADLE or CradleXC.
 
 ## Generate target-specific output
+
 Backend plugins are used when a CRADLE scenario needs to be converted into files for a specific target.
 
 Once a compatible backend plugin is installed, use `cxc emit`:
@@ -182,19 +183,20 @@ cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 
 The backend generates the files required by its target.
 
-These files are not automatically executed by CradleXC. They can then be used with the 
+These files are not automatically executed by CradleXC. They can then be used with the
 corresponding tools in the user's testbed environment.
 
 ## Why this separation matters
 
 ### Portability
+
 A CRADLE scenario is not tied directly to one deployment implementation.
 
 Compatible backends can generate output for different target systems without changing the CRADLE scenario itself.
 
 ### Maintainability
 
-Infrastructure-specific behavior remains in backend implementations rather than being 
+Infrastructure-specific behavior remains in backend implementations rather than being
 mixed into the core language.
 
 ### Debuggability
@@ -216,7 +218,7 @@ Problems can be isolated to different stages of the workflow:
 
 </div>
 
-This helps distinguish problems in the authored scenario from compiler, backend or 
+This helps distinguish problems in the authored scenario from compiler, backend or
 infrastructure problems.
 
 ## Continue exploring

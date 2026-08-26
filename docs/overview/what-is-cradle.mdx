@@ -59,42 +59,41 @@ Tool developers can also consult the [developer schema reference](../schema/crad
 
 ### Repeatability
 
-A structured scenario provides a stable source of intent. Teams can preserve, 
-compare and recreate cyber environments more consistently than when the design 
+A structured scenario provides a stable source of intent. Teams can preserve,
+compare and recreate cyber environments more consistently than when the design
 exists only as manual instructions.
 
 ### Reviewability
 
-Systems, relationships, artifacts and events are represented explicitly, making a 
+Systems, relationships, artifacts and events are represented explicitly, making a
 scenario easier for researchers, engineers and reviewers to inspect and discuss.
 
 ### Maintainability
 
-Changes can be made to the scenario definition instead of being duplicated across 
-several platform-specific procedures. This also makes the history of a scenario easier 
+Changes can be made to the scenario definition instead of being duplicated across
+several platform-specific procedures. This also makes the history of a scenario easier
 to track through version control.
 
 ### Infrastructure-independent scenario definitions
 
-CRADLE provides a common way to describe the systems, networks, artifacts and events 
+CRADLE provides a common way to describe the systems, networks, artifacts and events
 in a cyber environment.
 
-CradleXC processes the CRADLE scenario independently of a specific target platform. 
+CradleXC processes the CRADLE scenario independently of a specific target platform.
 A compatible backend plugin can then generate the files required by a supported target.
 
-This avoids making infrastructure platforms, virtualization providers or target-specific 
+This avoids making infrastructure platforms, virtualization providers or target-specific
 tools part of the CRADLE language itself.
 
-Backend capabilities can differ, so portability between targets depends on the features 
+Backend capabilities can differ, so portability between targets depends on the features
 supported by the selected backend.
-
 
 ## Conceptual lifecycle
 
-A CRADLE scenario moves through several stages, from defining the scenario to 
-producing target-specific files for use in a testbed environment. The lifecycle 
-separates the CRADLE language and compiler from deployment-specific behavior: 
-CRADLE describes what the scenario contains, while backend plugins determine how 
+A CRADLE scenario moves through several stages, from defining the scenario to
+producing target-specific files for use in a testbed environment. The lifecycle
+separates the CRADLE language and compiler from deployment-specific behavior:
+CRADLE describes what the scenario contains, while backend plugins determine how
 that scenario is represented for a particular target.
 
 <div className="cradle-lifecycle">
@@ -108,11 +107,11 @@ that scenario is represented for a particular target.
 
     <div className="cradle-lifecycle-step">
         <div className="cradle-lifecycle-number">2</div>
-        <div className="cradle-lifecycle-content"> 
-          <strong>Validate and process</strong> 
-          <span> 
-            CradleXC parses the source and checks it for syntactic and semantic errors. This ensures that the scenario is structurally valid and satisfies the constraints defined by the CRADLE language. 
-          </span>            
+        <div className="cradle-lifecycle-content">
+          <strong>Validate and process</strong>
+          <span>
+            CradleXC parses the source and checks it for syntactic and semantic errors. This ensures that the scenario is structurally valid and satisfies the constraints defined by the CRADLE language.
+          </span>
        </div>
     </div>
 
@@ -120,11 +119,11 @@ that scenario is represented for a particular target.
 
     <div className="cradle-lifecycle-step">
         <div className="cradle-lifecycle-number">3</div>
-        <div className="cradle-lifecycle-content"> 
-          <strong>Compile</strong> 
-          <span> 
-            Once validation succeeds, CradleXC transforms the scenario into compiled output. The compiler is responsible for processing the CRADLE language; it does not contain deployment-specific logic for individual target tools. 
-          </span>            
+        <div className="cradle-lifecycle-content">
+          <strong>Compile</strong>
+          <span>
+            Once validation succeeds, CradleXC transforms the scenario into compiled output. The compiler is responsible for processing the CRADLE language; it does not contain deployment-specific logic for individual target tools.
+          </span>
         </div>
     </div>
 
@@ -139,9 +138,9 @@ that scenario is represented for a particular target.
         </span>
       </div>
     </div>
-    
+
     <div className="cradle-lifecycle-connector">↓</div>
-    
+
     <div className="cradle-lifecycle-step">
       <div className="cradle-lifecycle-number">5</div>
       <div className="cradle-lifecycle-content">
@@ -192,7 +191,6 @@ The `cxc` command-line interface provides commands for different stages of the C
     <code>cxc emit</code>
   </div>
 
-
 </div>
 
 ### Validate and inspect scenarios
@@ -200,7 +198,6 @@ The `cxc` command-line interface provides commands for different stages of the C
 `cxc validate`, `cxc compile` and `cxc dump-ir` operate primarily on CRADLE scenarios and compiler representations.
 
 They are used to validate CRADLE syntax, compile scenarios and inspect the intermediate representation produced by CradleXC.
-
 
 ### Generate target-specific output
 
@@ -258,7 +255,6 @@ The available evidence depends on the command and backend being used.
 
 This separation helps distinguish problems in the CRADLE scenario from problems in generated target-specific files or the user's testbed environment.
 
-
 ## Who CRADLE is for
 
 CRADLE is intended for teams that need cyber-environments to be understandable, repeatable, and maintainable, including:
@@ -281,7 +277,7 @@ CRADLE is well suited to:
 
 ## Product boundaries
 
-CRADLE describes and transforms cyber-environment scenarios. It does not replace the underlying infrastructure or the governance required to operate it. 
+CRADLE describes and transforms cyber-environment scenarios. It does not replace the underlying infrastructure or the governance required to operate it.
 
 Using generated target-specific files in a testbed can additionally depend on:
 
