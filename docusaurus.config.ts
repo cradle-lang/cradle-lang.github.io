@@ -57,32 +57,16 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           // editUrl:
           //   'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
+
           /*
-* There is no published CRADLE documentation version yet.
-*
-* The current docs/ directory therefore remains the default
-* documentation served at /docs/.
-*
-* Once the first stable release is created, we will configure:
-*
-* lastVersion: '1.0.0',
-*
-* versions: {
-*   current: {
-*     label: 'Next',
-*     path: 'next',
-*     banner: 'unreleased',
-*   },
-*
-*   '1.0.0': {
-*     label: '1.0.0',
-*     path: '',
-*     banner: 'none',
-*   },
-* },
-*/
-          // TODO: Set to false after the first stable documentation version
-          // has been created.
+           * There is currently no published versioned documentation.
+           *
+           * The docs/ directory contains the current documentation and is
+           * served at /docs/.
+           *
+           * Docusaurus versioning can be enabled when a stable documentation
+           * release is published.
+           */
           includeCurrentVersion: true,
 
           lastVersion: 'current',
@@ -90,11 +74,6 @@ const config: Config = {
           versions: {
             current: {
               label: 'Current',
-            },
-            '1.0.0': {
-              label: '1.0.0',
-              path: '1.0.0',
-              banner: 'none',
             },
           },
         },
