@@ -1,39 +1,38 @@
-import type { ReactNode } from 'react';
+import {useEffect, useState, type ReactNode} from 'react';
 import Layout from '@theme/Layout';
 import ReactMarkdown from 'react-markdown';
 
-import releases from '../../data/releases.json';
+import releaseNotes from '../../data/release-notes.json';
 
 import styles from './releases.module.css';
 
-type Release = {
-  id: number;
-  tagName: string;
-  name: string;
-  body: string;
-  publishedAt: string | null;
-  htmlUrl: string;
-  prerelease: boolean;
+type ReleaseNote = {
+  version: string;
+  fileName: string;
+  content: string;
 };
 
-function formatDate(date: string | null): string {
-  if (!date) {
-    return 'Publication date unavailable';
-  }
-
-  return new Date(date).toLocaleDateString('en-GB', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
 export default function ReleasesPage(): ReactNode {
-  const releaseData = releases as Release[];
-
-  const publishedReleases = releaseData.filter(
-    (release) => !release.prerelease,
+  const notes = releaseNotes as ReleaseNote[];
+  const [selectedVersion, setSelectedVersion] = useState(
+    notes.at(-1)?.version ?? '',
   );
+  const selectedNote = notes.find(
+    (note) => note.version === selectedVersion,
+  ) ?? notes.at(-1);
+
+  useEffect(() => {
+    const versionFromHash = decodeURIComponent(window.location.hash.slice(1));
+
+    if (notes.some((note) => note.version === versionFromHash)) {
+      setSelectedVersion(versionFromHash);
+    }
+  }, [notes]);
+
+  function selectRelease(version: string) {
+    setSelectedVersion(version);
+    window.history.replaceState(null, '', `#${encodeURIComponent(version)}`);
+  }
 
   return (
     <Layout
@@ -48,7 +47,7 @@ export default function ReleasesPage(): ReactNode {
             </p>
 
             <h1>
-              Release notes (Coming Soon in September 2026)
+              Release notes
             </h1>
 
             <p className={styles.pageDescription}>
@@ -57,7 +56,7 @@ export default function ReleasesPage(): ReactNode {
             </p>
           </header>
 
-          {publishedReleases.length > 0 ? (
+          {notes.length > 0 && selectedNote ? (
             <div className={styles.releaseLayout}>
 
               <aside className={styles.releaseNavigation}>
@@ -66,78 +65,59 @@ export default function ReleasesPage(): ReactNode {
                 </p>
 
                 <nav aria-label="Release history">
-                  {publishedReleases.map((release, index) => (
-                    <a
-                      key={release.id}
-                      href={`#${release.tagName}`}
-                      className={styles.navigationItem}>
+                  {notes.map((note, index) => (
+                    <button
+                      key={note.fileName}
+                      type="button"
+                      aria-pressed={note.version === selectedNote.version}
+                      onClick={() => selectRelease(note.version)}
+                      className={`${styles.navigationItem} ${
+                        note.version === selectedNote.version
+                          ? styles.navigationItemActive
+                          : ''
+                      }`}>
 
                       <span>
-                        {release.name || release.tagName}
+                        {note.version}
                       </span>
 
-                      {index === 0 && (
+                      {index === notes.length - 1 && (
                         <span className={styles.latestBadge}>
                           Latest
                         </span>
                       )}
-                    </a>
+                    </button>
                   ))}
                 </nav>
               </aside>
 
               <div className={styles.releaseHistory}>
-                {publishedReleases.map((release, index) => (
-                  <article
-                    key={release.id}
-                    id={release.tagName}
-                    className={styles.release}>
+                <article
+                  id={selectedNote.version}
+                  className={styles.release}>
 
-                    <header className={styles.releaseHeader}>
-                      <div>
-                        <div className={styles.releaseMeta}>
-                          {index === 0 && (
-                            <span className={styles.latestLabel}>
-                              Latest release
-                            </span>
-                          )}
-
-                          <span className={styles.releaseTag}>
-                            {release.tagName}
+                  <header className={styles.releaseHeader}>
+                    <div>
+                      <div className={styles.releaseMeta}>
+                        {selectedNote.version === notes.at(-1)?.version && (
+                          <span className={styles.latestLabel}>
+                            Latest release
                           </span>
-                        </div>
+                        )}
 
-                        <h2>
-                          {release.name || release.tagName}
-                        </h2>
-
-                        <p className={styles.releaseDate}>
-                          Published {formatDate(release.publishedAt)}
-                        </p>
+                        <span className={styles.releaseTag}>
+                          {selectedNote.version}
+                        </span>
                       </div>
+                    </div>
+                  </header>
 
-                      <a
-                        className={styles.githubReleaseLink}
-                        href={release.htmlUrl}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Release details ↗
-                      </a>
-                    </header>
-
-                    {release.body ? (
-                      <div className={styles.releaseNotes}>
-                        <ReactMarkdown>
-                          {release.body}
-                        </ReactMarkdown>
-                      </div>
-                    ) : (
-                      <p className={styles.emptyNotes}>
-                        No release notes were provided for this release.
-                      </p>
-                    )}
-                  </article>
-                ))}
+                  <div className={styles.releaseNotes}>
+                    <ReactMarkdown>
+                      {selectedNote.content}
+                    </ReactMarkdown>
+                  </div>
+                </article>
               </div>
             </div>
           ) : (

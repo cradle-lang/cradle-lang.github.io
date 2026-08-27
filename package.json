@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
+    "prestart": "npm run generate-release-notes",
     "start": "docusaurus start",
+    "generate-release-notes": "node scripts/generate-release-notes.mjs",
     "fetch-releases": "node scripts/fetch-releases.mjs",
-    "build": "npm run fetch-releases && docusaurus build",
+    "build": "npm run generate-release-notes && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

@@ -1,0 +1,101 @@
+name: Publish approved release notes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'notes/v*.md'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-release-notes
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out release repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed release notes
+        id: changed
+        shell: bash
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          git diff --name-only "$BEFORE" "$AFTER" |
+            grep -E '^notes/v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?\.md$' \
+            > /tmp/changed-release-notes.txt || true
+
+          if [[ ! -s /tmp/changed-release-notes.txt ]]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "found=true" >> "$GITHUB_OUTPUT"
+
+          echo "Changed release notes:"
+          cat /tmp/changed-release-notes.txt
+
+      - name: Validate release notes
+        if: steps.changed.outputs.found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r note; do
+            TAG="$(basename "$note" .md)"
+
+            if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+              echo "::error file=${note}::Invalid release tag: ${TAG}"
+              exit 1
+            fi
+
+            if [[ ! -s "$note" ]]; then
+              echo "::error file=${note}::Release note is empty"
+              exit 1
+            fi
+
+            if ! head -n 1 "$note" | grep -q "^# "; then
+              echo "::error file=${note}::Release note must begin with a level-one heading"
+              exit 1
+            fi
+          done < /tmp/changed-release-notes.txt
+
+      - name: Create or update GitHub Releases
+        if: steps.changed.outputs.found == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r note; do
+            TAG="$(basename "$note" .md)"
+            TITLE="CRADLE ${TAG}"
+
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              echo "Updating existing release $TAG"
+
+              gh release edit "$TAG" \
+                --title "$TITLE" \
+                --notes-file "$note"
+            else
+              echo "Creating release $TAG"
+
+              gh release create "$TAG" \
+                --target main \
+                --title "$TITLE" \
+                --notes-file "$note"
+            fi
+          done < /tmp/changed-release-notes.txt
