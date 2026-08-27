@@ -14,12 +14,14 @@ type ReleaseNote = {
 
 export default function ReleasesPage(): ReactNode {
   const notes = releaseNotes as ReleaseNote[];
+  const latestNote = notes.at(-1);
+  const displayedNotes = [...notes].reverse();
   const [selectedVersion, setSelectedVersion] = useState(
-    notes.at(-1)?.version ?? '',
+    latestNote?.version ?? '',
   );
   const selectedNote = notes.find(
     (note) => note.version === selectedVersion,
-  ) ?? notes.at(-1);
+  ) ?? latestNote;
 
   useEffect(() => {
     const versionFromHash = decodeURIComponent(window.location.hash.slice(1));
@@ -65,7 +67,7 @@ export default function ReleasesPage(): ReactNode {
                 </p>
 
                 <nav aria-label="Release history">
-                  {notes.map((note, index) => (
+                  {displayedNotes.map((note) => (
                     <button
                       key={note.fileName}
                       type="button"
@@ -81,7 +83,7 @@ export default function ReleasesPage(): ReactNode {
                         {note.version}
                       </span>
 
-                      {index === notes.length - 1 && (
+                      {note.version === latestNote?.version && (
                         <span className={styles.latestBadge}>
                           Latest
                         </span>
@@ -99,7 +101,7 @@ export default function ReleasesPage(): ReactNode {
                   <header className={styles.releaseHeader}>
                     <div>
                       <div className={styles.releaseMeta}>
-                        {selectedNote.version === notes.at(-1)?.version && (
+                        {selectedNote.version === latestNote?.version && (
                           <span className={styles.latestLabel}>
                             Latest release
                           </span>
