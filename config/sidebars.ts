@@ -48,14 +48,6 @@ const sidebars: SidebarsConfig = {
             'guides/backends/generate-target-files',
           ],
         },
-        {
-          type: 'category',
-          label: 'Import and Migration',
-          items: [
-            'guides/import/import-existing',
-            'guides/import/migrate-v1',
-          ],
-        },
         'guides/troubleshooting',
       ],
     },
