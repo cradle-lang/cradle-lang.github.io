@@ -1,4 +1,5 @@
 .terminalContainer {
+  position: relative;
   flex: 1;
   width: 100%;
   max-width: 480px;
@@ -17,6 +18,15 @@
   padding: 10px 14px;
   background-color: color-mix(in srgb, var(--cradle-code-bg) 80%, #000);
   border-bottom: 1px solid var(--cradle-code-border);
+}
+
+.statusIndicator {
+  min-width: 48px;
+  color: var(--cradle-code-muted);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 .windowControls {
@@ -46,16 +56,20 @@
 .terminalBody {
   padding: 18px;
   color: var(--cradle-code-text);
-  font-size: 0.84rem;
-  line-height: 1.6;
-  min-height: 160px;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  height: 330px;
+  overflow: auto;
+  scrollbar-color: var(--cradle-code-border) transparent;
+  scrollbar-width: thin;
 }
 
 .line {
   margin: 0 0 6px 0;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  width: max-content;
+  min-width: 100%;
 }
 
 .prompt {
@@ -70,16 +84,29 @@
   font-weight: 400;
 }
 
-.outputBlock {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px dashed var(--cradle-code-border);
+.outputLine,
+.outputBanner,
+.outputHeading,
+.outputSuccess {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  white-space: pre;
+}
+
+.outputBanner {
+  color: var(--cradle-code-text);
+  font-weight: 650;
+}
+
+.outputHeading {
+  color: var(--cradle-code-muted);
+  font-weight: 650;
 }
 
 .outputSuccess {
   color: var(--cradle-accent);
   font-weight: 500;
-  margin: 0;
 }
 
 .cursor {
@@ -91,7 +118,35 @@
   animation: blink 0.9s infinite;
 }
 
+.outputCursor {
+  display: block;
+  width: 7px;
+  height: 13px;
+  margin-top: 2px;
+  background-color: var(--cradle-accent);
+  animation: blink 0.9s infinite;
+}
+
+.screenReaderOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor,
+  .outputCursor {
+    animation: none;
+  }
 }

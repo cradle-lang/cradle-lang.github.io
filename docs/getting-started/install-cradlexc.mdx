@@ -16,7 +16,7 @@ CradleXC is distributed as a prebuilt binary through the CRADLE APT repository.
 Add the repository to your system:
 
 ```bash
-echo "deb <CRADLE_APT_REPOSITORY_URL>" \
+echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" \
   | sudo tee /etc/apt/sources.list.d/cradle.list
 ```
 
@@ -32,7 +32,8 @@ Install CradleXC:
 sudo apt install cxc
 ```
 
-The final CRADLE APT repository URL will be added once the package repository is published.
+You can browse the packages published in the
+[CRADLE repository](https://repo.cradle-lang.org/).
 
 ## Verify the installation
 

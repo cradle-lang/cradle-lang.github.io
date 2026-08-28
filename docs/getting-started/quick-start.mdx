@@ -28,10 +28,11 @@ Before starting, make sure you have:
 
 ## Install CradleXC
 
-1. CradleXC is distributed as a prebuilt binary and is hosted through the CRADLE APT repository at:
+1. CradleXC is distributed as a prebuilt binary through the
+   [CRADLE APT repository](https://repo.cradle-lang.org/):
 
     ```text
-    <CRADLE_APT_REPOSITORY_URL>
+    https://repo.cradle-lang.org/apt/
     ```
 
 2. Add the CRADLE package repository, update your package index and install CradleXC.
@@ -39,7 +40,7 @@ Before starting, make sure you have:
     For example:
 
     ```bash
-    echo "deb <CRADLE_APT_REPOSITORY_URL>" | sudo tee /etc/apt/sources.list.d/cradle.list
+    echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" | sudo tee /etc/apt/sources.list.d/cradle.list
 
     sudo apt update
     sudo apt install cxc
