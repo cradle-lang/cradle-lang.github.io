@@ -1005,9 +1005,11 @@ export default function Workbench(): ReactNode {
 
           <div
             id="workbench-visualization-panel"
-            className={
-              styles.canvas
-            }
+            className={`${styles.canvas}${
+              view === 'events'
+                ? ` ${styles.scrollableCanvas}`
+                : ''
+            }`}
             role="tabpanel"
             aria-labelledby={
               `visualization-tab-${view}`

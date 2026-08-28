@@ -82,6 +82,37 @@ export default function EventFlowView({
     );
   }
 
+  const canvasSize =
+    useMemo(() => {
+      const positionsToFit =
+        parsed.events.map(
+          (event) =>
+            positions[event.id] ??
+            defaultPositions[event.id],
+        );
+
+      return {
+        width: Math.max(
+          1200,
+          ...positionsToFit.map(
+            (position) =>
+              position.x + 290,
+          ),
+        ),
+        height: Math.max(
+          800,
+          ...positionsToFit.map(
+            (position) =>
+              position.y + 120,
+          ),
+        ),
+      };
+    }, [
+      parsed.events,
+      positions,
+      defaultPositions,
+    ]);
+
   const dependencies =
     parsed.links.filter(
       (link) =>
@@ -91,12 +122,16 @@ export default function EventFlowView({
 
   return (
     <svg
-      viewBox="0 0 1200 800"
+      viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
       role="group"
       aria-labelledby="workbench-event-flow-title workbench-event-flow-description"
       style={{
-        width: '100%',
-        height: '100%',
+        position: 'relative',
+        inset: 'auto',
+        width: canvasSize.width,
+        minWidth: '100%',
+        height: canvasSize.height,
+        minHeight: '100%',
       }}
     >
       <title id="workbench-event-flow-title">
