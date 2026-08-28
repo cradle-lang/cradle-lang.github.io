@@ -76,7 +76,7 @@ The current CRADLE reference documents the following event-related properties:
 | `runObject` | Object name, parameters | Schema required | Selects a declared object and optional parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. CradleXC defaults to `0`. |
 | `pauseAfterRun` | Duration in seconds | Schema optional | Adds a delay after the event. CradleXC defaults to `0`. |
-| `dependsOn` | Event name | Adds an explicit dependency. Repeat for multiple dependencies. |
+| `dependsOn` | Event name | Schema optional | Adds an explicit dependency. Repeat for multiple dependencies. |
 | `scheduleExecution` | ISO 8601 date-time | Schema optional | Associates the event with a scheduled time. |
 | `description` | Text | Schema optional | Provides a human-readable description of the event. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier with the event. |

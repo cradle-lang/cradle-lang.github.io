@@ -65,7 +65,7 @@ The `metadata()` block identifies the scenario and the artifacts it uses.
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
 | `name` | Scenario name | Schema required | Human-readable identifier for the scenario. |
-| `eventType` | `sequence` | Selects the supported sequential event model. The compiler defaults to `sequence` when omitted. |
+| `eventType` | `sequence` | Schema required | Selects the supported sequential event model. The compiler defaults to `sequence` when omitted. |
 | `repositoryRemote` | URI | Schema required | Base location for remotely stored artifacts. |
 | `repositoryLocal` | Location | Compiler extension | Base location for locally available artifacts. |
 | `object` | Object name | Schema required | Declares an artifact used by the scenario. Repeat for multiple objects. |
@@ -112,7 +112,7 @@ The `instances()` block declares the systems in the scenario. Each system is the
 | `object` | Object name | Schema required | Associates a declared object with the instance. Repeat for multiple objects. |
 | `config` | Configuration name | Compiler extension | Associates a predefined configuration with the instance. Repeat for multiple configurations. |
 | `io` | I/O definition name | Compiler extension | Associates a predefined input/output definition with the instance. |
-| `role` | Collection, role, variable map | Associates a predefined role with optional typed variables. |
+| `role` | Collection, role, variable map | Schema optional | Associates a predefined role with optional typed variables. |
 | `description` | Text | Compiler extension | Provides a human-readable explanation of the instance. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier. |
 
@@ -182,7 +182,7 @@ Each phase lists named events, and every event is described in a matching `event
 | `runObject` | Object name, parameter map | Schema required | Selects a declared object and optional structured parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. The compiler defaults to `0`. |
 | `pauseAfterRun` | Duration in seconds | Schema optional | Adds a delay after the event. The compiler defaults to `0`. |
-| `dependsOn` | Event name | Adds an explicit dependency. Repeat for multiple dependencies. |
+| `dependsOn` | Event name | Schema optional | Adds an explicit dependency. Repeat for multiple dependencies. |
 | `scheduleExecution` | ISO 8601 date-time | Schema optional | Associates the event with a scheduled time. |
 | `description` | Text | Schema optional | Explains the purpose of the event. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier. |
