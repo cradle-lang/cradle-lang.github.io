@@ -607,6 +607,29 @@
     var(--cradle-text-muted);
 }
 
+.consoleBody > div[data-message-type='warning'] > span:nth-child(n + 2) {
+  color:
+    var(--cradle-warning);
+}
+
+.consoleBody > div[data-message-type='error'] > span:nth-child(n + 2) {
+  color:
+    var(--cradle-danger);
+}
+
+.consoleBody > div[data-message-type='success'] > span:nth-child(2) {
+  color:
+    var(--cradle-success);
+}
+
+.consoleBody:focus-visible {
+  outline:
+    2px solid
+    var(--cradle-accent);
+
+  outline-offset: -2px;
+}
+
 .inspectorBody pre {
   overflow: auto;
 
@@ -670,6 +693,74 @@
 
 .metrics > div:last-child {
   border-right: 0;
+}
+
+.metrics > .metricButton {
+  min-width: 0;
+  min-height: 0;
+
+  padding:
+    6px 8px;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+
+  text-align: left;
+}
+
+.metrics > .metricButton[data-issue-level='warning'] {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-warning) 9%,
+      transparent
+    );
+}
+
+.metrics > .metricButton[data-issue-level='warning'] strong,
+.metrics > .metricButton[data-issue-level='warning'] span {
+  color:
+    var(--cradle-warning);
+}
+
+.metrics > .metricButton[data-issue-level='error'] {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-danger) 9%,
+      transparent
+    );
+}
+
+.metrics > .metricButton[data-issue-level='error'] strong,
+.metrics > .metricButton[data-issue-level='error'] span {
+  color:
+    var(--cradle-danger);
+}
+
+.metrics > .metricButton:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.metrics > .metricButton:not(:disabled):hover {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-warning) 14%,
+      transparent
+    );
+}
+
+.metrics > .metricButton[data-issue-level='error']:not(:disabled):hover {
+  background:
+    color-mix(
+      in srgb,
+      var(--cradle-danger) 14%,
+      transparent
+    );
 }
 
 .metrics strong,

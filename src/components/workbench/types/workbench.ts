@@ -19,6 +19,15 @@ export type Heuristic = {
   value: string;
 };
 
+export type CradleValue =
+  | string
+  | number
+  | boolean
+  | CradleValue[]
+  | {
+      [key: string]: CradleValue;
+    };
+
 export type InstanceNetwork = {
   network: string;
   address: string;
@@ -44,7 +53,7 @@ export type CradleInstance = {
 
   role?: {
     name?: string;
-    params?: string;
+    params?: CradleValue;
   };
 };
 
@@ -67,6 +76,9 @@ export type CradleObject = {
   id: string;
   type: 'object';
   line: number;
+
+  location?: string;
+  heuristics: Heuristic[];
 };
 
 export type CradleEvent = {
@@ -77,8 +89,12 @@ export type CradleEvent = {
 
   heuristics: Heuristic[];
 
+  dependencies: string[];
+
   instance?: string;
-  needRoot?: string;
+  needRoot?: boolean;
+  pauseBeforeRun?: number | string;
+  pauseAfterRun?: number | string;
 
   subject?: {
     cmd?: string;
@@ -87,10 +103,9 @@ export type CradleEvent = {
 
   runObject?: {
     name?: string;
-    args?: string;
+    args?: CradleValue;
   };
 
-  waitfor?: string;
   description?: string;
 };
 
@@ -114,7 +129,7 @@ export type CradleOutline = {
 };
 
 export type ParsedCradle = {
-  metadata: Record<string, string | string[] | boolean>;
+  metadata: Record<string, CradleValue>;
 
   instances: CradleInstance[];
   networks: CradleNetwork[];

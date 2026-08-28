@@ -12,7 +12,10 @@ export default function WorkbenchConsole({
   return (
     <>
       {messages.map((message) => (
-        <div key={message.id}>
+        <div
+          key={message.id}
+          data-message-type={message.type}
+        >
           <span>
             {message.timestamp.toLocaleTimeString(
               [],
@@ -22,7 +25,15 @@ export default function WorkbenchConsole({
             )}
           </span>
 
-          <span>›</span>
+          <span aria-hidden="true">
+            {message.type === 'error'
+              ? '×'
+              : message.type === 'warning'
+                ? '!'
+                : message.type === 'success'
+                  ? '✓'
+                  : '›'}
+          </span>
 
           <span>
             {message.message}

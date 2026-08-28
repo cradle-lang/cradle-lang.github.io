@@ -35,36 +35,73 @@ export default function EventFlowView({
         Point
       > = {};
 
+      const eventsById = new Map(
+        parsed.events.map(
+          (event) => [
+            event.id,
+            event,
+          ],
+        ),
+      );
+
+      const levels = new Map<
+        string,
+        number
+      >();
+
+      function levelOf(
+        eventId: string,
+        visiting = new Set<string>(),
+      ): number {
+        const cached =
+          levels.get(eventId);
+
+        if (cached !== undefined) {
+          return cached;
+        }
+
+        if (visiting.has(eventId)) {
+          return 0;
+        }
+
+        const event =
+          eventsById.get(eventId);
+
+        if (
+          !event ||
+          !event.dependencies.length
+        ) {
+          levels.set(eventId, 0);
+          return 0;
+        }
+
+        const nextVisiting =
+          new Set(visiting);
+
+        nextVisiting.add(eventId);
+
+        const level = Math.max(
+          ...event.dependencies.map(
+            (dependency) =>
+              1 +
+              levelOf(
+                dependency,
+                nextVisiting,
+              ),
+          ),
+        );
+
+        levels.set(eventId, level);
+        return level;
+      }
+
       parsed.events.forEach(
         (event, index) => {
-          let level = 0;
-
-          let waitFor =
-            event.waitfor;
-
-          while (
-            waitFor &&
-            waitFor !== 'false'
-          ) {
-            level += 1;
-
-            const parent =
-              parsed.events.find(
-                (candidate) =>
-                  candidate.id ===
-                  waitFor,
-              );
-
-            waitFor =
-              parent?.waitfor;
-
-            if (level > 10) {
-              break;
-            }
-          }
-
           output[event.id] = {
-            x: 70 + level * 280,
+            x:
+              70 +
+              levelOf(event.id) *
+                280,
             y: 70 + index * 100,
           };
         },
@@ -224,9 +261,8 @@ export default function EventFlowView({
           event.instance
             ? `instance: ${event.instance}`
             : undefined,
-          event.waitfor &&
-          event.waitfor !== 'false'
-            ? `waitfor: ${event.waitfor}`
+          event.dependencies.length
+            ? `depends on: ${event.dependencies.join(', ')}`
             : 'concurrent/root',
         ]
           .filter(Boolean)

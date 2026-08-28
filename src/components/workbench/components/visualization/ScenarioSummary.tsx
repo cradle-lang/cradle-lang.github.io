@@ -121,7 +121,7 @@ export default function ScenarioSummary({
                   <th scope="col">Event</th>
                   <th scope="col">Instance</th>
                   <th scope="col">Action or description</th>
-                  <th scope="col">Waits for</th>
+                  <th scope="col">Depends on</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,8 +137,8 @@ export default function ScenarioSummary({
                           : event.description || 'Not specified'}
                     </td>
                     <td>
-                      {event.waitfor && event.waitfor !== 'false'
-                        ? event.waitfor
+                      {event.dependencies.length
+                        ? event.dependencies.join(', ')
                         : 'No dependency'}
                     </td>
                   </tr>

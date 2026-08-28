@@ -2,12 +2,18 @@ import type {
   ParsedCradle,
 } from '../types/workbench';
 
+import styles from '../Workbench.module.css';
+
 type Props = {
   parsed: ParsedCradle | null;
+  errorCount: number;
+  onShowIssues: () => void;
 };
 
 export default function WorkbenchMetrics({
   parsed,
+  errorCount,
+  onShowIssues,
 }: Props) {
   const metrics = [
     [
@@ -30,11 +36,11 @@ export default function WorkbenchMetrics({
       'Links',
       parsed?.links.length ?? 0,
     ],
-    [
-      'Warnings',
-      parsed?.warnings.length ?? 0,
-    ],
   ];
+
+  const issueCount =
+    (parsed?.warnings.length ?? 0) +
+    errorCount;
 
   return (
     <>
@@ -46,6 +52,33 @@ export default function WorkbenchMetrics({
           </div>
         ),
       )}
+
+      <button
+        type="button"
+        className={
+          styles.metricButton
+        }
+        data-has-issues={
+          issueCount > 0
+        }
+        data-issue-level={
+          errorCount
+            ? 'error'
+            : issueCount
+              ? 'warning'
+              : 'none'
+        }
+        disabled={issueCount === 0}
+        onClick={onShowIssues}
+        aria-label={
+          issueCount
+            ? `Show ${issueCount} issue${issueCount === 1 ? '' : 's'} in the console`
+            : 'No issues'
+        }
+      >
+        <strong>{issueCount}</strong>
+        <span>Issues</span>
+      </button>
     </>
   );
 }

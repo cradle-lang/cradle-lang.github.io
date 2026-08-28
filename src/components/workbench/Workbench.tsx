@@ -135,6 +135,9 @@ export default function Workbench(): ReactNode {
   const fileInputRef =
     useRef<HTMLInputElement>(null);
 
+  const consoleBodyRef =
+    useRef<HTMLDivElement>(null);
+
   const messageId =
     useRef(0);
 
@@ -164,8 +167,31 @@ export default function Workbench(): ReactNode {
     [],
   );
 
+  const logWarnings = useCallback(
+    (result: ParsedCradle): void => {
+      result.warnings.forEach(
+        (warning) =>
+          log(warning, 'warning'),
+      );
+    },
+    [log],
+  );
+
+  const clearDiagnostics =
+    useCallback(() => {
+      setMessages((previous) =>
+        previous.filter(
+          (message) =>
+            message.type !== 'warning' &&
+            message.type !== 'error',
+        ),
+      );
+    }, []);
+
   const generateVisualization =
     useCallback(() => {
+      clearDiagnostics();
+
       try {
         const result =
           parseCradleForWorkbench(source);
@@ -176,6 +202,10 @@ export default function Workbench(): ReactNode {
         setNodePositions({});
         setNetworkPositions({});
         setParseError(null);
+
+        if (result.warnings.length) {
+          setMobilePane('source');
+        }
 
         log(
           `Generated ${
@@ -192,6 +222,8 @@ export default function Workbench(): ReactNode {
             ? 'warning'
             : 'success',
         );
+
+        logWarnings(result);
       } catch (error) {
         const guidance =
           describeWorkbenchError(error);
@@ -202,13 +234,19 @@ export default function Workbench(): ReactNode {
         setNodePositions({});
         setNetworkPositions({});
         setParseError(guidance);
+        setMobilePane('source');
 
         log(
           `${guidance.title}: ${guidance.detail} ${guidance.suggestion}`,
           'error',
         );
       }
-    }, [source, log]);
+    }, [
+      source,
+      log,
+      logWarnings,
+      clearDiagnostics,
+    ]);
 
   useEffect(() => {
     const saved =
@@ -221,6 +259,7 @@ export default function Workbench(): ReactNode {
 
     setSource(initialSource);
     setSourceLoaded(true);
+    clearDiagnostics();
 
     try {
       const result =
@@ -231,6 +270,7 @@ export default function Workbench(): ReactNode {
       setParsed(result);
       setVisualizedSource(initialSource);
       setParseError(null);
+      logWarnings(result);
     } catch (error) {
       const guidance =
         describeWorkbenchError(error);
@@ -246,7 +286,11 @@ export default function Workbench(): ReactNode {
     }
 
     log('Workbench ready. Edit or import a CRADLE scenario.');
-  }, [log]);
+  }, [
+    log,
+    logWarnings,
+    clearDiagnostics,
+  ]);
 
   useEffect(() => {
     if (!sourceLoaded) {
@@ -303,6 +347,8 @@ export default function Workbench(): ReactNode {
           return;
         }
 
+        clearDiagnostics();
+
         const result =
           parseCradleForWorkbench(
             nextSource,
@@ -316,12 +362,25 @@ export default function Workbench(): ReactNode {
         setNetworkPositions({});
         setParseError(null);
 
+        if (result.warnings.length) {
+          setMobilePane('source');
+        }
+
         log(
           `Loaded ${label}.`,
-          'success',
+          result.warnings.length
+            ? 'warning'
+            : 'success',
         );
+
+        logWarnings(result);
       },
-      [confirmReplacement, log],
+      [
+        confirmReplacement,
+        log,
+        logWarnings,
+        clearDiagnostics,
+      ],
     );
 
   const handleImport =
@@ -355,6 +414,8 @@ export default function Workbench(): ReactNode {
             return;
           }
 
+          clearDiagnostics();
+
           setSource(content);
           setParsed(result);
           setVisualizedSource(content);
@@ -363,15 +424,26 @@ export default function Workbench(): ReactNode {
           setNetworkPositions({});
           setParseError(null);
 
+          if (result.warnings.length) {
+            setMobilePane('source');
+          }
+
           log(
             `Imported ${file.name}.`,
-            'success',
+            result.warnings.length
+              ? 'warning'
+              : 'success',
           );
+
+          logWarnings(result);
         } catch (error) {
+          clearDiagnostics();
+
           const guidance =
             describeWorkbenchError(error);
 
           setParseError(guidance);
+          setMobilePane('source');
 
           log(
             `Import failed. ${guidance.title}: ${guidance.detail} ${guidance.suggestion}`,
@@ -381,13 +453,45 @@ export default function Workbench(): ReactNode {
           event.target.value = '';
         }
       },
-      [confirmReplacement, log],
+      [
+        confirmReplacement,
+        log,
+        logWarnings,
+        clearDiagnostics,
+      ],
     );
 
   const visualizationOutdated =
     parsed !== null &&
     visualizedSource !== null &&
     source !== visualizedSource;
+
+  const showIssues =
+    useCallback(() => {
+      setMobilePane('source');
+
+      window.requestAnimationFrame(
+        () => {
+          const consoleBody =
+            consoleBodyRef.current;
+
+          if (!consoleBody) {
+            return;
+          }
+
+          consoleBody.scrollTo({
+            top: parseError
+              ? 0
+              : consoleBody.scrollHeight,
+            behavior: 'smooth',
+          });
+
+          consoleBody.focus({
+            preventScroll: true,
+          });
+        },
+      );
+    }, [parseError]);
 
   function handleExport(): void {
     const rawName =
@@ -720,6 +824,7 @@ export default function Workbench(): ReactNode {
                     {},
                   );
                   setParseError(null);
+                  clearDiagnostics();
 
                   log(
                     'Created new scenario.',
@@ -759,9 +864,11 @@ export default function Workbench(): ReactNode {
               </h3>
 
               <div
+                ref={consoleBodyRef}
                 className={
                   styles.consoleBody
                 }
+                tabIndex={-1}
                 role="log"
                 aria-live="polite"
                 aria-relevant="additions"
@@ -825,6 +932,12 @@ export default function Workbench(): ReactNode {
           >
             <WorkbenchMetrics
               parsed={parsed}
+              errorCount={
+                parseError ? 1 : 0
+              }
+              onShowIssues={
+                showIssues
+              }
             />
           </footer>
         </section>
