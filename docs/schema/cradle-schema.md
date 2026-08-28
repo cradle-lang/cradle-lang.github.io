@@ -42,7 +42,7 @@ Path: `metadata`
 | Property | Type | Required | Allowed value or format | Description |
 | --- | --- | --- | --- | --- |
 | `name` | String | Yes | Any string | Scenario name. |
-| `eventType` | String | Yes | `sequence` or `DAG` | Event organization model. |
+| `eventType` | String | Yes | `sequence` | Event organization model. |
 | `repositoryRemote` | String | Yes | URI | Remote base location for scenario artifacts. |
 | `object` | Array of strings | Yes | Object names | Artifacts declared by the scenario. |
 
@@ -81,7 +81,7 @@ Path: `instances.<instance-name>.role`
 | Property | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `name` | String | Yes, when `role` is present | None | Role name. |
-| `vars` | String | No | None | Role-specific variables represented as a string. |
+| `vars` | Object | No | None | Role-specific typed variables represented as key-value pairs. |
 
 The schema does not validate whether referenced objects, networks, roles, operating systems, or versions are available for a deployment platform.
 
@@ -129,7 +129,7 @@ Path: `events.<phase>`
 | --- | --- | --- | --- |
 | `event` | Array of objects | No | Event definitions belonging to the phase. |
 
-The schema does not require at least one event and does not enforce unique event names or order values.
+The schema does not require at least one event and does not enforce unique semantic event names.
 
 ### Event properties
 
@@ -138,12 +138,12 @@ Path: `events.<phase>.event[]`
 | Property | Type | Required | Allowed value or format | Description |
 | --- | --- | --- | --- | --- |
 | `instance` | String | Yes | Instance name | Instance associated with the event. |
-| `needRoot` | String | Yes | `true` or `false` | Whether elevated privileges are requested. |
+| `needRoot` | Boolean | Yes | `true` or `false` | Whether elevated privileges are requested. |
 | `subject` | String | Yes | Any string | Execution subject. |
 | `runObject` | String | Yes | Object name | Artifact associated with the event. |
 | `pauseBeforeRun` | Integer | No | Integer | Delay before the event, represented in seconds. |
 | `pauseAfterRun` | Integer | No | Integer | Delay after the event, represented in seconds. |
-| `waitfor` | String | No | `true` or `false` | Whether the event waits before proceeding. |
+| `dependsOn` | Array of strings | No | Event names | Explicit event prerequisites. |
 | `scheduleExecution` | String | No | `date-time` format | Scheduled event time. |
 | `description` | String | No | Any string | Human-readable purpose of the event. |
 
@@ -156,7 +156,7 @@ When used with a validator that implements the declared formats, the schema can 
 - the presence of the four required top-level sections;
 - basic object, array, string, and integer types;
 - required properties within metadata, instances, networks, and events;
-- allowed `eventType`, `needRoot`, and `waitfor` values; and
+- allowed `eventType` and `needRoot` values; and
 - URI and date-time formatting supported by the validator.
 
 ## What the schema does not validate
@@ -186,8 +186,8 @@ The schema and current reference implementation differ in several material areas
 | Networks | Object map with one endpoint object | Compiler output represents networks and endpoints as lists. |
 | Endpoint fields | `instance` and optional `config` | Compiler output uses endpoint name and IP-related data. |
 | Event phases | Phase object containing an `event` array | Compiler output represents each phase directly as an event list. |
-| Event delays | Integers | CRADLE source examples pass quoted values, and the compiler may preserve them as strings. |
-| `waitfor` | Only `true` or `false` | Existing scenarios also use event names or order identifiers. |
+| Event delays | Integers | CRADLE source accepts integers or durations expressed in seconds. |
+| Dependencies | Array of event names | CRADLE source expresses each dependency with `dependsOn("event_name")`. |
 | Extensions | Limited to listed schema properties | The compiler recognizes additional properties such as configurations, descriptions, heuristics, I/O definitions, local repositories, and execution-flow settings. |
 
 Because of these differences, successfully validating data against the current schema does not guarantee equivalent compiler behavior, and compiler output may not validate against the schema without transformation.

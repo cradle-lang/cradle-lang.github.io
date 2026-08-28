@@ -22,7 +22,7 @@ metadata() >
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
 | `name` | Scenario name | Schema required | Human-readable identifier for the scenario. |
-| `eventType` | `sequence` or `DAG` | Schema required | Selects a sequential or dependency-graph event model. CradleXC defaults to `sequence` when omitted. |
+| `eventType` | `sequence` | Selects the supported sequential event model. CradleXC defaults to `sequence` when omitted. |
 | `repositoryRemote` | URI | Schema required | Defines the base location for remotely stored artifacts. |
 | `repositoryLocal` | Location | Compiler extension | Defines the base location for locally available artifacts. |
 | `object` | Object name | Schema required | Declares an artifact used by the scenario. Repeat for multiple objects. |
@@ -52,11 +52,10 @@ Use a stable scenario name and keep its spelling and capitalization consistent w
 
 Use `eventType()` to define the event model used by the scenario.
 
-The documented values are:
+The supported value is:
 
 ```text
 sequence
-DAG
 ```
 
 For example:
@@ -86,17 +85,11 @@ metadata() >
     object("HelloWorld").
 ```
 
-### Dependency graph
+### Event dependencies
 
-A dependency-graph event model uses:
+Keep `eventType("sequence")` and express explicit ordering relationships with `dependsOn()` inside event definitions.
 
-```CRADLE
-eventType("DAG")
-```
-
-This allows event relationships to be expressed through dependencies.
-
-Detailed event behavior is covered in [Events and Dependencies](./events-and-dependencies).
+Detailed dependency behavior is covered in [Events and Dependencies](./events-and-dependencies).
 
 :::note
 CradleXC currently defaults to `sequence` when `eventType()` is omitted.
@@ -375,7 +368,7 @@ metadata() >
 instance("Client") >
     object("InitializationScript").
 
-event("1") >
+event("initialize_client") >
     runObject("InitializationScript", "").
 
 object("InitializationScript") >

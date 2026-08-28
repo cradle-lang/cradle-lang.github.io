@@ -30,7 +30,7 @@ The current CRADLE reference documents the following instance-related properties
 | `object` | Object name | Schema required | Associates a declared object with the instance. Repeat for multiple objects. |
 | `config` | Configuration name | Compiler extension | Associates a predefined configuration with the instance. Repeat for multiple configurations. |
 | `io` | I/O definition name | Compiler extension | Associates a predefined input/output definition with the instance. |
-| `role` | Collection, role, variables | Schema optional, compiler-specific form | Associates a predefined role. Variables are optional semicolon-separated `key=value` pairs. |
+| `role` | Collection, role, variable map | Associates a predefined role. Variables are optional typed `key = value` pairs. |
 | `description` | Text | Compiler extension | Provides a human-readable description of the instance. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates the instance with an external classification or framework identifier. |
 
@@ -267,14 +267,16 @@ Use `role()` to associate a predefined role with an instance.
 The current compiler-specific form is:
 
 ```CRADLE
-role("collection", "role", "variables")
+role("namespace.collection", "role", { key = value })
 ```
 
 For example:
 
 ```CRADLE
 instance("Router") >
-    role("example.collection", "router", "lan=lan_0").
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
 ```
 
 The three arguments represent:
@@ -299,23 +301,21 @@ router
 
 is the role and:
 
-```text
-lan=lan_0
-```
-
-provides a role variable.
+`lan = "lan_0"` provides a role variable.
 
 ## Role variables
 
-Role variables can be expressed as `key=value` pairs.
+Role variables are expressed as typed `key = value` pairs inside a structured map.
 
 For example:
 
 ```CRADLE
-role("example.collection", "router", "lan=lan_0")
+role("example.collection", "router", {
+    lan = "lan_0"
+})
 ```
 
-Where multiple variables are supported, they can be represented as a semicolon-separated string.
+Where multiple variables are supported, separate them with commas.
 
 For example:
 
@@ -323,7 +323,10 @@ For example:
 role(
     "example.collection",
     "router",
-    "lan=lan_0;mode=example"
+    {
+        lan = "lan_0",
+        mode = "example"
+    }
 )
 ```
 
@@ -390,7 +393,9 @@ instance("Client") >
 instance("Router") >
     os("ubuntu", "20.04"),
     config("linux-router"),
-    role("example.collection", "router", "lan=lan_0").
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
 ```
 
 The `Client` instance:
@@ -452,9 +457,9 @@ Events also reference instances by name.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", "").
 ```
@@ -494,7 +499,7 @@ instance("Client") >
 network("lan_0") >
     endpoint("Client", "DHCP").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
     runObject("InitializationScript", "").
 
@@ -643,14 +648,14 @@ Client
 avoid:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("client").
 ```
 
 Use:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client").
 ```
 

@@ -53,7 +53,7 @@ For example:
 | Router | `Router` |
 | Network | `lan_0` |
 | Object | `InitializationScript` |
-| Main event | `1` |
+| Main event | `initialize_client` |
 
 A simple topology might be:
 
@@ -122,11 +122,10 @@ eventType("sequence")
 
 for sequential event handling.
 
-The documented event types are:
+The supported event type is:
 
 ```text
 sequence
-DAG
 ```
 
 ### Artifact repository
@@ -452,24 +451,23 @@ For this example, add one event to the main phase:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
-The event name is `1`. It should have a matching event definition.
+The event name is `initialize_client`. It should have a matching event definition.
 
 ## Define the event
 
-Define event `1`:
+Define event `initialize_client`:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 ```
@@ -494,64 +492,63 @@ For example:
 
 ```CRADLE
 preEvent() >
-    event("1").
+    event("initialize_client").
 
 mainEvent() >
-    event("2").
+    event("collect_evidence").
 
 postEvent() >
-    event("3").
+    event("cleanup").
 ```
 
 Each event then receives its own definition:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     ...
 
-event("2") >
+event("collect_evidence") >
     ...
 
-event("3") >
+event("cleanup") >
     ...
 ```
 
-Event names or order values should be unique within the scenario.
+Semantic event names should be unique within the scenario.
 
 For more information, see [Events and Dependencies](../language/events-and-dependencies).
 
 ## Add event dependencies
 
-CRADLE can express dependencies through `waitfor()` where supported by the current compiler behavior.
+CRADLE expresses dependencies through `dependsOn()`.
 
 For example:
 
 ```CRADLE
 mainEvent() >
-    event("1"),
-    event("2").
+    event("initialize_client"),
+    event("collect_evidence").
 ```
 
-Event `1` has no dependency:
+The initialization event has no dependency, so it omits `dependsOn()`:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
-    runObject("InitializationScript", ""),
-    waitfor("false").
+    runObject("InitializationScript", "").
 ```
 
-Event `2` can reference event `1`:
+The evidence event can depend on the initialization event:
 
 ```CRADLE
-event("2") >
+event("collect_evidence") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("CollectEvidence", ""),
-    waitfor("1").
+    dependsOn("initialize_client").
 ```
 
 Conceptually:
@@ -559,21 +556,21 @@ Conceptually:
 <div
   className="scenarioTopology scenarioTopologyTwoStep"
   role="img"
-  aria-label="Event 2 waits for event 1"
+  aria-label="Collect evidence depends on initialize client"
 >
   <div className="scenarioTopologyValue">
-    <code>event 1</code>
+    <code>initialize_client</code>
   </div>
 
   <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
 
   <div className="scenarioTopologyValue">
-    <code>event 2</code>
+    <code>collect_evidence</code>
   </div>
 </div>
 
 :::note
-The current JSON Schema and compiler behavior do not represent `waitfor` in exactly the same way. Validate dependency behavior against the CradleXC release you are using.
+Every `dependsOn()` value must match a defined semantic event name.
 :::
 
 ## Add heuristic annotations
@@ -583,9 +580,9 @@ Heuristic annotations can provide additional classification metadata.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
     heuristic("ttp", "T1190").
@@ -643,16 +640,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 

@@ -14,7 +14,7 @@ include "networks/corporate-lan.cradle".
 
 Included paths are resolved relative to the file that contains the `include` statement. Their instances, networks, objects, and events are merged into the main scenario; metadata in the main file takes precedence.
 
-## Current documentation status
+## Supported composition
 
 The current CRADLE language supports:
 
@@ -60,16 +60,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     description("Initialize the example client").
 
 object("InitializationScript") >
@@ -80,7 +79,7 @@ This keeps the scenario declarations and their definitions together in one sourc
 
 ## Cross-references still apply
 
-Even when scenario composition features are introduced, CRADLE names remain important cross-references.
+CRADLE names remain important cross-references across included files.
 
 For example:
 
@@ -124,7 +123,7 @@ Splitting scenario definitions across files should not change the requirement fo
 
 ## Validate composed scenarios
 
-If a CradleXC release provides scenario composition or include functionality, validate the resulting scenario with:
+Validate the resulting composed scenario with:
 
 ```bash
 cxc validate -i <scenario.cradle>
@@ -138,26 +137,19 @@ cxc validate -i scenarios/HelloWorld.cradle
 
 Validation should be used to confirm that the source structure is accepted by the CradleXC release being used.
 
-## Future documentation
+## Include behavior
 
-This page should be expanded once the supported include mechanism is confirmed.
+CradleXC applies the following include behavior:
 
-The completed documentation should define:
+- each include statement ends with a period
+- relative paths are resolved from the file containing the include
+- nested includes are resolved recursively
+- instances, networks, objects, and events are appended to the main document
+- metadata in the main document takes precedence
+- duplicate names are reported during validation
+- circular include chains must be avoided
 
-- the exact include syntax
-- supported path formats
-- relative path resolution
-- absolute path behavior
-- duplicate declarations
-- name conflicts
-- processing order
-- nested includes
-- circular include handling
-- validation behavior
-- compiler diagnostics
-- any restrictions on included files
-
-Until these behaviors are confirmed, they should not be documented as supported CRADLE features.
+Use relative paths for portable scenarios and validate the top-level file after composing it.
 
 ## Related documentation
 

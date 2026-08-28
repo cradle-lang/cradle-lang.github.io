@@ -36,12 +36,13 @@ Review the known language and schema differences at the end of this page before 
 | --- | --- | --- |
 | Simple block | `identifier() > ... .` | A period terminates the block. |
 | Named block | `identifier("name") > ... .` | The quoted name identifies the definition. |
-| Property | `identifier("value")` | Properties contain one or more comma-separated strings. |
+| Property | `identifier(value)` | Properties contain one or more comma-separated typed values. |
 | Reference | `identifier()` or `identifier("name")` | A reference links declarations and definitions. |
+| Map | `{ key = value }` | Supplies structured named parameters. |
 | Separator | `,` | Separates entries inside a block. |
 | Comment | `// comment text` | Continues to the end of the line. |
-| Identifier | Letters, digits, and `_` | The first character must be a letter or `_`. |
-| String | `"quoted value"` | Values are double-quoted; escaped characters are supported. |
+| Identifier | Letters, digits, `_`, and `-` | The first character must be an ASCII letter. |
+| String | `"quoted value"` | String values are double-quoted; escaped characters are supported. |
 
 The grammar validates the general shape of a file. It does not by itself restrict property names or the semantic meaning of their values.
 
@@ -64,7 +65,7 @@ The `metadata()` block identifies the scenario and the artifacts it uses.
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
 | `name` | Scenario name | Schema required | Human-readable identifier for the scenario. |
-| `eventType` | `sequence` or `DAG` | Schema required | Selects a sequential or dependency-graph event model. The compiler defaults to `sequence` when omitted. |
+| `eventType` | `sequence` | Selects the supported sequential event model. The compiler defaults to `sequence` when omitted. |
 | `repositoryRemote` | URI | Schema required | Base location for remotely stored artifacts. |
 | `repositoryLocal` | Location | Compiler extension | Base location for locally available artifacts. |
 | `object` | Object name | Schema required | Declares an artifact used by the scenario. Repeat for multiple objects. |
@@ -111,7 +112,7 @@ The `instances()` block declares the systems in the scenario. Each system is the
 | `object` | Object name | Schema required | Associates a declared object with the instance. Repeat for multiple objects. |
 | `config` | Configuration name | Compiler extension | Associates a predefined configuration with the instance. Repeat for multiple configurations. |
 | `io` | I/O definition name | Compiler extension | Associates a predefined input/output definition with the instance. |
-| `role` | Collection, role, variables | Schema optional, compiler-specific form | Associates a predefined role. Variables are optional semicolon-separated `key=value` pairs. |
+| `role` | Collection, role, variable map | Associates a predefined role with optional typed variables. |
 | `description` | Text | Compiler extension | Provides a human-readable explanation of the instance. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier. |
 
@@ -128,7 +129,9 @@ instance("Client") >
 instance("Router") >
     os("ubuntu", "20.04"),
     config("linux-router"),
-    role("example.collection", "router", "lan=lan_0").
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
 ```
 
 ```{important}
@@ -171,15 +174,15 @@ Each phase lists named events, and every event is described in a matching `event
 
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
-| `event` | Event name or order | Structural | Declares an event within a phase. |
+| `event` | Semantic event name | Structural | Declares an event within a phase. |
 | `instance` | Instance name | Schema required | Selects the instance associated with the event. |
 | `needRoot` | `true` or `false` | Schema required | Indicates whether elevated privileges are requested. The compiler defaults to `false`. |
-| `executionFlow` | Flow type, timeout, poll interval | Compiler extension | Selects `synchronous` or `asynchronous` handling. Additional values apply to asynchronous handling. |
+| `executionFlow` | Flow type | Compiler extension | Uses `sync` when stated explicitly; synchronous execution is the default. |
 | `subject` | Subject, parameters | Schema required | Identifies the execution subject and optional parameters. |
-| `runObject` | Object name, parameters | Schema required | Selects a declared object and optional semicolon-separated `key=value` parameters. |
+| `runObject` | Object name, parameter map | Schema required | Selects a declared object and optional structured parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. The compiler defaults to `0`. |
 | `pauseAfterRun` | Duration in seconds | Schema optional | Adds a delay after the event. The compiler defaults to `0`. |
-| `waitfor` | `false` or event reference | Schema/compiler mismatch | Expresses no dependency or a dependency on another event. See the compatibility note below. |
+| `dependsOn` | Event name | Adds an explicit dependency. Repeat for multiple dependencies. |
 | `scheduleExecution` | ISO 8601 date-time | Schema optional | Associates the event with a scheduled time. |
 | `description` | Text | Schema optional | Explains the purpose of the event. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier. |
@@ -191,22 +194,21 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 ```
 
 ```{important}
-Event names or order values should be unique within the scenario. Any `instance`, `runObject`, or dependency reference must resolve to a corresponding declaration.
+Semantic event names should be unique within the scenario. Any `instance`, `runObject`, or dependency reference must resolve to a corresponding definition.
 ```
 
 ## Heuristic properties
@@ -219,10 +221,10 @@ See [Heuristic Annotations](heuristic.md) for documented conventions and example
 
 The current reference sources contain differences that maintainers should resolve before treating the JSON Schema as the sole validation authority:
 
-- The grammar validates generic identifiers and quoted arguments but does not enforce recognized property names, argument counts, or allowed values.
+- The grammar validates generic identifiers and typed arguments but does not enforce recognized property names, argument counts, or allowed values.
 - The schema requires metadata properties, instance operating systems and objects, and network subnets and endpoints; the compiler supplies defaults or empty values for some of them.
 - The compiler recognizes `repositoryLocal`, `config`, `io`, `description`, `heuristic`, and `executionFlow` in contexts not represented by the current schema.
-- The schema models `waitfor` as `true` or `false`, while existing scenarios and compiler behavior also use event names or order identifiers.
+- The language uses `dependsOn()` for event dependencies.
 - The schema and compiler represent some values differently, including event delays and endpoint details.
 
 Until these sources are aligned, validate both the language structure and its intended behavior against the CRADLE release being documented.

@@ -165,9 +165,9 @@ instance("Client") >
     object("InitializationScript").
 ```
 
-## Quoted values
+## Typed values
 
-CRADLE property values are written as quoted strings.
+String values are double-quoted. Booleans, integers and durations use typed literals without quotes.
 
 For example:
 
@@ -180,6 +180,8 @@ and:
 ```CRADLE
 os("ubuntu", "20.04")
 ```
+
+Typed examples include `needRoot(false)` and `pauseBeforeRun(5s)`.
 
 Incorrectly quoted or unterminated values can cause parsing failures.
 
@@ -295,7 +297,7 @@ object("InitializationScript") >
 and:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     runObject("InitializationScript", "").
 ```
 
@@ -317,15 +319,15 @@ For example:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 The corresponding event definition should exist:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", "").
 ```
@@ -334,26 +336,26 @@ If an event is referenced but never defined, review the event declaration and de
 
 ## Dependency references
 
-`waitfor()` can reference another event in compiler-supported dependency behavior.
+`dependsOn()` references another semantic event name.
 
 For example:
 
 ```CRADLE
-event("2") >
-    waitfor("1").
+event("collect_evidence") >
+    dependsOn("initialize_client").
 ```
 
 The referenced event should exist:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     ...
 ```
 
 If the event identifier is misspelled or missing, the dependency does not resolve correctly.
 
 :::note
-The current schema and compiler behavior do not represent `waitfor` in exactly the same way. Validate dependency behavior against the CradleXC release being used.
+Omit `dependsOn()` when an event has no explicit dependency.
 :::
 
 ## Inspect the intermediate representation
@@ -444,7 +446,7 @@ Examples documented in the current language reference include:
 - endpoint addressing can default to `DHCP`
 - `repositoryLocal` is recognized as a compiler extension
 - `config`, `io`, `description`, `heuristic` and `executionFlow` include compiler-specific behavior
-- `waitfor` differs between the schema and existing compiler behavior
+- event dependencies use `dependsOn()` references
 
 :::important
 Do not treat grammar validation, compiler processing and JSON Schema validation as identical checks.

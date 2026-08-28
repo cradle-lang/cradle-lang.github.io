@@ -289,20 +289,19 @@ For example:
 
 ```CRADLE
 preEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 The corresponding event is then defined:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("HelloWorld"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("HelloWorld", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld pre-event").
 ```
@@ -338,7 +337,7 @@ instance("HelloWorld") >
 and from an event:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     runObject("HelloWorld", "").
 ```
 
@@ -385,13 +384,13 @@ For lifecycle events:
 
 ```CRADLE
 preEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 followed by:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     ...
 ```
 

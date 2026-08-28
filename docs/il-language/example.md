@@ -19,7 +19,7 @@ The IL document below is illustrative. The current reference branch does not pro
 | Router instance | `Router` | Represents a configured router on the same network. |
 | Network | `lan_0` | Connects the client and router. |
 | Object | `InitializationScript` | References an external artifact. |
-| Event | `1` | Associates the object with the client in the main-event phase. |
+| Event | `initialize_client` | Associates the object with the client in the main-event phase. |
 
 ## IL document
 
@@ -33,23 +33,22 @@ instance Client has object InitializationScript
 
 instance Router has os ubuntu 20.04
 instance Router has config linux-router
-instance Router has role example.collection router "lan=lan_0"
+instance Router has role example.collection router { lan = "lan_0" }
 
 network lan_0 has subnet 192.168.10.0/24
 network lan_0 has endpoint Client DHCP
 network lan_0 has endpoint Router 192.168.10.1
 
-mainEvent has event 1
+mainEvent has event initialize_client
 
-event 1 has instance Client
-event 1 need root false
-event 1 has subject bash ""
-event 1 run object InitializationScript ""
-event 1 pause before run 0
-event 1 pause after run 0
-event 1 wait for false
-event 1 has schedule execution 2026-01-15T10:00:00Z
-event 1 has description "Initialize the example client"
+event initialize_client has instance Client
+event initialize_client need root false
+event initialize_client has subject bash ""
+event initialize_client run object InitializationScript ""
+event initialize_client pause before run 0
+event initialize_client pause after run 0
+event initialize_client has schedule execution 2026-01-15T10:00:00Z
+event initialize_client has description "Initialize the example client"
 
 object InitializationScript has location ${uriRemote}/scripts/initialize.sh
 ```
@@ -74,7 +73,9 @@ instance("Client") >
 instance("Router") >
     os("ubuntu", "20.04"),
     config("linux-router"),
-    role("example.collection", "router", "lan=lan_0").
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
 
 networks() >
     network("lan_0").
@@ -90,16 +91,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00Z"),
     description("Initialize the example client").
 
@@ -114,8 +114,8 @@ object("InitializationScript") >
 | `environment has ...` | Properties collected inside `metadata()` |
 | Repeated `instance Name has ...` lines | One declaration in `instances()` and one named instance block |
 | Repeated `network Name has ...` lines | One declaration in `networks()` and one named network block |
-| `mainEvent has event 1` | Event reference inside `mainEvent()` |
-| Repeated `event 1 ...` lines | Properties collected inside `event("1")` |
+| `mainEvent has event initialize_client` | Event reference inside `mainEvent()` |
+| Repeated `event initialize_client ...` lines | Properties collected inside `event("initialize_client")` |
 | `object ... has location ...` | Named object block containing `location` |
 
 Formal CRADLE also requires declarations that the IL notation only implies. In this example:

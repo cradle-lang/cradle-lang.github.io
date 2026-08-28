@@ -77,9 +77,9 @@ instance("TargetServer") >
 ### Event annotation
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("TargetServer"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("ValidationScript", ""),
     heuristic("ttp", "T1190"),

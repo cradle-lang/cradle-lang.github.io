@@ -20,7 +20,7 @@ an authorized repository before deployment.
 | Router instance | `router` | Connects the environment and requests router and monitoring configurations. |
 | Network | `lan_0` | Connects both instances through DHCP. |
 | Object | `HelloWorld` | Locates the external `HelloWorld.sh` artifact. |
-| Events | `1`, `2`, and `3` | Run the object in the pre, main, and post phases. |
+| Events | `initialize_client`, `collect_evidence`, and `cleanup` | Run the object in the pre, main, and post phases. |
 
 ## Scenario definition
 
@@ -61,44 +61,41 @@ events() >
     postEvent().
 
 preEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("HelloWorld"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("HelloWorld", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld pre-event").
 
 mainEvent() >
-    event("2").
+    event("collect_evidence").
 
-event("2") >
+event("collect_evidence") >
     instance("HelloWorld"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("HelloWorld", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld main event").
 
 postEvent() >
-    event("3").
+    event("cleanup").
 
-event("3") >
+event("cleanup") >
     instance("HelloWorld"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("HelloWorld", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld post-event").
 
@@ -136,9 +133,9 @@ Use the repository supplied for your authorized CRADLE environment.
 
 The scenario defines one event in each phase:
 
-1. event `1` runs during `preEvent`;
-2. event `2` runs during `mainEvent`; and
-3. event `3` runs during `postEvent`.
+1. event `initialize_client` runs during `preEvent`;
+2. event `collect_evidence` runs during `mainEvent`; and
+3. event `cleanup` runs during `postEvent`.
 
 All three events run the same object through `bash` on the `HelloWorld`
 instance without requesting root privileges.

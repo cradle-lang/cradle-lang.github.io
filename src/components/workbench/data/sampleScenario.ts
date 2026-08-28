@@ -1,13 +1,9 @@
 export const ADVANCED_SAMPLE_SCENARIO = `metadata() >
     name("SmeEnv3RiskComplex"),
-    eventType("DAG"), # Changed to DAG to support concurrency and dependencies
+    eventType("sequence"),
     repositoryRemote("https://172.18.178.10:4443").
 
 instances() >
-    instance("Router"),
-    instance("DnsServer"),
-    instance("NtpServer"),
-    instance("SIEM"),
     instance("WebServer"),
     instance("MailServer"),
     instance("Attacker"),
@@ -16,6 +12,10 @@ instances() >
     instance("Host2"),
     instance("StorageServer"),
     instance("DatabaseServer"),
+    instance("DnsServer"),
+    instance("NtpServer"),
+    instance("SIEM"),
+    instance("Router"),
     instance("Firewall"),
     instance("Host3").
 
@@ -24,11 +24,7 @@ instance("WebServer") >
     config("custom-smeEnv-linux-ntpConfig"),
     config("custom-smeEnv-linux-dnsConfig"),
     config("custom-smeEnv-linux-defaultRouteToFirewallDmz"),
-    config("custom-smeEnv-linux-wordpressServer"),
-    heuristic("cve", "CVE-2025-7384"),
-    heuristic("cwe", "CWE-502"),
-    heuristic("d3fend", "D3-DLV"),
-    heuristic("fair", "controlStrengthMin=20;controlStrengthMostLikely=45;controlStrengthMax=70;primaryLossResponseMostLikely=15000;secondaryLossReputationMax=100000").
+    config("custom-smeEnv-linux-wordpressServer").
 
 instance("MailServer") >
     os("linux", "20.04"),
@@ -75,8 +71,7 @@ instance("DatabaseServer") >
     config("custom-smeEnv-linux-dnsConfig"),
     config("custom-smeEnv3-linux-databaseServer"),
     config("custom-smeEnv-linux-postgres-schemaCreation"),
-    config("custom-smeEnv-linux-defaultRouteToFirewallAdmin"),
-    heuristic("fair", "controlStrengthMostLikely=80;primaryLossProductivityMostLikely=50000;secondaryLossFinesJudgementsMostLikely=250000").
+    config("custom-smeEnv-linux-defaultRouteToFirewallAdmin").
 
 instance("DnsServer") >
     os("linux", "20.04"),
@@ -107,8 +102,7 @@ instance("Firewall") >
     config("linux-router"),
     config("custom-smeEnv-linux-ntpConfig"),
     config("custom-smeEnv-linux-dnsConfig"),
-    config("custom-smeEnv3-linux-ufwConfig"),
-    heuristic("fair", "controlStrengthMin=70;controlStrengthMostLikely=85;controlStrengthMax=95").
+    config("custom-smeEnv3-linux-ufwConfig").
 
 instance("Host3") >
     os("linux", "20.04"),
@@ -164,56 +158,57 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1"),
-    event("2"),
-    event("3"),
-    event("4").
+    event("initial_access_via_web_vulnerability"),
+    event("concurrent_network_reconnaissance"),
+    event("lateral_movement_to_database_server"),
+    event("data_exfiltration").
 
-event("1") >
+event("initial_access_via_web_vulnerability") >
     instance("Attacker"),
-    needRoot("true"),
+    needRoot(true),
     subject("bash", "-c"),
-    runObject("ExploitToolkit", "--target 192.168.56.6"),
-    waitfor("false"),
-    description("Initial Access via Web Vulnerability"),
-    heuristic("ttp", "T1190"),
-    heuristic("capec", "CAPEC-66"),
-    heuristic("killchain", "Exploitation"),
-    heuristic("fair", "threatEventFrequencyMin=5;threatEventFrequencyMostLikely=12;threatEventFrequencyMax=50;threatCapabilityMin=40;threatCapabilityMostLikely=60;threatCapabilityMax=85").
+    runObject("ExploitToolkit", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution(""),
+    description("Initial Access via Web Vulnerability").
 
-event("2") >
+event("concurrent_network_reconnaissance") >
     instance("Attacker"),
-    needRoot("true"),
+    needRoot(true),
     subject("bash", "-c"),
-    runObject("ReconScript", "--target 192.168.59.0/24"),
-    waitfor("false"),
-    description("Concurrent Network Reconnaissance"),
-    heuristic("ttp", "T1046").
+    runObject("ReconScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution(""),
+    description("Concurrent Network Reconnaissance").
 
-event("3") >
+event("lateral_movement_to_database_server") >
     instance("Attacker"),
-    needRoot("true"),
+    needRoot(true),
     subject("bash", "-c"),
-    runObject("PivotTool", "--target 192.168.59.4"),
-    waitfor("1"),
-    description("Lateral Movement to Database Server"),
-    heuristic("ttp", "T1021"),
-    heuristic("killchain", "Lateral Movement").
+    runObject("PivotTool", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    dependsOn("initial_access_via_web_vulnerability"),
+    scheduleExecution(""),
+    description("Lateral Movement to Database Server").
 
-event("4") >
+event("data_exfiltration") >
     instance("Attacker"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", "-c"),
-    runObject("ExfilScript", "--target db_dump"),
-    waitfor("3"),
-    description("Data Exfiltration"),
-    heuristic("ttp", "T1048"),
-    heuristic("killchain", "Exfiltration").`;
+    runObject("ExfilScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    dependsOn("lateral_movement_to_database_server"),
+    scheduleExecution(""),
+    description("Data Exfiltration").`;
 
 export const SAMPLE_SCENARIO = `metadata() >
     name("HelloWorld-Win"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 
 instances() >
@@ -229,13 +224,13 @@ instance("win7") >
 
 instance("router") >
     os("linux", "20.04"),
-    object("HelloWorld"),
     config("linux-vsftpd"),
     config("linux-auditd"),
     config("linux-mail"),
     config("linux-python3"),
     config("python3-pip"),
-    config("linux-router").
+    config("linux-router"),
+    object("HelloWorld").
 
 networks() >
     network("lan_0").
@@ -251,14 +246,13 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("helloworld_event").
 
-event("1") >
+event("helloworld_event") >
     instance("router"),
-    needRoot("true"),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld Event").
 

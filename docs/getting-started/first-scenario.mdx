@@ -29,7 +29,7 @@ CRADLE scenario and understand how their names connect them.
 | Router instance | `router` | Associates the external object and requests Linux configurations. |
 | Network | `lan_0` | Connects both instances through static IPv4 endpoints. |
 | Object | `HelloWorld` | Identifies the external `HelloWorld.sh` artifact. |
-| Event | `1` | Defines the scenario's main event on the router. |
+| Event | `initialize_client` | Defines the scenario's main event on the router. |
 
 ## Create the scenario file
 
@@ -86,14 +86,13 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("router"),
-    needRoot("true"),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld Event").
 
@@ -243,23 +242,22 @@ This scenario assigns one event to the main phase:
 
 ```cradle
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 The matching event definition is:
 
 ```cradle
-event("1") >
+event("initialize_client") >
     instance("router"),
-    needRoot("true"),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld Event").
 ```
 
-Event `1` references the `router` instance, requests root privileges, has no
+Event `initialize_client` references the `router` instance, requests root privileges, has no
 pause before or after execution, and does not wait for another event.
 
 ## Object definition

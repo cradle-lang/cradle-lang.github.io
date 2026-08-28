@@ -269,9 +269,9 @@ Events use `runObject()` to identify the object involved in the event.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", "").
 ```
@@ -300,7 +300,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>event("1")</div>
+  <div>event("initialize_client")</div>
 
   <span>↓</span>
 
@@ -320,14 +320,17 @@ runObject("InitializationScript", "")
 
 uses no additional parameters.
 
-Where parameters are required, the current reference documents semicolon-separated `key=value` pairs.
+Where parameters are required, use a structured map with typed values.
 
 For example:
 
 ```CRADLE
 runObject(
     "InitializationScript",
-    "mode=safe;count=1"
+    {
+        mode = "safe",
+        count = 1
+    }
 )
 ```
 
@@ -455,7 +458,7 @@ metadata() >
 instance("Client") >
     object("InitializationScript").
 
-event("1") >
+event("initialize_client") >
     runObject("InitializationScript", "").
 
 object("InitializationScript") >
@@ -476,7 +479,7 @@ For example:
 metadata() >
     object("InitializationScript").
 
-event("1") >
+event("initialize_client") >
     runObject("InitialisationScript", "").
 ```
 

@@ -56,16 +56,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Target"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("SetupScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Run the setup script").
 
@@ -88,7 +87,7 @@ keys in a `.cradle` file.
 | `network("lan_0")` | Defines the subnet and connected instances. |
 | `events()` | Declares the pre, main, and post event phases. |
 | `mainEvent()` | Lists events in the main phase. |
-| `event("1")` | Defines what runs, where it runs, and its timing behavior. |
+| `event("initialize_client")` | Defines what runs, where it runs, and its timing behavior. |
 | `object("SetupScript")` | Resolves the external artifact used by the event. |
 
 For every supported property, see the

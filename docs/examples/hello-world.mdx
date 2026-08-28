@@ -54,14 +54,13 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("router"),
-    needRoot("true"),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld Event").
 

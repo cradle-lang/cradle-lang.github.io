@@ -23,11 +23,13 @@ The main forms are:
 | --- | --- | --- |
 | Simple block | `identifier() > ... .` | Defines a section without a name. |
 | Named block | `identifier("name") > ... .` | Defines a named component. |
-| Property | `identifier("value")` | Assigns one or more values to a block. |
+| Property | `identifier(value)` | Assigns one or more typed values to a block. |
 | Reference | `identifier()` or `identifier("name")` | Refers to another section or named component. |
-| Separator | `,` | Separates entries inside a block. |
+| Map | `{ key = value }` | Defines structured named parameters. |
+| Separator | `,` | Separates entries inside a block or map. |
 | Terminator | `.` | Ends a block. |
-| Comment | `// comment text` | Adds a comment to the end of the line. |
+| Line comment | `// comment text` | Adds a comment until the end of the line. |
+| Block comment | `/* comment text */` | Adds a comment that can span multiple lines. |
 
 A typical block looks like:
 
@@ -128,7 +130,7 @@ object("InitializationScript") >
 ```
 
 ```CRADLE
-event("1") >
+event("initialise_client") >
     instance("Client").
 ```
 
@@ -139,7 +141,7 @@ Properties appear inside blocks.
 The general form is:
 
 ```CRADLE
-property("value")
+property(value)
 ```
 
 For example:
@@ -187,7 +189,7 @@ The block ends with a period:
 
 ## Strings
 
-CRADLE values are written as double-quoted strings.
+CRADLE string values are written in double quotes.
 
 For example:
 
@@ -196,15 +198,15 @@ name("HelloWorld")
 ```
 
 ```CRADLE
-needRoot("false")
-```
-
-```CRADLE
-pauseBeforeRun("0")
-```
-
-```CRADLE
 description("Initialize the example client")
+```
+
+```CRADLE
+instance("Client")
+```
+
+```CRADLE
+subnet("192.168.10.0/24")
 ```
 
 String values can contain spaces.
@@ -226,11 +228,11 @@ An identifier can contain:
 - letters
 - digits
 - underscores
+- hyphens
 
 The first character must be:
 
-- a letter, or
-- an underscore
+- an ASCII letter
 
 Examples of identifiers include:
 
@@ -359,15 +361,15 @@ Declare an event within a phase:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 Then define it:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", "").
 ```
@@ -406,7 +408,7 @@ Client
 An event can reference both an instance and an object:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
     runObject("InitializationScript", "").
 ```
@@ -455,7 +457,7 @@ The named components are then defined elsewhere in the same scenario.
 
 ## Value conventions
 
-Most values in CRADLE source are represented as quoted strings.
+CRADLE values use strings, booleans, integers, durations and structured maps.
 
 The meaning of those strings depends on the property.
 
@@ -466,8 +468,8 @@ Examples include:
 | Scenario name | `"HelloWorld"` |
 | Operating system | `"ubuntu"` |
 | Version | `"20.04"` |
-| Boolean-like value | `"false"` |
-| Duration | `"0"` |
+| Boolean value | `false` |
+| Duration | `0` or `5s` |
 | Address | `"DHCP"` |
 | CIDR range | `"192.168.10.0/24"` |
 | Date-time | `"2026-01-15T10:00:00+00:00"` |
@@ -476,54 +478,48 @@ Examples include:
 For example:
 
 ```CRADLE
-event("1") >
-    needRoot("false"),
-    pauseBeforeRun("0"),
+event("initialize_client") >
+    needRoot(false),
+    pauseBeforeRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00").
 ```
 
-The grammar treats these as quoted arguments.
+The grammar preserves the type represented by each argument.
 
 The compiler determines how a particular property interprets its values.
 
-## Boolean-like values
+## Boolean values
 
-Some CRADLE properties use the strings:
+Boolean properties use the unquoted literals:
 
 ```text
-"true"
-"false"
+true
+false
 ```
 
 For example:
 
 ```CRADLE
-needRoot("false")
+needRoot(false)
 ```
 
-and:
-
-```CRADLE
-waitfor("false")
-```
-
-These values are written as quoted arguments in CRADLE source.
+Omit `dependsOn()` when an event has no explicit dependency.
 
 ## Numeric values
 
-Values such as durations are also represented as quoted arguments.
+Integer and duration values are written without quotes.
 
 For example:
 
 ```CRADLE
-pauseBeforeRun("0")
+pauseBeforeRun(0)
 ```
 
 ```CRADLE
-pauseAfterRun("10")
+pauseAfterRun(10)
 ```
 
-The compiler interprets the value according to the property being processed.
+The optional `s` suffix explicitly denotes seconds.
 
 ## Date and time values
 
@@ -537,9 +533,9 @@ scheduleExecution("2026-01-15T10:00:00+00:00")
 
 Use a time-zone designator when specifying scheduled execution times.
 
-## Parameter strings
+## Parameter maps
 
-Some properties accept a parameter string as an additional argument.
+Some properties accept a structured map as an additional argument.
 
 For example:
 
@@ -547,21 +543,26 @@ For example:
 runObject("InitializationScript", "")
 ```
 
-or:
+For role variables, use:
 
 ```CRADLE
-role("example.collection", "router", "lan=lan_0")
+role("example.collection", "router", {
+    lan = "lan_0"
+})
 ```
 
-Where multiple parameters are represented inside a single argument, they can use semicolon-separated `key=value` pairs when supported by that property.
+Separate multiple parameters with commas. Map values can be strings, booleans, integers or durations.
 
 For example:
 
-```text
-key1=value1;key2=value2
+```CRADLE
+runObject("InitializationScript", {
+    mode = "safe",
+    retries = 3
+})
 ```
 
-The interpretation of parameter strings depends on the property using them.
+The interpretation of each parameter depends on the property using the map.
 
 ## Interpolation
 
@@ -592,7 +593,7 @@ This includes:
 
 - blocks
 - identifiers
-- quoted arguments
+- typed arguments
 - separators
 - terminators
 - comments
@@ -680,16 +681,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 

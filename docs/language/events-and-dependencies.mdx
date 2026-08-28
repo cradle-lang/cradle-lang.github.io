@@ -68,15 +68,15 @@ The current CRADLE reference documents the following event-related properties:
 
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
-| `event` | Event name or order | Structural | Declares an event within a lifecycle phase. |
+| `event` | Semantic event name | Structural | Declares an event within a lifecycle phase. |
 | `instance` | Instance name | Schema required | Selects the instance associated with the event. |
 | `needRoot` | `true` or `false` | Schema required | Indicates whether elevated privileges are requested. CradleXC defaults to `false`. |
-| `executionFlow` | Flow type, timeout, poll interval | Compiler extension | Selects `synchronous` or `asynchronous` handling. Additional values apply to asynchronous handling. |
+| `executionFlow` | Flow type | Compiler extension | Uses `sync` when stated explicitly; synchronous execution is the default. |
 | `subject` | Subject, parameters | Schema required | Identifies the execution subject and optional parameters. |
 | `runObject` | Object name, parameters | Schema required | Selects a declared object and optional parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. CradleXC defaults to `0`. |
 | `pauseAfterRun` | Duration in seconds | Schema optional | Adds a delay after the event. CradleXC defaults to `0`. |
-| `waitfor` | `false` or event reference | Schema/compiler mismatch | Expresses no dependency or a dependency on another event. |
+| `dependsOn` | Event name | Adds an explicit dependency. Repeat for multiple dependencies. |
 | `scheduleExecution` | ISO 8601 date-time | Schema optional | Associates the event with a scheduled time. |
 | `description` | Text | Schema optional | Provides a human-readable description of the event. |
 | `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier with the event. |
@@ -98,20 +98,20 @@ For example:
 
 ```CRADLE
 preEvent() >
-    event("1").
+    event("initialize_client").
 
 mainEvent() >
-    event("2").
+    event("collect_evidence").
 
 postEvent() >
-    event("3").
+    event("cleanup").
 ```
 
 This places:
 
-- event `1` in `preEvent`
-- event `2` in `mainEvent`
-- event `3` in `postEvent`
+- event `initialize_client` in `preEvent`
+- event `collect_evidence` in `mainEvent`
+- event `cleanup` in `postEvent`
 
 Each event must then have a corresponding definition.
 
@@ -127,14 +127,13 @@ event("name") >
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 ```
@@ -158,7 +157,7 @@ Use `instance()` inside an event to identify the associated instance.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client").
 ```
 
@@ -188,7 +187,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>event("1")</div>
+  <div>event("initialize_client")</div>
 
 </div>
 
@@ -203,13 +202,13 @@ Use `needRoot()` to indicate whether the event requests elevated privileges.
 For example:
 
 ```CRADLE
-needRoot("false")
+needRoot(false)
 ```
 
 or:
 
 ```CRADLE
-needRoot("true")
+needRoot(true)
 ```
 
 The current documented values are:
@@ -230,9 +229,9 @@ when it is omitted.
 A typical event uses:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false").
+    needRoot(false).
 ```
 
 ## Execution subject
@@ -256,7 +255,7 @@ The second argument contains optional parameters.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     subject("bash", "").
 ```
 
@@ -306,7 +305,7 @@ The relationship is:
 
   <span>↓</span>
 
-  <div>event("1")</div>
+  <div>event("initialize_client")</div>
 
   <span>↓</span>
 
@@ -328,14 +327,17 @@ For example:
 runObject("InitializationScript", "")
 ```
 
-uses an empty parameter string.
+uses no additional parameters.
 
-Where parameters are required, the current reference documents semicolon-separated `key=value` pairs.
+Where parameters are required, use a structured map.
 
 For example:
 
-```text
-mode=safe;count=1
+```CRADLE
+runObject("InitializationScript", {
+    mode = "safe",
+    count = 1
+})
 ```
 
 The exact interpretation of those values depends on the object and execution context.
@@ -347,7 +349,7 @@ Use `pauseBeforeRun()` to add a delay before an event.
 For example:
 
 ```CRADLE
-pauseBeforeRun("10")
+pauseBeforeRun(10)
 ```
 
 The value represents a duration in seconds.
@@ -355,7 +357,7 @@ The value represents a duration in seconds.
 To request no delay:
 
 ```CRADLE
-pauseBeforeRun("0")
+pauseBeforeRun(0)
 ```
 
 CradleXC currently defaults this property to:
@@ -373,13 +375,13 @@ Use `pauseAfterRun()` to add a delay after an event.
 For example:
 
 ```CRADLE
-pauseAfterRun("10")
+pauseAfterRun(10)
 ```
 
 To request no delay:
 
 ```CRADLE
-pauseAfterRun("0")
+pauseAfterRun(0)
 ```
 
 CradleXC currently defaults this property to:
@@ -392,62 +394,51 @@ when omitted.
 
 ## Event dependencies
 
-Use `waitfor()` to express whether an event depends on another event.
+Use `dependsOn()` to express whether an event depends on another event.
 
-The current documentation includes:
-
-```CRADLE
-waitfor("false")
-```
-
-to indicate that the event does not wait for another event.
-
-Existing scenarios and compiler behavior can also use an event name or order identifier as the value.
-
-For example, a dependency can conceptually be expressed as:
+For example:
 
 ```CRADLE
-waitfor("1")
+dependsOn("initialize_client")
 ```
 
-where event `2` depends on event `1`.
+This makes the surrounding event wait for `initialize_client`. Omit the property when no explicit dependency is required.
 
 For example:
 
 ```CRADLE
 mainEvent() >
-    event("1"),
-    event("2").
+    event("initialize_client"),
+    event("collect_evidence").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
-    runObject("InitializationScript", ""),
-    waitfor("false").
+    runObject("InitializationScript", "").
 
-event("2") >
+event("collect_evidence") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("CollectEvidence", ""),
-    waitfor("1").
+    dependsOn("initialize_client").
 ```
 
 Conceptually:
 
 <div className="architecture-flow">
 
-  <div>event("1")</div>
+  <div>event("initialize_client")</div>
 
   <span>↓</span>
 
-  <div>event("2") waits for event "1"</div>
+  <div>event("collect_evidence") depends on event("initialize_client")</div>
 
 </div>
 
 :::important
-The current schema and compiler behavior do not represent `waitfor` in exactly the same way. Existing scenarios and compiler behavior support event references, while the current schema models the value differently.
+Every `dependsOn()` value must match a defined semantic event name.
 :::
 
 ## Event model
@@ -461,11 +452,10 @@ metadata() >
     eventType("sequence").
 ```
 
-The documented event types are:
+The supported event type is:
 
 ```text
 sequence
-DAG
 ```
 
 ### Sequence
@@ -480,45 +470,24 @@ for sequential event handling.
 
 The Hello World example uses this event model.
 
-### DAG
+### Explicit dependencies
 
-Use:
-
-```CRADLE
-eventType("DAG")
-```
-
-for a dependency-graph event model.
-
-Dependencies can then describe relationships between events.
-
-:::note
-The detailed relationship between `eventType("DAG")` and supported dependency behavior should be validated against the CradleXC release being used.
-:::
+Use `dependsOn()` to describe ordering relationships between semantic event names while using the supported sequential event model.
 
 ## Execution flow
 
 CradleXC recognizes the `executionFlow()` property as a compiler extension.
 
-The documented flow types are:
+The supported flow type is:
 
 ```text
-synchronous
-asynchronous
+sync
 ```
 
-The property can contain:
-
-- flow type
-- timeout
-- poll interval
-
-Additional values apply to asynchronous handling.
-
-Because the source material does not define the exact argument forms for all `executionFlow()` combinations, this documentation does not prescribe a complete example here.
+Use `executionFlow("sync")` when the property must be stated explicitly. Synchronous execution is also the default when the property is omitted.
 
 :::note
-Check the documentation for the CradleXC release you are using before relying on advanced `executionFlow()` behavior.
+Asynchronous execution is not currently supported by the Vagrant deployment path.
 :::
 
 ## Schedule an event
@@ -534,7 +503,7 @@ scheduleExecution("2026-01-15T10:00:00+00:00")
 A complete event can include:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
     scheduleExecution("2026-01-15T10:00:00+00:00").
 ```
@@ -564,7 +533,7 @@ Descriptions provide additional context when reading or reviewing a scenario.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
     description("Initialize the example client").
 ```
@@ -580,7 +549,7 @@ heuristic("framework", "identifier")
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     heuristic("example-framework", "EXAMPLE-001").
 ```
 
@@ -599,16 +568,15 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("1").
+    event("initialize_client").
 
-event("1") >
+event("initialize_client") >
     instance("Client"),
-    needRoot("false"),
+    needRoot(false),
     subject("bash", ""),
     runObject("InitializationScript", ""),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2026-01-15T10:00:00+00:00"),
     description("Initialize the example client").
 ```
@@ -620,7 +588,7 @@ events()
    ↓
 mainEvent()
    ↓
-event("1")
+event("initialize_client")
    ↓
 event definition
 ```
@@ -633,26 +601,26 @@ For example:
 
 ```CRADLE
 mainEvent() >
-    event("1"),
-    event("2"),
-    event("3").
+    event("initialize_client"),
+    event("collect_evidence"),
+    event("cleanup").
 ```
 
 Each event should then have its own definition:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     ...
 
-event("2") >
+event("collect_evidence") >
     ...
 
-event("3") >
+event("cleanup") >
     ...
 ```
 
 :::important
-Event names or order values should be unique within the scenario.
+Semantic event names should be unique within the scenario.
 :::
 
 ## Events across multiple phases
@@ -668,25 +636,25 @@ events() >
     postEvent().
 
 preEvent() >
-    event("1").
+    event("initialize_client").
 
 mainEvent() >
-    event("2").
+    event("collect_evidence").
 
 postEvent() >
-    event("3").
+    event("cleanup").
 ```
 
 This gives the scenario a clear lifecycle:
 
 ```text
-event 1
+initialize_client
 preEvent
    ↓
-event 2
+collect_evidence
 mainEvent
    ↓
-event 3
+cleanup
 postEvent
 ```
 
@@ -708,18 +676,17 @@ The main phase contains:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 The event definition:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("router"),
-    needRoot("true"),
-    pauseBeforeRun("0"),
-    pauseAfterRun("0"),
-    waitfor("false"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
     scheduleExecution("2018-11-13T20:20:39+00:00"),
     description("HelloWorld Event").
 ```
@@ -739,7 +706,7 @@ Events frequently connect several parts of a CRADLE scenario.
 Consider:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client"),
     runObject("InitializationScript", "").
 ```
@@ -778,7 +745,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>event("1")</div>
+  <div>event("initialize_client")</div>
 
   <span>↓</span>
 
@@ -829,7 +796,7 @@ When reviewing an event-related problem, check:
 - whether the referenced instance exists
 - whether the referenced object exists
 - whether event names are unique
-- whether `waitfor()` references resolve correctly
+- whether `dependsOn()` references resolve correctly
 - whether scheduled execution values use the intended date-time form
 - whether compiler extensions are supported by the CradleXC release being used
 
@@ -841,13 +808,13 @@ If a phase contains:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 there should be a corresponding:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     ...
 ```
 
@@ -858,7 +825,7 @@ An event definition alone does not show which lifecycle phase contains it.
 For example:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client").
 ```
 
@@ -866,7 +833,7 @@ should also be referenced by a phase:
 
 ```CRADLE
 mainEvent() >
-    event("1").
+    event("initialize_client").
 ```
 
 ### Event references an undeclared instance
@@ -874,7 +841,7 @@ mainEvent() >
 Incorrect:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     instance("Client").
 ```
 
@@ -892,7 +859,7 @@ instances() >
 Incorrect:
 
 ```CRADLE
-event("1") >
+event("initialize_client") >
     runObject("InitializationScript", "").
 ```
 
@@ -914,16 +881,16 @@ object("InitializationScript") >
 
 ### Dependency references the wrong event name
 
-If the intended dependency is event `1`:
+If the intended dependency is event `initialize_client`:
 
 ```CRADLE
-waitfor("1")
+dependsOn("initialize_client")
 ```
 
 the scenario should contain a corresponding event named:
 
 ```CRADLE
-event("1")
+event("initialize_client")
 ```
 
 Use matching event identifiers consistently.

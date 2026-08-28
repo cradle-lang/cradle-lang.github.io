@@ -26,7 +26,7 @@ Examples:
 ```text
 environment has name ExampleEnvironment
 instance Client has os ubuntu 20.04
-event 1 run object InitializationScript
+event initialize_client run object InitializationScript
 ```
 
 ## Value conventions
@@ -41,7 +41,7 @@ Because no parser contract currently exists, use these conventions to reduce amb
 | Date-time | Use ISO 8601 with a time-zone designator | `2026-01-15T10:00:00Z` |
 | Address | Use an IPv4 address, CIDR range, or `DHCP` as appropriate | `192.168.10.0/24` |
 | Free text | Quote text containing spaces | `"Initialize the client"` |
-| Parameters | Quote the complete parameter string | `"mode=safe;count=1"` |
+| Parameters | Use a structured map | `{ mode = "safe", count = 1 }` |
 
 :::important
 
@@ -55,7 +55,7 @@ The environment statements correspond conceptually to CRADLE metadata.
 | Purpose | IL form | CRADLE concept |
 | --- | --- | --- |
 | Scenario name | `environment has name \{Name\}` | `name("...")` |
-| Event model | `environment has event type \{sequence\|DAG\}` | `eventType("...")` |
+| Event model | `environment has event type sequence` | `eventType("sequence")` |
 | Remote repository | `environment has repository remote \{URI\}` | `repositoryRemote("...")` |
 
 Example:
@@ -75,7 +75,7 @@ The documented IL notation does not contain a separate object-declaration statem
 | Operating system | `instance \{Name\} has os \{Platform\} \{Version\}` | `os("...", "...")` |
 | Object association | `instance \{Name\} has object \{Object\}` | `object("...")` |
 | Configuration | `instance \{Name\} has config \{Configuration\}` | `config("...")` |
-| Role | `instance \{Name\} has role \{Collection\} \{Role\} \{Variables\}` | `role("...", "...", "...")` |
+| Role | `instance \{Name\} has role \{Collection\} \{Role\} \{Variables\}` | `role("...", "...", { key = value })` |
 
 Example:
 
@@ -84,7 +84,7 @@ instance Client has os ubuntu 20.04
 instance Client has object InitializationScript
 instance Router has os ubuntu 20.04
 instance Router has config linux-router
-instance Router has role example.collection router "lan=lan_0"
+instance Router has role example.collection router { lan = "lan_0" }
 ```
 
 The current compiler’s role form distinguishes a collection name from a role name. Older IL documentation represented only a role and variables, which is not sufficient for a lossless mapping to the current compiler form.
@@ -117,12 +117,12 @@ Network and instance declarations are inferred during manual translation. Each n
 Example:
 
 ```text
-mainEvent has event 1
+mainEvent has event initialize_client
 ```
 
 :::important
 
-Every event should belong to one phase. Event names or order values should be unique within a scenario.
+Every event should belong to one phase. Semantic event names should be unique within a scenario.
 :::
 
 ## Event statements
@@ -130,32 +130,31 @@ Every event should belong to one phase. Event names or order values should be un
 | Purpose | IL form | CRADLE concept |
 | --- | --- | --- |
 | Instance | `event \{Event\} has instance \{Instance\}` | `instance("...")` |
-| Elevated privileges | `event \{Event\} need root \{true\|false\}` | `needRoot("...")` |
+| Elevated privileges | `event \{Event\} need root \{true\|false\}` | `needRoot(false)` |
 | Subject | `event \{Event\} has subject \{Subject\} \{Parameters\}` | `subject("...", "...")` |
-| Object | `event \{Event\} run object \{Object\} \{Parameters\}` | `runObject("...", "...")` |
-| Delay before | `event \{Event\} pause before run \{Seconds\}` | `pauseBeforeRun("...")` |
-| Delay after | `event \{Event\} pause after run \{Seconds\}` | `pauseAfterRun("...")` |
-| Dependency | `event \{Event\} wait for \{false\|Event\}` | `waitfor("...")` |
+| Object | `event \{Event\} run object \{Object\} \{Parameters\}` | `runObject("...", { key = value })` |
+| Delay before | `event \{Event\} pause before run \{Seconds\}` | `pauseBeforeRun(0)` |
+| Delay after | `event \{Event\} pause after run \{Seconds\}` | `pauseAfterRun(5s)` |
+| Dependency | `event \{Event\} depends on \{Event\}` | `dependsOn("event_name")` |
 | Schedule | `event \{Event\} has schedule execution \{DateTime\}` | `scheduleExecution("...")` |
 | Description | `event \{Event\} has description \{Text\}` | `description("...")` |
 
 Example:
 
 ```text
-event 1 has instance Client
-event 1 need root false
-event 1 has subject bash ""
-event 1 run object InitializationScript ""
-event 1 pause before run 0
-event 1 pause after run 0
-event 1 wait for false
-event 1 has schedule execution 2026-01-15T10:00:00Z
-event 1 has description "Initialize the client"
+event initialize_client has instance Client
+event initialize_client need root false
+event initialize_client has subject bash ""
+event initialize_client run object InitializationScript ""
+event initialize_client pause before run 0
+event initialize_client pause after run 0
+event initialize_client has schedule execution 2026-01-15T10:00:00Z
+event initialize_client has description "Initialize the client"
 ```
 
 :::important
 
-Advanced wait modules and asynchronous execution settings do not have a stable IL mapping in the current documentation.
+An event without an explicit dependency omits the `depends on` statement.
 :::
 
 ## Object statements
