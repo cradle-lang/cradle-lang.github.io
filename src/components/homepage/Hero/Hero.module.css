@@ -116,6 +116,7 @@
 
 :global([data-theme='dark']) .topologyPlatform {
   stroke: #555a62;
+
   opacity: 0.78;
 }
 
@@ -130,6 +131,7 @@
 .topologyGrid {
   stroke: var(--cradle-border-strong);
   stroke-width: 0.75;
+
   opacity: 0.09;
 }
 
@@ -169,8 +171,6 @@
   stroke-dasharray: 5 8;
 
   opacity: 0.55;
-
-  animation: topology-flow 8s linear infinite;
 }
 
 .topologyDrop {
@@ -190,11 +190,35 @@
   transform-origin: center;
 }
 
-.networkPacket {
+/* =========================================================
+   EVENT SEQUENCE
+   ========================================================= */
+
+.eventRoute {
+  fill: none;
+
+  stroke: #f06b22;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 5 7;
+
+  opacity: 0;
+
+  animation:
+    event-route
+    13s
+    ease-in-out
+    infinite;
+}
+
+.eventMarker {
   fill: #f06b22;
 
   stroke: rgb(240 107 34 / 20%);
-  stroke-width: 4.5;
+  stroke-width: 6;
+
+  opacity: 0;
 
   paint-order: stroke fill;
 
@@ -203,6 +227,304 @@
       0 0 4px
       rgb(240 107 34 / 58%)
     );
+}
+
+/* =========================================================
+   ICMP REQUEST
+   ========================================================= */
+
+.pingRoute {
+  fill: none;
+
+  stroke: #5bc0d6;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 4 7;
+
+  opacity: 0;
+
+  animation:
+    ping-route
+    13s
+    ease-in-out
+    infinite;
+}
+
+.pingMarker {
+  fill: #5bc0d6;
+
+  stroke: rgb(91 192 214 / 24%);
+  stroke-width: 6;
+
+  opacity: 0;
+
+  paint-order: stroke fill;
+
+  filter:
+    drop-shadow(
+      0 0 5px
+      rgb(91 192 214 / 70%)
+    );
+}
+
+/* =========================================================
+   ICMP REPLY
+   ========================================================= */
+
+.replyRoute {
+  fill: none;
+
+  stroke: #a78bfa;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 4 7;
+
+  opacity: 0;
+
+  animation:
+    reply-route
+    13s
+    ease-in-out
+    infinite;
+}
+
+.replyMarker {
+  fill: #a78bfa;
+
+  stroke: rgb(167 139 250 / 24%);
+  stroke-width: 6;
+
+  opacity: 0;
+
+  paint-order: stroke fill;
+
+  filter:
+    drop-shadow(
+      0 0 5px
+      rgb(167 139 250 / 72%)
+    );
+}
+
+/* =========================================================
+   COMPLETION RETURN
+   Same event path, opposite direction
+   ========================================================= */
+
+.completionRoute {
+  fill: none;
+
+  stroke: #52c18d;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3 6;
+
+  opacity: 0;
+
+  animation:
+    completion-route
+    13s
+    ease-in-out
+    infinite;
+}
+
+.completionMarker {
+  fill: #52c18d;
+
+  stroke: rgb(82 193 141 / 28%);
+  stroke-width: 7;
+
+  opacity: 0;
+
+  paint-order: stroke fill;
+
+  filter:
+    drop-shadow(
+      0 0 6px
+      rgb(82 193 141 / 78%)
+    );
+}
+
+/* =========================================================
+   CODE HIGHLIGHT
+   ========================================================= */
+
+.eventCodeLine {
+  animation:
+    event-code-highlight
+    13s
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   NODE LABELS
+   ========================================================= */
+
+.nodeLabel {
+  fill: var(--cradle-code-muted);
+
+  stroke: none;
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+
+  text-anchor: middle;
+}
+
+/* =========================================================
+   SEQUENCE NODE HIGHLIGHTS
+   ========================================================= */
+
+.routerSequenceTarget polygon {
+  animation:
+    router-sequence-highlight
+    13s
+    ease-in-out
+    infinite;
+}
+
+.win7SequenceTarget polygon {
+  animation:
+    win7-sequence-highlight
+    13s
+    ease-in-out
+    infinite;
+}
+
+.routerSequenceTarget {
+  transform-box: fill-box;
+  transform-origin: center;
+
+  animation:
+    router-sequence-glow
+    13s
+    ease-in-out
+    infinite;
+}
+
+.win7SequenceTarget {
+  transform-box: fill-box;
+  transform-origin: center;
+
+  animation:
+    win7-sequence-glow
+    13s
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.eventBadge,
+.pingBadge,
+.replyBadge,
+.completionBadge {
+  opacity: 0;
+}
+
+.eventBadge {
+  animation:
+    event-badge
+    13s
+    ease-in-out
+    infinite;
+}
+
+.pingBadge {
+  animation:
+    ping-badge
+    13s
+    ease-in-out
+    infinite;
+}
+
+.replyBadge {
+  animation:
+    reply-badge
+    13s
+    ease-in-out
+    infinite;
+}
+
+.completionBadge {
+  animation:
+    completion-badge
+    13s
+    ease-in-out
+    infinite;
+}
+
+.eventBadge rect,
+.pingBadge rect,
+.replyBadge rect,
+.completionBadge rect {
+  fill:
+    color-mix(
+      in srgb,
+      var(--cradle-code-bg) 90%,
+      transparent
+    );
+
+  stroke-width: 1;
+}
+
+.eventBadge rect {
+  stroke: #f06b22;
+}
+
+.pingBadge rect {
+  stroke: #5bc0d6;
+}
+
+.replyBadge rect {
+  stroke: #a78bfa;
+}
+
+.completionBadge rect {
+  stroke: #52c18d;
+}
+
+.eventBadge circle,
+.pingBadge circle,
+.replyBadge circle,
+.completionBadge circle {
+  stroke: none;
+}
+
+.eventBadge circle {
+  fill: #f06b22;
+}
+
+.pingBadge circle {
+  fill: #5bc0d6;
+}
+
+.replyBadge circle {
+  fill: #a78bfa;
+}
+
+.completionBadge circle {
+  fill: #52c18d;
+}
+
+.eventBadge text,
+.pingBadge text,
+.replyBadge text,
+.completionBadge text {
+  fill: var(--cradle-code-text);
+
+  stroke: none;
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 9px;
+  font-weight: 650;
 }
 
 /* =========================================================
@@ -373,15 +695,418 @@
   fill: rgb(119 40 13 / 92%);
 }
 
+.completionTarget polygon {
+  animation:
+    completion-target
+    13s
+    ease-in-out
+    infinite;
+}
+
 /* =========================================================
-   TOPOLOGY ANIMATION
+   TOPOLOGY ANIMATIONS
    ========================================================= */
 
-@keyframes topology-flow {
-  to {
-    stroke-dashoffset: -52;
+/* ---------------------------------------------------------
+   Router sequence
+   --------------------------------------------------------- */
+
+@keyframes router-sequence-highlight {
+  0%,
+  34% {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
+  }
+
+  /* HelloWorld event arrives */
+  39%,
+  43% {
+    stroke: #f06b22;
+    stroke-width: 2.8;
+  }
+
+  /* ICMP request starts */
+  44%,
+  49% {
+    stroke: #5bc0d6;
+    stroke-width: 2.8;
+  }
+
+  52%,
+  70% {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
+  }
+
+  /* ICMP reply returns */
+  73%,
+  80% {
+    stroke: #a78bfa;
+    stroke-width: 2.8;
+  }
+
+  /* Completion */
+  84%,
+  97% {
+    stroke: #52c18d;
+    stroke-width: 3;
+  }
+
+  100% {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
   }
 }
+
+/* ---------------------------------------------------------
+   win7 sequence
+   --------------------------------------------------------- */
+
+@keyframes win7-sequence-highlight {
+  0%,
+  57% {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
+  }
+
+  /* Request arrives */
+  60%,
+  64% {
+    stroke: #5bc0d6;
+    stroke-width: 2.8;
+  }
+
+  /* Reply is created/sent */
+  65%,
+  70% {
+    stroke: #a78bfa;
+    stroke-width: 2.8;
+  }
+
+  73%,
+  100% {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
+  }
+}
+
+/* ---------------------------------------------------------
+   Router glow
+   --------------------------------------------------------- */
+
+@keyframes router-sequence-glow {
+  0%,
+  34%,
+  52%,
+  70%,
+  81%,
+  100% {
+    filter: none;
+  }
+
+  39%,
+  43% {
+    filter:
+      drop-shadow(
+        0 0 6px
+        rgb(240 107 34 / 48%)
+      );
+  }
+
+  44%,
+  49% {
+    filter:
+      drop-shadow(
+        0 0 6px
+        rgb(91 192 214 / 48%)
+      );
+  }
+
+  73%,
+  80% {
+    filter:
+      drop-shadow(
+        0 0 6px
+        rgb(167 139 250 / 50%)
+      );
+  }
+
+  84%,
+  97% {
+    filter:
+      drop-shadow(
+        0 0 7px
+        rgb(82 193 141 / 52%)
+      );
+  }
+}
+
+/* ---------------------------------------------------------
+   win7 glow
+   --------------------------------------------------------- */
+
+@keyframes win7-sequence-glow {
+  0%,
+  57%,
+  73%,
+  100% {
+    filter: none;
+  }
+
+  60%,
+  64% {
+    filter:
+      drop-shadow(
+        0 0 6px
+        rgb(91 192 214 / 50%)
+      );
+  }
+
+  65%,
+  70% {
+    filter:
+      drop-shadow(
+        0 0 6px
+        rgb(167 139 250 / 52%)
+      );
+  }
+}
+
+/* ---------------------------------------------------------
+   Code highlight
+   --------------------------------------------------------- */
+
+@keyframes event-code-highlight {
+  0%,
+  12%,
+  42%,
+  100% {
+    fill:
+      color-mix(
+        in srgb,
+        var(--cradle-text) 78%,
+        transparent
+      );
+  }
+
+  17%,
+  34% {
+    fill: #f06b22;
+  }
+}
+
+/* ---------------------------------------------------------
+   Event route
+   --------------------------------------------------------- */
+
+@keyframes event-route {
+  0%,
+  15%,
+  40%,
+  100% {
+    opacity: 0;
+
+    stroke-dashoffset: 32;
+  }
+
+  20%,
+  35% {
+    opacity: 0.82;
+
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Event badge
+   --------------------------------------------------------- */
+
+@keyframes event-badge {
+  0%,
+  35%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  40%,
+  46% {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------
+   Request route
+   --------------------------------------------------------- */
+
+@keyframes ping-route {
+  0%,
+  39%,
+  65%,
+  100% {
+    opacity: 0;
+
+    stroke-dashoffset: 36;
+  }
+
+  44%,
+  60% {
+    opacity: 0.9;
+
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Ping badge
+   --------------------------------------------------------- */
+
+@keyframes ping-badge {
+  0%,
+  40%,
+  66%,
+  100% {
+    opacity: 0;
+  }
+
+  45%,
+  60% {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------
+   Reply route
+   --------------------------------------------------------- */
+
+@keyframes reply-route {
+  0%,
+  63%,
+  81%,
+  100% {
+    opacity: 0;
+
+    stroke-dashoffset: -36;
+  }
+
+  64%,
+  78% {
+    opacity: 0.92;
+
+    stroke-dashoffset: 0;
+  }
+
+  80% {
+    opacity: 0;
+
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Reply badge
+   --------------------------------------------------------- */
+
+@keyframes reply-badge {
+  0%,
+  63%,
+  81%,
+  100% {
+    opacity: 0;
+  }
+
+  64%,
+  78% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Completion route
+   Same geometry as event route, reverse movement
+   --------------------------------------------------------- */
+
+@keyframes completion-route {
+  0%,
+  82%,
+  98%,
+  100% {
+    opacity: 0;
+
+    stroke-dashoffset: -32;
+  }
+
+  84% {
+    opacity: 0.95;
+
+    stroke-dashoffset: -32;
+  }
+
+  95% {
+    opacity: 0.95;
+
+    stroke-dashoffset: 0;
+  }
+
+  97% {
+    opacity: 0;
+
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Completion badge
+   --------------------------------------------------------- */
+
+@keyframes completion-badge {
+  0%,
+  82%,
+  98%,
+  100% {
+    opacity: 0;
+  }
+
+  84%,
+  95% {
+    opacity: 1;
+  }
+
+  97% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Central node completion
+   --------------------------------------------------------- */
+
+@keyframes completion-target {
+  0%,
+  88% {
+    stroke: #f06b22;
+    stroke-width: 2;
+  }
+
+  93%,
+  98% {
+    stroke: #52c18d;
+    stroke-width: 3.2;
+  }
+
+  100% {
+    stroke: #f06b22;
+    stroke-width: 2;
+  }
+}
+
+/* ---------------------------------------------------------
+   Ambient animations
+   --------------------------------------------------------- */
 
 @keyframes topology-float {
   0%,
@@ -778,12 +1503,59 @@
   .topologyJunction,
   .satelliteCube,
   .topologyCard,
-  .centralNode circle {
+  .centralNode circle,
+  .eventCodeLine,
+  .eventRoute,
+  .routerSequenceTarget,
+  .routerSequenceTarget polygon,
+  .win7SequenceTarget,
+  .win7SequenceTarget polygon,
+  .eventBadge,
+  .pingRoute,
+  .pingBadge,
+  .replyRoute,
+  .replyBadge,
+  .completionRoute,
+  .completionBadge,
+  .completionTarget polygon {
     animation: none;
   }
 
-  .networkPacket {
+  .eventMarker,
+  .pingMarker,
+  .replyMarker,
+  .completionMarker {
     display: none;
+  }
+
+  .eventRoute,
+  .pingRoute,
+  .replyRoute,
+  .completionRoute {
+    opacity: 0.48;
+  }
+
+  .eventBadge,
+  .pingBadge,
+  .replyBadge,
+  .completionBadge {
+    opacity: 1;
+  }
+
+  .routerSequenceTarget,
+  .win7SequenceTarget {
+    filter: none;
+  }
+
+  .routerSequenceTarget polygon,
+  .win7SequenceTarget polygon {
+    stroke: var(--cradle-border-strong);
+    stroke-width: 1.4;
+  }
+
+  .completionTarget polygon {
+    stroke: #52c18d;
+    stroke-width: 2.8;
   }
 
   .primaryButton,

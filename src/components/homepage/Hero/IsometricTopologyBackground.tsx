@@ -35,12 +35,14 @@ function Cube({ centerX, centerY, size, depth, className = '' }: CubeProps): Rea
 }
 
 const nodes = [
-  { centerX: 98, centerY: 198, size: 64, depth: 38, groundX: 210, groundY: 322 },
-  { centerX: 500, centerY: 126, size: 64, depth: 38, groundX: 500, groundY: 290 },
-  { centerX: 646, centerY: 198, size: 64, depth: 38, groundX: 566, groundY: 322 },
-  { centerX: 584, centerY: 401, size: 64, depth: 38, groundX: 584, groundY: 466 },
-  { centerX: 148, centerY: 350, size: 64, depth: 38, groundX: 148, groundY: 414 },
+  { id: 'win7', centerX: 98, centerY: 198, size: 64, depth: 38, groundX: 210, groundY: 322 },
+  { id: 'service-a', centerX: 500, centerY: 126, size: 64, depth: 38, groundX: 500, groundY: 290 },
+  { id: 'service-b', centerX: 646, centerY: 198, size: 64, depth: 38, groundX: 566, groundY: 322 },
+  { id: 'router', centerX: 584, centerY: 401, size: 64, depth: 38, groundX: 584, groundY: 466 },
+  { id: 'service-c', centerX: 148, centerY: 350, size: 64, depth: 38, groundX: 148, groundY: 414 },
 ];
+
+const eventSequencePath = 'M468 231 C526 252 559 324 584 401';
 
 export function IsometricTopologyBackground(): ReactNode {
   return (
@@ -105,12 +107,10 @@ export function IsometricTopologyBackground(): ReactNode {
           <path className={styles.topologyRoute} d="M584 466 L398 338" style={{ animationDelay: '-3.6s' } as CSSProperties} />
           <path className={styles.topologyRoute} d="M148 414 L398 338" style={{ animationDelay: '-4.8s' } as CSSProperties} />
 
-          {nodes.map((node, index) => {
+          {nodes.map((node) => {
             const cubeBottom = node.centerY + node.size * 0.285 + node.depth;
-            const duration = 5.8 + index * 0.6;
-            const begin = index * -1.1;
             return (
-              <g key={`${node.centerX}-${node.centerY}`}>
+              <g key={node.id}>
                 <line
                   className={styles.topologyDrop}
                   x1={node.centerX}
@@ -119,26 +119,6 @@ export function IsometricTopologyBackground(): ReactNode {
                   y2={node.groundY}
                 />
                 <circle className={styles.topologyJunction} cx={node.groundX} cy={node.groundY} r="3" />
-                <circle className={styles.networkPacket} r="3.2">
-                  <animateMotion
-                    path={`M 398 338 L ${node.groundX} ${node.groundY} L ${node.centerX} ${cubeBottom}`}
-                    dur={`${duration}s`}
-                    begin={`${begin}s`}
-                    keyPoints="0;0.78;1"
-                    keyTimes="0;0.8;1"
-                    calcMode="spline"
-                    keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="opacity"
-                    values="0;1;1;0"
-                    keyTimes="0;0.08;0.88;1"
-                    dur={`${duration}s`}
-                    begin={`${begin}s`}
-                    repeatCount="indefinite"
-                  />
-                </circle>
               </g>
             );
           })}
@@ -147,6 +127,109 @@ export function IsometricTopologyBackground(): ReactNode {
           <line className={styles.topologyDrop} x1="210" y1="242" x2="210" y2="322" />
           <circle className={styles.topologyJunction} cx="566" cy="242" r="4" />
           <line className={styles.topologyDrop} x1="566" y1="242" x2="566" y2="322" />
+        </g>
+
+        <g className={styles.eventSequence}>
+          <path
+            className={styles.eventRoute}
+            d={eventSequencePath}
+          />
+
+          <circle className={styles.eventMarker} r="5">
+            <animateMotion
+              path={eventSequencePath}
+              dur="13s"
+              calcMode="linear"
+              keyPoints="0;0;1;1"
+              keyTimes="0;0.18;0.36;1"
+              repeatCount="indefinite"
+            />
+
+            <animate
+              attributeName="opacity"
+              values="0;0;1;1;0;0"
+              keyTimes="0;0.17;0.2;0.34;0.39;1"
+              dur="13s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+
+        <g className={styles.pingSequence}>
+          <path
+            className={styles.pingRoute}
+            d="M584 457 L584 466 L398 338 L210 322 L98 254"
+          />
+          <circle className={styles.pingMarker} r="4.5">
+            <animateMotion
+              path="M584 457 L584 466 L398 338 L210 322 L98 254"
+              dur="13s"
+              keyPoints="0;0;1;1"
+              keyTimes="0;0.42;0.62;1"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="opacity"
+              values="0;0;1;1;0;0"
+              keyTimes="0;0.41;0.44;0.59;0.64;1"
+              dur="13s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+
+        <g className={styles.replySequence}>
+          <path
+            className={styles.replyRoute}
+            d="M98 254 L210 322 L398 338 L584 466 L584 457"
+          />
+
+          <circle className={styles.replyMarker} r="4.5">
+            <animateMotion
+              path="M98 254 L210 322 L398 338 L584 466 L584 457"
+              dur="13s"
+              calcMode="linear"
+              keyPoints="0;0;1;1"
+              keyTimes="0;0.64;0.80;1"
+              repeatCount="indefinite"
+            />
+
+            <animate
+              attributeName="opacity"
+              values="0;0;1;1;0;0"
+              keyTimes="0;0.63;0.64;0.78;0.80;1"
+              dur="13s"
+              calcMode="linear"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </g>
+
+        <g className={styles.completionSequence}>
+          <path
+            className={styles.completionRoute}
+            d={eventSequencePath}
+          />
+
+          <circle className={styles.completionMarker} r="5">
+            <animateMotion
+              path={eventSequencePath}
+              dur="13s"
+              calcMode="linear"
+              keyPoints="1;1;0;0"
+              keyTimes="0;0.84;0.97;1"
+              repeatCount="indefinite"
+            />
+
+            <animate
+              attributeName="opacity"
+              values="0;0;1;1;0;0"
+              keyTimes="0;0.83;0.84;0.95;0.97;1"
+              dur="13s"
+              calcMode="linear"
+              repeatCount="indefinite"
+            />
+          </circle>
         </g>
 
         <g className={styles.topologyCard} transform="translate(54 14)">
@@ -169,30 +252,80 @@ export function IsometricTopologyBackground(): ReactNode {
               <tspan className={styles.topologyCodeKey} x="180" dy="15">{'instances() >'}</tspan>
               <tspan x="180" dy="11">{'  instance("win7"),'}</tspan>
               <tspan x="180" dy="11">{'  instance("router").'}</tspan>
-              <tspan className={styles.topologyCodeKey} x="180" dy="15">{'network("lan_0") >'}</tspan>
-              <tspan x="180" dy="11">{'  subnet("192.168.56.0/24"),'}</tspan>
-              <tspan x="180" dy="11">{'  endpoint("win7", "192.168.56.121"),'}</tspan>
-              <tspan x="180" dy="11">{'  endpoint("router", "192.168.56.122").'}</tspan>
+              <tspan className={styles.topologyCodeKey} x="180" dy="15">{'events() >'}</tspan>
+              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  mainEvent().'}</tspan>
+              <tspan className={styles.topologyCodeKey} x="180" dy="15">{'mainEvent() >'}</tspan>
+              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  event("helloworld_event").'}</tspan>
+              <tspan className={`${styles.topologyCodeKey} ${styles.eventCodeLine}`} x="180" dy="15">{'event("helloworld_event") >'}</tspan>
+              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  instance("router"),'}</tspan>
+              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  needRoot(true),'}</tspan>
+              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  description("HelloWorld Event").'}</tspan>
             </text>
           </g>
         </g>
 
         <g className={styles.satelliteNodes}>
           {nodes.map((node) => (
-            <Cube
-              key={`${node.centerX}-${node.centerY}-cube`}
-              centerX={node.centerX}
-              centerY={node.centerY}
-              size={node.size}
-              depth={node.depth}
-              className={styles.satelliteCube}
-            />
+            <g key={`${node.id}-node`}>
+              <Cube
+                centerX={node.centerX}
+                centerY={node.centerY}
+                size={node.size}
+                depth={node.depth}
+                className={`${styles.satelliteCube} ${node.id === 'router'
+                    ? styles.routerSequenceTarget
+                    : node.id === 'win7'
+                      ? styles.win7SequenceTarget
+                      : ''
+                  }`}
+              />
+
+              {(node.id === 'win7' || node.id === 'router') && (
+                <text
+                  className={styles.nodeLabel}
+                  x={node.centerX}
+                  y={node.centerY + node.size * 0.285 + node.depth + 16}
+                >
+                  {node.id}
+                </text>
+              )}
+            </g>
           ))}
+        </g>
+
+        <g className={styles.eventBadge} transform="translate(512 338)">
+          <rect width="142" height="28" rx="7" />
+          <circle cx="14" cy="14" r="3" />
+          <text x="25" y="17.5">HelloWorld Event</text>
+        </g>
+
+        <g className={styles.pingBadge} transform="translate(194 278)">
+          <rect width="139" height="28" rx="7" />
+          <circle cx="14" cy="14" r="3" />
+          <text x="25" y="17.5">ICMP echo request</text>
+        </g>
+
+        <g className={styles.replyBadge} transform="translate(408 438)">
+          <rect width="127" height="28" rx="7" />
+          <circle cx="14" cy="14" r="3" />
+          <text x="25" y="17.5">ICMP echo reply</text>
+        </g>
+
+        <g className={styles.completionBadge} transform="translate(326 397)">
+          <rect width="151" height="28" rx="7" />
+          <circle cx="14" cy="14" r="3" />
+          <text x="25" y="17.5">Event complete · next</text>
         </g>
 
         <g className={styles.centralNode}>
           <circle cx="398" cy="326" r="76" />
-          <Cube centerX={398} centerY={271} size={128} depth={73} className={styles.centralCube} />
+          <Cube
+            centerX={398}
+            centerY={271}
+            size={128}
+            depth={73}
+            className={`${styles.centralCube} ${styles.completionTarget}`}
+          />
         </g>
       </svg>
     </div>
