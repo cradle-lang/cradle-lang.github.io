@@ -1,0 +1,8 @@
+# Retry transient failures before declaring a link unavailable.
+max_retries = 5
+retry_wait_time = 3
+
+# The CRADLE package repository rate-limits concurrent automated requests.
+[hosts."repo.cradle-lang.org"]
+concurrency = 1
+request_interval = "2s"
