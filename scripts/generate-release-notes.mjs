@@ -4,6 +4,14 @@ import path from 'node:path';
 const RELEASE_NOTES_DIRECTORY = path.resolve('release-notes');
 const OUTPUT_FILE = path.resolve('src/data/release-notes.json');
 const RELEASE_NOTE_FILE = /^v(.+)\.md$/i;
+const UNPUBLISHED_RELEASE_NOTE = /^v0\./i;
+
+function stripMarkdownlintDirectives(content) {
+  return content.replace(
+    /<!--\s*markdownlint-[\s\S]*?-->\r?\n?/g,
+    '',
+  );
+}
 
 function parseVersion(fileName) {
   const version = fileName.slice(1, -3);
@@ -78,7 +86,12 @@ async function main() {
   });
 
   const fileNames = entries
-    .filter((entry) => entry.isFile() && RELEASE_NOTE_FILE.test(entry.name))
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        RELEASE_NOTE_FILE.test(entry.name) &&
+        !UNPUBLISHED_RELEASE_NOTE.test(entry.name),
+    )
     .map((entry) => entry.name)
     .sort(compareReleaseNotes);
 
@@ -86,9 +99,11 @@ async function main() {
     fileNames.map(async (fileName) => ({
       version: fileName.slice(0, -3),
       fileName,
-      content: await fs.readFile(
-        path.join(RELEASE_NOTES_DIRECTORY, fileName),
-        'utf8',
+      content: stripMarkdownlintDirectives(
+        await fs.readFile(
+          path.join(RELEASE_NOTES_DIRECTORY, fileName),
+          'utf8',
+        ),
       ),
     })),
   );
