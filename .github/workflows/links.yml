@@ -44,5 +44,7 @@ jobs:
             --verbose
             --no-progress
             --root-dir ./build
+            --remap
+            '^https://cradle-lang\.org/(.*)$ file://${{ github.workspace }}/build/$1'
             './build/**/*.html'
           fail: true
