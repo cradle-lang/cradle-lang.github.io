@@ -1,0 +1,882 @@
+---
+sidebar_position: 1
+title: Write a Scenario
+description: Learn the required CRADLE source order and define metadata, instances, networks, events, and objects.
+---
+
+# Write a Scenario
+
+This guide walks through the process of creating a CRADLE scenario from an empty `.cradle` file.
+
+A scenario typically defines:
+
+- scenario metadata
+- instances
+- networks
+- external objects
+- lifecycle phases
+- events
+
+The exact components required depend on the environment you want to describe.
+
+## Create the source file
+
+Create a new file with the `.cradle` extension.
+
+For example:
+
+```text
+ExampleEnvironment.cradle
+```
+
+You can organize scenarios under a dedicated directory:
+
+```text
+scenarios/
+└── ExampleEnvironment.cradle
+```
+
+The `.cradle` file is the authoritative source for the scenario.
+
+Generated YAML and backend-specific files should be treated as outputs rather than as replacements for the source.
+
+## Plan the scenario
+
+Before writing the source, identify the main components.
+
+For example:
+
+| Component | Example |
+| --- | --- |
+| Scenario | `ExampleEnvironment` |
+| Client | `Client` |
+| Router | `Router` |
+| Network | `lan_0` |
+| Object | `InitializationScript` |
+| Main event | `initialize_client` |
+
+A simple topology might be:
+
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="Client connects to Router through the lan_0 network"
+>
+  <div className="scenarioTopologyNode">
+    <strong>Client</strong>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNetwork">
+    <code>lan_0</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNode">
+    <strong>Router</strong>
+  </div>
+</div>
+
+The scenario will then connect these components through named references.
+
+## Define metadata
+
+Start with the `metadata()` block.
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+```
+
+This:
+
+- names the scenario
+- selects the event model
+- defines the remote artifact repository
+- declares the object used by the scenario
+
+### Scenario name
+
+Use:
+
+```CRADLE
+name("ExampleEnvironment")
+```
+
+Choose a stable name that identifies the scenario.
+
+### Event model
+
+Use:
+
+```CRADLE
+eventType("sequence")
+```
+
+for sequential event handling.
+
+The supported event type is:
+
+```text
+sequence
+```
+
+### Artifact repository
+
+Use:
+
+```CRADLE
+repositoryRemote("https://example.com/repository")
+```
+
+to define the remote artifact base location.
+
+:::important
+Do not embed usernames, passwords, access tokens or other secrets directly in repository URLs.
+:::
+
+### Object declarations
+
+Declare objects used by the scenario:
+
+```CRADLE
+object("InitializationScript")
+```
+
+Each declared object should later have a matching `object("name")` definition.
+
+For detailed metadata behavior, see [Metadata](../language/metadata).
+
+## Declare instances
+
+Use `instances()` to declare the systems participating in the scenario.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+This introduces:
+
+```text
+Client
+Router
+```
+
+Each declared instance should have a corresponding definition.
+
+## Define the instances
+
+Define each instance separately.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+```
+
+Then define the router:
+
+```CRADLE
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+```
+
+The relationship is:
+
+<div className="architecture-flow">
+
+  <div>instances()</div>
+
+  <span>↓</span>
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>instance("Router")</div>
+
+</div>
+
+### Operating system
+
+Use:
+
+```CRADLE
+os("ubuntu", "20.04")
+```
+
+to describe the instance operating system.
+
+The current compiler also supports an architecture argument.
+
+For example:
+
+```CRADLE
+os("ubuntu", "20.04", "AMD64")
+```
+
+If architecture is omitted, CradleXC currently defaults it to `AMD64`.
+
+### Configurations
+
+Configurations can be associated with instances using:
+
+```CRADLE
+config("linux-router")
+```
+
+For example:
+
+```CRADLE
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+```
+
+Configuration availability depends on the environment and backend being used.
+
+### Objects
+
+Associate an object with an instance using:
+
+```CRADLE
+object("InitializationScript")
+```
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+```
+
+The object name should match the declaration in `metadata()`.
+
+For detailed instance behavior, see [Instances and Roles](../language/instances-and-roles).
+
+## Declare networks
+
+Declare the scenario networks through:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Each declared network should have a corresponding definition.
+
+## Define the network
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+This defines:
+
+- the `192.168.10.0/24` subnet
+- a DHCP endpoint for `Client`
+- a static endpoint for `Router`
+
+The endpoint names reference the instances declared earlier.
+
+Conceptually:
+
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="Client uses DHCP and Router uses 192.168.10.1 on the 192.168.10.0/24 subnet"
+>
+  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
+    <strong>Client</strong>
+    <code>DHCP</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyNetwork">
+    <code>192.168.10.0/24</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">←</span>
+
+  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
+    <strong>Router</strong>
+    <code>192.168.10.1</code>
+  </div>
+</div>
+
+:::important
+Endpoint names must match declared instance names exactly.
+:::
+
+### Let the backend resolve network details
+
+The subnet can be omitted where supported by the compiler and selected backend.
+
+The Hello World example uses:
+
+```CRADLE
+network("lan_0") >
+    endpoint("HelloWorld", "DHCP"),
+    endpoint("router", "DHCP").
+```
+
+This leaves additional network details to the target-specific generation path.
+
+For more information, see [Networks and Routing](../language/networks-and-routing).
+
+## Plan the object definition
+
+Objects describe external artifacts used by the scenario.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+In the complete source, place this final object definition after the event
+declarations and definitions. The object name is introduced earlier through
+`metadata()` and its instance association.
+
+`${uriRemote}` references the remote artifact repository defined by:
+
+```CRADLE
+repositoryRemote("https://example.com/repository")
+```
+
+Conceptually:
+
+<div
+  className="scenarioTopology"
+  role="img"
+  aria-label="repositoryRemote plus the object-relative path produces the complete artifact location"
+>
+  <div className="scenarioTopologyValue">
+    <code>repositoryRemote</code>
+  </div>
+
+  <span className="scenarioTopologyOperator" aria-hidden="true">+</span>
+
+  <div className="scenarioTopologyValue">
+    <code>object-relative path</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyValue">
+    <code>complete artifact location</code>
+  </div>
+</div>
+
+The object name should remain consistent across:
+
+- `metadata()`
+- instance associations
+- event references
+- the object definition
+
+For detailed object behavior, see [Objects and Interpolation](../language/objects-and-interpolation).
+
+## Define the event lifecycle
+
+Declare the three event lifecycle phases:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+The lifecycle is:
+
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>preEvent</strong>
+      <span>Preparation before the primary scenario.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>mainEvent</strong>
+      <span>Primary scenario behavior.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">3</div>
+    <div className="cradle-lifecycle-content">
+      <strong>postEvent</strong>
+      <span>Follow-up or evidence-related activity.</span>
+    </div>
+  </div>
+
+</div>
+
+## Add an event to a phase
+
+For this example, add one event to the main phase:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client").
+```
+
+The event name is `initialize_client`. It should have a matching event definition.
+
+## Define the event
+
+Define event `initialize_client`:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2026-01-15T10:00:00+00:00"),
+    description("Initialize the example client").
+```
+
+This event:
+
+- references the `Client` instance
+- does not request root privileges
+- uses `bash`
+- runs the `InitializationScript` object
+- has no delay before execution
+- has no delay after execution
+- does not wait for another event
+- has a scheduled execution time
+- includes a description
+
+## Add pre-event and post-event behavior
+
+If the scenario requires preparation or follow-up behavior, declare additional events.
+
+For example:
+
+```CRADLE
+preEvent() >
+    event("initialize_client").
+
+mainEvent() >
+    event("collect_evidence").
+
+postEvent() >
+    event("cleanup").
+```
+
+Each event then receives its own definition:
+
+```CRADLE
+event("initialize_client") >
+    ...
+
+event("collect_evidence") >
+    ...
+
+event("cleanup") >
+    ...
+```
+
+Semantic event names should be unique within the scenario.
+
+For more information, see [Events and Dependencies](../language/events-and-dependencies).
+
+## Add event dependencies
+
+CRADLE expresses dependencies through `dependsOn()`.
+
+For example:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client"),
+    event("collect_evidence").
+```
+
+The initialization event has no dependency, so it omits `dependsOn()`:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+```
+
+The evidence event can depend on the initialization event:
+
+```CRADLE
+event("collect_evidence") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("CollectEvidence", ""),
+    dependsOn("initialize_client").
+```
+
+Conceptually:
+
+<div
+  className="scenarioTopology scenarioTopologyTwoStep"
+  role="img"
+  aria-label="Collect evidence depends on initialize client"
+>
+  <div className="scenarioTopologyValue">
+    <code>initialize_client</code>
+  </div>
+
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+
+  <div className="scenarioTopologyValue">
+    <code>collect_evidence</code>
+  </div>
+</div>
+
+:::note
+Every `dependsOn()` value must match a defined semantic event name.
+:::
+
+## Add heuristic annotations
+
+Heuristic annotations can provide additional classification metadata.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    heuristic("ttp", "T1190").
+```
+
+Objects and instances can also use `heuristic()`.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh"),
+    heuristic("mbc", "F0002").
+```
+
+Heuristic annotations do not change the underlying behavior of the element.
+
+For more information, see [Heuristic Annotations](../language/heuristics).
+
+## Complete example
+
+The resulting scenario is:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+
+instances() >
+    instance("Client"),
+    instance("Router").
+
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("initialize_client").
+
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2026-01-15T10:00:00+00:00"),
+    description("Initialize the example client").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+## Follow the references
+
+The scenario contains several relationships.
+
+### Instance references
+
+```text
+instances()
+    ↓
+Client
+    ↓
+instance("Client")
+    ↓
+endpoint("Client", ...)
+    ↓
+event instance("Client")
+```
+
+### Object references
+
+```text
+metadata()
+    ↓
+InitializationScript
+    ↓
+object("InitializationScript")
+    ↓
+instance association
+    ↓
+runObject("InitializationScript", "")
+```
+
+### Network references
+
+```text
+networks()
+    ↓
+lan_0
+    ↓
+network("lan_0")
+    ↓
+Client + Router endpoints
+```
+
+Names should remain consistent throughout these relationships.
+
+:::important
+A spelling or capitalization mismatch can leave a named reference unresolved.
+:::
+
+## Validate the scenario
+
+Save the source as:
+
+```text
+scenarios/ExampleEnvironment.cradle
+```
+
+Then validate it:
+
+```bash
+cxc validate -i scenarios/ExampleEnvironment.cradle
+```
+
+If CradleXC reports syntax errors, correct the source and run validation again.
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## Inspect the scenario
+
+If you want to inspect how CradleXC interpreted the source:
+
+```bash
+cxc dump-ir -i scenarios/ExampleEnvironment.cradle
+```
+
+This step is optional.
+
+It is mainly useful for inspection and diagnostics.
+
+## Compile the scenario
+
+After validation succeeds:
+
+```bash
+cxc compile \
+  -i scenarios/ExampleEnvironment.cradle \
+  -o ExampleEnvironment.yml
+```
+
+The resulting YAML is compiler-generated output.
+
+Continue editing the `.cradle` file rather than modifying the YAML as the authoritative scenario definition.
+
+## Generate target-specific files
+
+If you need output for a particular backend, first confirm that the backend is available:
+
+```bash
+cxc backend list
+```
+
+Then generate the target-specific files:
+
+```bash
+cxc emit \
+  -i scenarios/ExampleEnvironment.cradle \
+  --target <plugin_name> \
+  -o ./output
+```
+
+The files produced depend on the selected backend.
+
+:::important
+CradleXC does not automatically execute backend-generated files. Use them with the corresponding tools in your own testbed environment.
+:::
+
+For backend setup, see [Use a Backend](../getting-started/use-a-backend).
+
+## Recommended authoring workflow
+
+A practical scenario-authoring workflow is:
+
+1. Plan the instances, networks, objects and events.
+2. Create the `.cradle` file.
+3. Define scenario metadata.
+4. Declare and define instances.
+5. Declare and define networks.
+6. Confirm that objects are declared in metadata and associated with the
+   intended instances.
+7. Define the event lifecycle.
+8. Add events and dependencies.
+9. Finish with the object definitions.
+10. Check every named reference.
+11. Validate the scenario.
+12. Inspect the intermediate representation if required.
+13. Compile the scenario.
+14. Generate target-specific files only when required.
+
+<div className="architecture-flow">
+
+  <div>Plan scenario</div>
+
+  <span>↓</span>
+
+  <div>Write CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>Validate</div>
+
+  <span>↓</span>
+
+  <div>Compile</div>
+
+  <span>↓</span>
+
+  <div>Optional backend generation</div>
+
+</div>
+
+## Authoring checklist
+
+Before considering a scenario complete, verify that:
+
+- `metadata()` identifies the scenario
+- objects used by the scenario are declared
+- every instance is declared in `instances()`
+- every declared instance has a matching definition
+- every network is declared in `networks()`
+- every declared network has a matching definition
+- network endpoints reference valid instances
+- every object has a matching definition
+- object references use consistent names
+- lifecycle phases are declared
+- every event belongs to the intended phase
+- every event has a matching definition
+- event instance references resolve
+- `runObject()` references resolve
+- dependency references resolve
+- repository values do not expose credentials
+- the scenario passes `cxc validate`
+
+## Keep source and generated files separate
+
+A useful project layout is:
+
+```text
+.
+├── scenarios/
+│   └── ExampleEnvironment.cradle
+├── build/
+│   └── ExampleEnvironment.yml
+└── output/
+    └── ...
+```
+
+Here:
+
+| Directory | Purpose |
+| --- | --- |
+| `scenarios/` | Human-authored CRADLE source. |
+| `build/` | CradleXC compiler output. |
+| `output/` | Backend-generated target-specific files. |
+
+These directory names are recommendations rather than required CRADLE paths.
+
+## Related documentation
+
+- [Language Overview](../language/overview)
+- [Syntax and Types](../language/syntax-and-types)
+- [Metadata](../language/metadata)
+- [Instances and Roles](../language/instances-and-roles)
+- [Networks and Routing](../language/networks-and-routing)
+- [Events and Dependencies](../language/events-and-dependencies)
+- [Objects and Interpolation](../language/objects-and-interpolation)
+- [Heuristic Annotations](../language/heuristics)
+- [First Scenario](../getting-started/first-scenario)
+- [Validate and Compile](../getting-started/validate-and-compile)
+- [Use a Backend](../getting-started/use-a-backend)
+
+## Next steps
+
+After writing your scenario, continue with [Validate and Compile](../getting-started/validate-and-compile) to verify the source and generate the compiled representation.

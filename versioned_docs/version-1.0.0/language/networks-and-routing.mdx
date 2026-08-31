@@ -1,0 +1,688 @@
+---
+sidebar_position: 5
+title: Networks and Routing
+---
+
+# Networks and Routing
+
+Networks connect instances within a CRADLE scenario.
+
+The `networks()` block declares the networks used by the scenario. Each declared network is then defined in a matching `network("name")` block.
+
+For example:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+The network can then be defined as:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+## Network properties
+
+The current CRADLE reference documents the following network-related properties:
+
+| Property | Arguments | Status | Description |
+| --- | --- | --- | --- |
+| `network` | Network name | Structural | Declares a network. Repeat for multiple networks. |
+| `subnet` | IPv4 CIDR range | Schema required | Defines the network address range. CradleXC currently permits omission and can emit an empty value. |
+| `endpoint` | Instance name, address | Schema required | Connects a declared instance to the network. The address defaults to `DHCP` when omitted by CradleXC. |
+
+## Declare networks
+
+Networks are declared inside the `networks()` block.
+
+For example:
+
+```CRADLE
+networks() >
+    network("lan_0"),
+    network("lan_1").
+```
+
+This declares two networks:
+
+```text
+lan_0
+lan_1
+```
+
+Each declared network should have a matching named definition.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24").
+```
+
+and:
+
+```CRADLE
+network("lan_1") >
+    subnet("192.168.20.0/24").
+```
+
+:::important
+Network names are cross-references. Keep spelling and capitalization consistent between declarations and definitions.
+:::
+
+## Define a network
+
+A named network block has the form:
+
+```CRADLE
+network("name") >
+    ...
+```
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+This network:
+
+- is named `lan_0`
+- uses the subnet `192.168.10.0/24`
+- connects `Client` using DHCP
+- connects `Router` using `192.168.10.1`
+
+## Define a subnet
+
+Use `subnet()` to specify an IPv4 CIDR range.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24").
+```
+
+The value:
+
+```text
+192.168.10.0/24
+```
+
+defines the address range associated with the network.
+
+A complete network definition can combine the subnet with its endpoints:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+:::note
+The current schema requires `subnet`, while CradleXC currently permits it to be omitted and can produce an empty value. The resulting network behavior can also depend on the selected backend.
+:::
+
+## Connect instances with endpoints
+
+Use `endpoint()` to connect an instance to a network.
+
+The documented form is:
+
+```CRADLE
+endpoint("instance", "address")
+```
+
+For example:
+
+```CRADLE
+endpoint("Client", "DHCP")
+```
+
+This connects the `Client` instance to the network and requests DHCP addressing.
+
+A static address can also be supplied:
+
+```CRADLE
+endpoint("Router", "192.168.10.1")
+```
+
+A complete example is:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+## Endpoint references
+
+The first argument to `endpoint()` refers to a declared instance.
+
+For example:
+
+```CRADLE
+endpoint("Client", "DHCP")
+```
+
+should refer to an instance declared by:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+and defined by:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>instances()</div>
+
+  <span>↓</span>
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>endpoint("Client", "DHCP")</div>
+
+  <span>↓</span>
+
+  <div>network("lan_0")</div>
+
+</div>
+
+:::important
+Endpoint names must match declared instance names exactly.
+:::
+
+## DHCP addressing
+
+Use:
+
+```CRADLE
+endpoint("Client", "DHCP")
+```
+
+when the address should be resolved through DHCP.
+
+The Hello World example uses DHCP for both instances:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
+```
+
+In that scenario, no explicit subnet is defined.
+
+The source therefore leaves network details to the target-specific generation path.
+
+## Static addressing
+
+An endpoint can also use a specific address.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "192.168.10.10"),
+    endpoint("Router", "192.168.10.1").
+```
+
+Here:
+
+- `Client` uses `192.168.10.10`
+- `Router` uses `192.168.10.1`
+
+Both addresses belong to:
+
+```text
+192.168.10.0/24
+```
+
+The exact way these values are represented by the target environment depends on the selected backend.
+
+## Omitted endpoint addresses
+
+CradleXC currently permits the endpoint address to be omitted.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client").
+```
+
+When omitted, CradleXC currently defaults the address to:
+
+```text
+DHCP
+```
+
+The explicit form is:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client", "DHCP").
+```
+
+Using the explicit form can make the intended network behavior easier to understand when reviewing the scenario.
+
+## Multiple endpoints
+
+A network can connect multiple instances by repeating `endpoint()`.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1"),
+    endpoint("Server", "192.168.10.20").
+```
+
+Conceptually:
+
+```text
+Client
+   │
+   │
+   ▼
+ lan_0
+   ▲
+   │
+   ├──────── Router
+   │
+   └──────── Server
+```
+
+Each endpoint should reference an instance declared elsewhere in the scenario.
+
+## Multiple networks
+
+A scenario can declare more than one network.
+
+For example:
+
+```CRADLE
+networks() >
+    network("lan_0"),
+    network("lan_1").
+```
+
+Each network then has its own definition:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+
+network("lan_1") >
+    subnet("192.168.20.0/24"),
+    endpoint("Router", "192.168.20.1"),
+    endpoint("Server", "DHCP").
+```
+
+This allows the same instance to participate in more than one network.
+
+In this example, `Router` is connected to both `lan_0` and `lan_1`.
+
+## Routing relationships
+
+CRADLE network blocks describe network membership and endpoint addressing.
+
+Routing behavior can additionally depend on instance configuration and the selected backend.
+
+For example:
+
+```CRADLE
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+```
+
+The instance is then connected to multiple networks:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Router", "192.168.10.1").
+
+network("lan_1") >
+    endpoint("Router", "192.168.20.1").
+```
+
+The scenario expresses the network relationships.
+
+The details of how routing is represented in generated target files depend on the backend and configuration used.
+
+:::note
+Do not assume that the CRADLE network definition itself configures every provider-specific routing detail.
+:::
+
+## Example routed topology
+
+Consider:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router"),
+    instance("Server").
+
+instance("Client") >
+    os("ubuntu", "20.04").
+
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+
+instance("Server") >
+    os("ubuntu", "20.04").
+
+networks() >
+    network("lan_0"),
+    network("lan_1").
+
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+
+network("lan_1") >
+    subnet("192.168.20.0/24"),
+    endpoint("Router", "192.168.20.1"),
+    endpoint("Server", "DHCP").
+```
+
+The intended topology is:
+
+<div
+  className="scenarioTopology scenarioTopologyConverging"
+  role="img"
+  aria-label="Client connects to Router through lan_0, and Server connects to Router through lan_1"
+>
+  <div className="scenarioTopologyNode">
+    <strong>Client</strong>
+  </div>
+
+  <div className="scenarioTopologyConnection" aria-hidden="true">
+    <code className="scenarioTopologyConnectionLabel">lan_0</code>
+    <span className="scenarioTopologyArrow">→</span>
+  </div>
+
+  <div className="scenarioTopologyNode">
+    <strong>Router</strong>
+  </div>
+
+  <div className="scenarioTopologyConnection" aria-hidden="true">
+    <code className="scenarioTopologyConnectionLabel">lan_1</code>
+    <span className="scenarioTopologyArrow">←</span>
+  </div>
+
+  <div className="scenarioTopologyNode">
+    <strong>Server</strong>
+  </div>
+</div>
+
+The `Router` instance participates in both networks.
+
+## Hello World network
+
+The Hello World scenario declares one network:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Its definition is:
+
+```CRADLE
+network("lan_0") >
+    endpoint("HelloWorld", "DHCP"),
+    endpoint("router", "DHCP").
+```
+
+This connects:
+
+```text
+win7
+router
+```
+
+to:
+
+```text
+lan_0
+```
+
+using the addresses declared in the `192.168.56.0/24` subnet.
+
+## Network declarations and definitions
+
+Like instances, networks follow the declaration-definition pattern.
+
+First declare:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Then define:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Client", "DHCP").
+```
+
+The names must match:
+
+```text
+lan_0
+```
+
+This pattern allows other parts of the scenario to reference the same named network consistently.
+
+## Schema and compiler behavior
+
+The current CRADLE schema and CradleXC behavior differ in several network-related areas.
+
+| Property | Current behavior |
+| --- | --- |
+| `network` | Structural declaration of a named network. |
+| `subnet` | Required by the current schema, while CradleXC currently permits omission and can emit an empty value. |
+| `endpoint` | Required by the current schema for network membership. |
+| Endpoint address | CradleXC currently defaults the address to `DHCP` when omitted. |
+
+:::note
+The schema, compiler behavior and backend behavior should not be treated as identical layers.
+:::
+
+A scenario can therefore pass one form of processing while still relying on defaults or target-specific behavior elsewhere.
+
+## Backend-specific network behavior
+
+CRADLE describes the network topology at the scenario level.
+
+A backend plugin converts that representation into files for a particular target.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>CRADLE network definition</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Target-specific network configuration</div>
+
+</div>
+
+The selected backend can determine how concepts such as:
+
+- DHCP
+- subnets
+- provider networks
+- virtual interfaces
+- routing configuration
+
+are represented in its generated files.
+
+Refer to the backend documentation for target-specific behavior.
+
+## Validate network definitions
+
+Validate the scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+When troubleshooting a network definition, check:
+
+- whether the network was declared in `networks()`
+- whether a matching `network("name")` definition exists
+- whether endpoint instance names match declared instances
+- whether the subnet uses the expected CIDR form
+- whether endpoint addresses are appropriate for the intended network
+- whether the selected backend supports the required network behavior
+
+## Common mistakes
+
+### Network declaration does not match its definition
+
+Incorrect:
+
+```CRADLE
+networks() >
+    network("lan_0").
+
+network("lan0") >
+    endpoint("Client", "DHCP").
+```
+
+The declaration uses:
+
+```text
+lan_0
+```
+
+while the definition uses:
+
+```text
+lan0
+```
+
+Use the same name:
+
+```CRADLE
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    endpoint("Client", "DHCP").
+```
+
+### Endpoint references an undeclared instance
+
+Incorrect:
+
+```CRADLE
+instances() >
+    instance("Client").
+
+network("lan_0") >
+    endpoint("Router", "DHCP").
+```
+
+`Router` has not been declared.
+
+Declare it first:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+### Endpoint name uses different capitalization
+
+If the instance is:
+
+```CRADLE
+instance("Router")
+```
+
+avoid:
+
+```CRADLE
+endpoint("router", "DHCP")
+```
+
+unless the declared instance is actually named `router`.
+
+Use names consistently.
+
+### Static address does not match the intended subnet
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    subnet("192.168.10.0/24"),
+    endpoint("Router", "192.168.20.1").
+```
+
+The endpoint address does not belong to the documented `192.168.10.0/24` network.
+
+Review the network and endpoint values before generating target-specific files.
+
+## Related documentation
+
+- [Syntax and Types](./syntax-and-types)
+- [Instances and Roles](./instances-and-roles)
+- [Events and Dependencies](./events-and-dependencies)
+- [First Scenario](../getting-started/first-scenario)
+- [Use a Backend](../getting-started/use-a-backend)
+- [Developer Schema Reference](../schema/cradle-schema)
+
+## Next steps
+
+Continue with [Events and Dependencies](./events-and-dependencies) to learn how CRADLE organizes scenario behavior into lifecycle phases and defines relationships between events.

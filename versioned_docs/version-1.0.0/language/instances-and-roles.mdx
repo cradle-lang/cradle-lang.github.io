@@ -1,0 +1,674 @@
+---
+sidebar_position: 4
+title: Instances and Roles
+---
+
+# Instances and Roles
+
+Instances represent the systems that participate in a CRADLE scenario.
+
+The `instances()` block declares the systems used by the scenario. Each declared system is then defined in a matching `instance("name")` block.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+The corresponding instance definitions can then describe the operating system, associated objects, configurations, roles and other instance-specific properties.
+
+## Instance properties
+
+The current CRADLE reference documents the following instance-related properties:
+
+| Property | Arguments | Status | Description |
+| --- | --- | --- | --- |
+| `instance` | Instance name | Structural | Declares an instance. Repeat for multiple systems. |
+| `os` | Platform, version, architecture | Schema required | Describes the operating system. Architecture is optional in CradleXC and defaults to `AMD64`. |
+| `object` | Object name | Schema required | Associates a declared object with the instance. Repeat for multiple objects. |
+| `config` | Configuration name | Compiler extension | Associates a predefined configuration with the instance. Repeat for multiple configurations. |
+| `io` | I/O definition name | Compiler extension | Associates a predefined input/output definition with the instance. |
+| `role` | Collection, role, variable map | Schema optional | Associates a predefined role. Variables are optional typed `key = value` pairs. |
+| `description` | Text | Compiler extension | Provides a human-readable description of the instance. |
+| `heuristic` | Framework, identifier | Compiler extension | Associates the instance with an external classification or framework identifier. |
+
+## Declare instances
+
+Instances are declared in the `instances()` block.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+```
+
+This declares two systems:
+
+```text
+Client
+Router
+```
+
+Each declared instance should have a matching named definition.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+and:
+
+```CRADLE
+instance("Router") >
+    os("ubuntu", "20.04").
+```
+
+:::important
+Instance names are cross-references. Keep spelling and capitalization consistent between the `instances()` declaration and every later reference.
+:::
+
+## Define an instance
+
+A named instance block has the form:
+
+```CRADLE
+instance("name") >
+    ...
+```
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+```
+
+This definition:
+
+- identifies the instance as `Client`
+- selects Ubuntu 20.04
+- associates the `InitializationScript` object
+- adds a human-readable description
+
+## Operating system
+
+Use `os()` to describe the operating system associated with an instance.
+
+The documented form is:
+
+```CRADLE
+os("platform", "version", "architecture")
+```
+
+For example:
+
+```CRADLE
+os("ubuntu", "20.04", "AMD64")
+```
+
+The architecture argument is optional in the current CradleXC behavior.
+
+For example:
+
+```CRADLE
+os("ubuntu", "20.04")
+```
+
+If the architecture is omitted, CradleXC currently defaults it to:
+
+```text
+AMD64
+```
+
+A complete instance example is:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+:::note
+Operating-system availability can depend on the backend and target environment used to generate target-specific files.
+:::
+
+## Associate objects with an instance
+
+Use `object()` inside an instance definition to associate a declared object with that instance.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    object("InitializationScript").
+```
+
+The object should also be declared in `metadata()`:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+and defined in its own object block:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The relationship is:
+
+<div className="architecture-flow">
+
+  <div>metadata() object declaration</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript") definition</div>
+
+  <span>↓</span>
+
+  <div>instance("Client") association</div>
+
+</div>
+
+Multiple objects can be associated with the same instance by repeating the property.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    object("CollectEvidence").
+```
+
+## Configurations
+
+Use `config()` to associate a predefined configuration with an instance.
+
+For example:
+
+```CRADLE
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router").
+```
+
+Multiple configurations can be requested by repeating `config()`:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig").
+```
+
+The canonical HelloWorld-Win scenario uses two instance definitions. The
+Windows instance declares its operating system and configurations:
+
+```CRADLE
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+```
+
+The router associates the object used by the scenario:
+
+```CRADLE
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld").
+```
+
+:::note
+`config()` is currently documented as a CradleXC compiler extension. Configuration availability depends on the environment, backend and CRADLE distribution being used.
+:::
+
+## I/O definitions
+
+CradleXC also recognizes the `io()` property.
+
+The documented form is:
+
+```CRADLE
+io("definition")
+```
+
+For example:
+
+```CRADLE
+instance("Client") >
+    io("ExampleIO").
+```
+
+This associates a predefined input/output definition with the instance.
+
+`io()` is currently documented as a compiler extension.
+
+Use it only where the selected CRADLE release and environment provide the corresponding I/O definition.
+
+## Roles
+
+Use `role()` to associate a predefined role with an instance.
+
+The current compiler-specific form is:
+
+```CRADLE
+role("namespace.collection", "role", { key = value })
+```
+
+For example:
+
+```CRADLE
+instance("Router") >
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
+```
+
+The three arguments represent:
+
+| Argument | Purpose |
+| --- | --- |
+| Collection | Identifies the collection containing the role. |
+| Role | Identifies the role within that collection. |
+| Variables | Supplies optional role-specific values. |
+
+In the example:
+
+```text
+example.collection
+```
+
+is the collection,
+
+```text
+router
+```
+
+is the role and:
+
+`lan = "lan_0"` provides a role variable.
+
+## Role variables
+
+Role variables are expressed as typed `key = value` pairs inside a structured map.
+
+For example:
+
+```CRADLE
+role("example.collection", "router", {
+    lan = "lan_0"
+})
+```
+
+Where multiple variables are supported, separate them with commas.
+
+For example:
+
+```CRADLE
+role(
+    "example.collection",
+    "router",
+    {
+        lan = "lan_0",
+        mode = "example"
+    }
+)
+```
+
+The interpretation of these values depends on the selected role.
+
+:::important
+Role names, collections and supported variables depend on the roles available to the CRADLE environment being used.
+:::
+
+## Description
+
+Use `description()` to provide human-readable information about an instance.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    description("Example client system").
+```
+
+Descriptions do not replace the structural properties that define the instance.
+
+They provide additional context for users reviewing the scenario.
+
+`description()` is currently documented as a compiler extension for instances.
+
+## Heuristic annotations
+
+Supported instances can use:
+
+```CRADLE
+heuristic("framework", "identifier")
+```
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    heuristic("example-framework", "EXAMPLE-001").
+```
+
+Heuristic properties associate classification metadata with the instance.
+
+They do not replace the underlying CRADLE definition.
+
+See [Heuristics](./heuristics) for the documented conventions and supported use cases.
+
+## Complete instance example
+
+The following example declares two instances and gives them different responsibilities:
+
+```CRADLE
+instances() >
+    instance("Client"),
+    instance("Router").
+
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript"),
+    description("Example client system").
+
+instance("Router") >
+    os("ubuntu", "20.04"),
+    config("linux-router"),
+    role("example.collection", "router", {
+        lan = "lan_0"
+    }).
+```
+
+The `Client` instance:
+
+- uses Ubuntu 20.04
+- associates the `InitializationScript` object
+- includes a description
+
+The `Router` instance:
+
+- uses Ubuntu 20.04
+- requests the `linux-router` configuration
+- associates a predefined router role
+- supplies `lan_0` as a role variable
+
+## Instances and networks
+
+Instances can be connected to networks through `endpoint()` declarations in network blocks.
+
+For example:
+
+```CRADLE
+network("lan_0") >
+    endpoint("Client", "DHCP"),
+    endpoint("Router", "192.168.10.1").
+```
+
+The endpoint names:
+
+```text
+Client
+Router
+```
+
+refer to the instances declared earlier.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>network("lan_0")</div>
+
+  <span>↓</span>
+
+  <div>instance("Router")</div>
+
+</div>
+
+Network definitions are covered in [Networks and Routing](./networks-and-routing).
+
+## Instances and events
+
+Events also reference instances by name.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+```
+
+Here:
+
+```CRADLE
+instance("Client")
+```
+
+selects the instance associated with the event.
+
+The instance name must resolve to an instance declared by:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+Event behavior is covered in [Events and Dependencies](./events-and-dependencies).
+
+## References between components
+
+Consider the following scenario fragments:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+instances() >
+    instance("Client").
+
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+
+network("lan_0") >
+    endpoint("Client", "DHCP").
+
+event("initialize_client") >
+    instance("Client"),
+    runObject("InitializationScript", "").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The same names connect different parts of the scenario.
+
+For `Client`:
+
+```text
+instances()
+    ↓
+instance("Client")
+    ↓
+network endpoint
+    ↓
+event instance reference
+```
+
+For `InitializationScript`:
+
+```text
+metadata()
+    ↓
+object definition
+    ↓
+instance association
+    ↓
+event runObject reference
+```
+
+:::important
+A spelling or capitalization mismatch can prevent a named reference from resolving correctly.
+:::
+
+## Schema and compiler behavior
+
+The current CRADLE schema and CradleXC behavior are not completely aligned for instance properties.
+
+The documented differences include:
+
+| Property | Current behavior |
+| --- | --- |
+| `os` | Required by the current schema. Architecture is optional in CradleXC and defaults to `AMD64`. |
+| `object` | Required by the current schema for associated objects. |
+| `config` | Recognized by CradleXC but not represented by the current schema in the same way. |
+| `io` | Recognized by CradleXC as a compiler extension. |
+| `role` | Recognized by the schema and compiler, with a compiler-specific collection, role and variables form. |
+| `description` | Recognized by CradleXC as a compiler extension. |
+| `heuristic` | Recognized by CradleXC as a compiler extension. |
+
+:::note
+Validate instance definitions against the CradleXC release you are using rather than relying on the JSON Schema alone.
+:::
+
+## Validate instance definitions
+
+Validate the scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+When an instance-related problem occurs, check:
+
+- whether the instance was declared in `instances()`
+- whether the named `instance()` definition exists
+- whether names match exactly
+- whether the `os()` arguments are valid for the current CRADLE release
+- whether referenced objects are declared
+- whether configurations and roles exist in the environment being used
+
+## Common mistakes
+
+### Declared instance has no matching definition
+
+This declaration:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+should have a corresponding definition:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+### Mismatched instance names
+
+Incorrect:
+
+```CRADLE
+instances() >
+    instance("Client").
+
+instance("client") >
+    os("ubuntu", "20.04").
+```
+
+`Client` and `client` do not use the same capitalization.
+
+Use:
+
+```CRADLE
+instances() >
+    instance("Client").
+
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+### Network references an undeclared instance
+
+If a network contains:
+
+```CRADLE
+endpoint("Router", "DHCP")
+```
+
+make sure `Router` has been declared:
+
+```CRADLE
+instances() >
+    instance("Router").
+```
+
+### Event references the wrong instance
+
+If the instance is named:
+
+```text
+Client
+```
+
+avoid:
+
+```CRADLE
+event("initialize_client") >
+    instance("client").
+```
+
+Use:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client").
+```
+
+## Related documentation
+
+- [Syntax and Types](./syntax-and-types)
+- [Metadata](./metadata)
+- [Networks and Routing](./networks-and-routing)
+- [Events and Dependencies](./events-and-dependencies)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Heuristics](./heuristics)
+- [First Scenario](../getting-started/first-scenario)
+
+## Next steps
+
+Continue with [Networks and Routing](./networks-and-routing) to learn how CRADLE declares networks and connects instances to them.

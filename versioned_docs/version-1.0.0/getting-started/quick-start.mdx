@@ -1,0 +1,176 @@
+---
+sidebar_position: 1
+title: Quick Start
+description: Install CradleXC, validate a CRADLE scenario, and compile the canonical HelloWorld-Win example to YAML.
+---
+
+# Quick Start
+
+This guide walks you through the basic CRADLE workflow using CradleXC and the `cxc` command-line interface.
+
+You will:
+
+1. install CradleXC
+2. verify that `cxc` is available
+3. obtain a CRADLE scenario
+4. validate the scenario
+5. compile it to YAML
+
+No backend plugin is required for validation or compilation.
+
+## Prerequisites
+
+Before starting, make sure you have:
+
+- a supported operating system
+- a terminal or command prompt
+- `curl`
+
+## Install CradleXC
+
+1. CradleXC is distributed as a prebuilt binary through the
+   [CRADLE APT repository](https://repo.cradle-lang.org/):
+
+    ```text
+    https://repo.cradle-lang.org/apt/
+    ```
+
+2. Add the CRADLE package repository, update your package index and install CradleXC.
+
+    For example:
+
+    ```bash
+    echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" | sudo tee /etc/apt/sources.list.d/cradle.list
+
+    sudo apt update
+    sudo apt install cxc
+    ```
+
+## Verify the installation
+
+Confirm that the CLI is available:
+
+```bash
+cxc --version
+```
+
+Then check the dependencies required by your local environment:
+
+```bash
+cxc doctor
+```
+
+If `cxc doctor` reports missing dependencies, view the installation guidance with:
+
+```bash
+cxc install-deps
+```
+
+:::important
+Resolve any required dependency issues reported by `cxc doctor` before continuing.
+:::
+
+## Obtain a CRADLE scenario
+
+Use an existing `.cradle` scenario or follow the
+[First Scenario](./first-scenario) guide to create one.
+
+For example:
+
+```text
+scenarios/HelloWorld.cradle
+```
+
+The remaining examples in this guide assume that file path.
+
+## Validate the scenario
+
+Validate the scenario before compiling it:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Validation checks whether the CRADLE syntax is valid
+and reports any syntax errors that need to be fixed.
+
+:::note
+Fix any reported validation errors before continuing.
+:::
+
+## Compile the scenario
+
+Compile the validated scenario to YAML:
+
+```bash
+cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
+```
+
+CradleXC processes the scenario and writes the compiled output to `HelloWorld.yml`.
+
+You have now completed the basic CRADLE workflow:
+
+<div className="architecture-flow">
+
+  <div>CRADLE scenario</div>
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+  <span>↓</span>
+
+  <div><code>cxc compile</code></div>
+  <span>↓</span>
+
+  <div>YAML output</div>
+
+</div>
+
+## Optional next steps
+
+### Inspect the intermediate representation
+
+To inspect how CradleXC interpreted the scenario, run:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This command displays the intermediate representation produced from the
+CRADLE scenario. It is useful for troubleshooting or reviewing CradleXC's
+parsing and semantic processing.
+
+### Generate target-specific output
+
+Backend plugins provide target-specific rendering functionality.
+
+To see the backend plugins available to your installed CradleXC release, run:
+
+```bash
+cxc backend list
+```
+
+Backend installation and configuration are covered separately in the [backend guide](./use-a-backend).
+
+Once a compatible backend plugin is installed, generate target-specific output with:
+
+```bash
+cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+```
+
+For example:
+
+```bash
+cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+```
+
+The backend plugin generates the files required by its target.
+These files are not automatically executed by CradleXC.
+You can use the generated files with the corresponding tools in your own testbed environment.
+
+## Next steps
+
+- Learn how to [install and configure CradleXC](./install-cradlexc).
+- Build your [first CRADLE scenario](./first-scenario).
+- Learn more about [validation and compilation](./validate-and-compile).
+- Learn how to [inspect compiler output](./inspect-output).
+- Continue to [using a backend](./use-a-backend) when you are ready to generate target-specific files for your testbed.

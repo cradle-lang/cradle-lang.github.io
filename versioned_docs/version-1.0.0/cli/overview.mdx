@@ -1,0 +1,430 @@
+---
+sidebar_position: 1
+title: CLI Overview
+---
+
+# CLI Overview
+
+CradleXC provides the `cxc` command-line interface for working with CRADLE scenarios.
+
+The CLI is used to:
+
+- validate CRADLE source
+- compile scenarios
+- inspect intermediate output
+- import existing definitions
+- inspect configuration
+- manage dependencies
+- discover backend plugins
+- generate target-specific files
+
+## Check the installed version
+
+Confirm that CradleXC is installed with:
+
+```bash
+cxc --version
+```
+
+For installation instructions, see [Install CradleXC](../getting-started/install-cradlexc).
+
+## View command help
+
+Use:
+
+```bash
+cxc --help
+```
+
+to display the available commands and options for the installed CradleXC version.
+
+For help with a specific command, use:
+
+```bash
+cxc <command> --help
+```
+
+For example:
+
+```bash
+cxc validate --help
+```
+
+or:
+
+```bash
+cxc compile --help
+```
+
+:::note
+The exact command options available can vary between CradleXC releases. Use `--help` to confirm the interface provided by the version installed on your system.
+:::
+
+## Core workflow
+
+The most common workflow uses:
+
+```text
+cxc validate
+cxc compile
+cxc dump-ir
+cxc emit
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div><code>cxc compile</code></div>
+
+  <span>↓</span>
+
+  <div>Compiled representation</div>
+
+  <span>↓</span>
+
+  <div><code>cxc emit</code></div>
+
+  <span>↓</span>
+
+  <div>Target-specific files</div>
+
+</div>
+
+`cxc dump-ir` can be used separately when you want to inspect the intermediate representation produced by CradleXC.
+
+## Validate a scenario
+
+Use `cxc validate` to check CRADLE syntax:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Validation reports syntax problems that need to be corrected before continuing.
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## Compile a scenario
+
+Use `cxc compile` to compile a CRADLE scenario into YAML:
+
+```bash
+cxc compile \
+  -i <scenario.cradle> \
+  -o <output.yml>
+```
+
+For example:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+The resulting YAML is the compiled representation produced by CradleXC.
+
+## Inspect the intermediate representation
+
+Use `cxc dump-ir` when you need to inspect how CradleXC interpreted the source scenario:
+
+```bash
+cxc dump-ir -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This command is mainly useful for inspection, diagnostics and backend development.
+
+It is not required during every normal workflow.
+
+For more information, see [Inspect Output](../getting-started/inspect-output).
+
+## Generate target-specific files
+
+CradleXC uses external backend plugins for target-specific generation.
+
+Use:
+
+```bash
+cxc emit \
+  -i <scenario.cradle> \
+  --target <plugin_name> \
+  -o <output_directory>
+```
+
+For example:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+The selected backend generates files for its supported target.
+
+:::important
+CradleXC does not automatically execute backend-generated files. Use those files with the corresponding tools in your own testbed environment.
+:::
+
+For backend setup and usage, see [Use a Backend](../getting-started/use-a-backend).
+
+## Backend commands
+
+CradleXC provides commands for working with backend plugins.
+
+### List backends
+
+Use:
+
+```bash
+cxc backend list
+```
+
+to list compatible backend plugins currently discovered by CradleXC.
+
+Backend executables follow the convention:
+
+```text
+cxc-backend-<name>
+```
+
+CradleXC discovers compatible backend executables from the system `PATH` or:
+
+```text
+~/.cxc/plugins/
+```
+
+### Install a plugin
+
+Use:
+
+```bash
+cxc plugin install <plugin_name>
+```
+
+to install a backend plugin.
+
+For example:
+
+```bash
+cxc plugin install vagrant
+```
+
+Backend installation and discovery are documented in [Use a Backend](../getting-started/use-a-backend).
+
+## Check dependencies
+
+Use:
+
+```bash
+cxc doctor
+```
+
+to inspect dependencies required by the current CradleXC environment.
+
+If dependencies are missing, view installation guidance with:
+
+```bash
+cxc install-deps
+```
+
+For installation-related information, see [Install CradleXC](../getting-started/install-cradlexc).
+
+## View configuration
+
+Use:
+
+```bash
+cxc config
+```
+
+to inspect the current CradleXC configuration.
+
+Configuration can include values used by the CLI and local environment.
+
+Detailed configuration documentation is provided in [CLI Configuration](./configuration).
+
+## Command groups
+
+The current CLI can be thought of in several groups.
+
+### Scenario processing
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Check whether CRADLE source syntax is valid.
+    </div>
+    <code>cxc validate</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Compile CRADLE source into structured YAML.
+    </div>
+    <code>cxc compile</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Inspect CradleXC's intermediate representation.
+    </div>
+    <code>cxc dump-ir</code>
+  </div>
+
+</div>
+
+### Backend generation
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Discover backend plugins available to CradleXC.
+    </div>
+    <code>cxc backend list</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Install a compatible backend plugin.
+    </div>
+    <code>cxc plugin install</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Generate target-specific files through a backend.
+    </div>
+    <code>cxc emit</code>
+  </div>
+
+</div>
+
+### Environment and utilities
+
+<div className="cxc-command-grid">
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Check dependencies and environment readiness.
+    </div>
+    <code>cxc doctor</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Display dependency installation guidance.
+    </div>
+    <code>cxc install-deps</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Inspect current CradleXC configuration.
+    </div>
+    <code>cxc config</code>
+  </div>
+
+</div>
+
+## CLI responsibilities
+
+The CLI sits between CRADLE source and the other CradleXC processing stages.
+
+| Area | Responsibility |
+| --- | --- |
+| Source validation | Check CRADLE syntax. |
+| Compilation | Produce the compiled representation. |
+| Inspection | Expose intermediate representation and diagnostics. |
+| Import | Convert supported external definitions into CRADLE source. |
+| Backend discovery | Locate compatible external backend plugins. |
+| Backend generation | Pass a scenario to a selected backend for target-specific output. |
+| Environment checks | Inspect dependencies and configuration. |
+
+## CLI and backend boundaries
+
+Backend commands do not make target-specific functionality part of CradleXC itself.
+
+The separation remains:
+
+<div className="architecture-flow">
+
+  <div><code>cxc</code></div>
+
+  <span>↓</span>
+
+  <div>External backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Generated target-specific files</div>
+
+</div>
+
+Backend executables remain separate components from the core CradleXC CLI.
+
+## Troubleshooting CLI commands
+
+If a command fails, start by checking:
+
+```bash
+cxc --version
+```
+
+then:
+
+```bash
+cxc doctor
+```
+
+For command-specific usage:
+
+```bash
+cxc <command> --help
+```
+
+For example:
+
+```bash
+cxc emit --help
+```
+
+See [Troubleshooting](../guides/troubleshooting) for additional diagnostic guidance.
+
+## Related documentation
+
+- [Install CradleXC](../getting-started/install-cradlexc)
+- [Validate and Compile](../getting-started/validate-and-compile)
+- [Inspect Output](../getting-started/inspect-output)
+- [Use a Backend](../getting-started/use-a-backend)
+- [CLI Command Reference](./command-reference)
+- [CLI Configuration](./configuration)
+- [Backend Discovery](./backend-discovery)
+- [CLI Outputs](./outputs)
+
+## Next steps
+
+Continue with [CLI Command Reference](./command-reference) for the command-by-command reference.

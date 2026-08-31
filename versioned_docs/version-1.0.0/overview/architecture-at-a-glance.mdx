@@ -1,0 +1,229 @@
+---
+sidebar_position: 2
+title: Architecture at a glance
+---
+
+# Architecture at a glance
+
+CRADLE separates scenario definition, compilation and target-specific rendering
+into distinct layers.
+
+The CRADLE language describes the intended cyber environment and experiment.
+**CradleXC** parses, validates and processes that description. External backend plugins
+generate target-specific files for use in a testbed environment.
+
+## High-level architecture
+
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>CRADLE source</strong>
+      <span>
+        A <code>.cradle</code> file describes the intended systems, networks, objects and events.
+      </span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>CradleXC</strong>
+      <span>
+          CradleXC parses, validates and processes the scenario through the <code>cxc</code> command-line interface.
+      </span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step cradle-lifecycle-step-backend">
+    <div className="cradle-lifecycle-number">3</div>
+    <div className="cradle-lifecycle-content">
+      <strong>Generated target files</strong>
+      <span>
+        The generated files can then be used with the corresponding tools in the user's own testbed environment.
+      </span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">4</div>
+    <div className="cradle-lifecycle-content">
+      <strong>Generated output</strong>
+      <span>
+        The generated files can then be used with the corresponding tools in the user's testbed environment.
+      </span>
+    </div>
+  </div>
+
+</div>
+
+The separation between these stages is central to the current CRADLE architecture.
+
+CRADLE defines the scenario. CradleXC validates and processes it.
+Backends generate target-specific output.
+
+## CRADLE language
+
+The CRADLE language is the user-facing description layer.
+
+A scenario can describe concepts such as:
+
+- metadata
+- instances and roles
+- networks and routing
+- objects and artifacts
+- events and dependencies
+- includes
+- heuristic annotations
+
+The language is intended to describe the experiment rather than the implementation details of a specific deployment platform.
+
+For example, a scenario can describe the relationship between systems and networks without making a particular virtualization provider part of the language itself.
+
+## CradleXC
+
+CradleXC is the current compiler implementation for CRADLE.
+
+It is responsible for:
+
+- parsing `.cradle` source
+- reporting syntax errors
+- validating references and constraints
+- performing semantic analysis
+- discovering compatible backend plugins
+- coordinating backend operations through `cxc`
+
+The `cxc` command-line interface exposes these capabilities to users.
+
+Compiler-oriented commands include:
+
+```bash
+cxc validate
+cxc compile
+cxc dump-ir
+```
+
+## Backend plugins
+
+Target-specific rendering is provided through external backend plugins.
+
+Backend plugins are installed separately by the user. CradleXC does not include a backend plugin by default.
+
+CradleXC can discover installed backend executables from the system `PATH` or from `~/.cxc/plugins/`.
+
+Available backends can be inspected with:
+
+```bash
+cxc backend list
+```
+
+Once installed, a backend handles target-specific rendering for its supported target.
+
+Depending on the backend, generated output can include:
+
+- target-specific configuration
+- provisioning files
+- infrastructure definitions
+- other files required by the target platform
+
+The user is responsible for installing the required backend and any provider-specific
+dependencies or configuration it requires.
+
+:::important
+Backend capabilities vary depending on the backend implementation.
+:::
+
+## Backend and provider are different concepts
+
+A backend translates processed CRADLE scenarios into files for a specific target system.
+
+A provider is a target-specific option exposed by a backend.
+
+For example:
+
+<div className="architecture-chain">
+    <div>CRADLE</div> <span>→</span>
+    <div>CradleXC</div> <span>→</span>
+    <div>Vagrant backend</div> <span>→</span>
+    <div>libvirt provider</div>
+</div>
+
+In this example:
+
+1. CRADLE describes the environment
+2. CradleXC compiles the scenario
+3. The Vagrant backend generates Vagrant-specific files
+4. libvirt is configured within that backend
+
+libvirt is therefore a provider used by the backend
+rather than functionality built directly into CRADLE or CradleXC.
+
+## Generate target-specific output
+
+Backend plugins are used when a CRADLE scenario needs to be converted into files for a specific target.
+
+Once a compatible backend plugin is installed, use `cxc emit`:
+
+```bash
+cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+```
+
+For example:
+
+```bash
+cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+```
+
+The backend generates the files required by its target.
+
+These files are not automatically executed by CradleXC. They can then be used with the
+corresponding tools in the user's testbed environment.
+
+## Why this separation matters
+
+### Portability
+
+A CRADLE scenario is not tied directly to one deployment implementation.
+
+Compatible backends can generate output for different target systems without changing the CRADLE scenario itself.
+
+### Maintainability
+
+Infrastructure-specific behavior remains in backend implementations rather than being
+mixed into the core language.
+
+### Debuggability
+
+Problems can be isolated to different stages of the workflow:
+
+<div className="architecture-flow">
+
+  <div>CRADLE scenario</div>
+  <span>↓</span>
+
+  <div>CradleXC</div>
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+  <span>↓</span>
+
+  <div>Generated target files</div>
+
+</div>
+
+This helps distinguish problems in the authored scenario from compiler, backend or
+infrastructure problems.
+
+## Continue exploring
+
+- Follow the [Quick Start](../getting-started/quick-start) to begin using `cxc`.
+- Read [What is CRADLE?](./what-is-cradle) for the broader language and project overview.
+- Continue to the [CRADLE language overview](../language/overview) to learn how CRADLE scenarios are organized.
+- See [Backend plugins](../getting-started/use-a-backend) when you are ready to generate target-specific files for your testbed.

@@ -1,0 +1,25 @@
+---
+sidebar_position: 2
+title: Generate Target Files
+---
+
+# Generate Target Files
+
+Use a backend to render files for a selected target. Rendering generates files only; it does not execute the target tooling.
+
+## Workflow
+
+1. Validate the scenario.
+2. Confirm that the backend is discoverable.
+3. Render target files.
+4. Inspect the generated directory and use it with the target tooling under your own operational process.
+
+```bash
+cxc validate -i scenarios/Example.cradle
+cxc backend list
+cxc emit -i scenarios/Example.cradle --target <backend> -o ./output
+```
+
+The backend name is the suffix of its executable name. For example, `cxc-backend-example` is selected with `--target example`.
+
+Generated layout and backend options are backend-specific. Use `cxc emit --help` and the backend's own documentation for exact requirements.

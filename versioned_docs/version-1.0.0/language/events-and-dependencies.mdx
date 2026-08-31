@@ -1,0 +1,910 @@
+---
+sidebar_position: 6
+title: Events and Dependencies
+---
+
+# Events and Dependencies
+
+Events describe scenario behavior in CRADLE.
+
+The `events()` block organizes events into three lifecycle phases:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+Each phase declares the events that belong to it. Every declared event is then defined in a matching `event("name")` block.
+
+## Event lifecycle
+
+CRADLE divides scenario behavior into three phases:
+
+| Phase | Purpose |
+| --- | --- |
+| `preEvent()` | Contains preparation that occurs before the primary scenario. |
+| `mainEvent()` | Contains the primary scenario behavior. |
+| `postEvent()` | Contains follow-up or evidence-related activity. |
+
+The lifecycle can be viewed as:
+
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>preEvent</strong>
+      <span>Preparation before the primary scenario.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>mainEvent</strong>
+      <span>Primary scenario behavior.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">3</div>
+    <div className="cradle-lifecycle-content">
+      <strong>postEvent</strong>
+      <span>Follow-up or evidence-related activity.</span>
+    </div>
+  </div>
+
+</div>
+
+## Event properties
+
+The current CRADLE reference documents the following event-related properties:
+
+| Property | Arguments | Status | Description |
+| --- | --- | --- | --- |
+| `event` | Semantic event name | Structural | Declares an event within a lifecycle phase. |
+| `instance` | Instance name | Schema required | Selects the instance associated with the event. |
+| `needRoot` | `true` or `false` | Schema required | Indicates whether elevated privileges are requested. CradleXC defaults to `false`. |
+| `executionFlow` | Flow type | Compiler extension | Uses `sync` when stated explicitly; synchronous execution is the default. |
+| `subject` | Subject, parameters | Schema required | Identifies the execution subject and optional parameters. |
+| `runObject` | Object name, parameters | Schema required | Selects a declared object and optional parameters. |
+| `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. CradleXC defaults to `0`. |
+| `pauseAfterRun` | Duration in seconds | Schema optional | Adds a delay after the event. CradleXC defaults to `0`. |
+| `dependsOn` | Event name | Schema optional | Adds an explicit dependency. Repeat for multiple dependencies. |
+| `scheduleExecution` | ISO 8601 date-time | Schema optional | Associates the event with a scheduled time. |
+| `description` | Text | Schema optional | Provides a human-readable description of the event. |
+| `heuristic` | Framework, identifier | Compiler extension | Associates an external classification or framework identifier with the event. |
+
+## Declare event phases
+
+The lifecycle phases are declared through:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+Each phase can then declare its own events.
+
+For example:
+
+```CRADLE
+preEvent() >
+    event("initialize_client").
+
+mainEvent() >
+    event("collect_evidence").
+
+postEvent() >
+    event("cleanup").
+```
+
+This places:
+
+- event `initialize_client` in `preEvent`
+- event `collect_evidence` in `mainEvent`
+- event `cleanup` in `postEvent`
+
+Each event must then have a corresponding definition.
+
+## Define an event
+
+A named event block uses the form:
+
+```CRADLE
+event("name") >
+    ...
+```
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2026-01-15T10:00:00+00:00"),
+    description("Initialize the example client").
+```
+
+This event:
+
+- runs on `Client`
+- does not request root privileges
+- uses `bash`
+- runs the `InitializationScript` object
+- has no delay before execution
+- has no delay after execution
+- does not wait for another event
+- includes a scheduled execution time
+- includes a description
+
+## Select an instance
+
+Use `instance()` inside an event to identify the associated instance.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client").
+```
+
+The referenced instance should have been declared in `instances()`:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+and defined in a matching block:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04").
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>instances()</div>
+
+  <span>↓</span>
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>event("initialize_client")</div>
+
+</div>
+
+:::important
+The instance name used by an event must match the corresponding declared instance.
+:::
+
+## Root privileges
+
+Use `needRoot()` to indicate whether the event requests elevated privileges.
+
+For example:
+
+```CRADLE
+needRoot(false)
+```
+
+or:
+
+```CRADLE
+needRoot(true)
+```
+
+The current documented values are:
+
+```text
+"true"
+"false"
+```
+
+CradleXC currently defaults this property to:
+
+```text
+false
+```
+
+when it is omitted.
+
+A typical event uses:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false).
+```
+
+## Execution subject
+
+Use `subject()` to identify the execution subject and optional parameters.
+
+For example:
+
+```CRADLE
+subject("bash", "")
+```
+
+The first argument identifies the subject:
+
+```text
+bash
+```
+
+The second argument contains optional parameters.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    subject("bash", "").
+```
+
+The interpretation of the subject and its parameters depends on the scenario and supported CRADLE behavior.
+
+## Run an object
+
+Use `runObject()` to select a declared object.
+
+For example:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+The first argument identifies the object:
+
+```text
+InitializationScript
+```
+
+The second argument contains optional parameters.
+
+The object should be declared in metadata:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+and defined separately:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The relationship is:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript")</div>
+
+  <span>↓</span>
+
+  <div>event("initialize_client")</div>
+
+  <span>↓</span>
+
+  <div>runObject("InitializationScript", "")</div>
+
+</div>
+
+:::important
+The object name passed to `runObject()` must match a declared object.
+:::
+
+## Object parameters
+
+The second argument to `runObject()` can contain optional parameters.
+
+For example:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+uses no additional parameters.
+
+Where parameters are required, use a structured map.
+
+For example:
+
+```CRADLE
+runObject("InitializationScript", {
+    mode = "safe",
+    count = 1
+})
+```
+
+The exact interpretation of those values depends on the object and execution context.
+
+## Delay before an event
+
+Use `pauseBeforeRun()` to add a delay before an event.
+
+For example:
+
+```CRADLE
+pauseBeforeRun(10)
+```
+
+The value represents a duration in seconds.
+
+To request no delay:
+
+```CRADLE
+pauseBeforeRun(0)
+```
+
+CradleXC currently defaults this property to:
+
+```text
+0
+```
+
+when omitted.
+
+## Delay after an event
+
+Use `pauseAfterRun()` to add a delay after an event.
+
+For example:
+
+```CRADLE
+pauseAfterRun(10)
+```
+
+To request no delay:
+
+```CRADLE
+pauseAfterRun(0)
+```
+
+CradleXC currently defaults this property to:
+
+```text
+0
+```
+
+when omitted.
+
+## Event dependencies
+
+Use `dependsOn()` to express whether an event depends on another event.
+
+For example:
+
+```CRADLE
+dependsOn("initialize_client")
+```
+
+This makes the surrounding event wait for `initialize_client`. Omit the property when no explicit dependency is required.
+
+For example:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client"),
+    event("collect_evidence").
+
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+
+event("collect_evidence") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("CollectEvidence", ""),
+    dependsOn("initialize_client").
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>event("initialize_client")</div>
+
+  <span>↓</span>
+
+  <div>event("collect_evidence") depends on event("initialize_client")</div>
+
+</div>
+
+:::important
+Every `dependsOn()` value must match a defined semantic event name.
+:::
+
+## Event model
+
+The scenario metadata selects the overall event model with `eventType()`.
+
+For example:
+
+```CRADLE
+metadata() >
+    eventType("sequence").
+```
+
+The supported event type is:
+
+```text
+sequence
+```
+
+### Sequence
+
+Use:
+
+```CRADLE
+eventType("sequence")
+```
+
+for sequential event handling.
+
+The Hello World example uses this event model.
+
+### Explicit dependencies
+
+Use `dependsOn()` to describe ordering relationships between semantic event names while using the supported sequential event model.
+
+## Execution flow
+
+CradleXC recognizes the `executionFlow()` property as a compiler extension.
+
+The supported flow type is:
+
+```text
+sync
+```
+
+Use `executionFlow("sync")` when the property must be stated explicitly. Synchronous execution is also the default when the property is omitted.
+
+:::note
+Asynchronous execution is not currently supported by the Vagrant deployment path.
+:::
+
+## Schedule an event
+
+Use `scheduleExecution()` to associate an event with an ISO 8601 date-time.
+
+For example:
+
+```CRADLE
+scheduleExecution("2026-01-15T10:00:00+00:00")
+```
+
+A complete event can include:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    scheduleExecution("2026-01-15T10:00:00+00:00").
+```
+
+Use a time-zone designator when specifying scheduled execution times.
+
+The Hello World example contains:
+
+```CRADLE
+scheduleExecution("2018-11-13T20:20:39+00:00")
+```
+
+for each lifecycle event.
+
+## Event descriptions
+
+Use `description()` to explain the purpose of an event.
+
+For example:
+
+```CRADLE
+description("Initialize the example client")
+```
+
+Descriptions provide additional context when reading or reviewing a scenario.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    description("Initialize the example client").
+```
+
+## Event heuristics
+
+Supported events can use:
+
+```CRADLE
+heuristic("framework", "identifier")
+```
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    heuristic("example-framework", "EXAMPLE-001").
+```
+
+Heuristic properties add classification metadata without replacing the event definition.
+
+See [Heuristics](./heuristics) for documented conventions and examples.
+
+## Complete event example
+
+The following example defines one event in the main phase:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("initialize_client").
+
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2026-01-15T10:00:00+00:00"),
+    description("Initialize the example client").
+```
+
+The lifecycle relationship is:
+
+```text
+events()
+   ↓
+mainEvent()
+   ↓
+event("initialize_client")
+   ↓
+event definition
+```
+
+## Multiple events in a phase
+
+A phase can contain more than one event.
+
+For example:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client"),
+    event("collect_evidence"),
+    event("cleanup").
+```
+
+Each event should then have its own definition:
+
+```CRADLE
+event("initialize_client") >
+    ...
+
+event("collect_evidence") >
+    ...
+
+event("cleanup") >
+    ...
+```
+
+:::important
+Semantic event names should be unique within the scenario.
+:::
+
+## Events across multiple phases
+
+A scenario can define events across all three lifecycle phases.
+
+For example:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+preEvent() >
+    event("initialize_client").
+
+mainEvent() >
+    event("collect_evidence").
+
+postEvent() >
+    event("cleanup").
+```
+
+This gives the scenario a clear lifecycle:
+
+```text
+initialize_client
+preEvent
+   ↓
+collect_evidence
+mainEvent
+   ↓
+cleanup
+postEvent
+```
+
+The canonical HelloWorld-Win scenario declares all three phases and currently
+places one event in the main phase.
+
+## Hello World events
+
+The Hello World scenario declares:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+The main phase contains:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client").
+```
+
+The event definition:
+
+```CRADLE
+event("initialize_client") >
+    instance("router"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
+```
+
+This event:
+
+- references `instance("router")`
+- requests root privileges
+- uses zero-second pauses
+- does not wait for another event
+- records an explicit execution timestamp
+
+## Cross-references
+
+Events frequently connect several parts of a CRADLE scenario.
+
+Consider:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    runObject("InitializationScript", "").
+```
+
+This references:
+
+```text
+Client
+```
+
+and:
+
+```text
+InitializationScript
+```
+
+Those names should resolve to:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+and:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>event("initialize_client")</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript")</div>
+
+</div>
+
+## Schema and compiler behavior
+
+The current schema and CradleXC behavior contain several event-related differences.
+
+| Property | Current behavior |
+| --- | --- |
+| `instance` | Required by the current schema. |
+| `needRoot` | Required by the schema, while CradleXC currently defaults to `false`. |
+| `subject` | Required by the current schema. |
+| `runObject` | Required by the current schema. |
+| `pauseBeforeRun` | Optional in the schema. CradleXC defaults to `0`. |
+| `pauseAfterRun` | Optional in the schema. CradleXC defaults to `0`. |
+| `waitfor` | The current schema and compiler behavior differ in how dependencies are represented. |
+| `scheduleExecution` | Optional in the current schema. |
+| `description` | Optional in the current schema. |
+| `executionFlow` | Recognized by CradleXC as a compiler extension. |
+| `heuristic` | Recognized by CradleXC as a compiler extension. |
+
+:::note
+The grammar, schema and compiler should not be treated as identical validation layers. Validate event behavior against the CradleXC release you are using.
+:::
+
+## Validate event definitions
+
+Validate a scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+When reviewing an event-related problem, check:
+
+- whether the event belongs to a lifecycle phase
+- whether the event has a matching `event("name")` definition
+- whether the referenced instance exists
+- whether the referenced object exists
+- whether event names are unique
+- whether `dependsOn()` references resolve correctly
+- whether scheduled execution values use the intended date-time form
+- whether compiler extensions are supported by the CradleXC release being used
+
+## Common mistakes
+
+### Event is declared but not defined
+
+If a phase contains:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client").
+```
+
+there should be a corresponding:
+
+```CRADLE
+event("initialize_client") >
+    ...
+```
+
+### Event definition does not belong to a phase
+
+An event definition alone does not show which lifecycle phase contains it.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client").
+```
+
+should also be referenced by a phase:
+
+```CRADLE
+mainEvent() >
+    event("initialize_client").
+```
+
+### Event references an undeclared instance
+
+Incorrect:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client").
+```
+
+when `Client` has not been declared.
+
+Declare it through:
+
+```CRADLE
+instances() >
+    instance("Client").
+```
+
+### Event references an undeclared object
+
+Incorrect:
+
+```CRADLE
+event("initialize_client") >
+    runObject("InitializationScript", "").
+```
+
+without a corresponding object declaration.
+
+Declare it in metadata:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+and define it:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+### Dependency references the wrong event name
+
+If the intended dependency is event `initialize_client`:
+
+```CRADLE
+dependsOn("initialize_client")
+```
+
+the scenario should contain a corresponding event named:
+
+```CRADLE
+event("initialize_client")
+```
+
+Use matching event identifiers consistently.
+
+## Related documentation
+
+- [Syntax and Types](./syntax-and-types)
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Heuristics](./heuristics)
+- [First Scenario](../getting-started/first-scenario)
+- [Developer Schema Reference](../schema/cradle-schema)
+
+## Next steps
+
+Continue with [Objects and Interpolation](./objects-and-interpolation) to learn how CRADLE declares external artifacts and constructs their locations.

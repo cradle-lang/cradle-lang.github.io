@@ -1,0 +1,273 @@
+---
+sidebar_position: 4
+title: Validate and Compile
+---
+
+# Validate and Compile
+
+CradleXC provides separate commands for validating CRADLE source and compiling it into structured output.
+
+The typical workflow is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>Validate syntax</div>
+
+  <span>↓</span>
+
+  <div>Compile scenario</div>
+
+  <span>↓</span>
+
+  <div>Generated YAML</div>
+
+</div>
+
+Validation should normally be performed before compilation so syntax problems can be identified early.
+
+## Validate a scenario
+
+Use `cxc validate` to check the syntax of a `.cradle` file.
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For the Hello World example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+CradleXC reads the scenario and reports syntax errors that need to be corrected.
+
+If no validation errors are reported, you can proceed to compilation.
+
+:::note
+Validation checks the CRADLE source before target-specific backend generation. A backend plugin is not required to validate a scenario.
+:::
+
+## Fix validation errors
+
+If validation fails, review the diagnostics returned by CradleXC.
+
+The reported information can help identify problems such as:
+
+- malformed CRADLE syntax
+- incomplete declarations
+- incorrectly structured statements
+- unexpected values or tokens
+
+Correct the relevant `.cradle` source and run validation again:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Repeat this process until the scenario validates successfully.
+
+For broader troubleshooting guidance, see [Troubleshooting](../guides/troubleshooting).
+
+## Compile a scenario
+
+Once validation succeeds, compile the scenario with `cxc compile`.
+
+```bash
+cxc compile \
+  -i <scenario.cradle> \
+  -o <output.yml>
+```
+
+For the Hello World scenario:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+CradleXC processes the CRADLE source and writes the compiled representation to the specified YAML file.
+
+The resulting file in this example is:
+
+```text
+HelloWorld.yml
+```
+
+## Input and output
+
+The two main arguments used during compilation are:
+
+| Argument | Purpose |
+| --- | --- |
+| `-i` | Specifies the input `.cradle` scenario. |
+| `-o` | Specifies the output YAML file. |
+
+For example:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o build/HelloWorld.yml
+```
+
+This reads:
+
+```text
+scenarios/HelloWorld.cradle
+```
+
+and writes the compiled output to:
+
+```text
+build/HelloWorld.yml
+```
+
+:::note
+Make sure the output directory exists before compiling if you specify a path containing additional directories.
+:::
+
+## Validate before compiling
+
+A simple development workflow is:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
+```
+
+This keeps validation and compilation as separate steps.
+
+<div className="architecture-flow">
+
+  <div>HelloWorld.cradle</div>
+
+  <span>↓</span>
+
+  <div><code>cxc validate</code></div>
+
+  <span>↓</span>
+
+  <div><code>cxc compile</code></div>
+
+  <span>↓</span>
+
+  <div>HelloWorld.yml</div>
+
+</div>
+
+## Inspect the intermediate representation
+
+CradleXC can also display the intermediate representation produced while processing a scenario.
+
+Use:
+
+```bash
+cxc dump-ir -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+This is useful when you want to inspect how CradleXC interpreted the CRADLE source.
+
+You do not normally need to inspect the intermediate representation for every scenario.
+
+:::note
+`cxc dump-ir` is primarily an inspection and diagnostic command. It does not replace validation or compilation.
+:::
+
+## Compilation is not backend generation
+
+`cxc compile` generates CradleXC's compiled YAML output.
+
+It does not generate files for a specific backend target.
+
+The workflow can be viewed as:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>CradleXC validation and compilation</div>
+
+  <span>↓</span>
+
+  <div>Compiled YAML</div>
+
+</div>
+
+When target-specific files are required, use a compatible backend plugin separately.
+
+For example:
+
+```bash
+cxc emit \
+  -i scenarios/HelloWorld.cradle \
+  --target <plugin_name> \
+  -o /path/to/output
+```
+
+Backend installation and target-specific generation are covered in [Use a Backend](./use-a-backend).
+
+## Recommended workflow
+
+For normal scenario development:
+
+1. Write or modify the `.cradle` source.
+2. Validate the scenario with `cxc validate`.
+3. Fix any reported syntax errors.
+4. Compile the scenario with `cxc compile`.
+5. Inspect the generated YAML when required.
+6. Use a backend plugin only when target-specific files are needed.
+
+This keeps CRADLE source validation, compilation and backend generation as distinct stages.
+
+## Example workflow
+
+Starting with:
+
+```text
+scenarios/
+└── HelloWorld.cradle
+```
+
+Validate the scenario:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+Compile it:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+Your files then look like:
+
+```text
+.
+├── HelloWorld.yml
+└── scenarios/
+    └── HelloWorld.cradle
+```
+
+You can now inspect the generated YAML or continue to backend-specific generation.
+
+## Next steps
+
+- Learn how to [inspect compiler output](./inspect-output).
+- Learn how to [use a backend plugin](./use-a-backend) to generate target-specific files.
+- See [Troubleshooting](../guides/troubleshooting) if validation or compilation fails.

@@ -1,0 +1,12 @@
+---
+sidebar_position: 3
+title: Plugin Protocol
+---
+
+# Plugin Protocol
+
+The plugin protocol is a command-line contract. A backend must provide a `manifest` subcommand that prints a JSON manifest. CradleXC uses it to identify the plugin, its supported protocol and IR versions, and dependency checks.
+
+For rendering, CradleXC invokes the plugin with a path to serialized Deployment IR and an output directory. Plugins should treat the IR as the authoritative input, write only to the requested output location, and report failure through a nonzero exit status.
+
+The source of truth for the complete manifest and invocation contract is CradleXC's `docs/backend-plugin-protocol.md`. Keep this page conceptual; do not copy the protocol schema here.

@@ -1,0 +1,426 @@
+/* =========================================================
+   PROJECT LEADS
+   ========================================================= */
+
+.leadGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+
+  margin: 28px 0 42px;
+}
+
+.leadCard {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: stretch;
+
+  overflow: hidden;
+
+  min-height: 180px;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: 12px;
+
+  background: var(--cradle-surface);
+
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.04);
+
+  transition:
+    border-color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.leadCard:hover {
+  border-color: var(--cradle-border-strong);
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.07);
+}
+
+.leadPhoto {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+
+  object-fit: cover;
+  object-position: center;
+}
+
+.leadContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.leadContent h3 {
+  margin: 0 0 7px;
+
+  color: var(--cradle-text);
+
+  font-size: 1.08rem;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+}
+
+.leadAffiliation {
+  margin: 0 !important;
+
+  color: var(--cradle-primary);
+
+  font-size: 0.84rem;
+  font-weight: 550;
+  line-height: 1.5;
+}
+
+.leadContent > p:not(.leadAffiliation) {
+  margin: 14px 0 0;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOUNDING CONTRIBUTORS
+   ========================================================= */
+
+.founderGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+
+  margin: 28px 0 44px;
+}
+
+.founderItem {
+  flex: 0 1 calc(50% - 7px);
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-width: 0;
+  min-height: 76px;
+  padding: 18px 20px;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+
+  background: var(--cradle-surface);
+
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+.founderItem:hover {
+  border-color: var(--cradle-border-strong);
+
+  background: var(--cradle-surface-muted);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.04);
+}
+
+.founderNumber {
+  flex: 0 0 auto;
+
+  color: var(--cradle-accent);
+
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.founderItem h3 {
+  margin: 0;
+
+  color: var(--cradle-text);
+
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================
+   SINGLE FOUNDER
+   ========================================================= */
+
+/*
+ * If there is only one founder, don't stretch the item across
+ * the whole documentation column. Keep it centred.
+ */
+
+.founderItem:only-child {
+  flex-basis: calc(50% - 7px);
+}
+
+/* =========================================================
+   PAST CONTRIBUTORS
+   ========================================================= */
+
+.pastContributorGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 28px;
+
+  margin: 28px 0 44px;
+
+  border-top: 1px solid var(--cradle-border);
+}
+
+.pastContributor {
+  flex: 0 1 calc(50% - 14px);
+
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+  min-height: 58px;
+  padding: 15px 4px;
+
+  border-bottom: 1px solid var(--cradle-border);
+}
+
+.pastContributor span {
+  color: var(--cradle-text);
+
+  font-size: 0.94rem;
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+
+/* A single contributor should remain centred and compact. */
+
+.pastContributor:only-child {
+  flex-basis: calc(50% - 14px);
+}
+
+
+/* =========================================================
+   ORGANISATIONS
+   ========================================================= */
+
+.organizationList {
+  margin: 26px 0 36px;
+}
+
+.organization {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+
+  padding: 24px;
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+
+  background: var(--cradle-surface);
+
+  color: inherit;
+  text-decoration: none;
+
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.organization:hover {
+  border-color: var(--cradle-border-strong);
+
+  background: var(--cradle-surface-muted);
+
+  text-decoration: none;
+}
+
+.organization img {
+  width: 100%;
+  max-width: 140px;
+  max-height: 80px;
+
+  object-fit: contain;
+}
+
+.organization h3 {
+  margin: 0 0 8px;
+
+  color: var(--cradle-text);
+
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.organization p {
+  margin: 0;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.organization:focus-visible {
+  outline: 3px solid
+    color-mix(
+      in srgb,
+      var(--cradle-accent) 25%,
+      transparent
+    );
+
+  outline-offset: 3px;
+}
+/* =========================================================
+   CONTRIBUTOR NOTE
+   ========================================================= */
+.contributorNote {
+  margin: 14px 0 0;
+
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .leadCard {
+    grid-template-columns: 130px minmax(0, 1fr);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .leadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .leadPhoto {
+    height: 250px;
+  }
+
+  .organization {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .organization img {
+    max-width: 130px;
+  }
+}
+
+@media (max-width: 700px) {
+  .leadGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .leadCard {
+    grid-template-columns: 120px minmax(0, 1fr);
+
+    min-height: 150px;
+  }
+
+  .leadPhoto {
+    min-height: 150px;
+  }
+
+  .leadContent {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leadCard {
+    grid-template-columns: 1fr;
+  }
+
+  .leadPhoto {
+    height: 220px;
+  }
+}
+
+@media (max-width: 700px) {
+  .founderGrid {
+    gap: 12px;
+  }
+
+  .founderItem,
+  .founderItem:only-child {
+    flex-basis: 100%;
+
+    min-height: 68px;
+    padding: 16px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founderItem {
+    transition: none;
+  }
+
+  .founderItem:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .pastContributorGrid {
+    gap: 0;
+  }
+
+  .pastContributor,
+  .pastContributor:only-child {
+    flex-basis: 100%;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .leadCard {
+    transition: none;
+  }
+
+  .leadCard:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founderItem {
+    transition: none;
+  }
+
+  .founderItem:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,673 @@
+---
+sidebar_position: 7
+title: Objects and Interpolation
+---
+
+# Objects and Interpolation
+
+Objects represent external artifacts used by a CRADLE scenario.
+
+An object is typically:
+
+1. declared in `metadata()`
+2. defined in a matching `object("name")` block
+3. associated with an instance when required
+4. referenced by an event through `runObject()`
+
+Object locations can also use interpolation such as `${uriRemote}` to reuse repository values defined in scenario metadata.
+
+## Object properties
+
+The current CRADLE reference documents the following object-related properties:
+
+| Property | Arguments | Status | Description |
+| --- | --- | --- | --- |
+| `object` | Object name | Structural | Declares or references an object. |
+| `location` | URI or repository-relative location | Structural | Defines the location of the corresponding artifact. |
+| `heuristic` | Framework, identifier | Compiler extension | Associates the object with an external classification or framework identifier. |
+
+## Declare an object
+
+Objects used by the scenario are declared in `metadata()`.
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+```
+
+This declares an object named:
+
+```text
+InitializationScript
+```
+
+The declaration does not define where the artifact is located.
+
+That is done in a separate object definition.
+
+## Define an object
+
+Each declared object should have a matching named object block.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The object name:
+
+```text
+InitializationScript
+```
+
+matches the declaration in `metadata()`.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript") declaration</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript") definition</div>
+
+  <span>↓</span>
+
+  <div>Artifact location</div>
+
+</div>
+
+:::important
+Object names must match their declarations and references exactly.
+:::
+
+## Object locations
+
+Use `location()` to define where the artifact can be found.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("https://example.com/repository/scripts/initialize.sh").
+```
+
+The location can also be built from a repository value defined in metadata:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+This avoids repeating the complete repository path in every object definition.
+
+## Remote repository interpolation
+
+A common object location uses:
+
+```text
+${uriRemote}
+```
+
+For example:
+
+```CRADLE
+metadata() >
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+In this example:
+
+```text
+${uriRemote}
+```
+
+refers to:
+
+```text
+https://example.com/repository
+```
+
+The resulting artifact location is conceptually:
+
+```text
+https://example.com/repository/scripts/initialize.sh
+```
+
+The base repository is defined once and reused by the object definition.
+
+## Why use interpolation
+
+Interpolation helps separate repository configuration from individual artifact paths.
+
+Without interpolation:
+
+```CRADLE
+object("InitializationScript") >
+    location("https://example.com/repository/scripts/initialize.sh").
+
+object("CollectEvidence") >
+    location("https://example.com/repository/scripts/collect-evidence.sh").
+```
+
+With interpolation:
+
+```CRADLE
+metadata() >
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript"),
+    object("CollectEvidence").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+
+object("CollectEvidence") >
+    location("${uriRemote}/scripts/collect-evidence.sh").
+```
+
+Changing the repository base then requires changing only:
+
+```CRADLE
+repositoryRemote("https://example.com/repository")
+```
+
+rather than every object location.
+
+## Multiple objects
+
+A scenario can declare multiple objects.
+
+For example:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://example.com/repository"),
+    object("InitializationScript"),
+    object("CollectEvidence"),
+    object("CleanupScript").
+```
+
+Each object should have a corresponding definition:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+
+object("CollectEvidence") >
+    location("${uriRemote}/scripts/collect-evidence.sh").
+
+object("CleanupScript") >
+    location("${uriRemote}/scripts/cleanup.sh").
+```
+
+Each object has a unique name and location.
+
+## Associate an object with an instance
+
+Instances can reference declared objects using `object()`.
+
+For example:
+
+```CRADLE
+instance("Client") >
+    os("ubuntu", "20.04"),
+    object("InitializationScript").
+```
+
+The referenced object should exist in metadata:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+and should have a matching object definition:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The relationship is:
+
+<div className="architecture-flow">
+
+  <div>metadata() declaration</div>
+
+  <span>↓</span>
+
+  <div>object definition</div>
+
+  <span>↓</span>
+
+  <div>instance association</div>
+
+</div>
+
+## Reference an object from an event
+
+Events use `runObject()` to identify the object involved in the event.
+
+For example:
+
+```CRADLE
+event("initialize_client") >
+    instance("Client"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("InitializationScript", "").
+```
+
+The object name:
+
+```text
+InitializationScript
+```
+
+should match the metadata declaration and object definition.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript")</div>
+
+  <span>↓</span>
+
+  <div>instance("Client")</div>
+
+  <span>↓</span>
+
+  <div>event("initialize_client")</div>
+
+  <span>↓</span>
+
+  <div>runObject("InitializationScript", "")</div>
+
+</div>
+
+## Object parameters
+
+`runObject()` accepts a second argument for optional parameters.
+
+For example:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+uses no additional parameters.
+
+Where parameters are required, use a structured map with typed values.
+
+For example:
+
+```CRADLE
+runObject(
+    "InitializationScript",
+    {
+        mode = "safe",
+        count = 1
+    }
+)
+```
+
+The meaning of these parameters depends on the object and the execution environment.
+
+## Hello World object
+
+The Hello World scenario declares its object in metadata:
+
+```CRADLE
+metadata() >
+    name("HelloWorld-Win"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+```
+
+The object is then associated with the router instance:
+
+```CRADLE
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld").
+```
+
+The object definition is:
+
+```CRADLE
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+The complete reference path is therefore:
+
+<div className="architecture-flow">
+
+  <div>metadata() declares HelloWorld</div>
+
+  <span>↓</span>
+
+  <div>object("HelloWorld") defines its location</div>
+
+  <span>↓</span>
+
+  <div>instance("router") associates the object</div>
+
+</div>
+
+:::note
+The public Hello World example uses `https://artifacts.example.org` as a placeholder repository. It does not host the example artifact.
+:::
+
+## Local repositories
+
+CradleXC also recognizes:
+
+```CRADLE
+repositoryLocal("...")
+```
+
+as a compiler extension.
+
+This can provide a local base location for artifacts where supported.
+
+For example:
+
+```CRADLE
+metadata() >
+    repositoryLocal("/path/to/artifacts").
+```
+
+The source material provided for the current documentation does not define a complete local interpolation contract equivalent to `${uriRemote}`.
+
+For that reason, this page does not prescribe a local interpolation variable.
+
+:::note
+Use local repository behavior only when it is documented for the CradleXC release and environment you are using.
+:::
+
+## Heuristic annotations
+
+Objects can also include heuristic metadata.
+
+The documented form is:
+
+```CRADLE
+heuristic("framework", "identifier")
+```
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh"),
+    heuristic("mbc", "F0002").
+```
+
+This associates the object with an external classification or framework identifier.
+
+Multiple heuristic annotations can be added by repeating `heuristic()` where supported.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh"),
+    heuristic("framework-a", "ID-001"),
+    heuristic("framework-b", "ID-002").
+```
+
+Heuristic annotations do not replace the object definition.
+
+See [Heuristics](./heuristics) for more information.
+
+## Reference consistency
+
+Object names can appear in several places.
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+instance("Client") >
+    object("InitializationScript").
+
+event("initialize_client") >
+    runObject("InitializationScript", "").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+All four references use:
+
+```text
+InitializationScript
+```
+
+A mismatch can break the relationship.
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+event("initialize_client") >
+    runObject("InitialisationScript", "").
+```
+
+The two names are different.
+
+Use:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+instead.
+
+:::important
+Object names are cross-references. Keep spelling and capitalization consistent everywhere the object is declared, defined, associated or executed.
+:::
+
+## Repository security
+
+Repository values should identify artifact locations without embedding sensitive credentials.
+
+Avoid values such as:
+
+```CRADLE
+repositoryRemote("https://username:password@example.com/repository")
+```
+
+or URLs containing access tokens.
+
+Prefer repository configuration that keeps authentication information outside the CRADLE scenario.
+
+:::important
+Do not store passwords, access tokens or other secrets directly in `.cradle` source files.
+:::
+
+## Object and backend responsibilities
+
+A CRADLE object describes an artifact and its location.
+
+How that artifact is represented or consumed in target-specific files can depend on the selected backend.
+
+The relationship is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE object definition</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Target-specific artifact reference</div>
+
+</div>
+
+The CRADLE language therefore identifies the artifact without defining every target-specific implementation detail.
+
+## Schema and compiler behavior
+
+The current CRADLE reference sources are not completely aligned for object-related behavior.
+
+| Property | Current behavior |
+| --- | --- |
+| `object` in metadata | Required by the current schema for declared scenario objects. |
+| `object` in an instance | Associates a declared object with the instance. |
+| `location` | Defines the artifact location. |
+| `heuristic` | Recognized by CradleXC as a compiler extension. |
+| `repositoryLocal` | Recognized by CradleXC as a compiler extension. |
+
+:::note
+Validate object behavior against the CradleXC release you are using rather than relying on the schema alone.
+:::
+
+## Validate object references
+
+Validate the scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+When investigating an object-related issue, check:
+
+- whether the object is declared in `metadata()`
+- whether the matching `object("name")` definition exists
+- whether `location()` is present where required
+- whether object names match exactly
+- whether instance associations use the correct name
+- whether `runObject()` uses the correct object name
+- whether repository values are configured correctly
+
+## Common mistakes
+
+### Object is declared but not defined
+
+This declaration:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+should have a corresponding definition:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+### Object definition uses a different name
+
+Incorrect:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+object("InitScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+Use matching names:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+### Event references the wrong object
+
+Incorrect:
+
+```CRADLE
+runObject("InitScript", "")
+```
+
+when the declared object is:
+
+```text
+InitializationScript
+```
+
+Use:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+### Repository variable is misspelled
+
+If the documented interpolation value is:
+
+```text
+${uriRemote}
+```
+
+avoid using an inconsistent value such as:
+
+```text
+${remoteUri}
+```
+
+unless that variable is explicitly supported by the CRADLE release you are using.
+
+## Related documentation
+
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Events and Dependencies](./events-and-dependencies)
+- [Heuristics](./heuristics)
+- [First Scenario](../getting-started/first-scenario)
+- [Developer Schema Reference](../schema/cradle-schema)
+
+## Next steps
+
+Continue with [Includes](./includes) for scenario composition features, or [Heuristics](./heuristics) to learn how classification metadata can be attached to supported CRADLE elements.

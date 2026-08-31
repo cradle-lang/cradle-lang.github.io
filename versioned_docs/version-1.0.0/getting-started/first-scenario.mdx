@@ -1,0 +1,308 @@
+---
+sidebar_position: 3
+title: First Scenario
+description: Build and understand the canonical HelloWorld-Win CRADLE scenario section by section.
+---
+
+# First Scenario
+
+This guide introduces the main CRADLE concepts through the canonical
+`HelloWorld-Win` scenario.
+
+The scenario defines:
+
+- one Windows instance
+- one Linux router
+- one network with static endpoints
+- one external object associated with the router
+- one main event
+
+By the end of this guide, you should be able to identify the main parts of a
+CRADLE scenario and understand how their names connect them.
+
+## What the scenario contains
+
+| Component | Name | Purpose |
+| --- | --- | --- |
+| Scenario | `HelloWorld-Win` | Names the environment and its generated outputs. |
+| Windows instance | `win7` | Represents a Windows Server 2019 system. |
+| Router instance | `router` | Associates the external object and requests Linux configurations. |
+| Network | `lan_0` | Connects both instances through static IPv4 endpoints. |
+| Object | `HelloWorld` | Identifies the external `HelloWorld.sh` artifact. |
+| Event | `initialize_client` | Defines the scenario's main event on the router. |
+
+## Create the scenario file
+
+Create `HelloWorld.cradle` under a `scenarios` directory:
+
+```text
+scenarios/
+└── HelloWorld.cradle
+```
+
+## Scenario definition
+
+Add the following source to `HelloWorld.cradle`:
+
+```cradle
+metadata() >
+    name("HelloWorld-Win"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+
+instances() >
+    instance("win7"),
+    instance("router").
+
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld"),
+    config("linux-vsftpd"),
+    config("linux-auditd"),
+    config("linux-mail"),
+    config("linux-python3"),
+    config("python3-pip"),
+    config("linux-router").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("initialize_client").
+
+event("initialize_client") >
+    instance("router"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
+
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+:::note
+The documentation uses `https://artifacts.example.org` instead of an internal
+repository address. Replace it with an authorized artifact repository when
+using the external object in your environment.
+:::
+
+## Read the scenario in source order
+
+The complete file follows this order:
+
+<div className="architecture-flow">
+
+  <div>Metadata and object declaration</div>
+  <span>↓</span>
+
+  <div>Instance declarations and definitions</div>
+  <span>↓</span>
+
+  <div>Network declaration and definition</div>
+  <span>↓</span>
+
+  <div>Event lifecycle and event definition</div>
+  <span>↓</span>
+
+  <div>Final object definition</div>
+
+</div>
+
+The object name is introduced in `metadata()`, associated with an instance,
+and resolved by the final `object()` definition.
+
+## Metadata
+
+Start with scenario metadata:
+
+```cradle
+metadata() >
+    name("HelloWorld-Win"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+```
+
+This block:
+
+- names the scenario `HelloWorld-Win`
+- selects sequential event handling
+- defines the base artifact repository
+- declares the `HelloWorld` object used later in the file
+
+## Instances
+
+Declare both participating systems before defining them:
+
+```cradle
+instances() >
+    instance("win7"),
+    instance("router").
+```
+
+### Windows instance
+
+```cradle
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+```
+
+The instance name remains `win7`, while its operating-system declaration
+selects Windows Server 2019. Its configuration references request networking,
+packet monitoring, remote-management, and routing behavior.
+
+### Router instance
+
+```cradle
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld"),
+    config("linux-vsftpd"),
+    config("linux-auditd"),
+    config("linux-mail"),
+    config("linux-python3"),
+    config("python3-pip"),
+    config("linux-router").
+```
+
+The Linux router associates itself with the same `HelloWorld` object declared
+in `metadata()`.
+
+:::note
+Configuration availability depends on the CRADLE environment and selected
+backend.
+:::
+
+## Network
+
+Declare `lan_0`, then define its subnet and endpoints:
+
+```cradle
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
+```
+
+The endpoint names exactly match the earlier instance declarations.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>win7<br /><code>192.168.56.121</code></div>
+  <span>↓</span>
+
+  <div>lan_0<br /><code>192.168.56.0/24</code></div>
+  <span>↓</span>
+
+  <div>router<br /><code>192.168.56.122</code></div>
+
+</div>
+
+## Event lifecycle
+
+Declare the three lifecycle phases:
+
+```cradle
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+This scenario assigns one event to the main phase:
+
+```cradle
+mainEvent() >
+    event("initialize_client").
+```
+
+The matching event definition is:
+
+```cradle
+event("initialize_client") >
+    instance("router"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
+```
+
+Event `initialize_client` references the `router` instance, requests root privileges, has no
+pause before or after execution, and does not wait for another event.
+
+## Object definition
+
+Complete the file with the object definition:
+
+```cradle
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+`${uriRemote}` refers to the repository declared in `metadata()`. The object
+name must remain `HelloWorld` in the metadata declaration, router association,
+and final definition.
+
+:::important
+The public placeholder does not host `HelloWorld.sh`. Use an authorized
+artifact repository when working in an environment that requires this object.
+:::
+
+## Validate and compile
+
+Validate the completed source:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+After validation succeeds, compile it:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+You can optionally inspect the intermediate representation:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle
+```
+
+## Next steps
+
+- Learn more about [validation and compilation](./validate-and-compile).
+- Learn how to [inspect compiler output](./inspect-output).
+- Learn how to [use a backend](./use-a-backend) for target-specific files.
+- Continue to the CRADLE language documentation for detailed syntax.

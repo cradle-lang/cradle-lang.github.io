@@ -59,40 +59,22 @@ const config: Config = {
           //   'https://github.com/cradle-lang/cradle-lang.github.io/tree/main/',
 
           /*
-           * There is currently no published versioned documentation.
-           *
-           * The docs/ directory contains the current documentation and is
-           * served at /docs/.
-           *
-           * Docusaurus versioning can be enabled when a stable documentation
-           * release is published.
+           * The docs/ directory remains the current documentation at /docs/.
+           * Published snapshots are served from their versioned routes.
            */
           includeCurrentVersion: true,
-
           lastVersion: 'current',
 
           versions: {
             current: {
               label: 'Current',
             },
+            '1.0.0': {
+              label: '1.0.0',
+            },
           },
         },
         blog: false,
-        // blog: {
-        //   showReadingTime: true,
-        //   feedOptions: {
-        //     type: ['rss', 'atom'],
-        //     xslt: true,
-        //   },
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        //   // Useful options to enforce blogging best practices
-        //   onInlineTags: 'warn',
-        //   onInlineAuthors: 'warn',
-        //   onUntruncatedBlogPosts: 'warn',
-        // },
         theme: {
           customCss: './src/css/custom.css',
         },

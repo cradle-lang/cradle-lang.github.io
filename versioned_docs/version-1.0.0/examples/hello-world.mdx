@@ -1,0 +1,79 @@
+---
+sidebar_position: 1
+title: Hello World
+description: View the canonical, valid HelloWorld-Win CRADLE scenario used throughout the onboarding documentation and Workbench.
+---
+
+# Hello World
+
+This complete scenario defines a Windows instance, a Linux router, one
+network, one external object, and one main event.
+
+The public example uses a placeholder artifact repository. Replace it with an
+authorized repository when running the scenario in your environment.
+
+```cradle
+metadata() >
+    name("HelloWorld-Win"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+
+instances() >
+    instance("win7"),
+    instance("router").
+
+instance("win7") >
+    os("windows", "2019"),
+    config("win-icmpv4"),
+    config("win-pktmon"),
+    config("win-winrm"),
+    config("win-routing").
+
+instance("router") >
+    os("linux", "20.04"),
+    object("HelloWorld"),
+    config("linux-vsftpd"),
+    config("linux-auditd"),
+    config("linux-mail"),
+    config("linux-python3"),
+    config("python3-pip"),
+    config("linux-router").
+
+networks() >
+    network("lan_0").
+
+network("lan_0") >
+    subnet("192.168.56.0/24"),
+    endpoint("win7", "192.168.56.121"),
+    endpoint("router", "192.168.56.122").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("initialize_client").
+
+event("initialize_client") >
+    instance("router"),
+    needRoot(true),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld Event").
+
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+Save the source as `scenarios/HelloWorld.cradle`, then validate and compile it:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
+```
+
+Configuration and artifact availability depend on the selected CRADLE
+environment and backend.

@@ -1,0 +1,523 @@
+---
+sidebar_position: 1
+title: Language Overview
+description: Explore the structure and required ordering of CRADLE metadata, instances, networks, events, and objects.
+---
+
+# Language Overview
+
+CRADLE is a domain-specific language for describing cyber range scenarios.
+
+A CRADLE source file defines the systems, networks, objects, metadata and events that make up a scenario.
+
+CRADLE scenarios are written in `.cradle` files and processed by CradleXC.
+
+The general relationship is:
+
+<div className="architecture-flow">
+
+  <div>CRADLE source</div>
+
+  <span>↓</span>
+
+  <div>CradleXC</div>
+
+  <span>↓</span>
+
+  <div>Compiled representation</div>
+
+  <span>↓</span>
+
+  <div>Optional backend plugin</div>
+
+  <span>↓</span>
+
+  <div>Target-specific files</div>
+
+</div>
+
+This section focuses on the CRADLE language itself.
+
+## Basic structure
+
+CRADLE uses declarations followed by definitions.
+
+For example:
+
+```CRADLE
+instances() >
+    instance("HelloWorld"),
+    instance("router").
+```
+
+This declares two instances:
+
+```text
+HelloWorld
+router
+```
+
+Each instance can then be defined separately:
+
+```CRADLE
+instance("HelloWorld") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig"),
+    object("HelloWorld").
+```
+
+A CRADLE statement ends with:
+
+```text
+.
+```
+
+Properties within a definition are separated by:
+
+```text
+,
+```
+
+The `>` operator connects a declaration or named element to its associated properties.
+
+## Main language elements
+
+A CRADLE scenario can contain several types of declarations.
+
+| Element | Purpose |
+| --- | --- |
+| Metadata | Defines scenario-level information. |
+| Instances | Defines the systems participating in the scenario. |
+| Networks | Defines connections between instances. |
+| Objects | Defines external artifacts referenced by the scenario. |
+| Events | Defines actions and their lifecycle placement. |
+| Configurations | Associates required configuration with an instance. |
+
+The exact elements used depend on the scenario.
+
+## Metadata
+
+Scenario-level information is defined through `metadata()`.
+
+For example:
+
+```CRADLE
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://artifacts.example.org"),
+    object("HelloWorld").
+```
+
+This example:
+
+- names the scenario `HelloWorld`
+- selects sequential event handling
+- provides a remote artifact repository
+- declares the `HelloWorld` object
+
+Metadata can also provide values that are referenced elsewhere in the scenario.
+
+For example, the Hello World object uses:
+
+```text
+${uriRemote}
+```
+
+to construct its artifact location.
+
+## Instances
+
+Instances represent systems participating in the scenario.
+
+First, instances are declared:
+
+```CRADLE
+instances() >
+    instance("HelloWorld"),
+    instance("router").
+```
+
+Each instance is then defined through an `instance()` statement.
+
+For example:
+
+```CRADLE
+instance("HelloWorld") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-sysdig"),
+    object("HelloWorld").
+```
+
+The instance definition can specify properties such as:
+
+- operating system
+- requested configurations
+- associated objects
+
+A second instance can use different configuration:
+
+```CRADLE
+instance("router") >
+    os("ubuntu", "20.04"),
+    config("linux-tcpdump"),
+    config("ubuntu-focal-auditd"),
+    config("linux-router").
+```
+
+## Networks
+
+Networks connect instances within a scenario.
+
+Declare the networks first:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+Then define the network:
+
+```CRADLE
+network("lan_0") >
+    endpoint("HelloWorld", "DHCP"),
+    endpoint("router", "DHCP").
+```
+
+This connects both instances to `lan_0` using DHCP.
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>HelloWorld</div>
+
+  <span>↓</span>
+
+  <div>lan_0</div>
+
+  <span>↓</span>
+
+  <div>router</div>
+
+</div>
+
+Backend-specific network details can depend on the backend selected to generate target-specific files.
+
+## Objects
+
+Objects represent external artifacts used by a scenario.
+
+For example:
+
+```CRADLE
+object("HelloWorld") >
+    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+```
+
+The object is identified by the name:
+
+```text
+HelloWorld
+```
+
+Its location references the remote repository defined by the scenario metadata.
+
+An instance can associate itself with the object:
+
+```CRADLE
+instance("HelloWorld") >
+    object("HelloWorld").
+```
+
+Events can then reference the same object using `runObject()`.
+
+## Events
+
+Events describe actions within the scenario.
+
+CRADLE organizes events into lifecycle phases:
+
+```CRADLE
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+```
+
+The three phases are:
+
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>preEvent</strong>
+      <span>Contains events that occur before the main phase.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>mainEvent</strong>
+      <span>Contains the primary scenario events.</span>
+    </div>
+  </div>
+
+  <div className="cradle-lifecycle-connector">↓</div>
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">3</div>
+    <div className="cradle-lifecycle-content">
+      <strong>postEvent</strong>
+      <span>Contains events that occur after the main phase.</span>
+    </div>
+  </div>
+
+</div>
+
+Each phase references its events.
+
+For example:
+
+```CRADLE
+preEvent() >
+    event("initialize_client").
+```
+
+The corresponding event is then defined:
+
+```CRADLE
+event("initialize_client") >
+    instance("HelloWorld"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("HelloWorld", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2018-11-13T20:20:39+00:00"),
+    description("HelloWorld pre-event").
+```
+
+An event can therefore reference:
+
+- the instance where it belongs
+- the subject used to run the action
+- an object to run
+- privilege requirements
+- timing behavior
+- scheduling information
+- a description
+
+## References between declarations
+
+Names connect different parts of a CRADLE scenario.
+
+Consider:
+
+```CRADLE
+object("HelloWorld") >
+    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+```
+
+The same name is referenced from the instance:
+
+```CRADLE
+instance("HelloWorld") >
+    object("HelloWorld").
+```
+
+and from an event:
+
+```CRADLE
+event("initialize_client") >
+    runObject("HelloWorld", "").
+```
+
+This creates a relationship between the object declaration, the instance and the event.
+
+:::important
+Keep names, spelling and capitalization consistent when referencing CRADLE elements.
+:::
+
+## Collections and named definitions
+
+A recurring pattern in CRADLE is to declare elements in a collection and then define each element separately.
+
+For instances:
+
+```CRADLE
+instances() >
+    instance("HelloWorld"),
+    instance("router").
+```
+
+followed by:
+
+```CRADLE
+instance("HelloWorld") >
+    ...
+```
+
+For networks:
+
+```CRADLE
+networks() >
+    network("lan_0").
+```
+
+followed by:
+
+```CRADLE
+network("lan_0") >
+    ...
+```
+
+For lifecycle events:
+
+```CRADLE
+preEvent() >
+    event("initialize_client").
+```
+
+followed by:
+
+```CRADLE
+event("initialize_client") >
+    ...
+```
+
+This structure allows declarations to reference named elements defined elsewhere in the scenario.
+
+## Values
+
+CRADLE properties accept values as arguments.
+
+For example:
+
+```CRADLE
+os("ubuntu", "20.04")
+```
+
+contains two values:
+
+```text
+ubuntu
+20.04
+```
+
+Similarly:
+
+```CRADLE
+endpoint("HelloWorld", "DHCP")
+```
+
+identifies an instance and its network addressing behavior.
+
+The exact arguments accepted by each CRADLE property are covered in the corresponding language reference pages.
+
+## Interpolation
+
+CRADLE supports references that can be used when constructing values.
+
+The Hello World scenario uses:
+
+```CRADLE
+location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+Here:
+
+```text
+${uriRemote}
+```
+
+is resolved from the scenario's repository configuration.
+
+Interpolation allows values defined elsewhere in the scenario or environment to be reused when constructing paths and other values.
+
+Detailed interpolation behavior is covered in [Objects and Interpolation](./objects-and-interpolation).
+
+## Source file example
+
+The canonical HelloWorld-Win source is maintained on the
+[HelloWorld-Win example page](../examples/hello-world). Its top-level sections
+appear in this order:
+
+1. `metadata()`
+2. `instances()` followed by the instance definitions
+3. `networks()` followed by the network definitions
+4. `events()` followed by the event-phase and event definitions
+5. the final `object()` definition
+
+Use that complete example when learning the file structure. The shorter code
+fragments in this language reference demonstrate individual language concepts
+and are not intended to be complete standalone scenarios.
+
+## Language and backend responsibilities
+
+The CRADLE language describes the scenario.
+
+It does not define how every target platform must implement the scenario.
+
+The separation is:
+
+| Component | Responsibility |
+| --- | --- |
+| CRADLE language | Describes the scenario. |
+| CradleXC | Parses, validates and processes the CRADLE source. |
+| Backend plugin | Converts the processed scenario into target-specific files. |
+| Target tooling | Uses those files in the user's testbed. |
+
+This means target-specific implementation details can remain outside the CRADLE language itself.
+
+## Validate CRADLE source
+
+Use CradleXC to validate the syntax of a scenario:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+If validation succeeds, the source can then be compiled:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## Language documentation
+
+The remaining pages in this section cover individual parts of the CRADLE language in more detail:
+
+- [Syntax and Types](./syntax-and-types)
+- [Metadata](./metadata)
+- [Instances and Roles](./instances-and-roles)
+- [Networks and Routing](./networks-and-routing)
+- [Events and Dependencies](./events-and-dependencies)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Includes](./includes)
+- [Heuristics](./heuristics)
+- [Diagnostics](./diagnostics)
+
+## Next steps
+
+Start with [Syntax and Types](./syntax-and-types) for the fundamental CRADLE syntax rules.
+
+If you have not created a scenario yet, work through [First Scenario](../getting-started/first-scenario) before continuing with the detailed language reference.

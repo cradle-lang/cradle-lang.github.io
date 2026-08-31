@@ -1,0 +1,28 @@
+---
+sidebar_position: 2
+title: Networking
+---
+
+# Networking
+
+Networks declare a subnet and the instances attached to it. Use `DHCP` where the backend should allocate an address, or provide a static address.
+
+```cradle
+networks() >
+    network("internal"),
+    network("dmz").
+
+network("internal") >
+    subnet("192.168.56.0/24"),
+    endpoint("client", "DHCP"),
+    endpoint("router", "192.168.56.1").
+
+network("dmz") >
+    subnet("192.168.57.0/24"),
+    endpoint("router", "192.168.57.1"),
+    endpoint("server", "192.168.57.10").
+```
+
+The router belongs to both networks, so it can be used by a backend to establish the required routes. Every endpoint name must match a declared instance.
+
+See [Networks and Routing](../language/networks-and-routing) for the language reference.
