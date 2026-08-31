@@ -23,6 +23,16 @@
    ========================================================= */
 
 .topologyBackground {
+  --topology-card-start: var(--cradle-surface);
+  --topology-card-end: var(--cradle-bg);
+  --topology-code-fill:
+    color-mix(
+      in srgb,
+      var(--cradle-text) 78%,
+      transparent
+    );
+  --topology-code-key: #e76922;
+
   position: relative;
   z-index: 1;
   isolation: isolate;
@@ -88,6 +98,38 @@
         transparent
       )
     );
+}
+
+/* The illustration sits on a very pale surface in light mode. Keep the
+   structural lines and code legible instead of fading the complete SVG. */
+:global([data-theme='light']) .topologyBackground {
+  --topology-card-start: var(--cradle-bg);
+  --topology-card-end: var(--cradle-bg);
+  --topology-code-fill: #536173;
+  --topology-code-key: #c84f12;
+}
+
+:global([data-theme='light']) .topologyCanvas {
+  opacity: 0.96;
+}
+
+:global([data-theme='light']) .topologyPlatform {
+  stroke: #aeb9c6;
+
+  opacity: 0.82;
+}
+
+:global([data-theme='light']) .topologyCard {
+  opacity: 1;
+}
+
+:global([data-theme='light']) .topologyCard,
+:global([data-theme='light']) .topologyCube polygon {
+  stroke: #aeb9c6;
+}
+
+:global([data-theme='light']) .topologyConnections {
+  stroke: #657386;
 }
 
 /* =========================================================
@@ -623,12 +665,7 @@
 
 .topologyCodeHeader,
 .topologyCode {
-  fill:
-    color-mix(
-      in srgb,
-      var(--cradle-text) 78%,
-      transparent
-    );
+  fill: var(--topology-code-fill);
 
   stroke: none;
 
@@ -646,7 +683,7 @@
 }
 
 .topologyCode .topologyCodeKey {
-  fill: #e76922;
+  fill: var(--topology-code-key);
 }
 
 /* =========================================================
@@ -881,17 +918,12 @@
   12%,
   42%,
   100% {
-    fill:
-      color-mix(
-        in srgb,
-        var(--cradle-text) 78%,
-        transparent
-      );
+    fill: var(--topology-code-fill);
   }
 
   17%,
   34% {
-    fill: #f06b22;
+    fill: var(--topology-code-key);
   }
 }
 
@@ -1203,6 +1235,10 @@
   line-height: 0.99;
 
   letter-spacing: -0.05em;
+
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .heroTitleLine {
@@ -1323,6 +1359,14 @@
    ========================================================= */
 
 @media (min-width: 1280px) {
+  .heroInner {
+    width: min(
+      1520px,
+      calc(50vw + 540px),
+      calc(100% - 64px)
+    );
+  }
+
   .topologyBackground {
     width: 108%;
     max-width: 790px;
@@ -1338,6 +1382,40 @@
         5.4vw,
         5.3rem
       );
+  }
+}
+
+/* =========================================================
+   WIDE / ULTRAWIDE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1600px) {
+  .heroInner {
+    grid-template-columns:
+      minmax(0, 0.9fr)
+      minmax(620px, 1.1fr);
+
+    gap: clamp(64px, 4.5vw, 88px);
+  }
+
+  .heroContent {
+    max-width: 760px;
+  }
+
+  .heroTitle {
+    font-size:
+      clamp(
+        5.3rem,
+        5vw,
+        6rem
+      );
+  }
+
+  .topologyBackground {
+    width: 110%;
+    max-width: 880px;
+
+    margin-left: -5%;
   }
 }
 
@@ -1369,9 +1447,9 @@
   .heroTitle {
     font-size:
       clamp(
-        3.1rem,
-        5.2vw,
-        4.5rem
+        3rem,
+        4.7vw,
+        3.9rem
       );
   }
 }

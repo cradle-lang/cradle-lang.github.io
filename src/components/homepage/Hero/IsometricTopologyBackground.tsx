@@ -56,8 +56,8 @@ export function IsometricTopologyBackground(): ReactNode {
         focusable="false">
         <defs>
           <linearGradient id="topology-card" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="var(--cradle-surface)" stopOpacity="0.9" />
-            <stop offset="1" stopColor="var(--cradle-bg)" stopOpacity="0.72" />
+            <stop offset="0" stopColor="var(--topology-card-start)" stopOpacity="0.9" />
+            <stop offset="1" stopColor="var(--topology-card-end)" stopOpacity="0.72" />
           </linearGradient>
           <radialGradient id="topology-glow">
             <stop offset="0" stopColor="#e76922" stopOpacity="0.24" />

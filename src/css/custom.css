@@ -198,6 +198,16 @@ body {
   margin: 0 auto;
 }
 
+@media (min-width: 1280px) {
+  .navbar__inner {
+    width: min(
+      1520px,
+      calc(50vw + 540px),
+      calc(100% - 64px)
+    );
+  }
+}
+
 .navbar__brand {
   margin-right: 28px;
 
@@ -1975,6 +1985,12 @@ body {
    ========================================================= */
 
 @media (max-width: 996px) {
+  /* A backdrop filter creates a containing block for Docusaurus' fixed
+     mobile drawer, limiting it to the navbar's height. */
+  .navbar {
+    backdrop-filter: none;
+  }
+
   .docsHero {
     padding: 2.75rem 2rem;
   }

@@ -4,7 +4,7 @@ import styles from './TerminalAnimation.module.css';
 
 const COMMAND = 'cxc doctor';
 const OUTPUT = [
-  'CRADLE v0.17.0 — dependency check',
+  'CRADLE v1.0 — dependency check',
   '',
   '## Dependency                     Status     Purpose',
   '',
