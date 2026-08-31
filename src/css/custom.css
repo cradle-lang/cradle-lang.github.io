@@ -209,6 +209,8 @@ body {
 }
 
 .navbar__brand {
+  flex-shrink: 0;
+
   margin-right: 28px;
 
   color: var(--cradle-text-strong);
@@ -236,10 +238,46 @@ body {
 
   font-size: 0.94rem;
   font-weight: 550;
+  white-space: nowrap;
 
   transition:
     background-color 140ms ease,
     color 140ms ease;
+}
+
+/* Keep the narrow-desktop navbar on one line until Docusaurus renders its
+   mobile drawer at 996px. */
+@media (max-width: 1180px) {
+  .navbar__inner {
+    width: calc(100% - 24px);
+  }
+
+  .navbar__brand {
+    margin-right: 14px;
+  }
+
+  .navbar__items {
+    gap: 0;
+  }
+
+  .navbar__link {
+    padding-right: 7px;
+    padding-left: 7px;
+
+    font-size: 0.88rem;
+  }
+}
+
+@media (min-width: 997px) and (max-width: 1100px) {
+  .DocSearch-Button {
+    margin: 0;
+    padding: 0 10px;
+  }
+
+  .DocSearch-Button-Placeholder,
+  .DocSearch-Button-Keys {
+    display: none;
+  }
 }
 
 .navbar__link:hover {
@@ -1985,9 +2023,9 @@ body {
    ========================================================= */
 
 @media (max-width: 996px) {
-  /* A backdrop filter creates a containing block for Docusaurus' fixed
-     mobile drawer, limiting it to the navbar's height. */
   .navbar {
+    /* A backdrop filter creates a containing block for Docusaurus' fixed
+       mobile drawer, limiting it to the navbar's height. */
     backdrop-filter: none;
   }
 
