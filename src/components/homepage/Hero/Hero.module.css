@@ -933,16 +933,16 @@
 
 @keyframes event-route {
   0%,
-  15%,
-  40%,
+  14%,
+  38%,
   100% {
     opacity: 0;
 
     stroke-dashoffset: 32;
   }
 
-  20%,
-  35% {
+  18%,
+  36% {
     opacity: 0.82;
 
     stroke-dashoffset: 0;
@@ -974,15 +974,15 @@
 @keyframes ping-route {
   0%,
   39%,
-  65%,
+  63%,
   100% {
     opacity: 0;
 
     stroke-dashoffset: 36;
   }
 
-  44%,
-  60% {
+  43%,
+  61% {
     opacity: 0.9;
 
     stroke-dashoffset: 0;
@@ -1013,8 +1013,8 @@
 
 @keyframes reply-route {
   0%,
-  63%,
-  81%,
+  62%,
+  80%,
   100% {
     opacity: 0;
 
@@ -1064,7 +1064,7 @@
 
 @keyframes completion-route {
   0%,
-  82%,
+  81%,
   98%,
   100% {
     opacity: 0;
@@ -1072,13 +1072,14 @@
     stroke-dashoffset: -32;
   }
 
-  84% {
+  82% {
     opacity: 0.95;
 
     stroke-dashoffset: -32;
   }
 
-  95% {
+  84%,
+  96% {
     opacity: 0.95;
 
     stroke-dashoffset: 0;
