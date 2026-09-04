@@ -61,7 +61,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>Backend discovery</div>
+  <div className="architecture-flow-step-backend">Backend discovery</div>
 
   <span>↑</span>
 
@@ -188,7 +188,7 @@ cxc backend list
 Once the backend is available:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -196,21 +196,21 @@ cxc emit \
 
 The overall relationship is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
-  <div>Backend plugin installed</div>
-
-  <span>↓</span>
-
-  <div>CradleXC discovers backend</div>
+  <div className="architecture-flow-step-backend">Backend plugin installed</div>
 
   <span>↓</span>
 
-  <div><code>cxc backend list</code></div>
+  <div className="architecture-flow-step-backend">CradleXC discovers backend</div>
 
   <span>↓</span>
 
-  <div><code>cxc emit</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc backend list</code></div>
+
+  <span>↓</span>
+
+  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
 
   <span>↓</span>
 
@@ -220,12 +220,12 @@ The overall relationship is:
 
 ## Selecting a backend
 
-A discovered backend can be selected through `cxc emit`.
+A discovered backend can be selected through `cxc build`.
 
 The general form is:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -234,7 +234,7 @@ cxc emit \
 For example:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -280,7 +280,7 @@ For example:
 
   <span>↓</span>
 
-  <div>Vagrant backend</div>
+  <div className="architecture-flow-step-backend">Vagrant backend</div>
 
   <span>↓</span>
 
@@ -401,7 +401,7 @@ and review any reported issues.
 
 ## Backend discovered but generation fails
 
-A backend can be discovered successfully while `cxc emit` still fails.
+A backend can be discovered successfully while `cxc build` still fails.
 
 First validate the scenario:
 
@@ -418,7 +418,7 @@ cxc backend list
 Retry generation:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>

@@ -5,8 +5,184 @@ title: Exit Codes
 
 # Exit Codes
 
-CradleXC uses a zero exit status for success and a nonzero exit status for failure. Do not rely on undocumented numeric values beyond that distinction.
+CradleXC uses three process exit codes in its current command-line
+implementation:
 
-For automation, check the exit status and capture standard error with the command output. Use `cxc <command> --help` and the diagnostics themselves to identify the failing operation.
+| Code | Meaning | Produced by |
+| --- | --- | --- |
+| `0` | The requested command completed successfully. | CradleXC commands, `--help` and `--version`. |
+| `1` | CradleXC understood the command but validation, compilation, I/O, dependency checking, plugin handling or backend execution failed. | CradleXC command handlers. |
+| `2` | The command line itself is invalid. | The CLI argument parser. |
 
-Backend plugins also report rendering failure through a nonzero exit status. Their textual output is backend-specific.
+There are no separate numeric codes for parse errors, validation errors,
+unknown backends or plugin failures. Those failures all use `1`; inspect the
+diagnostic output to distinguish them.
+
+:::note
+This page describes process exit codes from the current CradleXC
+implementation. Operating-system termination, such as a signal or forced
+process kill, can produce shell-specific statuses outside this table.
+:::
+
+## Exit code 0: success
+
+Code `0` means that CradleXC completed the operation it was asked to perform.
+Examples include:
+
+- `cxc validate` found no error-level diagnostics
+- `cxc compile` parsed and wrote its output successfully
+- `cxc dump-ir` lowered and serialized Deployment IR successfully
+- `cxc build` completed target-file generation with the selected plugin
+- `cxc backend list` completed, even when no backends are installed
+- `cxc doctor` found every required dependency
+- `cxc install-deps` printed installation guidance
+- `cxc config` displayed either loaded configuration or defaults
+- `cxc --help` or `cxc --version` displayed information
+
+Warnings do not change a successful validation into a failure. If validation
+contains warnings but no errors, its exit code remains `0`.
+
+## Exit code 1: command failure
+
+Code `1` means that the command line was valid, but CradleXC could not complete
+the operation successfully.
+
+Common causes include:
+
+- the input file cannot be read
+- `.cradle` source cannot be parsed
+- `cxc validate` reports one or more error-level diagnostics
+- Deployment IR lowering fails because a reference, network, route, artifact or
+  event dependency cannot be resolved
+- output serialization or filesystem writing fails
+- a `build` or `rebuild` target is unknown
+- `cxc rebuild` cannot find a previous build snapshot or detects a network topology change
+- a plugin cannot complete compatibility checks
+- a plugin does not support the requested operation or IR version
+- a plugin process cannot be started or exits unsuccessfully
+- `cxc plugin install` cannot download, verify or install a plugin
+- `cxc doctor` finds a missing dependency marked as required
+
+Commands that return a Rust error through the main command handler print an
+`Error: ...` message to standard error and exit `1`. Validation and doctor use
+their own structured or human-readable output before exiting `1`.
+
+## Exit code 2: usage error
+
+Code `2` is emitted by the CLI argument parser before a command handler runs.
+Examples include:
+
+- an unknown subcommand
+- a missing required option such as `--input`
+- a value supplied to an option with the wrong shape
+- an invalid `--backend-arg` that is not in `key=value` form
+- mutually exclusive global flags such as `--verbose` and `--quiet`
+- an unsupported enumerated option value
+
+Usage errors are written to standard error and normally include a short usage
+summary or a suggestion to run `--help`.
+
+## Command behavior
+
+| Command | Returns `0` when | Returns `1` when |
+| --- | --- | --- |
+| `cxc validate` | Parsing succeeds and no error diagnostics are present. Warnings are allowed. | Parsing fails or at least one error diagnostic is present. |
+| `cxc validate --json` | JSON contains `"valid": true`. | JSON contains `"valid": false` or a `parse_error`. |
+| `cxc compile` | Input parsing, YAML serialization and optional file writing succeed. | Input parsing, serialization or file writing fails. |
+| `cxc dump-ir` | Parsing, HIR/IR lowering and JSON serialization succeed. | Parsing or any lowering/serialization step fails. |
+| `cxc build` | The target is found, IR lowering succeeds and target-file generation completes. | Target lookup, IR lowering, plugin compatibility, plugin startup or target-file generation fails. |
+| `cxc rebuild` | A prior build exists, a supported change is detected and the target files are regenerated, or there is nothing to do. | The baseline is missing, network topology changed, or target lookup, lowering or generation fails. |
+| `cxc backend list` | Registry discovery completes. An empty list is still success. | No ordinary command-level failure path is currently defined. |
+| `cxc plugin install` | Download, checksum verification, permission update and final installation succeed. | Plugin metadata lookup, download, checksum verification or filesystem installation fails. |
+| `cxc doctor` | All required dependency checks pass. Optional missing dependencies are allowed. | At least one required dependency is missing. |
+| `cxc install-deps` | Installation instructions are printed, including when dependencies are missing. | No ordinary missing-dependency failure is currently defined. |
+| `cxc config` | Configuration values or defaults are displayed. | No ordinary configuration-display failure is currently defined. |
+
+## Validation JSON and automation
+
+`cxc validate --json` always writes its validation result to standard output.
+Use both the JSON body and the process status:
+
+```bash
+if cxc validate -i scenarios/HelloWorld.cradle --json > validation.json; then
+  echo "scenario is valid"
+else
+  status=$?
+  echo "validation failed with exit code $status" >&2
+  cat validation.json
+fi
+```
+
+A valid result has this relationship:
+
+```json
+{
+  "valid": true,
+  "errors": [],
+  "warnings": []
+}
+```
+
+and exits `0`. A parsed scenario with validation errors contains
+`"valid": false` and exits `1`. A source parse failure contains
+`"valid": false` and `"parse_error"`, and also exits `1`.
+
+## Backend plugin failures
+
+Plugin executables define their own internal exit statuses, but CradleXC does
+not forward those numeric values as its own process status.
+
+When CradleXC invokes a plugin, plugin exit code `0` is treated as success and
+any nonzero plugin exit code is treated as failure. CradleXC reports the
+plugin's exit code in the error message when available, then exits with its own
+code `1`.
+
+The plugin's standard output and standard error are streamed live to the
+terminal. For plugin automation, preserve that output together with CradleXC's
+final error message.
+
+Plugin discovery, compatibility or metadata errors that prevent an operation
+from starting also cause CradleXC to exit with code `1`.
+
+## Important non-failing conditions
+
+Some conditions produce warnings or guidance but do not by themselves force a
+nonzero exit code:
+
+- validation warnings without validation errors
+- no backends discovered by `cxc backend list`
+- optional dependencies missing during `cxc doctor`
+- missing dependencies reported by `cxc install-deps`
+- a missing default config file, which causes built-in defaults to be used
+- an unreadable or invalid config file, which currently reports the problem and
+  falls back to defaults
+
+The rest of the requested command can still fail for another reason. If
+automation must reject one of these conditions, inspect the command's structured
+or textual output in addition to checking `$?`.
+
+## Shell usage
+
+Capture an exit code immediately after running the command:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle > HelloWorld.ir.json
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo "dump-ir failed with exit code $status" >&2
+  exit "$status"
+fi
+```
+
+When using a pipeline, enable `pipefail` so a failing CradleXC command is not
+hidden by a successful downstream command:
+
+```bash
+set -o pipefail
+cxc dump-ir -i scenarios/HelloWorld.cradle | jq .
+```
+
+For portable automation, use `0` as success, distinguish usage errors with `2`,
+and treat any other nonzero status as failure. Use command diagnostics to
+identify the exact operation that failed.

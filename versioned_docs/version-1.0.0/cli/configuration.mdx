@@ -139,7 +139,7 @@ A CRADLE scenario can define its own remote artifact repository:
 
 ```CRADLE
 metadata() >
-    repositoryRemote("https://example.com/repository").
+    repositoryRemote("https://172.18.178.10:4443").
 ```
 
 When `repositoryRemote` is defined by the scenario, that scenario-level value provides the repository information used by the scenario.
@@ -321,7 +321,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>Vagrant backend</div>
+  <div className="architecture-flow-step-backend">Vagrant backend</div>
 
   <span>↓</span>
 
@@ -433,7 +433,7 @@ For example, this belongs in the `.cradle` scenario:
 metadata() >
     name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 

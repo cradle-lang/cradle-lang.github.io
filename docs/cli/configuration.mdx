@@ -44,10 +44,10 @@ A configuration file can then be created at:
 For example:
 
 ```toml
-forensic_dir = "/home/cdl/forensic"
+forensic_dir = "/home/user/forensic"
 dataset_dir = "/mnt/hdd/cradle/dataset"
-artifact_repo = "/home/cdl/artifact"
-artifact_dir = "/home/cdl/artifact"
+artifact_repo = "/home/user/artifact"
+artifact_dir = "/home/user/artifact"
 ```
 
 :::note
@@ -72,7 +72,7 @@ Use `forensic_dir` to specify where forensic tools and supporting files are stor
 For example:
 
 ```toml
-forensic_dir = "/home/cdl/forensic"
+forensic_dir = "/home/user/forensic"
 ```
 
 This directory can contain resources required by supported forensic workflows.
@@ -128,7 +128,7 @@ Use `artifact_repo` to configure the default artifact repository available to Cr
 For example:
 
 ```toml
-artifact_repo = "/home/cdl/artifact"
+artifact_repo = "/home/user/artifact"
 ```
 
 The repository can represent an HTTP(S) base location or a local artifact directory where supported.
@@ -139,7 +139,7 @@ A CRADLE scenario can define its own remote artifact repository:
 
 ```CRADLE
 metadata() >
-    repositoryRemote("https://example.com/repository").
+    repositoryRemote("https://172.18.178.10:4443").
 ```
 
 When `repositoryRemote` is defined by the scenario, that scenario-level value provides the repository information used by the scenario.
@@ -147,7 +147,7 @@ When `repositoryRemote` is defined by the scenario, that scenario-level value pr
 The CradleXC configuration also provides:
 
 ```toml
-artifact_repo = "/home/cdl/artifact"
+artifact_repo = "/home/user/artifact"
 ```
 
 which can be used as the artifact repository fallback when scenario metadata does not define `repositoryRemote`.
@@ -190,7 +190,7 @@ Use `artifact_dir` to configure the local artifact staging directory.
 For example:
 
 ```toml
-artifact_dir = "/home/cdl/artifact"
+artifact_dir = "/home/user/artifact"
 ```
 
 `artifact_repo` and `artifact_dir` serve different roles:
@@ -321,7 +321,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>Vagrant backend</div>
+  <div className="architecture-flow-step-backend">Vagrant backend</div>
 
   <span>↓</span>
 
@@ -341,16 +341,16 @@ A complete example configuration is:
 # CradleXC configuration
 
 # Forensic tools and supporting files
-forensic_dir = "/home/cdl/forensic"
+forensic_dir = "/home/user/forensic"
 
 # Extracted datasets
 dataset_dir = "/mnt/hdd/cradle/dataset"
 
 # Default artifact repository
-artifact_repo = "/home/cdl/artifact"
+artifact_repo = "/home/user/artifact"
 
 # Local artifact staging directory
-artifact_dir = "/home/cdl/artifact"
+artifact_dir = "/home/user/artifact"
 
 [deployment]
 
@@ -433,7 +433,7 @@ For example, this belongs in the `.cradle` scenario:
 metadata() >
     name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 
@@ -444,10 +444,10 @@ These belong in:
 ```
 
 ```toml
-forensic_dir = "/home/cdl/forensic"
+forensic_dir = "/home/user/forensic"
 dataset_dir = "/mnt/hdd/cradle/dataset"
-artifact_repo = "/home/cdl/artifact"
-artifact_dir = "/home/cdl/artifact"
+artifact_repo = "/home/user/artifact"
+artifact_dir = "/home/user/artifact"
 ```
 
 The distinction is:

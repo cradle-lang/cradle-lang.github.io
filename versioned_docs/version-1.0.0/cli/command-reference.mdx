@@ -34,10 +34,10 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | Command | Purpose |
 | --- | --- |
 | `cxc validate` | Validate CRADLE source syntax. |
-| `cxc check` | Parse and validate CRADLE source with detailed diagnostics. |
 | `cxc compile` | Compile CRADLE source into structured YAML. |
 | `cxc dump-ir` | Display CradleXC's intermediate representation. |
-| `cxc emit` | Generate target-specific files through a backend plugin. |
+| `cxc build` | Generate target-specific files through a backend plugin. |
+| `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
 | `cxc backend list` | List backend plugins discovered by CradleXC. |
 | `cxc plugin install` | Install a backend plugin. |
 | `cxc doctor` | Check dependencies and environment readiness. |
@@ -63,19 +63,6 @@ cxc validate -i scenarios/HelloWorld.cradle
 Use this command before compilation to identify syntax problems in the source scenario.
 
 For more information, see [Validate and Compile](../getting-started/validate-and-compile).
-
----
-
-## `cxc check`
-
-Parses and validates a scenario with detailed diagnostics.
-
-```bash
-cxc check -i <scenario.cradle>
-cxc check -i <scenario.cradle> --json
-```
-
-Use `--json` when a tool needs diagnostics in a structured form.
 
 ---
 
@@ -143,14 +130,14 @@ For more information, see [Inspect Output](../getting-started/inspect-output).
 
 ---
 
-## `cxc emit`
+## `cxc build`
 
 Generates target-specific files through a compatible backend plugin.
 
 ### Usage
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -159,7 +146,7 @@ cxc emit \
 ### Example
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -171,17 +158,92 @@ cxc emit \
 | --- | --- |
 | `-i` | Specifies the input `.cradle` scenario. |
 | `--target` | Selects the backend target. |
-| `-o` | Specifies the output location for generated target-specific files. |
+| `-o` | Specifies the output location. When omitted, the default is `./build_<target>`. |
+| `--backend-arg key=value` | Passes a repeatable backend-specific option. |
+| `--config-dir` | Overrides the configured content directory for `config()` entries. |
+| `--heuristics-dir` | Overrides the configured content directory for instance heuristics. |
 
 A compatible backend plugin must be available for the selected target.
 
+When no backend plugin is registered, `build` and `rebuild` are hidden from the
+top-level `cxc --help` command list, although direct invocation still reports
+the normal target-discovery error.
+
 :::important
-`cxc emit` generates target-specific files. CradleXC does not automatically execute those files.
+`cxc build` generates target-specific files. CradleXC does not automatically execute those files.
 :::
 
 Use the generated files with the corresponding tools in your own testbed environment.
 
+:::note
+`cxc build` is a hard rename of `cxc emit`; there is no `emit` alias. The
+rendering purpose and command options are otherwise the same. The default
+output directory changed from `./emit_<target>` to `./build_<target>`, and the
+render state files changed from `.cxc-deploy.json` and `.cxc-deploy-ir.json` to
+`.cxc-build.json` and `.cxc-build-ir.json`.
+
+Build state is refreshed after every successful render. A backend that exposes
+stage commands can also make `cxc build` print suggested boot, provision and
+event commands after generation; these are hints and are not run automatically.
+:::
+
 For backend installation and configuration, see [Use a Backend](../getting-started/use-a-backend).
+
+---
+
+## `cxc rebuild`
+
+Compares the current scenario with the IR snapshot from the most recent
+successful `cxc build` or `cxc rebuild`, then regenerates the backend's complete
+file set in the same output directory.
+
+### Usage
+
+```bash
+cxc rebuild \
+  -i <scenario.cradle> \
+  --target <plugin_name> \
+  -o <existing_output_directory>
+```
+
+### Example
+
+```bash
+cxc rebuild \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+The output directory must already exist and contain `.cxc-build-ir.json` from a
+successful build. Output created by the former `cxc emit` state format is not a
+valid baseline; run `cxc build` once to create current build state.
+
+`cxc rebuild` reports every instance as added, removed, recreated,
+reprovisioned or unchanged, with reasons for recreate and reprovision changes.
+It then asks the backend to render the complete current file set. It is not a
+partial file writer.
+
+| Difference | Classification |
+| --- | --- |
+| Platform, OS version, architecture, CPU, memory, interfaces or router/Windows status | Recreate |
+| Configs, objects, roles, routes or heuristic membership | Reprovision |
+| Instance only in the current scenario | Added |
+| Instance only in the previous build | Removed |
+| No deployment-relevant change | Unchanged |
+
+A pure reordering of the same heuristics is unchanged. Adding, removing or
+replacing a heuristic is a reprovision change.
+
+:::important
+`cxc rebuild` only updates generated files. It does not create, change or remove
+a live deployment. If network identity or addressing changed, it stops and asks
+you to run `cxc build` into a fresh output directory instead.
+:::
+
+After a successful rebuild, compatible backends may print boot or provision
+commands scoped to the affected instances. These are suggestions only and are
+not executed by CradleXC.
 
 ---
 
@@ -352,7 +414,7 @@ cxc compile --help
 ```
 
 ```bash
-cxc emit --help
+cxc build --help
 ```
 
 ## Typical scenario workflow
@@ -386,7 +448,7 @@ cxc backend list
 Then generate the files:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -394,7 +456,7 @@ cxc emit \
 
 The overall workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -412,7 +474,7 @@ The overall workflow is:
 
   <span>↓</span>
 
-  <div><code>cxc emit</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
 
   <span>↓</span>
 
@@ -471,7 +533,7 @@ The overall workflow is:
     <div className="cxc-command-description">
       Generate target-specific files.
     </div>
-    <code>cxc emit</code>
+    <code>cxc build</code>
   </div>
 
 </div>

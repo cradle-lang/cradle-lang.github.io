@@ -68,12 +68,12 @@ The most common workflow uses:
 cxc validate
 cxc compile
 cxc dump-ir
-cxc emit
+cxc build
 ```
 
 Conceptually:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -91,7 +91,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div><code>cxc emit</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
 
   <span>↓</span>
 
@@ -166,7 +166,7 @@ CradleXC uses external backend plugins for target-specific generation.
 Use:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -175,13 +175,28 @@ cxc emit \
 For example:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
 ```
 
 The selected backend generates files for its supported target.
+
+To regenerate an existing output directory after changing the scenario, use
+the previous build as a comparison baseline:
+
+```bash
+cxc rebuild \
+  -i scenarios/HelloWorld.cradle \
+  --target vagrant \
+  -o ./output
+```
+
+`cxc rebuild` reports what changed and rewrites the complete generated file
+set. It does not modify a live deployment. See the
+[Command Reference](./command-reference#cxc-rebuild) for its baseline and
+network-change rules.
 
 :::important
 CradleXC does not automatically execute backend-generated files. Use those files with the corresponding tools in your own testbed environment.
@@ -318,7 +333,14 @@ The current CLI can be thought of in several groups.
     <div className="cxc-command-description">
       Generate target-specific files through a backend.
     </div>
-    <code>cxc emit</code>
+    <code>cxc build</code>
+  </div>
+
+  <div className="cxc-command-card">
+    <div className="cxc-command-description">
+      Compare with the previous build and regenerate the complete file set.
+    </div>
+    <code>cxc rebuild</code>
   </div>
 
 </div>
@@ -376,7 +398,7 @@ The separation remains:
 
   <span>↓</span>
 
-  <div>External backend plugin</div>
+  <div className="architecture-flow-step-backend">External backend plugin</div>
 
   <span>↓</span>
 
@@ -409,7 +431,7 @@ cxc <command> --help
 For example:
 
 ```bash
-cxc emit --help
+cxc build --help
 ```
 
 See [Troubleshooting](../guides/troubleshooting) for additional diagnostic guidance.

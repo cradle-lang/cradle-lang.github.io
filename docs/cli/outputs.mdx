@@ -20,7 +20,7 @@ These outputs serve different purposes and should not be treated as interchangea
 
 The main workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -38,7 +38,7 @@ The main workflow is:
 
   <span>↓</span>
 
-  <div>Backend-generated target files</div>
+  <div className="architecture-flow-step-backend">Backend-generated target files</div>
 
 </div>
 
@@ -207,7 +207,6 @@ The current documentation identifies defaults including:
 | Property | Current CradleXC default |
 | --- | --- |
 | `eventType` | `sequence` |
-| Instance architecture | `AMD64` |
 | Endpoint address | `DHCP` |
 | `needRoot` | `false` |
 | `pauseBeforeRun` | `0` |
@@ -226,7 +225,7 @@ Backend plugins generate target-specific files.
 Use:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -235,7 +234,7 @@ cxc emit \
 For example:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -258,7 +257,7 @@ Compiled YAML and backend-generated files serve different purposes.
 | Validation diagnostics | `cxc validate` | Reports source problems. |
 | Intermediate representation | `cxc dump-ir` | Shows how CradleXC interpreted the source. |
 | Compiled YAML | `cxc compile` | Represents the processed scenario. |
-| Target-specific files | `cxc emit` and backend plugin | Represents the scenario for a particular target. |
+| Target-specific files | `cxc build` and backend plugin | Represents the scenario for a particular target. |
 
 The relationship is:
 
@@ -276,7 +275,7 @@ The relationship is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -313,7 +312,7 @@ CradleXC does not automatically execute backend-generated target files.
 
 The complete workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -323,7 +322,7 @@ The complete workflow is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -404,7 +403,7 @@ cxc compile \
 If target-specific files are required, regenerate them separately:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -450,19 +449,15 @@ This helps determine whether the problem occurs during:
 
   <span>↓</span>
 
-  <div>backend generation</div>
+  <div className="architecture-flow-step-backend">backend generation</div>
 
 </div>
 
-## Output and schema
+## Output model
 
-The compiled representation can be compared against the CRADLE schema documentation.
-
-However, the current language reference notes that the grammar, compiler and JSON Schema are not completely aligned.
-
-This means the schema should not be treated as the sole description of compiler output.
-
-For schema-level details, see [Developer Schema Reference](../schema/cradle-schema).
+Compiled YAML and Deployment IR describe different stages of CradleXC
+processing. For the structured model passed to backend plugins, see
+[Deployment IR](../internals/deployment-ir).
 
 ## Output and diagnostics
 
@@ -487,7 +482,7 @@ cxc compile \
 Then, if backend output is involved:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
