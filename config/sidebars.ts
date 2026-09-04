@@ -87,9 +87,28 @@ const sidebars: SidebarsConfig = {
       label: 'Examples',
       items: [
         'examples/hello-world',
+        'examples/hello-world-compiled-yaml',
+        'examples/hello-world-deployment-ir',
         'examples/networking',
         'examples/event-dependencies',
         'examples/backend-example',
+      ],
+    },
+
+    {
+      type: 'category',
+      label: 'Backend Development',
+      items: [
+        'backend-development/overview',
+        'backend-development/plugin-model',
+        'backend-development/deployment-ir-contract',
+        {
+          type: 'ref',
+          id: 'examples/hello-world-deployment-ir',
+          label: 'Deployment IR Walkthrough',
+        },
+        'backend-development/building-a-backend',
+        'backend-development/plugin-protocol',
       ],
     },
 
