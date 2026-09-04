@@ -15,7 +15,7 @@ A backend plugin is used only when you need output for a specific target.
 
 The general workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -25,7 +25,7 @@ The general workflow is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -117,12 +117,12 @@ The corresponding backend target can then be selected when generating target-spe
 
 ## Generate target-specific files
 
-Use `cxc emit` to generate files for a selected backend.
+Use `cxc build` to generate files for a selected backend.
 
 The general command is:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -131,7 +131,7 @@ cxc emit \
 For example, using the Hello World scenario:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -151,7 +151,7 @@ A normal backend workflow is:
 2. Validate the scenario.
 3. Install the required backend plugin.
 4. Confirm that CradleXC discovers the backend.
-5. Generate target-specific files with `cxc emit`.
+5. Generate target-specific files with `cxc build`.
 6. Review the generated files.
 7. Use the generated files with the corresponding tools in your testbed environment.
 
@@ -162,7 +162,7 @@ cxc validate -i scenarios/HelloWorld.cradle
 
 cxc backend list
 
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -180,11 +180,11 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>Backend discovery</div>
+  <div className="architecture-flow-step-backend">Backend discovery</div>
 
   <span>↓</span>
 
-  <div><code>cxc emit</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
 
   <span>↓</span>
 
@@ -236,7 +236,7 @@ Backend-specific documentation can contain additional requirements that are not 
 
 ## Validate before generating output
 
-Validate the scenario before running `cxc emit`:
+Validate the scenario before running `cxc build`:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
@@ -245,7 +245,7 @@ cxc validate -i scenarios/HelloWorld.cradle
 Then generate the backend-specific output:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -255,7 +255,7 @@ This helps identify CRADLE syntax problems before backend processing begins.
 
 ## Inspect generated files
 
-After `cxc emit` completes, inspect the output directory:
+After `cxc build` completes, inspect the output directory:
 
 ```bash
 ls -la ./output
@@ -277,7 +277,7 @@ CradleXC does not automatically execute them.
 
 The complete workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE scenario</div>
 
@@ -287,7 +287,7 @@ The complete workflow is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -328,7 +328,7 @@ cxc backend list
 Then generate target-specific files:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output

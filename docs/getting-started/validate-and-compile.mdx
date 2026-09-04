@@ -9,7 +9,7 @@ CradleXC provides separate commands for validating CRADLE source and compiling i
 
 The typical workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -31,21 +31,41 @@ Validation should normally be performed before compilation so syntax problems ca
 
 ## Validate a scenario
 
-Use `cxc validate` to check the syntax of a `.cradle` file.
-
-```bash
-cxc validate -i <scenario.cradle>
-```
-
-For the Hello World example:
+Pass the scenario path to `cxc validate` with `-i`. For the Hello World
+example, run:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
 ```
 
-CradleXC reads the scenario and reports syntax errors that need to be corrected.
+If the scenario is valid, CradleXC prints a checkmark and a short summary.
 
-If no validation errors are reported, you can proceed to compilation.
+<details>
+<summary>Show the successful validation result</summary>
+
+```console
+✓ scenarios/HelloWorld.cradle is valid
+  instances: 2
+  networks:  1
+  events:    1 (pre=0, main=1, post=0)
+  objects:   1
+```
+
+</details>
+
+The first line confirms that validation succeeded. The remaining lines count
+the scenario elements CradleXC found:
+
+| Result | Meaning |
+| --- | --- |
+| `instances: 2` | Two machines: `win7` and `router`. |
+| `networks: 1` | One network: `lan_0`. |
+| `events: 1 (pre=0, main=1, post=0)` | One main event and no events in the other phases. |
+| `objects: 1` | One declared object: `HelloWorld`. |
+
+You can proceed to compilation after seeing a valid result. If validation
+fails, CradleXC prints diagnostics identifying the source that needs to be
+corrected.
 
 :::note
 Validation checks the CRADLE source before target-specific backend generation. A backend plugin is not required to validate a scenario.
@@ -142,17 +162,17 @@ cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
 
 This keeps validation and compilation as separate steps.
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>HelloWorld.cradle</div>
 
   <span>↓</span>
 
-  <div><code>cxc validate</code></div>
+  <div><code>`cxc validate`</code></div>
 
   <span>↓</span>
 
-  <div><code>cxc compile</code></div>
+  <div><code>`cxc compile`</code></div>
 
   <span>↓</span>
 
@@ -192,7 +212,7 @@ It does not generate files for a specific backend target.
 
 The workflow can be viewed as:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -211,7 +231,7 @@ When target-specific files are required, use a compatible backend plugin separat
 For example:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o /path/to/output

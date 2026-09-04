@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: Quick Start
-description: Install CradleXC, validate a CRADLE scenario, and compile the canonical HelloWorld-Win example to YAML.
+description: Install CradleXC, validate a CRADLE scenario, and compile the canonical HelloWorld example to YAML.
 ---
 
 # Quick Start
@@ -110,7 +110,7 @@ CradleXC processes the scenario and writes the compiled output to `HelloWorld.ym
 
 You have now completed the basic CRADLE workflow:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE scenario</div>
   <span>↓</span>
@@ -141,7 +141,7 @@ parsing and semantic processing.
 
 ### Generate target-specific output
 
-Backend plugins provide target-specific rendering functionality.
+Backend plugins provide target-specific file generation.
 
 To see the backend plugins available to your installed CradleXC release, run:
 
@@ -154,13 +154,13 @@ Backend installation and configuration are covered separately in the [backend gu
 Once a compatible backend plugin is installed, generate target-specific output with:
 
 ```bash
-cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+cxc build -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
 ```
 
 For example:
 
 ```bash
-cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+cxc build -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
 The backend plugin generates the files required by its target.

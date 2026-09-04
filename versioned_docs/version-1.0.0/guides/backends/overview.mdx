@@ -28,8 +28,8 @@ cxc backend list
 cxc plugin install <name>
 ```
 
-Discovery confirms that CradleXC can find the plugin and recognize its
-manifest. It does not, by itself, guarantee that the plugin supports every
+Discovery confirms that CradleXC can find and recognize the plugin. It does
+not, by itself, guarantee that the plugin supports every
 scenario feature, host configuration, provider, or target version.
 
 ## What compatibility means
@@ -67,11 +67,11 @@ Different parts of CRADLE can be evaluated independently:
 
 | Capability | Public evaluation path | Boundary |
 | --- | --- | --- |
-| Language and documentation | Read the language guide and canonical HelloWorld-Win example. | Documentation explains the model but does not deploy infrastructure. |
+| Language and documentation | Read the language guide and canonical HelloWorld example. | Documentation explains the model but does not create infrastructure. |
 | Browser Workbench | Edit a scenario and inspect its topology, event flow, or text summary. | The Workbench is an inspection tool and does not run CradleXC or start virtual machines. |
 | Validation and compilation | Use `cxc validate` and `cxc compile` with an available CradleXC distribution. | Availability of the compiler distribution is separate from backend availability. |
-| Target-file generation | Install a published, compatible plugin and use `cxc emit`. | Do not assume a backend is publicly available unless it appears in the release repository with its own compatibility documentation. |
-| Deployment or execution | Review generated files and use the selected target tooling in an authorized testbed. | CradleXC does not automatically deploy or execute the generated files. |
+| Target-file generation | Install a published, compatible plugin and use `cxc build`. | Do not assume a backend is publicly available unless it appears in the release repository with its own compatibility documentation. |
+| Environment creation or execution | Review generated files and use the selected target tooling in an authorized testbed. | CradleXC does not automatically create infrastructure or execute the generated files. |
 
 If the release repository does not list a backend release for the required
 target, treat that target as unavailable for public evaluation. Do not infer
@@ -89,7 +89,7 @@ Before generating target-specific files:
 4. Install the backend and verify discovery with `cxc backend list`.
 5. Run `cxc doctor` and resolve required host dependencies.
 6. Validate the scenario with `cxc validate`.
-7. Generate output with `cxc emit`.
+7. Generate output with `cxc build`.
 8. Inspect and validate the generated files using the target tool before
    operating them in a testbed.
 
@@ -108,14 +108,14 @@ After selecting and installing a compatible backend, use:
 cxc validate -i scenarios/HelloWorld.cradle
 cxc backend list
 cxc doctor
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
 ```
 
 CradleXC writes target-specific files to the output directory. It does not
-automatically execute those files or deploy infrastructure. Review the output
+automatically execute those files or create infrastructure. Review the output
 and follow the selected backend's documentation for any subsequent steps.
 
 ## Related documentation

@@ -1,13 +1,13 @@
 ---
 sidebar_position: 3
 title: First Scenario
-description: Build and understand the canonical HelloWorld-Win CRADLE scenario section by section.
+description: Build and understand the canonical HelloWorld CRADLE scenario section by section.
 ---
 
 # First Scenario
 
 This guide introduces the main CRADLE concepts through the canonical
-`HelloWorld-Win` scenario.
+`HelloWorld` scenario.
 
 The scenario defines:
 
@@ -24,7 +24,7 @@ CRADLE scenario and understand how their names connect them.
 
 | Component | Name | Purpose |
 | --- | --- | --- |
-| Scenario | `HelloWorld-Win` | Names the environment and its generated outputs. |
+| Scenario | `HelloWorld` | Names the environment and its generated outputs. |
 | Windows instance | `win7` | Represents a Windows Server 2019 system. |
 | Router instance | `router` | Associates the external object and requests Linux configurations. |
 | Network | `lan_0` | Connects both instances through static IPv4 endpoints. |
@@ -46,9 +46,9 @@ Add the following source to `HelloWorld.cradle`:
 
 ```cradle
 metadata() >
-    name("HelloWorld-Win"),
+    name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 
 instances() >
@@ -101,16 +101,16 @@ object("HelloWorld") >
 ```
 
 :::note
-The documentation uses `https://artifacts.example.org` instead of an internal
-repository address. Replace it with an authorized artifact repository when
-using the external object in your environment.
+This walkthrough reproduces the repository value from the canonical
+`HelloWorld.cradle` file. Confirm that the repository is authorized and
+reachable from your environment before using the external object.
 :::
 
 ## Read the scenario in source order
 
 The complete file follows this order:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>Metadata and object declaration</div>
   <span>↓</span>
@@ -137,15 +137,15 @@ Start with scenario metadata:
 
 ```cradle
 metadata() >
-    name("HelloWorld-Win"),
+    name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 
 This block:
 
-- names the scenario `HelloWorld-Win`
+- names the scenario `HelloWorld`
 - selects sequential event handling
 - defines the base artifact repository
 - declares the `HelloWorld` object used later in the file
@@ -215,15 +215,38 @@ The endpoint names exactly match the earlier instance declarations.
 
 Conceptually:
 
-<div className="architecture-flow">
+<div
+  className="scenarioNetworkGraph"
+  role="img"
+  aria-label="win7 is connected to Router on the lan_0 network"
+>
 
-  <div>win7<br /><code>192.168.56.121</code></div>
-  <span>↓</span>
+  <div className="scenarioNetworkGraphHeader">
+    <span>Network</span>
+    <code>lan_0</code>
+  </div>
 
-  <div>lan_0<br /><code>192.168.56.0/24</code></div>
-  <span>↓</span>
+  <div className="scenarioNetworkGraphBody">
 
-  <div>router<br /><code>192.168.56.122</code></div>
+    <div className="scenarioGraphInstance">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>win7</strong>
+      <code>192.168.56.121</code>
+    </div>
+
+    <div
+      className="scenarioGraphConnection"
+      aria-hidden="true"
+    />
+
+    <div className="scenarioGraphInstance scenarioGraphRouter">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>router</strong>
+      <code>192.168.56.122</code>
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -274,8 +297,8 @@ name must remain `HelloWorld` in the metadata declaration, router association,
 and final definition.
 
 :::important
-The public placeholder does not host `HelloWorld.sh`. Use an authorized
-artifact repository when working in an environment that requires this object.
+Confirm that the configured repository is authorized, reachable, and hosts
+`HelloWorld.sh` before deploying this scenario.
 :::
 
 ## Validate and compile

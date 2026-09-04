@@ -186,7 +186,7 @@ cxc validate -i <scenario.cradle>
 Generate the target-specific files with:
 
 ```bash
-cxc emit \
+cxc build \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o /path/to/output
@@ -195,7 +195,7 @@ cxc emit \
 For example:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output

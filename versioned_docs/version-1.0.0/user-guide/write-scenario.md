@@ -27,13 +27,13 @@ command-line argument. Consistent names make generated paths predictable.
 
 ## 2. Add a complete scenario
 
-Start with this public-safe example:
+Start with this example:
 
 ```CRADLE
 metadata() >
     name("MyScenario"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("SetupScript").
 
 instances() >
@@ -72,7 +72,7 @@ object("SetupScript") >
     location("${uriRemote}/MyScenario/SetupScript.sh").
 ```
 
-Replace `https://artifacts.example.org` and the object path with an authorized,
+Replace `https://172.18.178.10:4443` and the object path with an authorized,
 reachable location before deployment. Do not put passwords, tokens, or private
 keys in a `.cradle` file.
 

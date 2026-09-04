@@ -14,25 +14,17 @@ dataset_dir = "/srv/cradle/datasets"
 
 `forensic_dir` identifies host-side forensic resources. `dataset_dir` is the default destination for extracted data when no output directory is supplied.
 
-## Extract data
+## Collect data
 
-Use `cxc extract` with the scenario name and the directory containing the generated backend files:
+Forensic-data collection is provided by the selected backend and its target
+environment rather than by a CradleXC command. Follow the backend's
+documentation for its supported collection workflow and output layout.
 
-```bash
-cxc extract \
-  --scenario <scenario-name> \
-  --deploy-dir <target-files-directory> \
-  --output <dataset-directory>
-```
-
-The exact collection capabilities depend on the backend and the target environment. Confirm backend prerequisites with `cxc doctor` before collecting data.
+Confirm the backend's prerequisites with `cxc doctor` before using its own
+collection tooling.
 
 ## Generate artifacts
 
-`cxc generate-artifacts` generates supported artifacts from an artifact YAML configuration or project index:
-
-```bash
-cxc generate-artifacts -i <artifact-config.yml> -o ./build
-```
-
-Use `cxc generate-artifacts --help` for the options supported by your installed release.
+Artifact generation is backend-specific. Use the artifact tooling documented by
+the selected backend, and keep generated files outside the scenario source tree
+when they contain environment-specific or sensitive data.

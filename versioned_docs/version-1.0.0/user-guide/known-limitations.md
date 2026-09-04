@@ -146,11 +146,11 @@ does not:
 Scenario authors are responsible for checking external identifiers and their
 applicability. See [Heuristic annotations](../language/heuristics).
 
-## Public examples
+## Example repositories
 
-Public examples use sanitized placeholder artifact locations such as
-`https://artifacts.example.org`. These locations do not host CRADLE artifacts.
-Replace them with authorized, reachable repositories before deployment.
+The Hello World examples reproduce the repository location from the canonical
+scenario. Confirm that every configured location is authorized, reachable, and
+hosts the required artifact before deployment.
 
 Configurations, images, roles, and artifacts shown in an example can also
 depend on the selected CRADLE distribution. Treat examples as starting points
