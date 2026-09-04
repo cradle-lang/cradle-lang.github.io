@@ -547,6 +547,486 @@ body {
   border-radius: 2px;
 }
 
+/* =========================================================
+   DOCUMENTATION - AUDIENCE LIST
+   ========================================================= */
+
+.theme-doc-markdown .audienceList li {
+  color: var(--cradle-text-subtle);
+}
+
+.theme-doc-markdown .audienceList li strong {
+  color: var(--cradle-text-strong);
+  font-weight: 650;
+}
+
+/* =========================================================
+   DOCUMENTATION - NETWORK TOPOLOGY GRAPH
+   ========================================================= */
+
+.scenarioNetworkGraph {
+  position: relative;
+
+  width: min(100%, 720px);
+
+  margin: 1.5rem 0 2rem;
+  padding: 1rem 1.1rem 1.2rem;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent-soft) 30%,
+    var(--cradle-surface-raised)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--cradle-accent) 26%,
+    var(--cradle-border)
+  );
+
+  border-radius: var(--cradle-radius-lg);
+}
+
+
+/* =========================================================
+   NETWORK HEADER
+   ========================================================= */
+
+.scenarioNetworkGraphHeader {
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  margin-bottom: 1rem;
+}
+
+.scenarioNetworkGraphHeader span {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+.theme-doc-markdown .scenarioNetworkGraphHeader code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-strong);
+
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   GRAPH BODY
+   ========================================================= */
+
+.scenarioNetworkGraphBody {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    minmax(48px, 0.3fr)
+    minmax(150px, 1fr);
+
+  align-items: center;
+
+  gap: 0;
+}
+
+
+/* =========================================================
+   INSTANCE NODES
+   ========================================================= */
+
+.scenarioGraphInstance {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 0.2rem;
+
+  min-width: 0;
+  min-height: 96px;
+
+  padding: 0.9rem 1rem;
+
+  background: var(--cradle-surface-raised);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+}
+
+.scenarioGraphInstanceType {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+.scenarioGraphInstance strong {
+  color: var(--cradle-text-strong);
+
+  font-size: 0.96rem;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.theme-doc-markdown .scenarioGraphInstance code {
+  width: fit-content;
+
+  margin-top: 0.12rem;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-muted);
+
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   CLIENT <-> ROUTER CONNECTION
+   ========================================================= */
+
+.scenarioGraphConnection {
+  width: 100%;
+  height: 2px;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+}
+
+
+/* =========================================================
+   ROUTER -> ADDITIONAL NETWORK CONNECTION
+   ========================================================= */
+
+.scenarioGraphRouter {
+  position: relative;
+}
+
+.scenarioGraphExternalConnection {
+  position: absolute;
+
+  top: 50%;
+  right: -3rem;
+
+  width: 3rem;
+  height: 2px;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+
+  transform: translateY(-50%);
+}
+
+/* =========================================================
+   DOCUMENTATION - INSTANCE DECLARATION GRAPH
+   ========================================================= */
+
+.instanceDeclarationGraph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: min(100%, 620px);
+
+  margin: 1.4rem 0 2rem;
+}
+
+
+/* Root */
+
+.instanceDeclarationRoot,
+.instanceDeclarationNode {
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  padding: 0.85rem 1rem;
+
+  background: var(--cradle-surface-raised);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+}
+
+.instanceDeclarationRoot {
+  justify-content: center;
+
+  min-width: 190px;
+
+  text-align: center;
+}
+
+.theme-doc-markdown .instanceDeclarationRoot code,
+.theme-doc-markdown .instanceDeclarationNode code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-strong);
+
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+
+/* Branch structure */
+
+.instanceDeclarationBranches {
+  position: relative;
+
+  width: 72%;
+  height: 3rem;
+}
+
+.instanceDeclarationBranches::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+
+  width: 1px;
+  height: 1.3rem;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+
+  content: '';
+
+  transform: translateX(-50%);
+}
+
+.instanceDeclarationBranches::after {
+  position: absolute;
+  top: 1.3rem;
+  left: 25%;
+
+  width: 50%;
+  height: 1px;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+
+  content: '';
+}
+
+.instanceDeclarationBranch {
+  position: absolute;
+  top: 1.3rem;
+
+  width: 1px;
+  height: 1.7rem;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+}
+
+.instanceDeclarationBranchLeft {
+  left: 25%;
+}
+
+.instanceDeclarationBranchRight {
+  right: 25%;
+}
+
+
+/* Children */
+
+.instanceDeclarationChildren {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 1.2rem;
+
+  width: 100%;
+}
+
+.instanceDeclarationNode {
+  justify-content: center;
+
+  min-width: 0;
+
+  text-align: center;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .instanceDeclarationBranches {
+    width: 82%;
+  }
+
+  .instanceDeclarationChildren {
+    gap: 0.75rem;
+  }
+
+  .theme-doc-markdown .instanceDeclarationNode code {
+    font-size: 0.82rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* =========================================================
+   DOCUMENTATION - REFERENCE TRACE
+   ========================================================= */
+
+.referenceTrace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: min(100%, 700px);
+
+  margin: 1.4rem 0 2.2rem;
+}
+
+.referenceTraceNode,
+.referenceTraceUse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.3rem;
+
+  box-sizing: border-box;
+
+  padding: 0.9rem 1rem;
+
+  background: var(--cradle-surface-raised);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+
+  text-align: center;
+}
+
+.referenceTraceNode {
+  width: min(100%, 360px);
+}
+
+.referenceTraceNodePrimary {
+  background: linear-gradient(
+    135deg,
+    var(--cradle-primary-soft),
+    var(--cradle-surface-raised) 78%
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-primary) 24%,
+    var(--cradle-border)
+  );
+}
+
+.referenceTraceType {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.63rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+}
+
+.theme-doc-markdown .referenceTrace code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-strong);
+
+  font-size: 0.84rem;
+  font-weight: 620;
+  line-height: 1.4;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.referenceTraceConnector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 1.8rem;
+
+  color: color-mix(
+    in srgb,
+    var(--cradle-primary) 72%,
+    var(--cradle-text-muted)
+  );
+
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.referenceTraceUses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 0.8rem;
+
+  width: 100%;
+}
+
+.referenceTraceUse {
+  min-width: 0;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .referenceTrace {
+    width: 100%;
+  }
+
+  .referenceTraceUses {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* =========================================================
    DOCUMENTATION - SCENARIO TOPOLOGY
@@ -660,8 +1140,11 @@ body {
 }
 
 .scenarioReferenceStep {
+  flex-direction: column;
   flex: 1 0 104px;
   justify-content: center;
+
+  gap: 0.3rem;
 
   min-width: 104px;
   padding: 0.85rem 0.55rem;
@@ -669,8 +1152,29 @@ body {
   text-align: center;
 }
 
+.scenarioReferenceType {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.63rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
 .theme-doc-markdown .scenarioReferenceStep code {
+  padding: 0;
+
+  color: var(--cradle-text-strong);
+
+  background: transparent;
+  border: 0;
+
   font-size: 0.78rem;
+  font-weight: 620;
+  line-height: 1.35;
+
+  white-space: normal;
   overflow-wrap: anywhere;
 }
 
@@ -703,6 +1207,263 @@ body {
   white-space: nowrap;
 }
 
+/* =========================================================
+   DOCUMENTATION - NETWORK REFERENCE GRAPH
+   ========================================================= */
+
+.networkReferenceGraph {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: min(100%, 460px);
+
+  margin: 1.4rem 0 2rem;
+}
+
+
+/* =========================================================
+   NETWORK REFERENCE NODES
+   ========================================================= */
+
+.networkReferenceNode {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.3rem;
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  padding: 0.9rem 1.05rem;
+
+  background: var(--cradle-surface-raised);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+}
+
+.networkReferenceType {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.theme-doc-markdown .networkReferenceNode code {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--cradle-text-strong);
+
+  font-size: 0.94rem;
+  font-weight: 650;
+  line-height: 1.4;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+
+/* Highlight endpoint because it is the relationship being explained. */
+
+.networkReferenceNodeEndpoint {
+  background: linear-gradient(
+    135deg,
+    var(--cradle-primary-soft),
+    var(--cradle-surface-raised) 78%
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-primary) 24%,
+    var(--cradle-border)
+  );
+}
+
+/* =========================================================
+   DOCUMENTATION - ROUTED TOPOLOGY
+   Match scenarioNetworkGraph colour scheme
+   ========================================================= */
+
+.scenarioRoutedGraph {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    2.5rem
+    minmax(180px, 0.8fr)
+    2.5rem
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 0;
+
+  width: 100%;
+
+  margin: 1.5rem 0 2rem;
+}
+
+
+/* Network groups */
+
+.scenarioRoutedNetwork {
+  padding: 1rem;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent-soft) 30%,
+    var(--cradle-surface-raised)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--cradle-accent) 26%,
+    var(--cradle-border)
+  );
+
+  border-radius: var(--cradle-radius-lg);
+}
+
+.scenarioRoutedNetworkBody {
+  margin-top: 0.8rem;
+}
+
+
+/* Router */
+
+.scenarioRoutedRouter {
+  min-height: 112px;
+
+  background: var(--cradle-surface-raised);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+}
+
+
+/* Connections */
+
+.scenarioRoutedConnector {
+  width: 100%;
+  height: 2px;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 58%,
+    var(--cradle-border)
+  );
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .scenarioRoutedGraph {
+    grid-template-columns: 1fr;
+  }
+
+  .scenarioRoutedConnector {
+    width: 2px;
+    height: 1.8rem;
+
+    margin: 0 auto;
+  }
+}
+
+/* =========================================================
+   NETWORK REFERENCE CONNECTIONS
+   ========================================================= */
+
+.networkReferenceConnection {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  height: 3rem;
+
+  margin-left: 1.4rem;
+}
+
+
+/* Vertical connector */
+
+.networkReferenceLine {
+  position: relative;
+
+  display: block;
+
+  width: 1px;
+  height: 100%;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-accent) 60%,
+    var(--cradle-border)
+  );
+}
+
+
+/* Arrowhead */
+
+.networkReferenceLine::after {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+
+  width: 7px;
+  height: 7px;
+
+  border-right: 2px solid var(--cradle-accent);
+  border-bottom: 2px solid var(--cradle-accent);
+
+  content: '';
+
+  transform:
+    translateX(-50%)
+    rotate(45deg);
+}
+
+
+/* Relationship text */
+
+.networkReferenceLabel {
+  margin-left: 0.8rem;
+
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.75rem;
+  font-weight: 550;
+  line-height: 1.3;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   NETWORK REFERENCE GRAPH - MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .networkReferenceGraph {
+    width: 100%;
+  }
+
+  .networkReferenceNode {
+    padding: 0.85rem 0.95rem;
+  }
+
+  .networkReferenceLabel {
+    font-size: 0.72rem;
+  }
+}
 
 /* =========================================================
    DOC CODE BLOCKS
@@ -719,6 +1480,169 @@ body {
 
 .theme-code-block pre {
   line-height: 1.65;
+}
+
+
+/* =========================================================
+   DOCUMENTATION - INTERPOLATION EQUATION
+   ========================================================= */
+
+.interpolation-equation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  box-sizing: border-box;
+  width: min(100%, 760px);
+  margin: 0.45rem 0 1.4rem;
+  padding: 1.15rem;
+
+  background: linear-gradient(
+    145deg,
+    var(--cradle-surface-raised),
+    color-mix(in srgb, var(--cradle-primary-soft) 32%, var(--cradle-surface-raised))
+  );
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-md);
+}
+
+.interpolation-equation-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.35rem minmax(0, 1fr);
+  align-items: center;
+
+  gap: 0.75rem;
+
+  width: 100%;
+}
+
+.interpolation-equation-value,
+.interpolation-equation-result {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.42rem;
+
+  min-width: 0;
+  padding: 0.85rem 0.9rem;
+
+  background: var(--cradle-surface);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: var(--cradle-radius-sm);
+}
+
+.interpolation-equation-value > span,
+.interpolation-equation-result > span {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.interpolation-equation-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.35rem;
+  height: 2.35rem;
+
+  color: var(--cradle-primary);
+
+  background: var(--cradle-primary-soft);
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--cradle-primary) 28%,
+    var(--cradle-border)
+  );
+  border-radius: 50%;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.theme-doc-markdown .interpolation-equation code {
+  padding: 0;
+
+  color: var(--cradle-text-strong);
+
+  background: transparent;
+  border: 0;
+
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.interpolation-equation-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.1rem;
+
+  width: 100%;
+  min-height: 3.3rem;
+
+  color: var(--cradle-accent);
+}
+
+.interpolation-equation-connector > span {
+  color: var(--cradle-text-subtle);
+
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.interpolation-equation-connector > strong {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.interpolation-equation-result {
+  align-self: stretch;
+
+  text-align: center;
+
+  background: color-mix(
+    in srgb,
+    var(--cradle-primary-soft) 68%,
+    var(--cradle-surface)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-primary) 34%,
+    var(--cradle-border)
+  );
+}
+
+@media (max-width: 700px) {
+  .interpolation-equation {
+    align-items: stretch;
+
+    padding: 0.9rem;
+  }
+
+  .interpolation-equation-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .interpolation-equation-plus {
+    align-self: center;
+    justify-self: center;
+  }
 }
 
 
@@ -843,6 +1767,50 @@ body {
     var(--cradle-accent) 30%,
     var(--cradle-border)
   );
+}
+
+.backend-lifecycle .cradle-lifecycle-step {
+  padding: 0.9rem 1rem;
+}
+
+.backend-lifecycle .cradle-lifecycle-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.15rem;
+  height: 1.45rem;
+
+  margin-left: 0;
+
+  color: var(--cradle-accent);
+
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.theme-doc-markdown
+.backend-lifecycle
+.cradle-lifecycle-content code {
+  display: block;
+
+  width: fit-content;
+  max-width: 100%;
+
+  margin-top: 0.35rem;
+  padding: 0.24rem 0.45rem;
+
+  overflow-wrap: anywhere;
+
+  color: var(--cradle-text);
+
+  background: var(--cradle-surface-muted);
+
+  border: 1px solid var(--cradle-border);
+  border-radius: 5px;
+
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 
@@ -1099,7 +2067,7 @@ body {
   margin: 1.3rem 0 1.6rem;
 }
 
-.architecture-flow div {
+.architecture-flow > div {
   min-width: 220px;
 
   padding: 0.65rem 0.85rem;
@@ -1115,7 +2083,7 @@ body {
   font-weight: 600;
 }
 
-.architecture-flow span {
+.architecture-flow > span {
   margin-left: 1rem;
 
   color: var(--cradle-accent);
@@ -1124,6 +2092,199 @@ body {
   line-height: 1;
 }
 
+.architecture-flow.architecture-workflow {
+  align-items: stretch;
+
+  gap: 0;
+
+  max-width: 680px;
+
+  counter-reset: architecture-flow-step;
+}
+
+.architecture-flow.architecture-workflow > div {
+  display: grid;
+
+  grid-template-columns: auto 1fr;
+  align-items: center;
+
+  gap: 0.85rem;
+
+  width: 100%;
+  padding: 0.82rem 1rem;
+
+  border-radius: var(--cradle-radius-md);
+
+  font-size: 0.96rem;
+  font-weight: 680;
+  line-height: 1.35;
+
+  counter-increment: architecture-flow-step;
+}
+
+.theme-doc-markdown .architecture-flow.architecture-workflow > div > code {
+  display: inline;
+
+  justify-self: start;
+
+  width: fit-content;
+  padding: 0;
+
+  color: var(--cradle-text-strong);
+
+  background: transparent;
+  border: 0;
+
+  font-size: 0.93em;
+  font-weight: 680;
+}
+
+.architecture-flow.architecture-workflow > div::before {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 2.15rem;
+  height: 2.15rem;
+
+  color: var(--cradle-primary);
+
+  background: var(--cradle-primary-soft);
+
+  border: 1px solid;
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-primary) 20%,
+    var(--cradle-border)
+  );
+  border-radius: 50%;
+
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1;
+
+  content: counter(architecture-flow-step);
+}
+
+.architecture-flow.architecture-workflow > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.15rem;
+  height: 1.55rem;
+
+  margin-left: 1rem;
+}
+
+.architecture-flow > .architecture-flow-step-backend {
+  background: linear-gradient(
+    135deg,
+    var(--cradle-accent-soft),
+    var(--cradle-surface-raised) 70%
+  );
+
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-accent) 28%,
+    var(--cradle-border)
+  );
+}
+
+.architecture-flow.architecture-workflow
+  > .architecture-flow-step-backend::before {
+  color: var(--cradle-accent);
+
+  background: var(--cradle-accent-soft);
+
+  border-color: color-mix(
+    in srgb,
+    var(--cradle-accent) 30%,
+    var(--cradle-border)
+  );
+}
+
+.architecture-flow.dependency-flow {
+  flex-direction: row;
+  align-items: center;
+
+  gap: 0.8rem;
+
+  max-width: 100%;
+}
+
+.architecture-flow.dependency-flow > div {
+  min-width: 0;
+  padding: 0.8rem 1rem;
+}
+
+.architecture-flow.dependency-flow > .dependency-flow-connector {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 0.15rem;
+
+  min-width: 5.5rem;
+  margin-left: 0;
+}
+
+.dependency-flow-connector > span {
+  color: var(--cradle-text-muted);
+
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.dependency-flow-connector > strong {
+  color: var(--cradle-accent);
+
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* =========================================================
+   DOCUMENTATION - AUTHORING WORKFLOW
+   ========================================================= */
+
+.architecture-flow.authoring-workflow > div {
+  grid-template-areas:
+    "number title"
+    "number description";
+
+  column-gap: 0.85rem;
+  row-gap: 0.15rem;
+
+  align-items: start;
+}
+
+.architecture-flow.authoring-workflow > div::before {
+  grid-area: number;
+}
+
+.architecture-flow.authoring-workflow > div > span {
+  grid-area: title;
+
+  color: var(--cradle-text-strong);
+
+  font-size: 0.96rem;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.architecture-flow.authoring-workflow > div > small {
+  grid-area: description;
+
+  color: var(--cradle-text-muted);
+
+  font-size: 0.82rem;
+  font-weight: 450;
+  line-height: 1.5;
+}
 
 /* =========================================================
    BREADCRUMBS
@@ -2150,9 +3311,42 @@ body {
     align-items: stretch;
   }
 
-  .architecture-flow div {
+  .architecture-flow > div {
     min-width: 0;
     width: 100%;
+  }
+
+  .architecture-flow.architecture-workflow > div {
+    gap: 0.8rem;
+    padding: 0.78rem 0.85rem;
+  }
+
+  .architecture-flow.architecture-workflow > div::before {
+    width: 1.9rem;
+    height: 1.9rem;
+
+    font-size: 0.67rem;
+  }
+
+  .architecture-flow.architecture-workflow > span {
+    width: 1.9rem;
+    margin-left: 0.85rem;
+  }
+
+  .architecture-flow.dependency-flow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .architecture-flow.dependency-flow > .dependency-flow-connector {
+    align-self: flex-start;
+
+    min-width: 0;
+    margin-left: 1rem;
+  }
+
+  .dependency-flow-connector > strong {
+    transform: rotate(90deg);
   }
 }
 
@@ -2172,6 +3366,18 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .backend-lifecycle .cradle-lifecycle-step {
+    gap: 0.8rem;
+    padding: 0.85rem;
+  }
+
+  .backend-lifecycle .cradle-lifecycle-connector {
+    width: 1.9rem;
+    margin-left: 0;
   }
 }
 

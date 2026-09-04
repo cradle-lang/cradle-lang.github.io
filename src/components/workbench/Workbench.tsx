@@ -72,7 +72,7 @@ function describeWorkbenchError(
         ? error.message
         : String(error),
     suggestion:
-      'Review the source and compare its section order with the HelloWorld-Win example.',
+      'Review the source and compare its section order with the HelloWorld example.',
   };
 }
 
@@ -769,7 +769,7 @@ export default function Workbench(): ReactNode {
                 onClick={() =>
                   loadSample(
                     SAMPLE_SCENARIO,
-                    'HelloWorld-Win sample',
+                    'HelloWorld sample',
                   )
                 }
               >

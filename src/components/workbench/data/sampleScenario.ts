@@ -206,7 +206,7 @@ event("data_exfiltration") >
     description("Data Exfiltration").`;
 
 export const SAMPLE_SCENARIO = `metadata() >
-    name("HelloWorld-Win"),
+    name("HelloWorld"),
     eventType("sequence"),
     repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
@@ -224,13 +224,13 @@ instance("win7") >
 
 instance("router") >
     os("linux", "20.04"),
+    object("HelloWorld"),
     config("linux-vsftpd"),
     config("linux-auditd"),
     config("linux-mail"),
     config("linux-python3"),
     config("python3-pip"),
-    config("linux-router"),
-    object("HelloWorld").
+    config("linux-router").
 
 networks() >
     network("lan_0").
@@ -246,9 +246,9 @@ events() >
     postEvent().
 
 mainEvent() >
-    event("helloworld_event").
+    event("initialize_client").
 
-event("helloworld_event") >
+event("initialize_client") >
     instance("router"),
     needRoot(true),
     pauseBeforeRun(0),

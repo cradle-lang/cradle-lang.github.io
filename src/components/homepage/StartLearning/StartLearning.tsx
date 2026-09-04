@@ -32,7 +32,7 @@ export default function StartLearning(): ReactNode {
             className={styles.learningCard}
             to="/docs/getting-started/first-scenario">
             <span className={styles.cardNumber}>02</span>
-            <h3>Follow HelloWorld-Win</h3>
+            <h3>Follow HelloWorld</h3>
             <p>
               Follow the instances, network, object and scheduled event in the
               compact HelloWorld example.

@@ -78,7 +78,7 @@ export default function CradleInAction(): ReactNode {
 
               <div className={styles.codeLine}>
                 <span className={styles.indent}>
-                  name("HelloWorld-Win"),
+                  name("HelloWorld"),
                 </span>
               </div>
 
@@ -438,7 +438,7 @@ export default function CradleInAction(): ReactNode {
           <Link
             className={styles.textLink}
             to="/docs/getting-started/first-scenario">
-            View the HelloWorld-Win scenario →
+            View the HelloWorld scenario →
           </Link>
         </div>
       </div>

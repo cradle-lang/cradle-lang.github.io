@@ -36,19 +36,19 @@ export default function EvaluateCradle(): ReactNode {
             className={styles.evidenceCard}
             to="/docs/getting-started/first-scenario">
             <span className={styles.cardLabel}>Documented example</span>
-            <h3>Follow the HelloWorld-Win scenario</h3>
+            <h3>Follow the HelloWorld scenario</h3>
             <p>
               Trace instances, a network, an object and a scheduled event
               through a compact scenario definition.
             </p>
             <span className={styles.cardLink}>
-              View the HelloWorld-Win scenario →
+              View the HelloWorld scenario →
             </span>
           </Link>
 
           <Link
             className={styles.evidenceCard}
-            to="/docs/schema/cradle-schema">
+            to="/docs/language/overview">
             <span className={styles.cardLabel}>Preview reference</span>
             <h3>Review the current scenario model</h3>
             <p>

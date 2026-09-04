@@ -24,7 +24,7 @@ const OUTPUT = [
   '✓ All required dependencies are installed.',
   '',
   'Configuration:',
-  'Config file: /home/amish/.cxc/config.toml',
+  'Config file: /home/user/.cxc/config.toml',
   'Forensic dir:    /opt/cxc/forensic',
   'Dataset dir:     /opt/cxc/dataset',
 ];

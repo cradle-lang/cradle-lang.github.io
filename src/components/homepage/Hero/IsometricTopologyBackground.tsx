@@ -242,21 +242,21 @@ export function IsometricTopologyBackground(): ReactNode {
             <line x1="412" y1="250" x2="412" y2="187" />
 
             <text className={styles.topologyCodeHeader} x="180" y="47">
-              scenario.cradle
+              HelloWorld.cradle
             </text>
             <text className={styles.topologyCode} x="180" y="78">
               <tspan className={styles.topologyCodeKey} x="180">{'metadata() >'}</tspan>
-              <tspan x="180" dy="11">{'  name("HelloWorld-Win"),'}</tspan>
+              <tspan x="180" dy="11">{'  name("HelloWorld"),'}</tspan>
               <tspan x="180" dy="11">{'  eventType("sequence"),'}</tspan>
               <tspan x="180" dy="11">{'  object("HelloWorld").'}</tspan>
               <tspan className={styles.topologyCodeKey} x="180" dy="15">{'instances() >'}</tspan>
               <tspan x="180" dy="11">{'  instance("win7"),'}</tspan>
               <tspan x="180" dy="11">{'  instance("router").'}</tspan>
               <tspan className={styles.topologyCodeKey} x="180" dy="15">{'events() >'}</tspan>
-              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  mainEvent().'}</tspan>
+              <tspan x="180" dy="11">{'  mainEvent().'}</tspan>
               <tspan className={styles.topologyCodeKey} x="180" dy="15">{'mainEvent() >'}</tspan>
-              <tspan className={styles.eventCodeLine} x="180" dy="11">{'  event("helloworld_event").'}</tspan>
-              <tspan className={`${styles.topologyCodeKey} ${styles.eventCodeLine}`} x="180" dy="15">{'event("helloworld_event") >'}</tspan>
+              <tspan x="180" dy="11">{'  event("initialize_client").'}</tspan>
+              <tspan className={`${styles.topologyCodeKey} ${styles.eventCodeLine}`} x="180" dy="15">{'event("initialize_client") >'}</tspan>
               <tspan className={styles.eventCodeLine} x="180" dy="11">{'  instance("router"),'}</tspan>
               <tspan className={styles.eventCodeLine} x="180" dy="11">{'  needRoot(true),'}</tspan>
               <tspan className={styles.eventCodeLine} x="180" dy="11">{'  description("HelloWorld Event").'}</tspan>
@@ -299,7 +299,7 @@ export function IsometricTopologyBackground(): ReactNode {
           <text x="25" y="17.5">HelloWorld Event</text>
         </g>
 
-        <g className={styles.pingBadge} transform="translate(194 278)">
+        <g className={styles.pingBadge} transform="translate(29 295)">
           <rect width="139" height="28" rx="7" />
           <circle cx="14" cy="14" r="3" />
           <text x="25" y="17.5">ICMP echo request</text>
