@@ -129,8 +129,8 @@ Prospective users can inspect the documented approach directly:
   between CradleXC and target-specific generation;
 - the [language overview](../language/overview) documents the
   human-authored scenario format; and
-- the [developer schema reference](../schema/cradle-schema.md) records the
-  current structured model and its limitations.
+- the [Deployment IR contract](../backend-development/deployment-ir-contract)
+  records the structured model exchanged with backend plugins.
 
 ## Product boundaries
 

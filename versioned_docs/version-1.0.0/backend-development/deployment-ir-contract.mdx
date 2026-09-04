@@ -9,7 +9,7 @@ Deployment IR is the JSON contract between CradleXC and a backend plugin. It con
 
 Plugins should:
 
-- declare a compatible minimum IR version in their manifest;
+- validate that the supplied `ir_version` is supported;
 - parse the JSON permissively and ignore unknown additive fields;
 - avoid assuming provider-specific fields that are not part of the IR; and
 - retain the IR path reported on failures for reproducible debugging.

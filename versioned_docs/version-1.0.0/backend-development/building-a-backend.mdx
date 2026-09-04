@@ -5,11 +5,500 @@ title: Building a Backend
 
 # Building a Backend
 
-1. Choose a backend name and create an executable named `cxc-backend-<name>`.
-2. Implement the manifest required by the plugin protocol.
-3. Accept serialized Deployment IR and an output directory for rendering.
-4. Render target-specific files without modifying CRADLE source.
-5. Place the executable on `PATH` or in `~/.cxc/plugins/`.
-6. Verify discovery with `cxc backend list` and rendering with `cxc emit`.
+A CRADLE backend translates resolved Deployment IR into files for a target
+testbed. It remains separate from the CRADLE language and compiler, so adding a
+target does not require changing scenario syntax or rebuilding CradleXC.
 
-Use the plugin protocol source document and the `cradle-backend-api` crate as the implementation authority. Build tests around a fixed IR fixture so rendering remains repeatable across compiler releases.
+:::important
+Treat the JSON produced by `cxc dump-ir` as the backend's source data. The
+worked translator on this page starts from that JSON, validates its references
+and writes target files without reparsing the `.cradle` scenario.
+:::
+
+Backend executables follow this naming convention:
+
+```text
+cxc-backend-<name>
+```
+
+For example, `cxc-backend-example` is selected with `--target example`.
+
+## Understand the boundary
+
+CradleXC handles parsing, validation and backend-neutral resolution. Backend
+code receives the resulting Deployment IR and translates it into the files
+required by one target.
+
+<div className="architecture-flow architecture-workflow">
+
+  <div>CRADLE source</div>
+  <span>↓</span>
+
+  <div>CradleXC validation and lowering</div>
+  <span>↓</span>
+
+  <div>Deployment IR</div>
+  <span>↓</span>
+
+  <div className="architecture-flow-step-backend">Backend translation</div>
+  <span>↓</span>
+
+  <div>Target-specific files</div>
+
+</div>
+
+Before implementing a target translator, read
+[Hello World: Deployment IR](../examples/hello-world-deployment-ir). It
+contains a complete generated IR example and explains every structure a
+backend consumes.
+
+## Start with an IR fixture
+
+Capture Deployment IR from a small, known scenario:
+
+```bash
+cxc dump-ir -i scenarios/HelloWorld.cradle > fixture.ir.json
+```
+
+Keep this file with the backend's tests. It provides a stable compiler output
+that can be used to develop and verify translation logic independently from the
+scenario parser.
+
+Add more fixtures as backend support grows. Useful cases include:
+
+- multiple networks
+- DHCP and static endpoints
+- Linux and Windows instances
+- routers and computed routes
+- local and remote objects
+- ordered events with dependencies
+- roles and resolved role variables
+
+## Translate the IR, not the source
+
+Backend code should not parse `.cradle` files. CradleXC has already validated
+and resolved the scenario into a deployment-ready structure.
+
+At a minimum, translation logic normally reads:
+
+| IR structure | Typical backend use |
+| --- | --- |
+| `project_name` | Name the target project and generated resources. |
+| `instances` | Define machines, operating systems, resources and provisioning requirements. |
+| `networks` | Define subnets, gateways and target-side network resources. |
+| `interfaces` | Attach each machine to its resolved networks and addresses. |
+| `routes` | Configure static routing where required. |
+| `objects` | Locate artifacts required by instances and events. |
+| event arrays | Produce ordered event-execution definitions. |
+| `boot_order` | Preserve router-first machine ordering. |
+
+Use resolved values exactly as supplied. In particular, do not allocate new
+addresses for endpoints that were written as `DHCP` in source, and do not
+recalculate router or Windows status from configuration names.
+
+## Map the Hello World IR into a target plan
+
+Start by deciding what files your testbed tooling needs. A small backend can
+translate the supplied `HelloWorld` IR into this target-neutral layout:
+
+```text
+output/
+├── project.json
+├── networks.json
+├── instances.json
+├── events.json
+├── artifacts.json
+└── boot-order.txt
+```
+
+The example IR maps into those files as follows:
+
+| IR value | Translation decision |
+| --- | --- |
+| `project_name: "HelloWorld"` | Use it as the target project name. |
+| Network `lan_0` | Create one network plan for `192.168.56.0/24` with gateway `192.168.56.1`. |
+| Endpoint `win7`, `192.168.56.121` | Attach `win7` to `lan_0` at that exact address. |
+| Endpoint `router`, `192.168.56.122` | Attach `router` to `lan_0` at that exact address. |
+| Instance resources | Request the supplied CPU and memory values from the target. |
+| Instance `configs` | Map each identifier to a target-supported image step, role or setup action. Reject an identifier that the backend cannot implement. |
+| Object `HelloWorld` | Make the resolved remote artifact available to the `router` instance using `ttp` and `filename` as destination components. |
+| `main_events` | Preserve the supplied order and execution metadata. Do not invent an action when both `subject` and `run_object` are `null`. |
+| `boot_order: ["router", "win7"]` | Start the router before the Windows instance. |
+
+Empty arrays and `null` values are meaningful. An empty `routes` array means
+that the backend must not invent extra static routes. Empty lifecycle phases
+mean that there is nothing to schedule in those phases.
+
+## Build a runnable translator
+
+The following Python module turns a captured IR fixture into deterministic
+files. It deliberately generates JSON so the data mapping stays visible. In a
+real backend, replace the five writer payloads with the configuration formats
+required by your testbed.
+
+<details>
+<summary>Show the complete Python translator</summary>
+
+```python title="backend/translate.py"
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+
+SUPPORTED_IR_VERSIONS = {1}
+SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+
+
+def load_ir(ir_path: Path) -> dict:
+    with ir_path.open(encoding="utf-8") as handle:
+        ir = json.load(handle)
+
+    version = ir.get("ir_version")
+    if version not in SUPPORTED_IR_VERSIONS:
+        raise ValueError(
+            f"unsupported IR version {version!r}; "
+            f"supported versions: {sorted(SUPPORTED_IR_VERSIONS)}"
+        )
+    return ir
+
+
+def checked_name(value: str, field: str) -> str:
+    if not SAFE_NAME.fullmatch(value):
+        raise ValueError(f"unsafe {field}: {value!r}")
+    return value
+
+
+def index_by(items: list[dict], key: str) -> dict[str, dict]:
+    indexed = {}
+    for item in items:
+        value = item[key]
+        if value in indexed:
+            raise ValueError(f"duplicate {key}: {value!r}")
+        indexed[value] = item
+    return indexed
+
+
+def validate_references(ir: dict) -> None:
+    instances = index_by(ir.get("instances", []), "name")
+    networks = index_by(ir.get("networks", []), "name")
+    objects = index_by(ir.get("objects", []), "id")
+
+    for instance in instances.values():
+        checked_name(instance["name"], "instance name")
+        for interface in instance.get("interfaces", []):
+            if interface["network"] not in networks:
+                raise ValueError(
+                    f"instance {instance['name']!r} references unknown "
+                    f"network {interface['network']!r}"
+                )
+        for object_id in instance.get("objects", []):
+            if object_id not in objects:
+                raise ValueError(
+                    f"instance {instance['name']!r} references unknown "
+                    f"object {object_id!r}"
+                )
+
+    for instance_name in ir.get("boot_order", []):
+        if instance_name not in instances:
+            raise ValueError(
+                f"boot_order references unknown instance {instance_name!r}"
+            )
+
+    boot_order = ir.get("boot_order", [])
+    if len(boot_order) != len(set(boot_order)):
+        raise ValueError("boot_order contains a duplicate instance")
+    if set(boot_order) != set(instances):
+        raise ValueError("boot_order must contain every instance exactly once")
+
+    for phase in ("pre_events", "main_events", "post_events"):
+        for event in ir.get(phase, []):
+            if event["instance"] not in instances:
+                raise ValueError(
+                    f"event {event['name']!r} references unknown instance "
+                    f"{event['instance']!r}"
+                )
+            run_object = event.get("run_object")
+            if run_object and run_object["object_id"] not in objects:
+                raise ValueError(
+                    f"event {event['name']!r} references unknown object "
+                    f"{run_object['object_id']!r}"
+                )
+
+
+def write_json(output_dir: Path, filename: str, value) -> None:
+    destination = output_dir / filename
+    destination.write_text(
+        json.dumps(value, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def translate(ir: dict, output_dir: Path) -> None:
+    validate_references(ir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    instances = index_by(ir.get("instances", []), "name")
+    objects = index_by(ir.get("objects", []), "id")
+
+    instance_plans = []
+    for name in ir.get("boot_order", []):
+        instance = instances[name]
+        instance_plans.append(
+            {
+                "name": name,
+                "image": {
+                    "platform": instance["platform"],
+                    "version": instance["version"],
+                    "architecture": instance["bit"],
+                },
+                "resources": {
+                    "cpu": instance["cpu"],
+                    "memory_mb": instance["memory"],
+                },
+                "interfaces": instance.get("interfaces", []),
+                "routes": instance.get("routes", []),
+                "configs": instance.get("configs", []),
+                "roles": instance.get("roles", []),
+                "artifacts": [
+                    objects[object_id]
+                    for object_id in instance.get("objects", [])
+                ],
+                "is_router": instance.get("is_router", False),
+                "is_windows": instance.get("is_windows", False),
+            }
+        )
+
+    event_plan = {
+        "pre": ir.get("pre_events", []),
+        "main": ir.get("main_events", []),
+        "post": ir.get("post_events", []),
+    }
+
+    write_json(
+        output_dir,
+        "project.json",
+        {
+            "name": ir["project_name"],
+            "ir_version": ir["ir_version"],
+        },
+    )
+    write_json(output_dir, "networks.json", ir.get("networks", []))
+    write_json(output_dir, "instances.json", instance_plans)
+    write_json(output_dir, "events.json", event_plan)
+    write_json(output_dir, "artifacts.json", list(objects.values()))
+    (output_dir / "boot-order.txt").write_text(
+        "\n".join(ir.get("boot_order", [])) + "\n",
+        encoding="utf-8",
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ir", required=True, type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    args = parser.parse_args()
+
+    try:
+        translate(load_ir(args.ir), args.output_dir)
+    except (OSError, KeyError, TypeError, ValueError) as error:
+        print(f"backend translation failed: {error}", file=sys.stderr)
+        raise SystemExit(1) from error
+
+
+if __name__ == "__main__":
+    main()
+```
+
+</details>
+
+Run the translator directly while developing it:
+
+```bash
+python3 backend/translate.py \
+  --ir fixtures/HelloWorld.ir.json \
+  --output-dir build/hello-world
+```
+
+Inspect every generated file before connecting the translator to CradleXC. The
+module must return a nonzero process status and write an actionable message to
+standard error when it cannot safely translate an input.
+
+## Adapt the writers to your testbed
+
+The example separates CRADLE semantics from target syntax. Keep the validation
+and indexing logic, then replace each output with the equivalent accepted by
+your environment:
+
+| Generated model | Replace with your target's format |
+| --- | --- |
+| `networks.json` | Network definitions, virtual switches, subnets or VLAN configuration. |
+| `instances.json` | Machine definitions, image identifiers, resource sizes, interface attachments and setup steps. |
+| `events.json` | Scheduled jobs, playbooks or testbed event instructions. |
+| `artifacts.json` | Artifact download/copy instructions and destination paths. |
+| `boot-order.txt` | Dependency edges or ordered startup instructions. |
+
+Keep provider credentials and site-specific identifiers outside generated
+files where possible. Accept them through the backend's own configuration,
+resolve them at runtime, and never copy secrets into logs or fixtures.
+
+After generation, the user reviews the files and applies them with the tools
+approved for their own testbed. CradleXC supplies the resolved plan; the
+backend owns the target syntax; the testbed tooling owns infrastructure and
+runtime execution.
+
+## Connect the translator to CradleXC
+
+Keep the translator independent from the executable integration layer. The
+integration layer for `cxc-backend-<name>` should be thin:
+
+1. receive the IR file and requested output directory from CradleXC
+2. decode backend-specific settings into a typed configuration
+3. call `load_ir()` and the target-specific equivalent of `translate()`
+4. write only beneath the requested output directory
+5. return success only after every required file has been written
+6. report unsupported IR values and target capabilities as clear errors
+
+Use the backend API from the matching CradleXC release for this integration
+layer rather than duplicating its process-handling logic. Keep all target
+decisions inside the translator so it can still be run and tested directly
+with a captured `dump-ir` fixture.
+
+Name the installed executable after the target. For a target named `lab`, the
+executable is:
+
+```text
+cxc-backend-lab
+```
+
+Place it on `PATH` or in `~/.cxc/plugins/`, make it executable, and verify that
+CradleXC discovers it before testing file generation.
+
+## Keep translation logic testable
+
+Test the translator directly against the captured IR without requiring a live
+testbed:
+
+<details>
+<summary>Show the complete fixture-based test</summary>
+
+```python title="tests/test_translate.py"
+import json
+from pathlib import Path
+
+from backend.translate import load_ir, translate
+
+
+def test_hello_world_translation(tmp_path):
+    ir = load_ir(Path("fixtures/HelloWorld.ir.json"))
+    translate(ir, tmp_path)
+
+    project = json.loads((tmp_path / "project.json").read_text())
+    networks = json.loads((tmp_path / "networks.json").read_text())
+    instances = json.loads((tmp_path / "instances.json").read_text())
+    events = json.loads((tmp_path / "events.json").read_text())
+
+    assert project["name"] == "HelloWorld"
+    assert networks[0]["gateway"] == "192.168.56.1"
+    assert [item["name"] for item in instances] == ["router", "win7"]
+    assert instances[0]["interfaces"][0]["ip"] == "192.168.56.122"
+    assert instances[1]["interfaces"][0]["ip"] == "192.168.56.121"
+    assert events["main"][0]["name"] == "initialize_client"
+```
+
+</details>
+
+Add golden-file tests for the exact target configuration files when formatting
+and ordering are part of the backend's public output. Also add negative fixtures
+for unknown IR versions, missing object references, unsupported configuration
+identifiers and malformed target-specific settings.
+
+## Handle IR compatibility
+
+The top-level `ir_version` identifies the Deployment IR contract. Backend code
+should:
+
+1. read and validate the version before translating the rest of the document
+2. reject versions it cannot safely understand with an actionable error
+3. accept unknown object keys so additive fields do not break older code
+4. avoid depending on JSON key order or whitespace
+5. keep fixtures for every supported IR version
+
+Do not compare raw JSON text. Deserialize it into typed structures or access
+fields by name.
+
+## Generate deterministic output
+
+Given the same IR and backend configuration, target-file generation should
+produce the same result. Deterministic output makes reviews, tests and
+troubleshooting much easier.
+
+Recommended practices include:
+
+- sort generated maps when the target format does not preserve order
+- preserve IR ordering where it carries meaning, especially events and
+  `boot_order`
+- use `provider_name` for target-side network identifiers
+- keep backend-specific image and provider mappings in backend code
+- avoid embedding machine-local temporary paths in generated files
+- fail clearly when a required target capability is unsupported
+
+## Resolve objects safely
+
+Instance and event structures refer to objects by `id`. Resolve those IDs
+against the top-level `objects` array.
+
+Object sources use one of these shapes:
+
+```json
+{"Remote": "https://172.18.178.10:4443/TTP/HelloWorld/artifact/HelloWorld.sh"}
+```
+
+```json
+{"Local": "/absolute/path/file.sh"}
+```
+
+Treat `ttp` and `filename` as resolved destination components. Do not parse the
+original repository placeholder from CRADLE source again.
+
+## Verify discovery and generation
+
+Once the backend package has been installed, confirm that CradleXC can discover
+it:
+
+```bash
+cxc backend list
+```
+
+Then test the public target-file workflow:
+
+```bash
+cxc build \
+  -i scenarios/HelloWorld.cradle \
+  --target example \
+  -o ./output
+```
+
+Inspect the generated directory and compare it with the expected golden files.
+Repeat the check with each supported IR fixture and target configuration.
+
+## Backend checklist
+
+Before publishing a backend:
+
+1. document the supported CradleXC and IR versions
+2. document supported operating systems, configurations and scenario features
+3. validate required external dependencies early
+4. test local and remote artifact handling
+5. test mixed static and DHCP-originated endpoints
+6. preserve lifecycle event and boot ordering
+7. reject unsupported features with clear diagnostics
+8. keep target-specific state and generated files inside the requested output
+   location
+9. test failure paths as well as successful generation
+10. publish compatibility notes alongside each backend release
+
+Use CradleXC's Deployment IR types and backend API as the implementation
+authority. Keep the public backend documentation focused on supported inputs,
+generated outputs and target compatibility.

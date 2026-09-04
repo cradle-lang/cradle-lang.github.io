@@ -112,7 +112,7 @@ cxc dump-ir
 
 ## Backend plugins
 
-Target-specific rendering is provided through external backend plugins.
+Target-specific file generation is provided through external backend plugins.
 
 Backend plugins are installed separately by the user. CradleXC does not include a backend plugin by default.
 
@@ -169,16 +169,16 @@ rather than functionality built directly into CRADLE or CradleXC.
 
 Backend plugins are used when a CRADLE scenario needs to be converted into files for a specific target.
 
-Once a compatible backend plugin is installed, use `cxc emit`:
+Once a compatible backend plugin is installed, use `cxc build`:
 
 ```bash
-cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+cxc build -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
 ```
 
 For example:
 
 ```bash
-cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+cxc build -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
 The backend generates the files required by its target.
@@ -203,7 +203,7 @@ mixed into the core language.
 
 Problems can be isolated to different stages of the workflow:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE scenario</div>
   <span>↓</span>
@@ -211,7 +211,7 @@ Problems can be isolated to different stages of the workflow:
   <div>CradleXC</div>
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
   <span>↓</span>
 
   <div>Generated target files</div>

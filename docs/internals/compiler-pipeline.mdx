@@ -13,4 +13,5 @@ CradleXC treats a scenario as a checked program before it reaches an external ba
 
 The parser reads v2 grammar and local includes. Validation checks references, supported values, networks, event dependencies, and other semantic constraints. HIR is the resolved scenario model; Deployment IR contains backend-ready planning data such as interfaces, routes, artifacts, event order, and boot order.
 
-Use `cxc dump-hir` and `cxc dump-ir` to inspect the two lower-level representations.
+Use `cxc dump-ir` to inspect the backend-facing Deployment IR. HIR remains an
+internal compiler representation and is not exposed by the documented CLI.

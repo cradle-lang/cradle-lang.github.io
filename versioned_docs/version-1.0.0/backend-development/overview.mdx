@@ -5,6 +5,31 @@ title: Backend Development
 
 # Backend Development
 
-A CradleXC backend is an out-of-process executable that consumes Deployment IR and renders target-specific files. It can be implemented in any language and is discovered as `cxc-backend-<name>`.
+A CradleXC backend is an out-of-process executable that consumes Deployment IR
+JSON and generates target-specific files. It can be implemented in any
+language and is discovered as `cxc-backend-<name>`.
 
-The backend boundary keeps provider-specific choices outside the CRADLE language and the compiler. Start with [Plugin Model](./plugin-model), then consult the protocol before implementing a backend.
+The JSON produced by `cxc dump-ir` is the practical starting point for backend
+development. It contains resolved machines, networks, addresses, routes,
+objects, events and startup order, so backend code does not need to parse the
+CRADLE language.
+
+:::important
+Start with the complete
+[Hello World Deployment IR walkthrough](../examples/hello-world-deployment-ir),
+then use [Building a Backend](./building-a-backend) to turn that JSON into
+files for your own testbed.
+:::
+
+## Recommended path
+
+1. Read [Plugin Model](./plugin-model) to understand the boundary.
+2. Generate IR from a known scenario with `cxc dump-ir`.
+3. Study every field in the
+   [Hello World IR example](../examples/hello-world-deployment-ir).
+4. Implement and test the translator in
+   [Building a Backend](./building-a-backend).
+5. Confirm discovery and generate files through `cxc build`.
+
+The backend boundary keeps target-specific choices outside the CRADLE language
+and compiler.

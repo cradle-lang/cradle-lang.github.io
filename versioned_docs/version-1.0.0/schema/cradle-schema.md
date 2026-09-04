@@ -188,7 +188,7 @@ The schema and current reference implementation differ in several material areas
 | Event phases | Phase object containing an `event` array | Compiler output represents each phase directly as an event list. |
 | Event delays | Integers | CRADLE source accepts integers or durations expressed in seconds. |
 | Dependencies | Array of event names | CRADLE source expresses each dependency with `dependsOn("event_name")`. |
-| Extensions | Limited to listed schema properties | The compiler recognizes additional properties such as configurations, descriptions, heuristics, I/O definitions, local repositories, and execution-flow settings. |
+| Extensions | Limited to listed schema properties | The compiler recognizes additional properties such as configurations, descriptions, heuristics, I/O definitions, and local repositories. |
 
 Because of these differences, successfully validating data against the current schema does not guarantee equivalent compiler behavior, and compiler output may not validate against the schema without transformation.
 

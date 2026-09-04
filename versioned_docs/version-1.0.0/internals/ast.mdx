@@ -7,6 +7,7 @@ title: AST
 
 The AST records the parsed CRADLE document: metadata, instances, networks, objects, and event declarations. It preserves the source-level structure before semantic resolution.
 
-`cxc parse -i <scenario.cradle>` displays the parsed AST as JSON. Use it when diagnosing parsing behavior; use `cxc check` for parse-and-validation diagnostics.
+Use `cxc validate` for parse-and-validation diagnostics. The parsed AST itself is
+an internal compiler representation and is not exposed by the documented CLI.
 
 The AST is an implementation representation, not a stable integration contract.

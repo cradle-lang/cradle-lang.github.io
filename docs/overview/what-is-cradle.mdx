@@ -53,8 +53,6 @@ A CRADLE scenario can capture:
 
 These concepts form the main [CRADLE language structure](../language/overview).
 
-Tool developers can also consult the [developer schema reference](../schema/cradle-schema.md) for the current structured model and its limitations.
-
 ## Why teams use CRADLE
 
 ### Repeatability
@@ -96,74 +94,79 @@ separates the CRADLE language and compiler from deployment-specific behavior:
 CRADLE describes what the scenario contains, while backend plugins determine how
 that scenario is represented for a particular target.
 
+## Conceptual lifecycle
+
+A CRADLE scenario moves through five main stages:
+
 <div className="cradle-lifecycle">
 
-    <div className="cradle-lifecycle-step">
-        <div className="cradle-lifecycle-number">1</div>
-        <div className="cradle-lifecycle-content"> <strong>CRADLE source</strong> <span> Define systems, networks, objects and events in a <code>.cradle</code> scenario. The source describes the intended scenario independently of any particular deployment or testbed. </span> </div>
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+
+    <div className="cradle-lifecycle-content">
+      <strong>CRADLE source</strong>
+      <span>
+        Define systems, networks, objects and events in a <code>.cradle</code> scenario.
+      </span>
     </div>
+  </div>
 
-    <div className="cradle-lifecycle-connector">↓</div>
+  <div className="cradle-lifecycle-connector">↓</div>
 
-    <div className="cradle-lifecycle-step">
-        <div className="cradle-lifecycle-number">2</div>
-        <div className="cradle-lifecycle-content">
-          <strong>Validate and process</strong>
-          <span>
-            CradleXC parses the source and checks it for syntactic and semantic errors. This ensures that the scenario is structurally valid and satisfies the constraints defined by the CRADLE language.
-          </span>
-       </div>
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+
+    <div className="cradle-lifecycle-content">
+      <strong>Validate</strong>
+      <span>
+        CradleXC checks the scenario for syntactic and semantic errors.
+      </span>
     </div>
+  </div>
 
-    <div className="cradle-lifecycle-connector">↓</div>
+  <div className="cradle-lifecycle-connector">↓</div>
 
-    <div className="cradle-lifecycle-step">
-        <div className="cradle-lifecycle-number">3</div>
-        <div className="cradle-lifecycle-content">
-          <strong>Compile</strong>
-          <span>
-            Once validation succeeds, CradleXC transforms the scenario into compiled output. The compiler is responsible for processing the CRADLE language; it does not contain deployment-specific logic for individual target tools.
-          </span>
-        </div>
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">3</div>
+
+    <div className="cradle-lifecycle-content">
+      <strong>Compile</strong>
+      <span>
+        CradleXC processes the validated scenario into compiled output.
+      </span>
     </div>
+  </div>
 
-    <div className="cradle-lifecycle-connector">↓</div>
+  <div className="cradle-lifecycle-connector">↓</div>
 
-    <div className="cradle-lifecycle-step cradle-lifecycle-step-backend">
-      <div className="cradle-lifecycle-number">4</div>
-      <div className="cradle-lifecycle-content">
-        <strong>Backend plugin</strong>
-        <span>
-          A compatible backend plugin converts the processed scenario into files for its supported target.
-        </span>
-      </div>
+  <div className="cradle-lifecycle-step cradle-lifecycle-step-backend">
+    <div className="cradle-lifecycle-number">4</div>
+
+    <div className="cradle-lifecycle-content">
+      <strong>Backend plugin</strong>
+      <span>
+        A compatible backend generates files for a specific target.
+      </span>
     </div>
+  </div>
 
-    <div className="cradle-lifecycle-connector">↓</div>
+  <div className="cradle-lifecycle-connector">↓</div>
 
-    <div className="cradle-lifecycle-step">
-      <div className="cradle-lifecycle-number">5</div>
-      <div className="cradle-lifecycle-content">
-        <strong>Generated target files</strong>
-        <span>
-          The generated files can be used with the corresponding tools in the user's own testbed environment.
-        </span>
-      </div>
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">5</div>
+
+    <div className="cradle-lifecycle-content">
+      <strong>Target files</strong>
+      <span>
+        Use the generated files with the corresponding tools in your testbed.
+      </span>
     </div>
+  </div>
 
 </div>
 
-The lifecycle separates the CRADLE language and compiler from target-specific behavior:
-
-**Define.** Describe the intended systems, networks, objects and events.
-
-**Validate.** CradleXC checks the scenario for syntactic and semantic errors.
-
-**Compile.** CradleXC transforms the validated scenario into compiled output.
-
-**Generate target-specific files.** A compatible backend plugin can process the scenario and generate the files required by its target.
-
-The generated files can then be used with the corresponding tools in the user's own testbed environment.
+CRADLE and CradleXC remain independent of target-specific deployment logic.
+Backend plugins handle that translation for each supported target.
 
 ## What you can do with `cxc`
 
@@ -188,7 +191,7 @@ The `cxc` command-line interface provides commands for different stages of the C
     </div>
 
     <code>cxc backend list</code>
-    <code>cxc emit</code>
+    <code>cxc build</code>
   </div>
 
 </div>
@@ -203,9 +206,11 @@ They are used to validate CRADLE syntax, compile scenarios and inspect the inter
 
 `cxc backend list` shows the backend plugins currently available to CradleXC.
 
-`cxc emit` uses a compatible backend plugin to generate target-specific files from a CRADLE scenario.
+`cxc build` uses a compatible backend plugin to generate target-specific files from a CRADLE scenario.
 
-These files are not automatically executed by CradleXC. They can be used with the corresponding tools in the user's own testbed environment.
+:::note
+These files are **not automatically** executed by CradleXC. They can be used with the corresponding tools in the user's own testbed environment.
+:::
 
 ## Backend architecture
 
@@ -259,11 +264,15 @@ This separation helps distinguish problems in the CRADLE scenario from problems 
 
 CRADLE is intended for teams that need cyber-environments to be understandable, repeatable, and maintainable, including:
 
+<div className="audienceList">
+
 - **cybersecurity researchers** conducting controlled experiments
 - **educators and exercise designers** developing repeatable training scenarios
-- **security teams modeling** threat activity or validating defensive capabilities
+- **security teams** modelling threat activity or validating defensive capabilities
 - **engineers** responsible for cyber-range and test-environment definitions
 - **developers** maintaining or extending the CRADLE language and toolchain
+
+</div>
 
 ## Suitable use cases
 
@@ -300,4 +309,4 @@ A scenario being valid CRADLE does not mean every backend supports every feature
 - See a compact scenario in the [Hello World example](../examples/hello-world).
 - Learn how external classification metadata is represented in [Heuristic Annotations](../language/heuristics).
 - Write a complete environment in [Write a scenario](../guides/write-a-scenario).
-- Tool developers can consult the [developer schema reference](../schema/cradle-schema.md).
+- Tool developers can consult the [Deployment IR contract](../backend-development/deployment-ir-contract).

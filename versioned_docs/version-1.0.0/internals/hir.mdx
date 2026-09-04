@@ -7,8 +7,6 @@ title: HIR
 
 HIR is the validated semantic representation of a scenario. By this stage, includes have been merged, named references have been checked, and compiler-recognized scenario concepts have been resolved.
 
-```bash
-cxc dump-hir -i scenarios/Example.cradle
-```
-
-HIR is intended for compiler inspection and diagnostics. Backend authors should use Deployment IR rather than depending on HIR internals.
+HIR is intended for compiler implementation and diagnostics. It is not exposed
+by the documented CLI. Backend authors should inspect Deployment IR with
+`cxc dump-ir` rather than depending on HIR internals.
