@@ -9,11 +9,9 @@ not apply. Comments are guidance and will not appear in the pull request.
 <!-- What changed, why was it needed, and what user, contributor, or maintainer
 outcome does it improve? -->
 
-
 ## Related issue
 
 <!-- Use "Closes #123", "Fixes #123", "Related to #123", or "N/A - <reason>". -->
-
 
 ## Change type
 
@@ -30,13 +28,11 @@ outcome does it improve? -->
 - [ ] Refactor/maintenance
 - [ ] Other:
 
-
 ## Changes made
 
 <!-- Describe the important implementation or documentation changes. Avoid
 repeating the Summary. Mention affected pages, routes, components, versions, or
 user workflows where useful. -->
-
 
 ## Testing and verification
 
@@ -72,7 +68,6 @@ generated-site link checks.
 If a check genuinely does not apply, write `N/A - <reason>` rather than leaving
 the evidence blank. -->
 
-
 ## User-facing evidence
 
 <!-- For UI, layout, responsive-design, animation, or Workbench changes, add
@@ -80,14 +75,12 @@ screenshots or recordings that show the relevant states and viewports. Do not
 include credentials, private infrastructure, or sensitive scenarios. Use
 "N/A - no visible impact" for changes without a user-visible effect. -->
 
-
 ## Documentation and compatibility impact
 
 <!-- State whether this affects commands, configuration, public behavior,
 documentation versions, URLs/routes, or existing user workflows. Describe
 migration, compatibility, or release implications when relevant; otherwise use
 "N/A - <reason>". -->
-
 
 ## Contributor checklist
 
