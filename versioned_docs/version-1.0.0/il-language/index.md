@@ -59,7 +59,7 @@ The documented IL notation covers:
 - object locations
 
 ```{important}
-The current notation does not define a complete mapping for all compiler features, including heuristic annotations, I/O definitions, local repositories, execution-flow settings, advanced wait conditions, and some role details.
+The current notation does not define a complete mapping for all compiler features, including heuristic annotations, I/O definitions, local repositories, advanced wait conditions, and some role details.
 ```
 
 ## Conversion boundaries

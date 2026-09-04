@@ -59,7 +59,7 @@ The documented IL notation covers:
 - object locations
 
 ```{important}
-The current notation does not define a complete mapping for all compiler features, including heuristic annotations, I/O definitions, local repositories, execution-flow settings, advanced wait conditions, and some role details.
+The current notation does not define a complete mapping for all compiler features, including heuristic annotations, I/O definitions, local repositories, advanced wait conditions, and some role details.
 ```
 
 ## Conversion boundaries
@@ -78,4 +78,4 @@ Until an IL implementation is supplied and tested:
 - Review the documented forms in [IL Syntax and Structure](syntax.md).
 - Compare both representations in the [Intermediary Language Example](example.md).
 - Consult the [CRADLE Language Overview](../language/overview) for the formal language.
-- Review the [CRADLE Schema Reference](../schema/cradle-schema.md) for the structured model and current limitations.
+- Review [Deployment IR](../internals/deployment-ir) for the structured compiler model.

@@ -28,7 +28,7 @@ The general relationship is:
 
   <span>↓</span>
 
-  <div>Optional backend plugin</div>
+  <div className="architecture-flow-step-backend">Optional backend plugin</div>
 
   <span>↓</span>
 
@@ -107,7 +107,7 @@ For example:
 metadata() >
     name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 
@@ -192,17 +192,38 @@ This connects both instances to `lan_0` using DHCP.
 
 Conceptually:
 
-<div className="architecture-flow">
+<div
+  className="scenarioNetworkGraph"
+  role="img"
+  aria-label="HelloWorld is connected to router on the lan_0 network"
+>
 
-  <div>HelloWorld</div>
+  <div className="scenarioNetworkGraphHeader">
+    <span>Network</span>
+    <code>lan_0</code>
+  </div>
 
-  <span>↓</span>
+  <div className="scenarioNetworkGraphBody">
 
-  <div>lan_0</div>
+    <div className="scenarioGraphInstance">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>HelloWorld</strong>
+      <code>DHCP</code>
+    </div>
 
-  <span>↓</span>
+    <div
+      className="scenarioGraphConnection"
+      aria-hidden="true"
+    />
 
-  <div>router</div>
+    <div className="scenarioGraphInstance scenarioGraphRouter">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>router</strong>
+      <code>DHCP</code>
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -216,7 +237,7 @@ For example:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 The object is identified by the name:
@@ -324,7 +345,7 @@ Consider:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 The same name is referenced from the instance:
@@ -408,10 +429,8 @@ os("ubuntu", "20.04")
 
 contains two values:
 
-```text
-ubuntu
-20.04
-```
+- ubuntu
+- 20.04
 
 Similarly:
 
@@ -447,8 +466,8 @@ Detailed interpolation behavior is covered in [Objects and Interpolation](./obje
 
 ## Source file example
 
-The canonical HelloWorld-Win source is maintained on the
-[HelloWorld-Win example page](../examples/hello-world). Its top-level sections
+The canonical HelloWorld source is maintained on the
+[HelloWorld example page](../examples/hello-world). Its top-level sections
 appear in this order:
 
 1. `metadata()`

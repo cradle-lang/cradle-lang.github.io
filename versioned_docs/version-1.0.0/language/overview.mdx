@@ -28,7 +28,7 @@ The general relationship is:
 
   <span>↓</span>
 
-  <div>Optional backend plugin</div>
+  <div className="architecture-flow-step-backend">Optional backend plugin</div>
 
   <span>↓</span>
 
@@ -107,7 +107,7 @@ For example:
 metadata() >
     name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 
@@ -216,7 +216,7 @@ For example:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 The object is identified by the name:
@@ -324,7 +324,7 @@ Consider:
 
 ```CRADLE
 object("HelloWorld") >
-    location("${uriRemote}/HelloWorld/object/HelloWorld.sh").
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
 The same name is referenced from the instance:
@@ -447,8 +447,8 @@ Detailed interpolation behavior is covered in [Objects and Interpolation](./obje
 
 ## Source file example
 
-The canonical HelloWorld-Win source is maintained on the
-[HelloWorld-Win example page](../examples/hello-world). Its top-level sections
+The canonical HelloWorld source is maintained on the
+[HelloWorld example page](../examples/hello-world). Its top-level sections
 appear in this order:
 
 1. `metadata()`

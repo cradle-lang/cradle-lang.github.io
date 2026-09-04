@@ -26,7 +26,7 @@ The IL document below is illustrative. The current reference branch does not pro
 ```text
 environment has name ExampleEnvironment
 environment has event type sequence
-environment has repository remote https://example.com/repository
+environment has repository remote https://172.18.178.10:4443
 
 instance Client has os ubuntu 20.04
 instance Client has object InitializationScript
@@ -59,7 +59,7 @@ object InitializationScript has location ${uriRemote}/scripts/initialize.sh
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 
 instances() >

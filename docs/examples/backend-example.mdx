@@ -9,7 +9,7 @@ Backends transform a validated scenario into files for a particular target.
 
 <div className="architecture-chain">
     <div>.cradle source </div> <span>→</span>
-    <div>cxc emit</div> <span>→</span>
+    <div>cxc build</div> <span>→</span>
     <div>external backend</div> <span>→</span>
     <div>target-specific files</div>
 </div>
@@ -17,7 +17,7 @@ Backends transform a validated scenario into files for a particular target.
 ```bash
 cxc validate -i scenarios/Example.cradle
 cxc backend list
-cxc emit -i scenarios/Example.cradle --target <backend> -o ./output
+cxc build -i scenarios/Example.cradle --target <backend> -o ./output
 ```
 
 `<backend>` is provided by an external `cxc-backend-<name>` executable. Generated files are backend-specific and are not automatically executed by CradleXC.

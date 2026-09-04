@@ -18,6 +18,11 @@ events() >
 
 Each phase declares the events that belong to it. Every declared event is then defined in a matching `event("name")` block.
 
+:::important[Sequential execution]
+CRADLE events execute sequentially: one event completes before the next event begins. Use
+`dependsOn()` to make required ordering between named events explicit.
+:::
+
 ## Event lifecycle
 
 CRADLE divides scenario behavior into three phases:
@@ -71,7 +76,6 @@ The current CRADLE reference documents the following event-related properties:
 | `event` | Semantic event name | Structural | Declares an event within a lifecycle phase. |
 | `instance` | Instance name | Schema required | Selects the instance associated with the event. |
 | `needRoot` | `true` or `false` | Schema required | Indicates whether elevated privileges are requested. CradleXC defaults to `false`. |
-| `executionFlow` | Flow type | Compiler extension | Uses `sync` when stated explicitly; synchronous execution is the default. |
 | `subject` | Subject, parameters | Schema required | Identifies the execution subject and optional parameters. |
 | `runObject` | Object name, parameters | Schema required | Selects a declared object and optional parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. CradleXC defaults to `0`. |
@@ -211,20 +215,19 @@ or:
 needRoot(true)
 ```
 
-The current documented values are:
+`needRoot()` accepts a boolean value:
 
-```text
-"true"
-"false"
-```
+| Value   | Meaning                             |
+| ------- | ----------------------------------- |
+| `true`  | Request elevated privileges.        |
+| `false` | Do not request elevated privileges. |
 
-CradleXC currently defaults this property to:
+
+If `needRoot()` is omitted, CradleXC currently defaults to:
 
 ```text
 false
 ```
-
-when it is omitted.
 
 A typical event uses:
 
@@ -427,13 +430,16 @@ event("collect_evidence") >
 
 Conceptually:
 
-<div className="architecture-flow">
+<div className="architecture-flow dependency-flow">
 
-  <div>event("initialize_client")</div>
+  <div><code>event("collect_evidence")</code></div>
 
-  <span>↓</span>
+  <span className="dependency-flow-connector">
+    <span>depends on</span>
+    <strong aria-hidden="true">→</strong>
+  </span>
 
-  <div>event("collect_evidence") depends on event("initialize_client")</div>
+  <div><code>event("initialize_client")</code></div>
 
 </div>
 
@@ -473,22 +479,6 @@ The Hello World example uses this event model.
 ### Explicit dependencies
 
 Use `dependsOn()` to describe ordering relationships between semantic event names while using the supported sequential event model.
-
-## Execution flow
-
-CradleXC recognizes the `executionFlow()` property as a compiler extension.
-
-The supported flow type is:
-
-```text
-sync
-```
-
-Use `executionFlow("sync")` when the property must be stated explicitly. Synchronous execution is also the default when the property is omitted.
-
-:::note
-Asynchronous execution is not currently supported by the Vagrant deployment path.
-:::
 
 ## Schedule an event
 
@@ -658,7 +648,7 @@ cleanup
 postEvent
 ```
 
-The canonical HelloWorld-Win scenario declares all three phases and currently
+The canonical HelloWorld scenario declares all three phases and currently
 places one event in the main phase.
 
 ## Hello World events
@@ -768,7 +758,6 @@ The current schema and CradleXC behavior contain several event-related differenc
 | `waitfor` | The current schema and compiler behavior differ in how dependencies are represented. |
 | `scheduleExecution` | Optional in the current schema. |
 | `description` | Optional in the current schema. |
-| `executionFlow` | Recognized by CradleXC as a compiler extension. |
 | `heuristic` | Recognized by CradleXC as a compiler extension. |
 
 :::note
@@ -903,7 +892,7 @@ Use matching event identifiers consistently.
 - [Objects and Interpolation](./objects-and-interpolation)
 - [Heuristics](./heuristics)
 - [First Scenario](../getting-started/first-scenario)
-- [Developer Schema Reference](../schema/cradle-schema)
+- [Deployment IR](../internals/deployment-ir)
 
 ## Next steps
 

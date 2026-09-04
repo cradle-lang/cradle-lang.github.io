@@ -58,25 +58,38 @@ For example:
 A simple topology might be:
 
 <div
-  className="scenarioTopology"
+  className="scenarioNetworkGraph"
   role="img"
-  aria-label="Client connects to Router through the lan_0 network"
+  aria-label="Client is connected to Router on the lan_0 network"
 >
-  <div className="scenarioTopologyNode">
-    <strong>Client</strong>
-  </div>
 
-  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
-
-  <div className="scenarioTopologyNetwork">
+  <div className="scenarioNetworkGraphHeader">
+    <span>Network</span>
     <code>lan_0</code>
   </div>
 
-  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioNetworkGraphBody">
 
-  <div className="scenarioTopologyNode">
-    <strong>Router</strong>
+    <div className="scenarioGraphInstance">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>Client</strong>
+      <code>DHCP</code>
+    </div>
+
+    <div
+      className="scenarioGraphConnection"
+      aria-hidden="true"
+    />
+
+    <div className="scenarioGraphInstance scenarioGraphRouter">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>Router</strong>
+      <code>192.168.10.1</code>
+
+    </div>
+
   </div>
+
 </div>
 
 The scenario will then connect these components through named references.
@@ -91,7 +104,7 @@ For example:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 ```
 
@@ -133,7 +146,7 @@ sequence
 Use:
 
 ```CRADLE
-repositoryRemote("https://example.com/repository")
+repositoryRemote("https://172.18.178.10:4443")
 ```
 
 to define the remote artifact base location.
@@ -168,12 +181,12 @@ instances() >
 
 This introduces:
 
-```text
-Client
-Router
-```
+- Client
+- Router
 
+:::important
 Each declared instance should have a corresponding definition.
+:::
 
 ## Define the instances
 
@@ -198,17 +211,32 @@ instance("Router") >
 
 The relationship is:
 
-<div className="architecture-flow">
+<div
+  className="instanceDeclarationGraph"
+  role="img"
+  aria-label='instances() declares the Client and Router instances'
+>
 
-  <div>instances()</div>
+  <div className="instanceDeclarationRoot">
+    <code>instances()</code>
+  </div>
 
-  <span>↓</span>
+  <div className="instanceDeclarationBranches" aria-hidden="true">
+    <span className="instanceDeclarationBranch instanceDeclarationBranchLeft" />
+    <span className="instanceDeclarationBranch instanceDeclarationBranchRight" />
+  </div>
 
-  <div>instance("Client")</div>
+  <div className="instanceDeclarationChildren">
 
-  <span>↓</span>
+    <div className="instanceDeclarationNode">
+      <code>instance("Client")</code>
+    </div>
 
-  <div>instance("Router")</div>
+    <div className="instanceDeclarationNode">
+      <code>instance("Router")</code>
+    </div>
+
+  </div>
 
 </div>
 
@@ -221,16 +249,6 @@ os("ubuntu", "20.04")
 ```
 
 to describe the instance operating system.
-
-The current compiler also supports an architecture argument.
-
-For example:
-
-```CRADLE
-os("ubuntu", "20.04", "AMD64")
-```
-
-If architecture is omitted, CradleXC currently defaults it to `AMD64`.
 
 ### Configurations
 
@@ -303,27 +321,38 @@ The endpoint names reference the instances declared earlier.
 Conceptually:
 
 <div
-  className="scenarioTopology"
+  className="scenarioNetworkGraph"
   role="img"
-  aria-label="Client uses DHCP and Router uses 192.168.10.1 on the 192.168.10.0/24 subnet"
+  aria-label="Client is connected to Router on the lan_0 network"
 >
-  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
-    <strong>Client</strong>
-    <code>DHCP</code>
-  </div>
 
-  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
-
-  <div className="scenarioTopologyNetwork">
+  <div className="scenarioNetworkGraphHeader">
+    <span>Network</span>
     <code>192.168.10.0/24</code>
   </div>
 
-  <span className="scenarioTopologyArrow" aria-hidden="true">←</span>
+  <div className="scenarioNetworkGraphBody">
 
-  <div className="scenarioTopologyNode scenarioTopologyEndpoint">
-    <strong>Router</strong>
-    <code>192.168.10.1</code>
+    <div className="scenarioGraphInstance">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>Client</strong>
+      <code>DHCP</code>
+    </div>
+
+    <div
+      className="scenarioGraphConnection"
+      aria-hidden="true"
+    />
+
+    <div className="scenarioGraphInstance scenarioGraphRouter">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>Router</strong>
+      <code>192.168.10.1</code>
+
+    </div>
+
   </div>
+
 </div>
 
 :::important
@@ -364,7 +393,7 @@ declarations and definitions. The object name is introduced earlier through
 `${uriRemote}` references the remote artifact repository defined by:
 
 ```CRADLE
-repositoryRemote("https://example.com/repository")
+repositoryRemote("https://172.18.178.10:4443")
 ```
 
 Conceptually:
@@ -553,20 +582,24 @@ event("collect_evidence") >
 
 Conceptually:
 
-<div
-  className="scenarioTopology scenarioTopologyTwoStep"
-  role="img"
-  aria-label="Collect evidence depends on initialize client"
->
-  <div className="scenarioTopologyValue">
-    <code>initialize_client</code>
+<div className="cradle-lifecycle">
+
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">1</div>
+    <div className="cradle-lifecycle-content">
+      <strong>initialize_client</strong>
+    </div>
   </div>
 
-  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="cradle-lifecycle-connector">↓</div>
 
-  <div className="scenarioTopologyValue">
-    <code>collect_evidence</code>
+  <div className="cradle-lifecycle-step">
+    <div className="cradle-lifecycle-number">2</div>
+    <div className="cradle-lifecycle-content">
+      <strong>collect_evidence</strong>
+    </div>
   </div>
+
 </div>
 
 :::note
@@ -610,7 +643,7 @@ The resulting scenario is:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 
 instances() >
@@ -658,47 +691,122 @@ object("InitializationScript") >
 
 ## Follow the references
 
-The scenario contains several relationships.
+The scenario contains several relationships. Read each chain from left to right to
+trace a name from its declaration to the places where it is used.
 
 ### Instance references
 
-```text
-instances()
-    ↓
-Client
-    ↓
-instance("Client")
-    ↓
-endpoint("Client", ...)
-    ↓
-event instance("Client")
-```
+<div
+  className="referenceTrace"
+  role="img"
+  aria-label='The Client instance is declared, defined and then referenced by a network endpoint and an event'
+>
+
+  <div className="referenceTraceNode">
+    <span className="referenceTraceType">Declaration list</span>
+    <code>instances()</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceNode referenceTraceNodePrimary">
+    <span className="referenceTraceType">Client instance</span>
+    <code>instance("Client")</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceUses">
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Network reference</span>
+      <code>endpoint("Client", …)</code>
+    </div>
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Event reference</span>
+      <code>instance("Client")</code>
+    </div>
+
+  </div>
+
+</div>
 
 ### Object references
 
-```text
-metadata()
-    ↓
-InitializationScript
-    ↓
-object("InitializationScript")
-    ↓
-instance association
-    ↓
-runObject("InitializationScript", "")
-```
+<div
+  className="referenceTrace"
+  role="img"
+  aria-label='The InitializationScript object is declared and then referenced by an instance and an event'
+>
+
+  <div className="referenceTraceNode">
+    <span className="referenceTraceType">Declaration list</span>
+    <code>metadata()</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceNode referenceTraceNodePrimary">
+    <span className="referenceTraceType">Object</span>
+    <code>object("InitializationScript")</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceUses">
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Instance association</span>
+      <code>object("InitializationScript")</code>
+    </div>
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Event reference</span>
+      <code>runObject("InitializationScript", "")</code>
+    </div>
+
+  </div>
+
+</div>
 
 ### Network references
 
-```text
-networks()
-    ↓
-lan_0
-    ↓
-network("lan_0")
-    ↓
-Client + Router endpoints
-```
+<div
+  className="referenceTrace"
+  role="img"
+  aria-label='The lan_0 network is declared and then referenced by the Client and Router endpoints'
+>
+
+  <div className="referenceTraceNode">
+    <span className="referenceTraceType">Declaration list</span>
+    <code>networks()</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceNode referenceTraceNodePrimary">
+    <span className="referenceTraceType">Network</span>
+    <code>network("lan_0")</code>
+  </div>
+
+  <div className="referenceTraceConnector" aria-hidden="true">↓</div>
+
+  <div className="referenceTraceUses">
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Endpoint reference</span>
+      <code>Client</code>
+    </div>
+
+    <div className="referenceTraceUse">
+      <span className="referenceTraceType">Endpoint reference</span>
+      <code>Router</code>
+    </div>
+
+  </div>
+
+</div>
 
 Names should remain consistent throughout these relationships.
 
@@ -761,7 +869,7 @@ cxc backend list
 Then generate the target-specific files:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/ExampleEnvironment.cradle \
   --target <plugin_name> \
   -o ./output
@@ -784,8 +892,7 @@ A practical scenario-authoring workflow is:
 3. Define scenario metadata.
 4. Declare and define instances.
 5. Declare and define networks.
-6. Confirm that objects are declared in metadata and associated with the
-   intended instances.
+6. Confirm that objects are declared in metadata and associated with the intended instances.
 7. Define the event lifecycle.
 8. Add events and dependencies.
 9. Finish with the object definitions.
@@ -795,49 +902,70 @@ A practical scenario-authoring workflow is:
 13. Compile the scenario.
 14. Generate target-specific files only when required.
 
-<div className="architecture-flow">
+At a high level:
 
-  <div>Plan scenario</div>
+<div className="architecture-flow architecture-workflow authoring-workflow">
 
-  <span>↓</span>
-
-  <div>Write CRADLE source</div>
-
-  <span>↓</span>
-
-  <div>Validate</div>
+  <div>
+    <span>Author</span>
+    <small>Plan and write the CRADLE scenario.</small>
+  </div>
 
   <span>↓</span>
 
-  <div>Compile</div>
+  <div>
+    <span>Verify</span>
+    <small>Check references and validate the source.</small>
+  </div>
 
   <span>↓</span>
 
-  <div>Optional backend generation</div>
+  <div>
+    <span>Inspect and compile</span>
+    <small>Inspect the IR if needed, then compile the scenario.</small>
+  </div>
+
+  <span>↓</span>
+
+  <div className="architecture-flow-step-backend">
+    <span>Generate target files</span>
+    <small>Use a backend plugin only when target-specific output is required.</small>
+  </div>
 
 </div>
 
 ## Authoring checklist
 
-Before considering a scenario complete, verify that:
+Before considering a scenario complete, verify the following.
 
-- `metadata()` identifies the scenario
-- objects used by the scenario are declared
-- every instance is declared in `instances()`
-- every declared instance has a matching definition
-- every network is declared in `networks()`
-- every declared network has a matching definition
-- network endpoints reference valid instances
-- every object has a matching definition
-- object references use consistent names
-- lifecycle phases are declared
-- every event belongs to the intended phase
-- every event has a matching definition
-- event instance references resolve
-- `runObject()` references resolve
-- dependency references resolve
-- repository values do not expose credentials
-- the scenario passes `cxc validate`
+### Scenario and objects
+
+- `metadata()` identifies the scenario.
+- All objects used by the scenario are declared.
+- Every object has a matching definition.
+- Object references use consistent names.
+- Repository values do not expose credentials.
+
+### Instances and networks
+
+- Every instance is declared in `instances()`.
+- Every declared instance has a matching definition.
+- Every network is declared in `networks()`.
+- Every declared network has a matching definition.
+- Network endpoints reference valid instances.
+
+### Events and references
+
+- Lifecycle phases are declared.
+- Every event belongs to the intended phase.
+- Every event has a matching definition.
+- Event instance references resolve.
+- `runObject()` references resolve.
+- Dependency references resolve.
+
+### Validation
+
+- The scenario passes `cxc validate`.
 
 ## Keep source and generated files separate
 

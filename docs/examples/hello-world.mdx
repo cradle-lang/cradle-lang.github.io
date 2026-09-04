@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: Hello World
-description: View the canonical, valid HelloWorld-Win CRADLE scenario used throughout the onboarding documentation and Workbench.
+description: View the canonical, valid HelloWorld CRADLE scenario used throughout the onboarding documentation and Workbench.
 ---
 
 # Hello World
@@ -9,14 +9,17 @@ description: View the canonical, valid HelloWorld-Win CRADLE scenario used throu
 This complete scenario defines a Windows instance, a Linux router, one
 network, one external object, and one main event.
 
-The public example uses a placeholder artifact repository. Replace it with an
-authorized repository when running the scenario in your environment.
+This page reproduces the repository value and artifact path from the canonical
+`HelloWorld.cradle` file.
+
+<details>
+<summary>Show the complete HelloWorld.cradle source</summary>
 
 ```cradle
 metadata() >
-    name("HelloWorld-Win"),
+    name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 
 instances() >
@@ -68,6 +71,8 @@ object("HelloWorld") >
     location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
 ```
 
+</details>
+
 Save the source as `scenarios/HelloWorld.cradle`, then validate and compile it:
 
 ```bash
@@ -77,3 +82,12 @@ cxc compile -i scenarios/HelloWorld.cradle -o HelloWorld.yml
 
 Configuration and artifact availability depend on the selected CRADLE
 environment and backend.
+
+## Generated output examples
+
+- [Hello World: Compiled YAML](./hello-world-compiled-yaml) shows how the
+  source is represented after compilation.
+- [Hello World: Deployment IR](./hello-world-deployment-ir) shows the resolved
+  data consumed by backend plugins.
+- [Inspect Output](../getting-started/inspect-output) explains when to use each
+  representation.

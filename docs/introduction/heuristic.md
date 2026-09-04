@@ -139,4 +139,4 @@ Heuristic annotations should provide classification context only. They must not 
 - [CRADLE Language Structure](sections.md)
 - [Hello World Example](helloworld.md)
 - [Write a scenario](../guides/write-a-scenario)
-- [Developer schema reference](../schema/cradle-schema.md)
+- [Deployment IR contract](../backend-development/deployment-ir-contract)

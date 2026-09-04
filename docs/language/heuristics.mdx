@@ -5,10 +5,14 @@ title: Heuristic Annotations
 
 # Heuristic Annotations
 
-The `heuristic` property adds semantic context to a CRADLE instance, event or object. It associates a scenario element with a framework name and an external identifier without changing the element's core definition.
+The `heuristic` property associates a CRADLE element with a supported security
+framework and identifier. On an instance, it can also add provisioning tasks to
+backend-generated output when matching heuristic content is available.
 
 :::important
-The current compiler preserves heuristic values as metadata. It does not verify framework names, validate identifier formats, retrieve framework records, calculate risk or enforce where a framework can be used.
+Only instance-level heuristics currently reach the deployment IR and generated
+provisioning playbook. Heuristics on metadata, events and objects are parsed, but
+they do not change backend output.
 :::
 
 ## Syntax
@@ -17,14 +21,15 @@ The current compiler preserves heuristic values as metadata. It does not verify 
 heuristic("<framework>", "<identifier>")
 ```
 
-The current compiler consumes two values:
+For identifier-based frameworks, the compiler consumes two string values:
 
 | Argument | Description | Example |
 | --- | --- | --- |
 | Framework | Name or key identifying the external classification system | `cve` |
 | Identifier | Identifier or framework-specific value | `CVE-2024-1086` |
 
-Use one framework-identifier pair per declaration. Repeat `heuristic` when an element needs multiple annotations.
+Use one framework-identifier pair per declaration. Repeat `heuristic` when an
+instance needs multiple annotations.
 
 ```CRADLE
 heuristic("cve", "CVE-2024-1086"),
@@ -33,36 +38,59 @@ heuristic("cwe", "CWE-89")
 
 Do not combine several identifiers into one comma-separated value. Separate declarations remain easier to validate, search and transform.
 
-## Supported contexts
+Framework keys are parsed case-insensitively and normalized to lowercase. The
+current compiler recognizes exactly these keys:
+
+- `cve`
+- `ttp`
+- `mbc`
+- `cwe`
+- `d3fend`
+- `capec`
+- `killchain`
+- `fair`
+
+An unknown key, such as `cvee`, is an error. Earlier compiler behavior silently
+treated an unknown key as `cve`; it no longer does so.
+
+## Where heuristics take effect
 
 The current compiler recognizes heuristic annotations on:
 
-| Context | Typical purpose |
+| Context | Current behavior |
 | --- | --- |
-| Instance | Describe a system's vulnerability, defensive function, weakness or scenario role. |
-| Event | Describe behavior, technique, attack phase or risk context associated with an event. |
-| Object | Describe the capability, weakness or classification of an artifact. |
+| Instance | Validated, lowered into the deployment IR and rendered into provisioning output. |
+| Metadata | Parsed as an annotation; not included in deployment output. |
+| Event | Parsed as an annotation; not included in deployment output. |
+| Object | Parsed as an annotation; not included in deployment output. |
 
 :::note
-These are compiler contexts, not framework-enforced rules. The compiler does not reject an annotation solely because its framework is unusual for that context.
+Place a heuristic on an instance when it is expected to affect a build. Other
+placements should be treated as descriptive annotations only.
 :::
 
-## Documented framework conventions
+## Framework and identifier checks
 
-The following keys are conventions used by the existing documentation and examples. They are not a compiler allowlist.
+The compiler checks instance heuristic identifiers against these shapes:
 
-| Framework key | External framework or model | Common context | Example value |
-| --- | --- | --- | --- |
-| `cve` | Common Vulnerabilities and Exposures | Instance | `CVE-2024-1086` |
-| `ttp` | MITRE ATT&CK technique or sub-technique | Event, instance | `T1059.004` |
-| `mbc` | Malware Behavior Catalog | Object | `F0002` |
-| `cwe` | Common Weakness Enumeration | Instance, object | `CWE-89` |
-| `d3fend` | MITRE D3FEND | Instance | `D3-SCA` |
-| `capec` | Common Attack Pattern Enumeration and Classification | Event, object | `CAPEC-66` |
-| `killchain` | Cyber Kill Chain phase | Event | `Exploitation` |
-| `fair` | Factor Analysis of Information Risk data | Instance, event | Framework-specific key-value text |
+| Framework key | Expected value | Example |
+| --- | --- | --- |
+| `cve` | `CVE-<four-digit year>-<four or more digits>` | `CVE-2024-1086` |
+| `ttp` | `T` plus four digits, optionally followed by a three-digit sub-technique | `T1566.001` |
+| `mbc` | `OB`, `B`, `C`, `E` or `F` plus four digits, optionally followed by three digits | `C0046` |
+| `cwe` | `CWE-` plus one to four digits | `CWE-79` |
+| `d3fend` | `D3-` plus an alphanumeric abbreviation | `D3-IPA` |
+| `capec` | `CAPEC-` plus one to four digits | `CAPEC-160` |
+| `killchain` | One of the seven Cyber Kill Chain phases | `command-and-control` |
+| `fair` | No identifier-shape check | See [FAIR values](#fair-values). |
 
-Framework identifiers evolve independently of CRADLE. Scenario authors and reviewers are responsible for confirming that a referenced identifier exists, is current and is appropriate for the annotated element.
+An unfamiliar identifier shape produces a warning rather than an error because
+external frameworks can evolve independently of CRADLE. The compiler does not
+look up the identifier in an external framework registry.
+
+Except for `fair`, an instance heuristic value must also be a safe single path
+segment: letters, digits, `.`, `_` and `-` are allowed, while path separators,
+an empty value, `.` and `..` are rejected.
 
 ## Examples by context
 
@@ -103,24 +131,83 @@ Existing documentation uses the `fair` key with semicolon-separated `key=value` 
 heuristic("fair", "controlStrengthMostLikely=75;primaryLossResponseMostLikely=50000")
 ```
 
-The current compiler stores the entire second argument as one heuristic identifier. It does not parse the key-value pairs, validate ranges, apply distributions, perform Monte Carlo simulation or calculate financial risk.
+The parser also accepts a structured form:
+
+```CRADLE
+heuristic("fair", { threat_event_frequency = 2 })
+```
+
+FAIR values are exempt from the normal identifier and content checks. The
+compiler does not validate the fields, preserve the structured block in
+deployment output, apply distributions, run simulations or calculate risk.
+
+Do not use either FAIR form as an instance provisioning reference. Structured
+fields are not carried into the deployment IR, and FAIR data is not a valid
+setup-template identifier for a backend to resolve.
 
 :::note
-FAIR parameter names, units, ranges and calculation behavior require a separately defined and versioned contract before they can be presented as a supported analytical feature.
+FAIR remains annotation syntax rather than a supported provisioning or
+analytical feature.
 :::
 
-## Validation responsibilities
+## Provisioning content
 
-A complete heuristic-validation layer would need to check:
+An instance heuristic resolves against `heuristics_dir` using this layout:
 
-- whether the framework key is recognized
-- whether the identifier matches the framework's syntax
-- whether the identifier exists in the selected framework version
-- whether the annotation is appropriate for its CRADLE context
-- whether duplicate or conflicting annotations are allowed
-- whether framework-specific values have valid types, units and ranges
+```text
+heuristics/
+└── <framework>/
+    └── <identifier>/
+        └── ansible/
+            └── <identifier>.j2
+```
 
-These checks are not performed by the current grammar or JSON Schema.
+For example, `heuristic("cve", "CVE-2024-1086")` resolves to:
+
+```text
+<heuristics_dir>/cve/CVE-2024-1086/ansible/CVE-2024-1086.j2
+```
+
+The template is rendered into the instance's generated provisioning playbook.
+Assets can live beside the heuristic folder and can be referenced by the
+template through `config_asset_dir`.
+
+`heuristics_dir` may be a local directory or a Git repository configured for
+CradleXC. When it is a repository, `cxc build`, `cxc rebuild` and the
+development deployment commands fetch referenced heuristic subtrees on demand.
+
+List locally available heuristic content with:
+
+```bash
+cxc heuristics list
+```
+
+or inspect another directory with:
+
+```bash
+cxc heuristics list --heuristics-dir <path>
+```
+
+:::note
+Heuristic provisioning is setup-only. Replacing or removing a heuristic can
+mark an instance for reprovisioning, but CradleXC does not render teardown tasks
+for the removed heuristic.
+:::
+
+## Validation behavior
+
+Current instance-level diagnostics include:
+
+- unknown framework: error
+- empty non-FAIR value: error
+- unsafe path value: error
+- unexpected identifier shape: warning
+- no matching content in a resolved `heuristics_dir`: warning
+
+`cxc validate` performs syntax and identifier checks without loading
+`heuristics_dir`. Commands that prepare backend output also resolve heuristic
+content; if an instance heuristic has no setup template, rendering can fail even
+though the content diagnostic itself is a warning.
 
 ## Maintenance guidance
 
@@ -133,7 +220,8 @@ When introducing a framework convention:
 5. Add positive and negative test cases.
 6. Record the supported framework version or retrieval date.
 
-Heuristic annotations should provide classification context only. They must not be treated as authorization, proof that a vulnerability exists or evidence that an event occurred.
+Heuristic annotations must not be treated as authorization, proof that a
+vulnerability exists or evidence that an event occurred.
 
 ## Related documentation
 
@@ -143,4 +231,4 @@ Heuristic annotations should provide classification context only. They must not 
 - [Events and Dependencies](./events-and-dependencies)
 - [Objects and Interpolation](./objects-and-interpolation)
 - [First Scenario](../getting-started/first-scenario)
-- [Developer Schema Reference](../schema/cradle-schema)
+- [Deployment IR](../internals/deployment-ir)

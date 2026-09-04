@@ -26,7 +26,7 @@ The current CRADLE reference documents the following instance-related properties
 | Property | Arguments | Status | Description |
 | --- | --- | --- | --- |
 | `instance` | Instance name | Structural | Declares an instance. Repeat for multiple systems. |
-| `os` | Platform, version, architecture | Schema required | Describes the operating system. Architecture is optional in CradleXC and defaults to `AMD64`. |
+| `os` | Platform, version, architecture | Schema required | Describes the operating system. |
 | `object` | Object name | Schema required | Associates a declared object with the instance. Repeat for multiple objects. |
 | `config` | Configuration name | Compiler extension | Associates a predefined configuration with the instance. Repeat for multiple configurations. |
 | `io` | I/O definition name | Compiler extension | Associates a predefined input/output definition with the instance. |
@@ -48,10 +48,8 @@ instances() >
 
 This declares two systems:
 
-```text
-Client
-Router
-```
+- Client
+- Router
 
 Each declared instance should have a matching named definition.
 
@@ -105,27 +103,13 @@ Use `os()` to describe the operating system associated with an instance.
 The documented form is:
 
 ```CRADLE
-os("platform", "version", "architecture")
+os("platform", "version")
 ```
-
-For example:
-
-```CRADLE
-os("ubuntu", "20.04", "AMD64")
-```
-
-The architecture argument is optional in the current CradleXC behavior.
 
 For example:
 
 ```CRADLE
 os("ubuntu", "20.04")
-```
-
-If the architecture is omitted, CradleXC currently defaults it to:
-
-```text
-AMD64
 ```
 
 A complete instance example is:
@@ -213,7 +197,7 @@ instance("Client") >
     config("linux-sysdig").
 ```
 
-The canonical HelloWorld-Win scenario uses two instance definitions. The
+The canonical HelloWorld scenario uses two instance definitions. The
 Windows instance declares its operating system and configurations:
 
 ```CRADLE
@@ -236,29 +220,6 @@ instance("router") >
 :::note
 `config()` is currently documented as a CradleXC compiler extension. Configuration availability depends on the environment, backend and CRADLE distribution being used.
 :::
-
-## I/O definitions
-
-CradleXC also recognizes the `io()` property.
-
-The documented form is:
-
-```CRADLE
-io("definition")
-```
-
-For example:
-
-```CRADLE
-instance("Client") >
-    io("ExampleIO").
-```
-
-This associates a predefined input/output definition with the instance.
-
-`io()` is currently documented as a compiler extension.
-
-Use it only where the selected CRADLE release and environment provide the corresponding I/O definition.
 
 ## Roles
 
@@ -425,26 +386,43 @@ network("lan_0") >
 
 The endpoint names:
 
-```text
-Client
-Router
-```
+- Client
+- Router
 
 refer to the instances declared earlier.
 
 Conceptually:
 
-<div className="architecture-flow">
+<div
+  className="scenarioNetworkGraph"
+  role="img"
+  aria-label="HelloWorld is connected to router on the lan_0 network"
+>
 
-  <div>instance("Client")</div>
+  <div className="scenarioNetworkGraphHeader">
+    <span>Network</span>
+    <code>lan_0</code>
+  </div>
 
-  <span>↓</span>
+  <div className="scenarioNetworkGraphBody">
 
-  <div>network("lan_0")</div>
+    <div className="scenarioGraphInstance">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>HelloWorld</strong>
+    </div>
 
-  <span>↓</span>
+    <div
+      className="scenarioGraphConnection"
+      aria-hidden="true"
+    />
 
-  <div>instance("Router")</div>
+    <div className="scenarioGraphInstance scenarioGraphRouter">
+      <span className="scenarioGraphInstanceType">Instance</span>
+      <strong>Router</strong>
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -545,10 +523,9 @@ The documented differences include:
 
 | Property | Current behavior |
 | --- | --- |
-| `os` | Required by the current schema. Architecture is optional in CradleXC and defaults to `AMD64`. |
+| `os` | Required by the current schema. |
 | `object` | Required by the current schema for associated objects. |
 | `config` | Recognized by CradleXC but not represented by the current schema in the same way. |
-| `io` | Recognized by CradleXC as a compiler extension. |
 | `role` | Recognized by the schema and compiler, with a compiler-specific collection, role and variables form. |
 | `description` | Recognized by CradleXC as a compiler extension. |
 | `heuristic` | Recognized by CradleXC as a compiler extension. |

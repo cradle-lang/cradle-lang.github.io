@@ -7,6 +7,9 @@ title: Networking
 
 Networks declare a subnet and the instances attached to it. Use `DHCP` where the backend should allocate an address, or provide a static address.
 
+<details>
+<summary>Show the complete networking example</summary>
+
 ```cradle
 networks() >
     network("internal"),
@@ -22,6 +25,8 @@ network("dmz") >
     endpoint("router", "192.168.57.1"),
     endpoint("server", "192.168.57.10").
 ```
+
+</details>
 
 The router belongs to both networks, so it can be used by a backend to establish the required routes. Every endpoint name must match a declared instance.
 

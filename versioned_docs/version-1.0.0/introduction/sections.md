@@ -74,7 +74,7 @@ The `metadata()` block identifies the scenario and the artifacts it uses.
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 ```
 
@@ -177,7 +177,6 @@ Each phase lists named events, and every event is described in a matching `event
 | `event` | Semantic event name | Structural | Declares an event within a phase. |
 | `instance` | Instance name | Schema required | Selects the instance associated with the event. |
 | `needRoot` | `true` or `false` | Schema required | Indicates whether elevated privileges are requested. The compiler defaults to `false`. |
-| `executionFlow` | Flow type | Compiler extension | Uses `sync` when stated explicitly; synchronous execution is the default. |
 | `subject` | Subject, parameters | Schema required | Identifies the execution subject and optional parameters. |
 | `runObject` | Object name, parameter map | Schema required | Selects a declared object and optional structured parameters. |
 | `pauseBeforeRun` | Duration in seconds | Schema optional | Adds a delay before the event. The compiler defaults to `0`. |
@@ -223,7 +222,7 @@ The current reference sources contain differences that maintainers should resolv
 
 - The grammar validates generic identifiers and typed arguments but does not enforce recognized property names, argument counts, or allowed values.
 - The schema requires metadata properties, instance operating systems and objects, and network subnets and endpoints; the compiler supplies defaults or empty values for some of them.
-- The compiler recognizes `repositoryLocal`, `config`, `io`, `description`, `heuristic`, and `executionFlow` in contexts not represented by the current schema.
+- The compiler recognizes `repositoryLocal`, `config`, `io`, `description`, and `heuristic` in contexts not represented by the current schema.
 - The language uses `dependsOn()` for event dependencies.
 - The schema and compiler represent some values differently, including event delays and endpoint details.
 

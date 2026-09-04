@@ -36,19 +36,13 @@ For example:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 ```
 
-This declares an object named:
-
-```text
-InitializationScript
-```
-
-The declaration does not define where the artifact is located.
-
-That is done in a separate object definition.
+Here, `InitializationScript` is the object's shared identifier. This declaration
+registers the name, but it does not say where the artifact is located. The
+location belongs in a separate object definition.
 
 ## Define an object
 
@@ -61,31 +55,34 @@ object("InitializationScript") >
     location("${uriRemote}/scripts/initialize.sh").
 ```
 
-The object name:
+The definition must use the same object name as the declaration in `metadata()`.
 
-```text
-InitializationScript
-```
+The relationship is:
 
-matches the declaration in `metadata()`.
+<div
+  className="architecture-flow architecture-workflow authoring-workflow"
+  role="img"
+  aria-label="Declare the InitializationScript object in metadata, define its location in a matching object block, then CradleXC resolves that location to the external artifact"
+>
 
-Conceptually:
-
-<div className="architecture-flow">
-
-  <div>metadata()</div>
-
-  <span>↓</span>
-
-  <div>object("InitializationScript") declaration</div>
+  <div>
+    <span>Declare the object</span>
+    <small><code>metadata()</code> registers the name <code>InitializationScript</code>.</small>
+  </div>
 
   <span>↓</span>
 
-  <div>object("InitializationScript") definition</div>
+  <div>
+    <span>Define the object</span>
+    <small><code>object("InitializationScript")</code> assigns its <code>location()</code>.</small>
+  </div>
 
   <span>↓</span>
 
-  <div>Artifact location</div>
+  <div>
+    <span>Resolve the artifact</span>
+    <small>The location identifies the external file used by the scenario.</small>
+  </div>
 
 </div>
 
@@ -101,7 +98,7 @@ For example:
 
 ```CRADLE
 object("InitializationScript") >
-    location("https://example.com/repository/scripts/initialize.sh").
+    location("https://172.18.178.10:4443/scripts/initialize.sh").
 ```
 
 The location can also be built from a repository value defined in metadata:
@@ -125,7 +122,7 @@ For example:
 
 ```CRADLE
 metadata() >
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 
 object("InitializationScript") >
@@ -141,13 +138,13 @@ ${uriRemote}
 refers to:
 
 ```text
-https://example.com/repository
+https://172.18.178.10:4443
 ```
 
 The resulting artifact location is conceptually:
 
 ```text
-https://example.com/repository/scripts/initialize.sh
+https://172.18.178.10:4443/scripts/initialize.sh
 ```
 
 The base repository is defined once and reused by the object definition.
@@ -160,17 +157,17 @@ Without interpolation:
 
 ```CRADLE
 object("InitializationScript") >
-    location("https://example.com/repository/scripts/initialize.sh").
+    location("https://172.18.178.10:4443/scripts/initialize.sh").
 
 object("CollectEvidence") >
-    location("https://example.com/repository/scripts/collect-evidence.sh").
+    location("https://172.18.178.10:4443/scripts/collect-evidence.sh").
 ```
 
 With interpolation:
 
 ```CRADLE
 metadata() >
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript"),
     object("CollectEvidence").
 
@@ -184,7 +181,7 @@ object("CollectEvidence") >
 Changing the repository base then requires changing only:
 
 ```CRADLE
-repositoryRemote("https://example.com/repository")
+repositoryRemote("https://172.18.178.10:4443")
 ```
 
 rather than every object location.
@@ -199,7 +196,7 @@ For example:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript"),
     object("CollectEvidence"),
     object("CleanupScript").
@@ -342,9 +339,9 @@ The Hello World scenario declares its object in metadata:
 
 ```CRADLE
 metadata() >
-    name("HelloWorld-Win"),
+    name("HelloWorld"),
     eventType("sequence"),
-    repositoryRemote("https://artifacts.example.org"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("HelloWorld").
 ```
 
@@ -380,7 +377,8 @@ The complete reference path is therefore:
 </div>
 
 :::note
-The public Hello World example uses `https://artifacts.example.org` as a placeholder repository. It does not host the example artifact.
+This repository and object path match the canonical `HelloWorld.cradle` file.
+Confirm that the repository is authorized and reachable before deployment.
 :::
 
 ## Local repositories
@@ -533,7 +531,7 @@ The relationship is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -666,7 +664,7 @@ unless that variable is explicitly supported by the CRADLE release you are using
 - [Events and Dependencies](./events-and-dependencies)
 - [Heuristics](./heuristics)
 - [First Scenario](../getting-started/first-scenario)
-- [Developer Schema Reference](../schema/cradle-schema)
+- [Deployment IR](../internals/deployment-ir)
 
 ## Next steps
 

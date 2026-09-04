@@ -7,6 +7,9 @@ title: Event Dependencies
 
 Events belong to `preEvent`, `mainEvent`, or `postEvent`. Use semantic names and `dependsOn()` to express an ordering requirement.
 
+<details>
+<summary>Show the complete event-dependency example</summary>
+
 ```cradle
 events() >
     preEvent(),
@@ -37,5 +40,7 @@ event("run_test") >
     dependsOn("prepare_target"),
     scheduleExecution("2024-01-01T00:01:00+00:00").
 ```
+
+</details>
 
 Omit `dependsOn()` when no explicit dependency is needed.

@@ -63,7 +63,7 @@ Example:
 ```text
 environment has name ExampleEnvironment
 environment has event type sequence
-environment has repository remote https://example.com/repository
+environment has repository remote https://172.18.178.10:4443
 ```
 
 The documented IL notation does not contain a separate object-declaration statement for metadata. A manual translation must collect object names from instance, event, and object-location statements and declare them in CRADLE metadata.
@@ -183,7 +183,7 @@ Object names must be added to CRADLE metadata and must match instance and event 
 | Roles | Partial | The current three-part role form supersedes older two-part IL examples. |
 | Networks | Basic | Platform-specific network behavior is not represented. |
 | Event phases | Basic | Phase membership is represented one event at a time. |
-| Events | Partial | Execution flow, advanced waits, and heuristics are not defined. |
+| Events | Partial | Advanced waits and heuristics are not defined. |
 | Objects | Basic | Location is represented; heuristic annotations are not defined. |
 
 ## Translation checks
@@ -203,4 +203,4 @@ When translating an IL document into formal CRADLE, verify that:
 - [Intermediary Language](index.md)
 - [Intermediary Language Example](example.md)
 - [CRADLE Language Overview](../language/overview)
-- [CRADLE Schema Reference](../schema/cradle-schema.md)
+- [Deployment IR](../internals/deployment-ir)

@@ -54,7 +54,7 @@ If validation reports an error, correct the source and run the command again.
 
 A typical workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>Edit CRADLE source</div>
 
@@ -376,7 +376,7 @@ This can help you compare the authored source with the structure interpreted by 
 
 A useful diagnostic flow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -441,11 +441,11 @@ As a result, a scenario can expose differences between:
 Examples documented in the current language reference include:
 
 - `eventType` is required by the schema while CradleXC can default it to `sequence`
-- instance architecture can default to `AMD64`
+- instance architecture
 - network subnet handling differs between the schema and compiler
 - endpoint addressing can default to `DHCP`
 - `repositoryLocal` is recognized as a compiler extension
-- `config`, `io`, `description`, `heuristic` and `executionFlow` include compiler-specific behavior
+- `config`, `description` and `heuristic` include compiler-specific behavior
 - event dependencies use `dependsOn()` references
 
 :::important
@@ -481,7 +481,6 @@ Documented examples include:
 | Property | Current default behavior |
 | --- | --- |
 | `eventType` | `sequence` when omitted |
-| Instance architecture | `AMD64` when omitted |
 | Endpoint address | `DHCP` when omitted |
 | `needRoot` | `false` when omitted |
 | `pauseBeforeRun` | `0` when omitted |
@@ -497,7 +496,7 @@ This is because validation and backend generation are separate stages.
 
 The workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -507,7 +506,7 @@ The workflow is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -613,4 +612,4 @@ Review diagnostic output and scenario files before sharing them. Remove credenti
 - [Validate and Compile](../getting-started/validate-and-compile)
 - [Inspect Output](../getting-started/inspect-output)
 - [Troubleshooting](../guides/troubleshooting)
-- [Developer Schema Reference](../schema/cradle-schema)
+- [Deployment IR](../internals/deployment-ir)

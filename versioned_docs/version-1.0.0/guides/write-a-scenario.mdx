@@ -91,7 +91,7 @@ For example:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 ```
 
@@ -133,7 +133,7 @@ sequence
 Use:
 
 ```CRADLE
-repositoryRemote("https://example.com/repository")
+repositoryRemote("https://172.18.178.10:4443")
 ```
 
 to define the remote artifact base location.
@@ -364,7 +364,7 @@ declarations and definitions. The object name is introduced earlier through
 `${uriRemote}` references the remote artifact repository defined by:
 
 ```CRADLE
-repositoryRemote("https://example.com/repository")
+repositoryRemote("https://172.18.178.10:4443")
 ```
 
 Conceptually:
@@ -610,7 +610,7 @@ The resulting scenario is:
 metadata() >
     name("ExampleEnvironment"),
     eventType("sequence"),
-    repositoryRemote("https://example.com/repository"),
+    repositoryRemote("https://172.18.178.10:4443"),
     object("InitializationScript").
 
 instances() >
@@ -658,47 +658,102 @@ object("InitializationScript") >
 
 ## Follow the references
 
-The scenario contains several relationships.
+The scenario contains several relationships. Read each chain from left to right to
+trace a name from its declaration to the places where it is used.
 
 ### Instance references
 
-```text
-instances()
-    ↓
-Client
-    ↓
-instance("Client")
-    ↓
-endpoint("Client", ...)
-    ↓
-event instance("Client")
-```
+<div
+  className="scenarioReferenceFlow"
+  role="img"
+  aria-label='The Client instance is declared, defined, and then referenced by a network endpoint and an event'
+>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration list</span>
+    <code>instances()</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration</span>
+    <code>instance("Client")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Definition</span>
+    <code>instance("Client")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Network reference</span>
+    <code>endpoint("Client", …)</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Event reference</span>
+    <code>instance("Client")</code>
+  </div>
+</div>
 
 ### Object references
 
-```text
-metadata()
-    ↓
-InitializationScript
-    ↓
-object("InitializationScript")
-    ↓
-instance association
-    ↓
-runObject("InitializationScript", "")
-```
+<div
+  className="scenarioReferenceFlow"
+  role="img"
+  aria-label='The InitializationScript object is declared, defined, associated with an instance, and referenced by an event'
+>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration list</span>
+    <code>metadata()</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration</span>
+    <code>object("InitializationScript")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Definition</span>
+    <code>object("InitializationScript")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Instance association</span>
+    <code>object("InitializationScript")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Event reference</span>
+    <code>runObject("InitializationScript", "")</code>
+  </div>
+</div>
 
 ### Network references
 
-```text
-networks()
-    ↓
-lan_0
-    ↓
-network("lan_0")
-    ↓
-Client + Router endpoints
-```
+<div
+  className="scenarioReferenceFlow"
+  role="img"
+  aria-label='The lan_0 network is declared, defined, and connected to the Client and Router instances through endpoints'
+>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration list</span>
+    <code>networks()</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Declaration</span>
+    <code>network("lan_0")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Definition</span>
+    <code>network("lan_0")</code>
+  </div>
+  <span className="scenarioTopologyArrow" aria-hidden="true">→</span>
+  <div className="scenarioTopologyNode scenarioReferenceStep">
+    <span className="scenarioReferenceType">Endpoint references</span>
+    <code>Client + Router</code>
+  </div>
+</div>
 
 Names should remain consistent throughout these relationships.
 
@@ -761,7 +816,7 @@ cxc backend list
 Then generate the target-specific files:
 
 ```bash
-cxc emit \
+cxc build \
   -i scenarios/ExampleEnvironment.cradle \
   --target <plugin_name> \
   -o ./output
@@ -795,7 +850,7 @@ A practical scenario-authoring workflow is:
 13. Compile the scenario.
 14. Generate target-specific files only when required.
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>Plan scenario</div>
 
@@ -813,7 +868,7 @@ A practical scenario-authoring workflow is:
 
   <span>↓</span>
 
-  <div>Optional backend generation</div>
+  <div className="architecture-flow-step-backend">Optional backend generation</div>
 
 </div>
 

@@ -54,7 +54,7 @@ If validation reports an error, correct the source and run the command again.
 
 A typical workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>Edit CRADLE source</div>
 
@@ -376,7 +376,7 @@ This can help you compare the authored source with the structure interpreted by 
 
 A useful diagnostic flow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -445,7 +445,7 @@ Examples documented in the current language reference include:
 - network subnet handling differs between the schema and compiler
 - endpoint addressing can default to `DHCP`
 - `repositoryLocal` is recognized as a compiler extension
-- `config`, `io`, `description`, `heuristic` and `executionFlow` include compiler-specific behavior
+- `config`, `io`, `description` and `heuristic` include compiler-specific behavior
 - event dependencies use `dependsOn()` references
 
 :::important
@@ -497,7 +497,7 @@ This is because validation and backend generation are separate stages.
 
 The workflow is:
 
-<div className="architecture-flow">
+<div className="architecture-flow architecture-workflow">
 
   <div>CRADLE source</div>
 
@@ -507,7 +507,7 @@ The workflow is:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 

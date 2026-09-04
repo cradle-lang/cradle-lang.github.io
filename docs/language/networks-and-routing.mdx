@@ -49,10 +49,8 @@ networks() >
 
 This declares two networks:
 
-```text
-lan_0
-lan_1
-```
+- lan_0
+- lan_1
 
 Each declared network should have a matching named definition.
 
@@ -190,22 +188,35 @@ instance("Client") >
 
 Conceptually:
 
-<div className="architecture-flow">
+<div
+  className="networkReferenceGraph"
+  role="img"
+  aria-label='The endpoint named Client references the declared Client instance and connects it to the lan_0 network'
+>
+  <div className="networkReferenceNode">
+    <span className="networkReferenceType">Instance</span>
+    <code>instance("Client")</code>
+  </div>
 
-  <div>instances()</div>
+  <div className="networkReferenceConnection" aria-hidden="true">
+    <span className="networkReferenceLine"></span>
+    <span className="networkReferenceLabel">referenced by name</span>
+  </div>
 
-  <span>↓</span>
+  <div className="networkReferenceNode networkReferenceNodeEndpoint">
+    <span className="networkReferenceType">Endpoint</span>
+    <code>endpoint("Client", "DHCP")</code>
+  </div>
 
-  <div>instance("Client")</div>
+  <div className="networkReferenceConnection" aria-hidden="true">
+    <span className="networkReferenceLine"></span>
+    <span className="networkReferenceLabel">belongs to</span>
+  </div>
 
-  <span>↓</span>
-
-  <div>endpoint("Client", "DHCP")</div>
-
-  <span>↓</span>
-
-  <div>network("lan_0")</div>
-
+  <div className="networkReferenceNode">
+    <span className="networkReferenceType">Network</span>
+    <code>network("lan_0")</code>
+  </div>
 </div>
 
 :::important
@@ -418,32 +429,53 @@ network("lan_1") >
 The intended topology is:
 
 <div
-  className="scenarioTopology scenarioTopologyConverging"
+  className="scenarioRoutedGraph"
   role="img"
-  aria-label="Client connects to Router through lan_0, and Server connects to Router through lan_1"
+  aria-label="Client connects to Router through lan_0, and Router connects to Server through lan_1"
 >
-  <div className="scenarioTopologyNode">
-    <strong>Client</strong>
+
+  <div className="scenarioRoutedNetwork scenarioRoutedNetworkLeft">
+    <div className="scenarioNetworkGraphHeader">
+      <span>Network</span>
+      <code>lan_0</code>
+    </div>
+
+    <div className="scenarioRoutedNetworkBody">
+      <div className="scenarioGraphInstance">
+        <span className="scenarioGraphInstanceType">Instance</span>
+        <strong>Client</strong>
+        <code>DHCP</code>
+      </div>
+    </div>
   </div>
 
-  <div className="scenarioTopologyConnection" aria-hidden="true">
-    <code className="scenarioTopologyConnectionLabel">lan_0</code>
-    <span className="scenarioTopologyArrow">→</span>
-  </div>
+  <div className="scenarioRoutedConnector" aria-hidden="true" />
 
-  <div className="scenarioTopologyNode">
+  <div className="scenarioGraphInstance scenarioRoutedRouter">
+    <span className="scenarioGraphInstanceType">Router</span>
     <strong>Router</strong>
+    <code>192.168.10.1 / 192.168.20.1</code>
   </div>
 
-  <div className="scenarioTopologyConnection" aria-hidden="true">
-    <code className="scenarioTopologyConnectionLabel">lan_1</code>
-    <span className="scenarioTopologyArrow">←</span>
+  <div className="scenarioRoutedConnector" aria-hidden="true" />
+
+  <div className="scenarioRoutedNetwork scenarioRoutedNetworkRight">
+    <div className="scenarioNetworkGraphHeader">
+      <span>Network</span>
+      <code>lan_1</code>
+    </div>
+
+    <div className="scenarioRoutedNetworkBody">
+      <div className="scenarioGraphInstance">
+        <span className="scenarioGraphInstanceType">Instance</span>
+        <strong>Server</strong>
+        <code>DHCP</code>
+      </div>
+    </div>
   </div>
 
-  <div className="scenarioTopologyNode">
-    <strong>Server</strong>
-  </div>
 </div>
+
 
 The `Router` instance participates in both networks.
 
@@ -466,10 +498,8 @@ network("lan_0") >
 
 This connects:
 
-```text
-win7
-router
-```
+- win7
+- router
 
 to:
 
@@ -541,7 +571,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div>Backend plugin</div>
+  <div className="architecture-flow-step-backend">Backend plugin</div>
 
   <span>↓</span>
 
@@ -681,7 +711,7 @@ Review the network and endpoint values before generating target-specific files.
 - [Events and Dependencies](./events-and-dependencies)
 - [First Scenario](../getting-started/first-scenario)
 - [Use a Backend](../getting-started/use-a-backend)
-- [Developer Schema Reference](../schema/cradle-schema)
+- [Deployment IR](../internals/deployment-ir)
 
 ## Next steps
 
