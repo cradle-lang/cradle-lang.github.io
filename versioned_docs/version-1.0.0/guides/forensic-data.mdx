@@ -5,14 +5,7 @@ title: Forensic Data
 
 # Forensic Data
 
-CradleXC separates scenario authoring from the storage locations used for forensic resources and extracted datasets.
-
-```toml
-forensic_dir = "/srv/cradle/forensic"
-dataset_dir = "/srv/cradle/datasets"
-```
-
-`forensic_dir` identifies host-side forensic resources. `dataset_dir` is the default destination for extracted data when no output directory is supplied.
+CradleXC separates scenario authoring and target-file generation from forensic-data collection. Collection locations and output layouts are defined by the selected backend and its target environment.
 
 ## Collect data
 

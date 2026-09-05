@@ -143,7 +143,7 @@ Compatible backend executables follow the naming convention:
 cxc-backend-<name>
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH` or from:
+CradleXC discovers compatible backend executables from the system `PATH`, `/opt/cxc/plugins/` or from:
 
 ```text
 ~/.cxc/plugins/
@@ -153,12 +153,12 @@ If the expected backend is not listed, confirm that:
 
 - the backend plugin is installed
 - the backend executable follows the `cxc-backend-<name>` naming convention
-- the executable is available on the system `PATH` or under `~/.cxc/plugins/`
+- the executable is available on the system `PATH`, under `/opt/cxc/plugins/` or under `~/.cxc/plugins/`
 
 Backend plugins can be installed with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 After installation, check backend discovery again:

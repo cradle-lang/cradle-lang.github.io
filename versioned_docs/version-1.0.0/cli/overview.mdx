@@ -12,7 +12,6 @@ The CLI is used to:
 - validate CRADLE source
 - compile scenarios
 - inspect intermediate output
-- import existing definitions
 - inspect configuration
 - manage dependencies
 - discover backend plugins
@@ -103,7 +102,7 @@ Conceptually:
 
 ## Validate a scenario
 
-Use `cxc validate` to check CRADLE syntax:
+Use `cxc validate` to parse a scenario and check its syntax and structure:
 
 ```bash
 cxc validate -i <scenario.cradle>
@@ -224,7 +223,7 @@ Backend executables follow the convention:
 cxc-backend-<name>
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH` or:
+CradleXC discovers compatible backend executables from the system `PATH`, `/opt/cxc/plugins/` or:
 
 ```text
 ~/.cxc/plugins/
@@ -235,7 +234,7 @@ CradleXC discovers compatible backend executables from the system `PATH` or:
 Use:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 to install a backend plugin.
@@ -243,7 +242,7 @@ to install a backend plugin.
 For example:
 
 ```bash
-cxc plugin install vagrant
+sudo cxc plugin install vagrant
 ```
 
 Backend installation and discovery are documented in [Use a Backend](../getting-started/use-a-backend).
@@ -326,7 +325,7 @@ The current CLI can be thought of in several groups.
     <div className="cxc-command-description">
       Install a compatible backend plugin.
     </div>
-    <code>cxc plugin install</code>
+    <code>sudo cxc plugin install</code>
   </div>
 
   <div className="cxc-command-card">

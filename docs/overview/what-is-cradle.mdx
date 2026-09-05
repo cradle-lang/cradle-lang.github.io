@@ -225,7 +225,7 @@ cxc-backend-<name>
 Backend plugins can be installed with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 Installed backend plugins can be listed with:
@@ -234,7 +234,7 @@ Installed backend plugins can be listed with:
 cxc backend list
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH` or from:
+CradleXC discovers compatible backend executables from the system `PATH`, the default system-wide directory `/opt/cxc/plugins/`, or from:
 
 ```text
 ~/.cxc/plugins/

@@ -64,13 +64,13 @@ See the [CRADLE release repository](https://github.com/cradle-lang/cradle-releas
 Install a backend plugin with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 For example:
 
 ```bash
-cxc plugin install vagrant
+sudo cxc plugin install vagrant
 ```
 
 The exact plugin name depends on the backend you want to use. The release repository is the authoritative list of published plugin names.
@@ -99,6 +99,12 @@ and:
 
 ```text
 ~/.cxc/plugins/
+```
+
+and the default system-wide directory:
+
+```text
+/opt/cxc/plugins/
 ```
 
 A backend executable must follow the expected naming convention:
@@ -178,7 +184,7 @@ A typical backend workflow is:
     <div className="cradle-lifecycle-content">
       <strong>Install a backend</strong>
       <span>Install the plugin for the target you want to generate.</span>
-      <code>cxc plugin install &lt;plugin_name&gt;</code>
+      <code>sudo cxc plugin install &lt;plugin_name&gt;</code>
     </div>
   </div>
 
@@ -399,12 +405,12 @@ If `cxc backend list` does not show the expected plugin, confirm that:
 
 - the plugin has been installed
 - the executable uses the `cxc-backend-<name>` naming convention
-- the executable is available through the system `PATH` or `~/.cxc/plugins/`
+- the executable is available through the system `PATH`, `/opt/cxc/plugins/` or `~/.cxc/plugins/`
 
 You can reinstall a backend plugin with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 Then run:

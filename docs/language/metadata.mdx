@@ -23,9 +23,11 @@ metadata() >
 | --- | --- | --- | --- |
 | `name` | Scenario name | Schema required | Human-readable identifier for the scenario. |
 | `eventType` | `sequence` | Schema required | Selects the supported sequential event model. CradleXC defaults to `sequence` when omitted. |
-| `repositoryRemote` | URI | Schema required | Defines the base location for remotely stored artifacts. |
-| `repositoryLocal` | Location | Compiler extension | Defines the base location for locally available artifacts. |
-| `object` | Object name | Schema required | Declares an artifact used by the scenario. Repeat for multiple objects. |
+| `repositoryRemote` | URI | Optional | Defines the base location for remotely stored artifacts. |
+| `repositoryLocal` | Location | Optional | Defines the base location for locally available artifacts. |
+| `ssh_credential` | Username, password | Optional | Supplies SSH credentials when the selected workflow requires them. |
+| `object` | Object name | Optional | Declares an artifact used by the scenario. Repeat for multiple objects. |
+| `heuristic` | Framework, identifier | Optional | Associates a classification or framework identifier with the scenario. |
 
 ## Scenario name
 
@@ -146,9 +148,29 @@ metadata() >
     repositoryLocal("/path/to/artifacts").
 ```
 
-This property is currently treated as a compiler extension and is not represented in the same way by the current schema.
+Objects can reference this value with `${uriLocal}`.
 
-Use it only when supported by the CradleXC release and workflow you are using.
+## SSH credentials
+
+When a workflow requires SSH credentials, provide the username and password as two strings:
+
+```CRADLE
+metadata() >
+    ssh_credential("cradle", "replace-with-a-secret").
+```
+
+Avoid committing real credentials to source control.
+
+## Scenario heuristics
+
+Metadata can carry scenario-level heuristic annotations:
+
+```CRADLE
+metadata() >
+    heuristic("ttp", "T1566.001").
+```
+
+See [Heuristic Annotations](./heuristics) for the supported frameworks and validation behavior.
 
 ## Declare objects
 
@@ -405,23 +427,17 @@ The same object name connects all four parts.
 
 ## Schema and compiler behavior
 
-The current CRADLE reference sources are not completely aligned.
-
-For metadata, the documented differences include:
+The current parser, validator and compiled representation handle metadata as follows:
 
 | Property | Current behavior |
 | --- | --- |
-| `name` | Required by the current schema. |
-| `eventType` | Required by the schema, while CradleXC currently supplies `sequence` as a default when omitted. |
-| `repositoryRemote` | Required by the current schema. |
-| `repositoryLocal` | Recognized by CradleXC but not documented by the current schema in the same way. |
-| `object` | Required by the schema for declared scenario objects. |
-
-:::note
-These differences mean that grammar validation, compiler behavior and schema validation should not be treated as identical checks.
-:::
-
-Use the CRADLE release documentation and CradleXC validation behavior as the reference for the version you are working with.
+| `name` | Required and must be non-empty. |
+| `eventType` | Defaults to `sequence` when omitted; `sequence` is the supported value. |
+| `repositoryRemote` | Optional. Supplies `${uriRemote}` during object-location resolution. |
+| `repositoryLocal` | Optional. Supplies `${uriLocal}` during object-location resolution. |
+| `ssh_credential` | Optional. Preserved in compiled scenario output. |
+| `object` | Optional and repeatable. Each declared name must have a matching object definition. |
+| `heuristic` | Optional and repeatable. Preserved as scenario metadata. |
 
 ## Validate metadata
 

@@ -53,6 +53,12 @@ and:
 ~/.cxc/plugins/
 ```
 
+and the default system-wide installation directory:
+
+```text
+/opt/cxc/plugins/
+```
+
 Conceptually:
 
 <div className="architecture-flow">
@@ -66,6 +72,10 @@ Conceptually:
   <span>↑</span>
 
   <div>~/.cxc/plugins/</div>
+
+  <span>↑</span>
+
+  <div>/opt/cxc/plugins/</div>
 
 </div>
 
@@ -98,13 +108,13 @@ See the [CRADLE release repository](https://github.com/cradle-lang/cradle-releas
 Install a supported backend plugin with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 For example:
 
 ```bash
-cxc plugin install vagrant
+sudo cxc plugin install vagrant
 ```
 
 After installation, confirm that the backend can be discovered:
@@ -117,7 +127,15 @@ cxc backend list
 The release repository is the authoritative list of published plugin names.
 :::
 
-## Plugin directory
+## Plugin directories
+
+By default, `sudo cxc plugin install <plugin_name>` installs into:
+
+```text
+/opt/cxc/plugins/
+```
+
+Passing `--user` installs into the per-user directory instead:
 
 CradleXC also searches:
 
@@ -176,7 +194,7 @@ A typical backend setup flow is:
 For example:
 
 ```bash
-cxc plugin install vagrant
+sudo cxc plugin install vagrant
 ```
 
 Then:
@@ -330,7 +348,7 @@ does not show the expected backend, check the following.
 If the backend is distributed through the CRADLE plugin system, install it with:
 
 ```bash
-cxc plugin install <plugin_name>
+sudo cxc plugin install <plugin_name>
 ```
 
 Then check again:

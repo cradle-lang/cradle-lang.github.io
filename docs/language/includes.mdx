@@ -18,10 +18,7 @@ It is useful when multiple scenarios need the same router, network, object, or
 event. The shared definition can be maintained once instead of copied into
 every scenario.
 
-:::important[Version availability]
-`include` is supported by the current CradleXC v2 parser. It was not supported
-by the legacy v1 parser.
-:::
+`include` is supported by the current CradleXC parser.
 
 ## A small example
 
@@ -164,8 +161,7 @@ An include can fail when:
 
 Use includes when a definition is genuinely shared or when a large scenario is
 easier to maintain as several focused files. Keep a small scenario in one file
-when splitting it would make the scenario harder to follow, or when it must be
-processed by the legacy v1 parser.
+when splitting it would make the scenario harder to follow.
 
 ## Related documentation
 

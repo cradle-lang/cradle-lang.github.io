@@ -80,7 +80,7 @@ export default function SupportedWorkflow(): ReactNode {
             </p>
 
             <code className={styles.command}>
-              cxc plugin install &lt;plugin_name&gt;
+              sudo cxc plugin install &lt;plugin_name&gt;
             </code>
 
           </article>
