@@ -152,8 +152,8 @@ Repository Structure
 
 ``release-notes/``
    Canonical local release-note Markdown. Published notes use semantic-version
-   names such as ``v1.2.0.md``. Files beginning with ``v0.`` are intentionally
-   excluded from the public release-note index.
+   names such as ``v0.18.1.md`` or ``v1.2.0.md``. Versions before ``v0.18.1``
+   are not indexed or published.
 
 ``scripts/``
    Release-data generation and maintenance scripts.

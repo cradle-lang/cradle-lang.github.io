@@ -4,7 +4,7 @@ import path from 'node:path';
 const RELEASE_NOTES_DIRECTORY = path.resolve('release-notes');
 const OUTPUT_FILE = path.resolve('src/data/release-notes.json');
 const RELEASE_NOTE_FILE = /^v(.+)\.md$/i;
-const UNPUBLISHED_RELEASE_NOTE = /^v0\./i;
+const FIRST_PUBLIC_RELEASE_NOTE = 'v0.18.1.md';
 
 function stripMarkdownlintDirectives(content) {
   return content.replace(
@@ -90,7 +90,7 @@ async function main() {
       (entry) =>
         entry.isFile() &&
         RELEASE_NOTE_FILE.test(entry.name) &&
-        !UNPUBLISHED_RELEASE_NOTE.test(entry.name),
+        compareReleaseNotes(entry.name, FIRST_PUBLIC_RELEASE_NOTE) >= 0,
     )
     .map((entry) => entry.name)
     .sort(compareReleaseNotes);
