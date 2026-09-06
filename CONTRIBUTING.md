@@ -81,7 +81,7 @@ Author release notes in `release-notes/` using names such as `v1.2.0.md` or `v1.
 npm run generate-release-notes
 ```
 
-`v0.18.1` is the first public release. Earlier versioned files are excluded 
+`v0.18.1` is the first public release. Earlier versioned files are excluded
 from the public release index and publication workflow.
 The optional `npm run fetch-releases` command uses `CRADLE_RELEASES_TOKEN`;
 never commit that token.

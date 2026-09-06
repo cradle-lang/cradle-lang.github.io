@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'notes/v*.md'
+      - 'release-notes/v*.md'
 
 permissions:
   contents: write
@@ -33,9 +33,30 @@ jobs:
         run: |
           set -euo pipefail
 
-          git diff --name-only "$BEFORE" "$AFTER" |
-            grep -E '^notes/v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?\.md$' \
-            > /tmp/changed-release-notes.txt || true
+          candidates="$RUNNER_TEMP/changed-release-note-candidates.txt"
+
+          git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER" |
+            grep -E '^release-notes/v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?\.md$' \
+            > "$candidates" || true
+
+          : > /tmp/changed-release-notes.txt
+
+          while IFS= read -r note; do
+            tag="$(basename "$note" .md)"
+
+            if [[ "$tag" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+              major="${BASH_REMATCH[1]}"
+              minor="${BASH_REMATCH[2]}"
+              patch="${BASH_REMATCH[3]}"
+
+              if (( major == 0 && (minor < 18 || (minor == 18 && patch < 1)) )); then
+                echo "Skipping internal test release note: $note"
+                continue
+              fi
+            fi
+
+            echo "$note" >> /tmp/changed-release-notes.txt
+          done < "$candidates"
 
           if [[ ! -s /tmp/changed-release-notes.txt ]]; then
             echo "found=false" >> "$GITHUB_OUTPUT"
