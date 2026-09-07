@@ -2,7 +2,10 @@
 name: Generate CradleXC release notes with Copilot
 description: Use Copilot to author a reviewed CradleXC release-note pull request
 intent: Give CRADLE users accurate, useful release notes that explain the user-visible impact of each new CradleXC release in the documentation site's established editorial style.
-engine: copilot
+engine:
+  id: copilot
+  env:
+    COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
 on:
   roles: [admin, maintainer, write]
   workflow_dispatch:
@@ -14,7 +17,6 @@ on:
 permissions:
   contents: read
   pull-requests: read
-  copilot-requests: write
 concurrency:
   job-discriminator: ${{ github.run_id }}
 checkout:
