@@ -55,6 +55,8 @@ items as available.
   limitations where they affect users.
 - Prefer concise, copyable examples verified against current CLI syntax. Keep
   related examples internally consistent.
+- Format Markdown tables with leading and trailing pipes and keep every row at
+  the same column count so the repository's markdownlint rules pass.
 - Keep the landing page high-level. Put operational detail in the docs and link
   to it instead of turning landing-page sections into a command reference.
 - Do not copy upstream documentation wholesale, expose secrets or internal-only
