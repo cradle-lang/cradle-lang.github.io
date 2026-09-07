@@ -1,0 +1,214 @@
+name: Update docs from CradleXC with Copilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Exact 40-character CradleXC commit to analyze
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-cradlexc-docs-${{ inputs.sha }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Validate input
+        shell: bash
+        env:
+          SHA: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Invalid full commit SHA: $SHA"
+            exit 1
+          fi
+
+      - name: Checkout documentation repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
+
+      - name: Checkout CradleXC at requested commit
+        uses: actions/checkout@v4
+        with:
+          repository: cradle-lang/CradleXC
+          ref: ${{ inputs.sha }}
+          path: upstream-cradlexc
+          fetch-depth: 0
+          token: ${{ secrets.CRADLE_RELEASES_TOKEN }}
+
+      - name: Verify upstream checkout
+        shell: bash
+        env:
+          SHA: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git -C upstream-cradlexc rev-parse HEAD)"
+          if [[ "$actual" != "$SHA" ]]; then
+            echo "::error::Expected upstream commit $SHA but checked out $actual."
+            exit 1
+          fi
+
+      - name: Install GitHub Copilot CLI
+        shell: bash
+        run: npm install --global @github/copilot@1.0.83
+
+      - name: Synchronize documentation
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+          SHA: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$COPILOT_GITHUB_TOKEN" ]]; then
+            echo "::error::COPILOT_CLI_TOKEN is not configured."
+            exit 1
+          fi
+
+          prompt="$(cat .github/prompts/update-cradlexc-docs.md)
+
+          Requested commit: $SHA"
+
+          copilot \
+            --prompt "$prompt" \
+            --no-ask-user \
+            --no-custom-instructions \
+            --disable-builtin-mcps \
+            --secret-env-vars=COPILOT_GITHUB_TOKEN \
+            --max-ai-credits 40 \
+            --allow-tool write \
+            --allow-tool 'shell(cat)' \
+            --allow-tool 'shell(cd)' \
+            --allow-tool 'shell(date)' \
+            --allow-tool 'shell(find)' \
+            --allow-tool 'shell(git cat-file:*)' \
+            --allow-tool 'shell(git describe:*)' \
+            --allow-tool 'shell(git diff:*)' \
+            --allow-tool 'shell(git log:*)' \
+            --allow-tool 'shell(git merge-base:*)' \
+            --allow-tool 'shell(git rev-parse:*)' \
+            --allow-tool 'shell(git show:*)' \
+            --allow-tool 'shell(git show-ref:*)' \
+            --allow-tool 'shell(git status)' \
+            --allow-tool 'shell(git tag:*)' \
+            --allow-tool 'shell(grep)' \
+            --allow-tool 'shell(head)' \
+            --allow-tool 'shell(ls)' \
+            --allow-tool 'shell(pwd)' \
+            --allow-tool 'shell(rg)' \
+            --allow-tool 'shell(sed)' \
+            --allow-tool 'shell(sort)' \
+            --allow-tool 'shell(tail)' \
+            --allow-tool 'shell(wc)'
+
+      - name: Verify Copilot changed only documentation paths
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | grep -v '^upstream-cradlexc/$' | sort -u
+          )
+
+          for path in "${changed[@]}"; do
+            case "$path" in
+              docs/*|src/pages/index.tsx|src/components/homepage/*|static/img/home/*)
+                ;;
+              *)
+                echo "::error::Copilot changed a disallowed path: $path"
+                exit 1
+                ;;
+            esac
+          done
+
+          echo "count=${#changed[@]}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+
+          mapfile -t markdown_files < <(
+            {
+              git diff --name-only --diff-filter=ACM -- '*.md' '*.mdx'
+              git ls-files --others --exclude-standard -- '*.md' '*.mdx'
+            } | grep -v '^upstream-cradlexc/' | sort -u
+          )
+          if [[ "${#markdown_files[@]}" -gt 0 ]]; then
+            npx --yes markdownlint-cli2@0.18.1 "${markdown_files[@]}"
+          fi
+
+          npm run build
+          git restore --worktree src/data/release-notes.json
+
+      - name: Commit and push automation branch
+        shell: bash
+        env:
+          SHA: ${{ inputs.sha }}
+          BRANCH: docs-sync/${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$SHA" > .cradlexc-docs-source-revision
+
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git fetch origin \
+            "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
+          git switch -C "$BRANCH"
+          git add -- \
+            .cradlexc-docs-source-revision \
+            docs \
+            src/pages/index.tsx \
+            src/components/homepage \
+            static/img/home
+          git commit -m "Sync docs with CradleXC $SHA"
+          git push --force-with-lease --set-upstream origin "$BRANCH"
+
+      - name: Create or update draft pull request
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
+          SHA: ${{ inputs.sha }}
+          BRANCH: docs-sync/${{ inputs.sha }}
+          CONTENT_CHANGE_COUNT: ${{ steps.changes.outputs.count }}
+        run: |
+          set -euo pipefail
+          body="$(printf '%s\n' \
+            "## Summary" \
+            "" \
+            "Synchronizes the website documentation with CradleXC commit \`$SHA\`. Copilot found $CONTENT_CHANGE_COUNT documentation file change(s), excluding the source-revision marker." \
+            "" \
+            "## Validation" \
+            "" \
+            "- Ran Markdown/MDX linting on changed documentation files." \
+            "- Ran \`npm run build\`." \
+            "- Restricted changes to approved documentation and homepage paths." \
+            "" \
+            "This draft requires human technical and editorial review before merging.")"
+
+          number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
+          if [[ -n "$number" ]]; then
+            gh pr edit "$number" --title "Sync docs with CradleXC $SHA" --body "$body"
+          else
+            gh pr create \
+              --draft \
+              --base main \
+              --head "$BRANCH" \
+              --title "Sync docs with CradleXC $SHA" \
+              --body "$body"
+          fi

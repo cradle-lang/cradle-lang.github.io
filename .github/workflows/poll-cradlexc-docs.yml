@@ -1,0 +1,115 @@
+name: Poll CradleXC for documentation changes
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Optional CradleXC commit SHA (defaults to main HEAD)
+        required: false
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: poll-cradlexc-docs
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPOSITORY: cradle-lang/CradleXC
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout documentation repository
+        uses: actions/checkout@v4
+
+      - name: Resolve upstream revision
+        id: upstream
+        shell: bash
+        env:
+          CRADLE_RELEASES_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN }}
+          GH_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN || github.token }}
+          REQUESTED_SHA: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$CRADLE_RELEASES_TOKEN" ]]; then
+            echo "::error::CRADLE_RELEASES_TOKEN is required to read the private ${UPSTREAM_REPOSITORY} repository."
+            exit 1
+          fi
+
+          if [[ -n "$REQUESTED_SHA" ]]; then
+            if [[ ! "$REQUESTED_SHA" =~ ^[0-9a-fA-F]{7,40}$ ]]; then
+              echo "::error::The requested commit SHA is invalid: $REQUESTED_SHA"
+              exit 1
+            fi
+            revision="$REQUESTED_SHA"
+          else
+            default_branch="$(gh api "repos/${UPSTREAM_REPOSITORY}" --jq '.default_branch')"
+            revision="$default_branch"
+          fi
+
+          sha="$(gh api "repos/${UPSTREAM_REPOSITORY}/commits/${revision}" --jq '.sha')"
+
+          if [[ ! "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Upstream returned an invalid commit SHA: $sha"
+            exit 1
+          fi
+
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether the revision needs processing
+        id: status
+        shell: bash
+        env:
+          SHA: ${{ steps.upstream.outputs.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          marker='.cradlexc-docs-source-revision'
+          previous=''
+
+          if [[ -f "$marker" ]]; then
+            previous="$(tr -d '[:space:]' < "$marker")"
+          fi
+
+          if [[ "$SHA" == "$previous" ]]; then
+            echo "CradleXC revision $SHA has already been reviewed."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if gh pr list \
+            --state open \
+            --json headRefName \
+            --jq 'map(select(.headRefName | startswith("docs-sync/"))) | length > 0' \
+            | grep -qx true; then
+            echo "A documentation-sync PR is already open; deferring $SHA."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Detected CradleXC revision $SHA (previously reviewed: ${previous:-none})."
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Ask Copilot to synchronize the documentation
+        if: steps.status.outputs.changed == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.upstream.outputs.sha }}
+        run: |
+          set -euo pipefail
+
+          gh workflow run update-cradlexc-docs.yml \
+            --ref "$GITHUB_REF_NAME" \
+            -f "sha=$SHA"
