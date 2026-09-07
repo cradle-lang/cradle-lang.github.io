@@ -1,10 +1,10 @@
-name: Update docs from CradleXC with Copilot
+name: Update docs from a CradleXC tag with Copilot
 
 on:
   workflow_dispatch:
     inputs:
-      sha:
-        description: Exact 40-character CradleXC commit to analyze
+      tag:
+        description: Existing CradleXC release tag to analyze
         required: true
         type: string
 
@@ -13,7 +13,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: update-cradlexc-docs-${{ inputs.sha }}
+  group: update-cradlexc-docs-${{ inputs.tag }}
   cancel-in-progress: false
 
 jobs:
@@ -25,11 +25,11 @@ jobs:
       - name: Validate input
         shell: bash
         env:
-          SHA: ${{ inputs.sha }}
+          TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
-          if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "::error::Invalid full commit SHA: $SHA"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid release tag: $TAG"
             exit 1
           fi
 
@@ -39,11 +39,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
 
-      - name: Checkout CradleXC at requested commit
+      - name: Checkout CradleXC at requested tag
         uses: actions/checkout@v4
         with:
           repository: cradle-lang/CradleXC
-          ref: ${{ inputs.sha }}
+          ref: ${{ inputs.tag }}
           path: upstream-cradlexc
           fetch-depth: 0
           token: ${{ secrets.CRADLE_RELEASES_TOKEN }}
@@ -51,12 +51,13 @@ jobs:
       - name: Verify upstream checkout
         shell: bash
         env:
-          SHA: ${{ inputs.sha }}
+          TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
+          expected="$(git -C upstream-cradlexc rev-list -n 1 "$TAG")"
           actual="$(git -C upstream-cradlexc rev-parse HEAD)"
-          if [[ "$actual" != "$SHA" ]]; then
-            echo "::error::Expected upstream commit $SHA but checked out $actual."
+          if [[ -z "$expected" || "$actual" != "$expected" ]]; then
+            echo "::error::Expected upstream tag $TAG at $expected but checked out $actual."
             exit 1
           fi
 
@@ -68,7 +69,7 @@ jobs:
         shell: bash
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
-          SHA: ${{ inputs.sha }}
+          TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
           if [[ -z "$COPILOT_GITHUB_TOKEN" ]]; then
@@ -78,7 +79,7 @@ jobs:
 
           prompt="$(cat .github/prompts/update-cradlexc-docs.md)
 
-          Requested commit: $SHA"
+          Requested release tag: $TAG"
 
           copilot \
             --prompt "$prompt" \
@@ -97,6 +98,7 @@ jobs:
             --allow-tool 'shell(git diff:*)' \
             --allow-tool 'shell(git log:*)' \
             --allow-tool 'shell(git merge-base:*)' \
+            --allow-tool 'shell(git rev-list:*)' \
             --allow-tool 'shell(git rev-parse:*)' \
             --allow-tool 'shell(git show:*)' \
             --allow-tool 'shell(git show-ref:*)' \
@@ -159,11 +161,12 @@ jobs:
       - name: Commit and push automation branch
         shell: bash
         env:
-          SHA: ${{ inputs.sha }}
-          BRANCH: docs-sync/${{ inputs.sha }}
+          TAG: ${{ inputs.tag }}
+          BRANCH: docs-sync/${{ inputs.tag }}
         run: |
           set -euo pipefail
-          printf '%s\n' "$SHA" > .cradlexc-docs-source-revision
+          printf '%s\n' "$TAG" > .cradlexc-docs-source-tag
+          git rm --ignore-unmatch .cradlexc-docs-source-revision
 
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -171,27 +174,27 @@ jobs:
             "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
           git switch -C "$BRANCH"
           git add -- \
-            .cradlexc-docs-source-revision \
+            .cradlexc-docs-source-tag \
             docs \
             src/pages/index.tsx \
             src/components/homepage \
             static/img/home
-          git commit -m "Sync docs with CradleXC $SHA"
+          git commit -m "Sync docs with CradleXC $TAG"
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
       - name: Create or update draft pull request
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
-          SHA: ${{ inputs.sha }}
-          BRANCH: docs-sync/${{ inputs.sha }}
+          TAG: ${{ inputs.tag }}
+          BRANCH: docs-sync/${{ inputs.tag }}
           CONTENT_CHANGE_COUNT: ${{ steps.changes.outputs.count }}
         run: |
           set -euo pipefail
           body="$(printf '%s\n' \
             "## Summary" \
             "" \
-            "Synchronizes the website documentation with CradleXC commit \`$SHA\`. Copilot found $CONTENT_CHANGE_COUNT documentation file change(s), excluding the source-revision marker." \
+            "Synchronizes the website documentation with CradleXC tag \`$TAG\`. Copilot found $CONTENT_CHANGE_COUNT documentation file change(s), excluding the source-tag marker." \
             "" \
             "## Validation" \
             "" \
@@ -203,12 +206,12 @@ jobs:
 
           number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
           if [[ -n "$number" ]]; then
-            gh pr edit "$number" --title "Sync docs with CradleXC $SHA" --body "$body"
+            gh pr edit "$number" --title "Sync docs with CradleXC $TAG" --body "$body"
           else
             gh pr create \
               --draft \
               --base main \
               --head "$BRANCH" \
-              --title "Sync docs with CradleXC $SHA" \
+              --title "Sync docs with CradleXC $TAG" \
               --body "$body"
           fi

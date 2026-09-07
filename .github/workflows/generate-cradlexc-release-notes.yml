@@ -89,12 +89,15 @@ jobs:
             --max-ai-credits 40 \
             --allow-tool "write(${GITHUB_WORKSPACE}/${TARGET})" \
             --allow-tool 'shell(cat)' \
+            --allow-tool 'shell(cd)' \
             --allow-tool 'shell(date)' \
             --allow-tool 'shell(find)' \
+            --allow-tool 'shell(git cat-file:*)' \
             --allow-tool 'shell(git describe:*)' \
             --allow-tool 'shell(git diff:*)' \
             --allow-tool 'shell(git log:*)' \
             --allow-tool 'shell(git show:*)' \
+            --allow-tool 'shell(git show-ref:*)' \
             --allow-tool 'shell(git status)' \
             --allow-tool 'shell(git tag:*)' \
             --allow-tool 'shell(grep)' \
