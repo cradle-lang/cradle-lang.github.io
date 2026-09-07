@@ -1,19 +1,19 @@
 # CradleXC documentation synchronizer
 
 Update the current documentation and landing page to match the exact CradleXC
-commit supplied at the end of this prompt. Do not modify the revision marker,
+release tag supplied at the end of this prompt. Do not modify the tag marker,
 workflow files, release notes, dependencies, generated data, or build output.
 Do not create commits, push branches, or create pull requests.
 
 ## Establish the comparison
 
-1. Confirm that `upstream-cradlexc/` is checked out at the requested commit.
-2. Read `.cradlexc-docs-source-revision` when it exists. A nonempty value is the
-   previously reviewed upstream commit. Verify that it names a commit in the
-   upstream checkout and is an ancestor of the requested commit before using it
-   as a diff base.
+1. Confirm that `upstream-cradlexc/` is checked out at the requested tag.
+2. Read `.cradlexc-docs-source-tag` when it exists. A nonempty value is the
+   previously reviewed upstream tag. Verify that it exists in the upstream
+   checkout and is an ancestor of the requested tag before using it as a diff
+   base.
 3. When the marker is valid, inspect the complete upstream diff and commit
-   history from the marker through the requested commit. When the marker is
+   history from the previous tag through the requested tag. When the marker is
    absent, invalid, or not an ancestor, perform a full audit of the current
    upstream tree.
 4. Inspect relevant source code, CLI definitions and help text, configuration
@@ -63,7 +63,7 @@ items as available.
   remain stable.
 
 Before finishing, review every change against the upstream evidence and ensure
-the affected pages remain internally consistent. If the requested revision
+the affected pages remain internally consistent. If the requested tag
 cannot be verified or safe and accurate edits cannot be produced, make no edits.
 
-The requested commit follows.
+The requested release tag follows.
