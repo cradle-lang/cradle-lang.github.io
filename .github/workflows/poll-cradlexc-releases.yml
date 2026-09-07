@@ -1,4 +1,4 @@
-name: Poll for new CradleXC releases
+name: Poll for new CradleXC tags
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Optional existing CradleXC release tag (defaults to latest)
+        description: Optional existing CradleXC tag (defaults to latest)
         required: false
         type: string
 
@@ -31,28 +31,40 @@ jobs:
       - name: Checkout documentation repository
         uses: actions/checkout@v4
 
-      - name: Resolve upstream release
-        id: release
+      - name: Resolve upstream tag
+        id: upstream-tag
         shell: bash
         env:
+          CRADLE_RELEASES_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN }}
           GH_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN || github.token }}
           REQUESTED_TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
 
-          if [[ -n "$REQUESTED_TAG" ]]; then
-            endpoint="repos/${UPSTREAM_REPOSITORY}/releases/tags/${REQUESTED_TAG}"
-          else
-            endpoint="repos/${UPSTREAM_REPOSITORY}/releases/latest"
+          if [[ -z "$CRADLE_RELEASES_TOKEN" ]]; then
+            echo "::error::CRADLE_RELEASES_TOKEN is required to read tags from the private ${UPSTREAM_REPOSITORY} repository."
+            exit 1
           fi
 
-          release_json="$RUNNER_TEMP/cradlexc-release.json"
-          gh api "$endpoint" > "$release_json"
+          if [[ -n "$REQUESTED_TAG" ]]; then
+            if [[ ! "$REQUESTED_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+              echo "::error::The requested tag is invalid: $REQUESTED_TAG"
+              exit 1
+            fi
 
-          tag="$(jq -r '.tag_name' "$release_json")"
+            gh api "repos/${UPSTREAM_REPOSITORY}/git/ref/tags/${REQUESTED_TAG}" > /dev/null
+            tag="$REQUESTED_TAG"
+          else
+            tags_file="$RUNNER_TEMP/cradlexc-tags.txt"
+            gh api --paginate \
+              "repos/${UPSTREAM_REPOSITORY}/tags?per_page=100" \
+              --jq '.[].name' > "$tags_file"
 
-          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
-            echo "::error::Upstream returned an invalid release tag: $tag"
+            tag="$(grep -m 1 -E '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$' "$tags_file" || true)"
+          fi
+
+          if [[ -z "$tag" ]]; then
+            echo "::error::No valid version tags were found in ${UPSTREAM_REPOSITORY}."
             exit 1
           fi
 
@@ -62,7 +74,7 @@ jobs:
         id: status
         shell: bash
         env:
-          TAG: ${{ steps.release.outputs.tag }}
+          TAG: ${{ steps.upstream-tag.outputs.tag }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
@@ -75,7 +87,7 @@ jobs:
           fi
 
           if [[ "$TAG" == "$previous" ]]; then
-            echo "Release $TAG has already been processed."
+            echo "Tag $TAG has already been processed."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -90,7 +102,7 @@ jobs:
             exit 0
           fi
 
-          echo "Detected release $TAG (previously processed: ${previous:-none})."
+          echo "Detected tag $TAG (previously processed: ${previous:-none})."
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Ask Copilot to author the release-note PR
@@ -98,7 +110,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.release.outputs.tag }}
+          TAG: ${{ steps.upstream-tag.outputs.tag }}
         run: |
           set -euo pipefail
 

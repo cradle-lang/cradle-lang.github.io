@@ -61,8 +61,9 @@ Create one draft pull request containing polished release notes for CradleXC
    Use its Git history and tags to identify the immediately preceding upstream
    release and review the complete diff between that tag and the requested tag.
 3. Inspect relevant commits, source, tests, changelog files, README files, and
-   documentation. Use the upstream GitHub Release body as supporting evidence,
-   but verify claims against the repository instead of merely copying it.
+   documentation. Use an annotated upstream tag message as supporting evidence
+   when present, but verify claims against the repository instead of merely
+   copying it.
 4. Read relevant current documentation in this repository so terminology,
    commands, paths, limitations, and links remain consistent.
 
