@@ -152,6 +152,7 @@ jobs:
             } | grep -v '^upstream-cradlexc/' | sort -u
           )
           if [[ "${#markdown_files[@]}" -gt 0 ]]; then
+            npx --yes markdownlint-cli2@0.18.1 --fix "${markdown_files[@]}"
             npx --yes markdownlint-cli2@0.18.1 "${markdown_files[@]}"
           fi
 
