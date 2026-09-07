@@ -21,7 +21,7 @@ If your shell cannot find `cxc`, confirm whether the executable is installed:
 which cxc
 ```
 
-If no path is returned, verify that CradleXC was installed successfully through APT.
+If no path is returned, verify that CradleXC was installed successfully from source.
 
 Refresh the package index:
 
@@ -32,7 +32,7 @@ sudo apt update
 Install CradleXC:
 
 ```bash
-sudo apt install cxc
+cargo install --path crates/cradle-cli
 ```
 
 Then confirm the installation:
@@ -143,7 +143,7 @@ Compatible backend executables follow the naming convention:
 cxc-backend-<name>
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH`, `/opt/cxc/plugins/` or from:
+CradleXC discovers compatible backend executables from the system `PATH` or from:
 
 ```text
 ~/.cxc/plugins/
@@ -153,12 +153,12 @@ If the expected backend is not listed, confirm that:
 
 - the backend plugin is installed
 - the backend executable follows the `cxc-backend-<name>` naming convention
-- the executable is available on the system `PATH`, under `/opt/cxc/plugins/` or under `~/.cxc/plugins/`
+- the executable is available on the system `PATH` or under `~/.cxc/plugins/`
 
 Backend plugins can be installed with:
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 After installation, check backend discovery again:
@@ -186,7 +186,7 @@ cxc validate -i <scenario.cradle>
 Generate the target-specific files with:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o /path/to/output
@@ -195,7 +195,7 @@ cxc build \
 For example:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -241,7 +241,7 @@ sudo apt update
 Then upgrade the installed package:
 
 ```bash
-sudo apt install --only-upgrade cxc
+cargo install --path crates/cradle-cli --force
 ```
 
 Confirm the version after updating:

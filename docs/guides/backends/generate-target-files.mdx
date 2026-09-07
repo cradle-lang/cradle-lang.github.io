@@ -18,12 +18,12 @@ only; it does not execute the target tooling.
 ```bash
 cxc validate -i scenarios/Example.cradle
 cxc backend list
-cxc build -i scenarios/Example.cradle --target <backend> -o ./output
+cxc emit -i scenarios/Example.cradle --target <backend> -o ./output
 ```
 
 The backend name is the suffix of its executable name. For example, `cxc-backend-example` is selected with `--target example`.
 
-Generated layout and backend options are backend-specific. Use `cxc build --help` and the backend's own documentation for exact requirements.
+Generated layout and backend options are backend-specific. Use `cxc emit --help` and the backend's own documentation for exact requirements.
 
 ## Rebuild after a scenario change
 
@@ -31,7 +31,7 @@ Use `rebuild` when the output directory already contains a successful build and
 you want to compare it with an edited scenario:
 
 ```bash
-cxc rebuild -i scenarios/Example.cradle --target <backend> -o ./output
+cxc deploy -i scenarios/Example.cradle --backend <backend>
 ```
 
 The directory must contain `.cxc-build-ir.json`. CradleXC classifies each
@@ -39,5 +39,5 @@ instance change, prints the plan and regenerates the complete output. It does
 not apply the plan to a live deployment.
 
 If network identity or addressing changed, create a fresh output directory
-with `cxc build` instead. See [`cxc rebuild`](../../cli/command-reference#cxc-rebuild)
+with `cxc emit` instead. See [`cxc emit`](../../cli/command-reference#cxc-emit)
 for the complete behavior.

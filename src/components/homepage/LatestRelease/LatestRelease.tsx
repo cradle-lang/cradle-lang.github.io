@@ -24,9 +24,8 @@ export default function LatestRelease(): ReactNode {
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            Install CradleXC through the official CRADLE package
-            repository, verify your environment and start writing your
-            first scenario.
+            Install CradleXC from source, verify your environment and
+            start writing your first scenario.
           </p>
         </div>
 
@@ -35,17 +34,15 @@ export default function LatestRelease(): ReactNode {
           <div className={styles.installPanel}>
             <div className={styles.panelHeader}>
               <span className={styles.panelLabel}>
-                APT · Ubuntu / Debian
+                SOURCE · CARGO
               </span>
 
               <h3>
-                Install from the CRADLE repository.
+                Install from the source tree.
               </h3>
 
               <p className={styles.panelDescription}>
-                Configure the official CRADLE APT repository once, then
-                install and update CradleXC through your system package
-                manager.
+                Build the `cxc` CLI from the CradleXC Cargo workspace.
               </p>
             </div>
 
@@ -57,11 +54,11 @@ export default function LatestRelease(): ReactNode {
 
                 <div>
                   <strong>
-                    Add the repository
+                    Check out the source
                   </strong>
 
                   <span>
-                    Configure the CRADLE package source.
+                    Use a CradleXC source checkout.
                   </span>
                 </div>
               </div>
@@ -79,7 +76,7 @@ export default function LatestRelease(): ReactNode {
                   </strong>
 
                   <code>
-                    sudo apt install cxc
+                    cargo install --path crates/cradle-cli
                   </code>
                 </div>
               </div>
@@ -93,11 +90,11 @@ export default function LatestRelease(): ReactNode {
 
                 <div>
                   <strong>
-                    Keep it updated
+                    Update CradleXC
                   </strong>
 
                   <span>
-                    Future releases are delivered through APT.
+                    Reinstall after pulling a new source revision.
                   </span>
                 </div>
               </div>

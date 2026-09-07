@@ -191,7 +191,7 @@ The `cxc` command-line interface provides commands for different stages of the C
     </div>
 
     <code>cxc backend list</code>
-    <code>cxc build</code>
+    <code>cxc emit</code>
   </div>
 
 </div>
@@ -206,7 +206,7 @@ They are used to validate CRADLE syntax, compile scenarios and inspect the inter
 
 `cxc backend list` shows the backend plugins currently available to CradleXC.
 
-`cxc build` uses a compatible backend plugin to generate target-specific files from a CRADLE scenario.
+`cxc emit` uses a compatible backend plugin to render target-specific files from a CRADLE scenario.
 
 :::note
 These files are **not automatically** executed by CradleXC. They can be used with the corresponding tools in the user's own testbed environment.
@@ -225,7 +225,7 @@ cxc-backend-<name>
 Backend plugins can be installed with:
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 Installed backend plugins can be listed with:
@@ -234,7 +234,7 @@ Installed backend plugins can be listed with:
 cxc backend list
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH`, the default system-wide directory `/opt/cxc/plugins/`, or from:
+CradleXC discovers compatible backend executables from the system `PATH` or from:
 
 ```text
 ~/.cxc/plugins/

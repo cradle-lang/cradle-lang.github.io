@@ -47,8 +47,7 @@ export default function SupportedWorkflow(): ReactNode {
             </h3>
 
             <p>
-              Browse published backend plugins and choose one for your
-              target environment.
+              Choose a backend implementation for your target environment.
             </p>
 
             <a
@@ -76,11 +75,12 @@ export default function SupportedWorkflow(): ReactNode {
             </h3>
 
             <p>
-              Install the selected backend plugin with the CradleXC CLI.
+              Install a published backend plugin, or build one from its own
+              source repository.
             </p>
 
             <code className={styles.command}>
-              sudo cxc plugin install &lt;plugin_name&gt;
+              cxc plugin install &lt;plugin_name&gt;
             </code>
 
           </article>
@@ -112,7 +112,7 @@ export default function SupportedWorkflow(): ReactNode {
 
             <p>
               Use <code>cxc emit</code> with the selected backend to
-              generate target-specific output.
+              render target-specific output.
             </p>
           </article>
         </div>

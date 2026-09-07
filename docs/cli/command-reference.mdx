@@ -5,7 +5,7 @@ title: Command Reference
 
 # Command Reference
 
-This page provides a reference for the production CradleXC `cxc` command-line interface, with target generation ending at the `build` and `rebuild` workflow.
+This page provides a reference for the CradleXC 0.16.0 `cxc` command-line interface.
 
 For the command list available in your installed version, run:
 
@@ -36,8 +36,16 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | `cxc validate` | Parse and validate CRADLE source syntax and structure. |
 | `cxc compile` | Compile CRADLE source into structured YAML. |
 | `cxc dump-ir` | Display CradleXC's intermediate representation. |
-| `cxc build` | Generate target-specific files through a backend plugin. |
-| `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
+| `cxc emit` | Render YAML or target-specific files through a backend plugin. |
+| `cxc deploy` | Compile, render, provision, and run events through a backend plugin. |
+| `cxc destroy` | Destroy a deployment through the backend recorded in its manifest. |
+| `cxc extract` | Extract forensic data from deployed VMs. |
+| `cxc import` | Convert a static Vagrant/Ansible deployment into a validated `.cradle` file. |
+| `cxc migrate` | Convert v1 syntax to v2.0 syntax. |
+| `cxc parse` / `cxc check` | Inspect or validate parser and semantic-analysis stages. |
+| `cxc dump-hir` / `cxc dump-ir` | Inspect compiler intermediate representations. |
+| `cxc generate-artifacts` | Generate C/PowerShell artifacts from YAML. |
+| `cxc completions` | Generate shell completions. |
 | `cxc backend list` | List backend plugins discovered by CradleXC. |
 | `cxc plugin install` | Install a backend plugin. |
 | `cxc doctor` | Check dependencies and environment readiness. |
@@ -54,10 +62,10 @@ Parses a CRADLE scenario and validates its syntax and structure.
 cxc validate -i <scenario.cradle>
 ```
 
-Use `--json` for structured diagnostics:
+Use `cxc check --json` for structured diagnostics:
 
 ```bash
-cxc validate -i <scenario.cradle> --json
+cxc check -i <scenario.cradle> --json
 ```
 
 ### Example
@@ -136,14 +144,14 @@ For more information, see [Inspect Output](../getting-started/inspect-output).
 
 ---
 
-## `cxc build`
+## `cxc emit`
 
-Generates target-specific files through a compatible backend plugin.
+Renders YAML or target-specific files through a compatible backend plugin.
 
 ### Usage
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -152,7 +160,7 @@ cxc build \
 ### Example
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -164,88 +172,55 @@ cxc build \
 | --- | --- |
 | `-i` | Specifies the input `.cradle` scenario. |
 | `--target` | Selects the backend target. |
-| `-o` | Specifies the output location. When omitted, the default is `./build_<target>`. |
-| `--backend-arg key=value` | Passes a repeatable backend-specific option. |
-| `--config-dir` | Overrides the configured content directory for `config()` entries. |
-| `--heuristics-dir` | Overrides the configured content directory for instance heuristics. |
+| `-o` | Specifies the output location. Backend output defaults to `./emit_<target>`; YAML is printed to stdout when omitted. |
 
 A compatible backend plugin must be available for the selected target.
 
-When no backend plugin is registered, `build` and `rebuild` are hidden from the
-top-level `cxc --help` command list, although direct invocation still reports
-the normal target-discovery error.
+The selected backend must be discoverable before rendering.
 
 :::important
-`cxc build` generates target-specific files. CradleXC does not automatically execute those files.
+`cxc emit` generates target-specific files. CradleXC does not automatically execute those files.
 :::
 
 Use the generated files with the corresponding tools in your own testbed environment.
 
 :::note
-The default output directory is `./build_<target>`, and build state is stored
-in `.cxc-build.json` and `.cxc-build-ir.json`.
-
-Build state is refreshed after every successful render. A backend that exposes
-stage commands can also make `cxc build` print suggested boot, provision and
-event commands after generation; these are hints and are not run automatically.
+Backend output defaults to `./emit_<target>` when `-o` is omitted. With
+`--target yaml`, omitting `-o` prints YAML to stdout.
 :::
 
 For backend installation and configuration, see [Use a Backend](../getting-started/use-a-backend).
 
 ---
 
-## `cxc rebuild`
+## `cxc deploy`
 
-Compares the current scenario with the IR snapshot from the most recent
-successful `cxc build` or `cxc rebuild`, then regenerates the backend's complete
-file set in the same output directory.
+Runs the complete deployment workflow through the selected backend: compile,
+render, provision, and events.
 
 ### Usage
 
 ```bash
-cxc rebuild \
+cxc deploy \
   -i <scenario.cradle> \
-  --target <plugin_name> \
-  -o <existing_output_directory>
+  --backend <plugin_name>
 ```
 
 ### Example
 
 ```bash
-cxc rebuild \
+cxc deploy \
   -i scenarios/HelloWorld.cradle \
-  --target vagrant \
-  -o ./output
+  --backend vagrant
 ```
 
-The output directory must already exist and contain `.cxc-build-ir.json` from a
-successful build. Run `cxc build` once to create the required build state.
-
-`cxc rebuild` reports every instance as added, removed, recreated,
-reprovisioned or unchanged, with reasons for recreate and reprovision changes.
-It then asks the backend to render the complete current file set. It is not a
-partial file writer.
-
-| Difference | Classification |
-| --- | --- |
-| Platform, OS version, architecture, CPU, memory, interfaces or router/Windows status | Recreate |
-| Configs, objects, roles, routes or heuristic membership | Reprovision |
-| Instance only in the current scenario | Added |
-| Instance only in the previous build | Removed |
-| No deployment-relevant change | Unchanged |
-
-A pure reordering of the same heuristics is unchanged. Adding, removing or
-replacing a heuristic is a reprovision change.
+Select a stage with `--stage all|boot|provision|events`. The backend is required
+and is selected with `--backend <name>`.
 
 :::important
-`cxc rebuild` only updates generated files. It does not create, change or remove
-a live deployment. If network identity or addressing changed, it stops and asks
-you to run `cxc build` into a fresh output directory instead.
+`cxc deploy` can provision infrastructure and run scenario events through the
+selected backend. Review the backend's requirements before using it.
 :::
-
-After a successful rebuild, compatible backends may print boot or provision
-commands scoped to the affected instances. These are suggestions only and are
-not executed by CradleXC.
 
 ---
 
@@ -265,19 +240,7 @@ Backend executables follow the naming convention:
 cxc-backend-<name>
 ```
 
-CradleXC discovers compatible backend executables from:
-
-```text
-PATH
-```
-
-the default system-wide directory:
-
-```text
-/opt/cxc/plugins/
-```
-
-or the per-user directory:
+CradleXC discovers compatible backend executables from `PATH` and:
 
 ```text
 ~/.cxc/plugins/
@@ -296,13 +259,13 @@ Installs a backend plugin.
 ### Usage
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 ### Example
 
 ```bash
-sudo cxc plugin install vagrant
+cxc plugin install vagrant
 ```
 
 After installation, check whether the backend is available:
@@ -311,9 +274,13 @@ After installation, check whether the backend is available:
 cxc backend list
 ```
 
-The default install location is `/opt/cxc/plugins/`. Use `cxc plugin install --user <plugin_name>` only when you explicitly want a per-user installation in `~/.cxc/plugins/`.
+The plugin install location is `~/.cxc/plugins/`.
 
 The exact plugin names available depend on the backend plugins published for CRADLE.
+
+At this release, plugin installation requires a published plugin release, which
+is not yet available. Build a plugin from its source repository and place the
+resulting executable on `PATH` or in `~/.cxc/plugins/` until then.
 
 For more information, see [Use a Backend](../getting-started/use-a-backend).
 
@@ -424,7 +391,7 @@ cxc compile --help
 ```
 
 ```bash
-cxc build --help
+cxc emit --help
 ```
 
 ## Typical scenario workflow
@@ -458,7 +425,7 @@ cxc backend list
 Then generate the files:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -484,7 +451,7 @@ The overall workflow is:
 
   <span>↓</span>
 
-  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc emit</code></div>
 
   <span>↓</span>
 
@@ -536,14 +503,14 @@ The overall workflow is:
     <div className="cxc-command-description">
       Install a backend plugin.
     </div>
-    <code>sudo cxc plugin install</code>
+    <code>cxc plugin install</code>
   </div>
 
   <div className="cxc-command-card">
     <div className="cxc-command-description">
-      Generate target-specific files.
+      Render target-specific files.
     </div>
-    <code>cxc build</code>
+    <code>cxc emit</code>
   </div>
 
 </div>

@@ -24,14 +24,11 @@ When `--config` is not supplied, CradleXC uses the first configuration file it f
 1. `./config.toml`
 2. `config.toml` beside the `cxc` executable
 3. `~/.cxc/config.toml`
-4. `/opt/cxc/config.toml`
-5. built-in defaults
+4. built-in defaults
 
 ## Complete example
 
 ```toml
-config_dir = "https://github.com/cradle-lang/cradle-lib"
-heuristics_dir = "https://github.com/cradle-lang/cradle-lib"
 artifact_repo = "https://artifacts.example.org"
 artifact_dir = "/home/user/artifact"
 
@@ -58,27 +55,6 @@ memory = 1024
 [backend.vagrant]
 provider = "libvirt"
 ```
-
-## Content sources
-
-`config_dir` supplies the implementation for each instance `config()` entry. `heuristics_dir` supplies implementation content for instance heuristics. Each value can be either a local directory or a Git URL.
-
-The built-in default for both settings is:
-
-```text
-https://github.com/cradle-lang/cradle-lib
-```
-
-When a Git URL is configured, CradleXC fetches the referenced content into its local cache as needed by `build` and `rebuild`.
-
-List locally available content with:
-
-```bash
-cxc configs list
-cxc heuristics list
-```
-
-Use `--config-dir` or `--heuristics-dir` on those commands to inspect a specific local directory.
 
 ## Artifact settings
 
@@ -126,8 +102,6 @@ Command-line `--backend-arg key=value` options override matching values from the
 
 Environment variables override matching TOML values. Supported variables include:
 
-- `CXC_CONFIG_DIR`
-- `CXC_HEURISTICS_DIR`
 - `CXC_ARTIFACT_REPO`
 - `CXC_ARTIFACT_DIR`
 - `CXC_TIMEZONE`

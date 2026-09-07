@@ -5,13 +5,24 @@ title: Forensic Data
 
 # Forensic Data
 
-CradleXC separates scenario authoring and target-file generation from forensic-data collection. Collection locations and output layouts are defined by the selected backend and its target environment.
+CradleXC separates scenario authoring and target-file generation from forensic
+data collection. The `cxc extract` command runs forensic extraction against a
+deployment directory and stores the result in the configured dataset directory
+unless an output directory is supplied.
 
 ## Collect data
 
-Forensic-data collection is provided by the selected backend and its target
-environment rather than by a CradleXC command. Follow the backend's
-documentation for its supported collection workflow and output layout.
+After a deployment has produced its hosts file, extract data with:
+
+```bash
+cxc extract \
+  --scenario HelloWorld \
+  --deploy-dir ./output/HelloWorld
+```
+
+Use `--output <directory>` to override the configured forensic-data output
+location. Extraction depends on the forensic tools and deployed environment;
+it does not deploy infrastructure or run scenario events.
 
 Confirm the backend's prerequisites with `cxc doctor` before using its own
 collection tooling.

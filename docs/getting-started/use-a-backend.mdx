@@ -64,14 +64,18 @@ See the [CRADLE release repository](https://github.com/cradle-lang/cradle-releas
 Install a backend plugin with:
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 For example:
 
 ```bash
-sudo cxc plugin install vagrant
+cxc plugin install vagrant
 ```
+
+Plugin installation is not currently live until a plugin release is published.
+Until then, build a plugin from its own source repository and place the
+`cxc-backend-<name>` executable on `PATH` or in `~/.cxc/plugins/`.
 
 The exact plugin name depends on the backend you want to use. The release repository is the authoritative list of published plugin names.
 
@@ -104,7 +108,7 @@ and:
 and the default system-wide directory:
 
 ```text
-/opt/cxc/plugins/
+~/.cxc/plugins/
 ```
 
 A backend executable must follow the expected naming convention:
@@ -123,12 +127,12 @@ The corresponding backend target can then be selected when generating target-spe
 
 ## Generate target-specific files
 
-Use `cxc build` to generate files for a selected backend.
+Use `cxc emit` to render files for a selected backend.
 
 The general command is:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -137,7 +141,7 @@ cxc build \
 For example, using the Hello World scenario:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -184,7 +188,7 @@ A typical backend workflow is:
     <div className="cradle-lifecycle-content">
       <strong>Install a backend</strong>
       <span>Install the plugin for the target you want to generate.</span>
-      <code>sudo cxc plugin install &lt;plugin_name&gt;</code>
+      <code>cxc plugin install &lt;plugin_name&gt;</code>
     </div>
   </div>
 
@@ -206,8 +210,8 @@ A typical backend workflow is:
     <div className="cradle-lifecycle-number">5</div>
 
     <div className="cradle-lifecycle-content">
-      <strong>Generate target files</strong>
-      <span>Generate backend-specific output with <code>cxc build</code>.</span>
+      <strong>Render target files</strong>
+      <span>Render backend-specific output with <code>cxc emit</code>.</span>
     </div>
   </div>
 
@@ -289,7 +293,7 @@ Backend-specific documentation can contain additional requirements that are not 
 
 ## Validate before generating output
 
-Validate the scenario before running `cxc build`:
+Validate the scenario before running `cxc emit`:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
@@ -298,7 +302,7 @@ cxc validate -i scenarios/HelloWorld.cradle
 Then generate the backend-specific output:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -308,7 +312,7 @@ This helps identify CRADLE syntax problems before backend processing begins.
 
 ## Inspect generated files
 
-After `cxc build` completes, inspect the output directory:
+After `cxc emit` completes, inspect the output directory:
 
 ```bash
 ls -la ./output
@@ -381,7 +385,7 @@ cxc backend list
 Then generate target-specific files:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -405,12 +409,12 @@ If `cxc backend list` does not show the expected plugin, confirm that:
 
 - the plugin has been installed
 - the executable uses the `cxc-backend-<name>` naming convention
-- the executable is available through the system `PATH`, `/opt/cxc/plugins/` or `~/.cxc/plugins/`
+- the executable is available through the system `PATH` or `~/.cxc/plugins/`
 
 You can reinstall a backend plugin with:
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 Then run:

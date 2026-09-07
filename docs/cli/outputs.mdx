@@ -225,7 +225,7 @@ Backend plugins generate target-specific files.
 Use:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -234,7 +234,7 @@ cxc build \
 For example:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -257,7 +257,7 @@ Compiled YAML and backend-generated files serve different purposes.
 | Validation diagnostics | `cxc validate` | Reports source problems. |
 | Intermediate representation | `cxc dump-ir` | Shows how CradleXC interpreted the source. |
 | Compiled YAML | `cxc compile` | Represents the processed scenario. |
-| Target-specific files | `cxc build` and backend plugin | Represents the scenario for a particular target. |
+| Target-specific files | `cxc emit` and backend plugin | Represents the scenario for a particular target. |
 
 The relationship is:
 
@@ -403,7 +403,7 @@ cxc compile \
 If target-specific files are required, regenerate them separately:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -482,7 +482,7 @@ cxc compile \
 Then, if backend output is involved:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output

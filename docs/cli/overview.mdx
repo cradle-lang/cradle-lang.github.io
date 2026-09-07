@@ -67,7 +67,7 @@ The most common workflow uses:
 cxc validate
 cxc compile
 cxc dump-ir
-cxc build
+cxc emit
 ```
 
 Conceptually:
@@ -90,7 +90,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc emit</code></div>
 
   <span>↓</span>
 
@@ -165,7 +165,7 @@ CradleXC uses external backend plugins for target-specific generation.
 Use:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -174,7 +174,7 @@ cxc build \
 For example:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -186,13 +186,13 @@ To regenerate an existing output directory after changing the scenario, use
 the previous build as a comparison baseline:
 
 ```bash
-cxc rebuild \
+cxc deploy \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
 ```
 
-`cxc rebuild` reports what changed and rewrites the complete generated file
+`cxc deploy` runs the selected deployment stage through the backend
 set. It does not modify a live deployment. See the
 [Command Reference](./command-reference#cxc-rebuild) for its baseline and
 network-change rules.
@@ -223,7 +223,7 @@ Backend executables follow the convention:
 cxc-backend-<name>
 ```
 
-CradleXC discovers compatible backend executables from the system `PATH`, `/opt/cxc/plugins/` or:
+CradleXC discovers compatible backend executables from the system `PATH` or:
 
 ```text
 ~/.cxc/plugins/
@@ -234,7 +234,7 @@ CradleXC discovers compatible backend executables from the system `PATH`, `/opt/
 Use:
 
 ```bash
-sudo cxc plugin install <plugin_name>
+cxc plugin install <plugin_name>
 ```
 
 to install a backend plugin.
@@ -242,7 +242,7 @@ to install a backend plugin.
 For example:
 
 ```bash
-sudo cxc plugin install vagrant
+cxc plugin install vagrant
 ```
 
 Backend installation and discovery are documented in [Use a Backend](../getting-started/use-a-backend).
@@ -325,21 +325,21 @@ The current CLI can be thought of in several groups.
     <div className="cxc-command-description">
       Install a compatible backend plugin.
     </div>
-    <code>sudo cxc plugin install</code>
+    <code>cxc plugin install</code>
   </div>
 
   <div className="cxc-command-card">
     <div className="cxc-command-description">
       Generate target-specific files through a backend.
     </div>
-    <code>cxc build</code>
+    <code>cxc emit</code>
   </div>
 
   <div className="cxc-command-card">
     <div className="cxc-command-description">
       Compare with the previous build and regenerate the complete file set.
     </div>
-    <code>cxc rebuild</code>
+    <code>cxc deploy</code>
   </div>
 
 </div>
@@ -430,7 +430,7 @@ cxc <command> --help
 For example:
 
 ```bash
-cxc build --help
+cxc emit --help
 ```
 
 See [Troubleshooting](../guides/troubleshooting) for additional diagnostic guidance.

@@ -22,29 +22,17 @@ No backend plugin is required for validation or compilation.
 
 Before starting, make sure you have:
 
-- a supported operating system
+- Rust and Cargo
 - a terminal or command prompt
 - `curl`
 
 ## Install CradleXC
 
-1. CradleXC is distributed as a prebuilt binary through the
-   CRADLE APT repository:
+Install CradleXC from a checkout of the upstream source:
 
-    ```text
-    https://repo.cradle-lang.org/apt/
-    ```
-
-2. Add the CRADLE package repository, update your package index and install CradleXC.
-
-    For example:
-
-    ```bash
-    echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" | sudo tee /etc/apt/sources.list.d/cradle.list
-
-    sudo apt update
-    sudo apt install cxc
-    ```
+```bash
+cargo install --path crates/cradle-cli
+```
 
 ## Verify the installation
 
@@ -139,7 +127,7 @@ This command displays the intermediate representation produced from the
 CRADLE scenario. It is useful for troubleshooting or reviewing CradleXC's
 parsing and semantic processing.
 
-### Generate target-specific output
+### Render target-specific output
 
 Backend plugins provide target-specific file generation.
 
@@ -154,17 +142,17 @@ Backend installation and configuration are covered separately in the [backend gu
 Once a compatible backend plugin is installed, generate target-specific output with:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
 ```
 
 For example:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
-The backend plugin generates the files required by its target.
-These files are not automatically executed by CradleXC.
+The backend plugin generates the files required by its target. `cxc emit`
+renders output only; it does not provision or execute infrastructure.
 You can use the generated files with the corresponding tools in your own testbed environment.
 
 ## Next steps
