@@ -1,4 +1,4 @@
-name: Update docs from a CradleXC tag with Copilot
+name: Prepare CradleXC release documentation with Copilot
 
 on:
   workflow_dispatch:
@@ -13,11 +13,11 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: update-cradlexc-docs-${{ inputs.tag }}
+  group: prepare-cradlexc-release-${{ inputs.tag }}
   cancel-in-progress: false
 
 jobs:
-  update:
+  prepare:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -48,10 +48,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.CRADLE_RELEASES_TOKEN }}
 
-      - name: Verify upstream checkout
+      - name: Verify requested tag and target
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
+          TARGET: release-notes/${{ inputs.tag }}.md
         run: |
           set -euo pipefail
           expected="$(git -C upstream-cradlexc rev-list -n 1 "$TAG")"
@@ -60,16 +61,87 @@ jobs:
             echo "::error::Expected upstream tag $TAG at $expected but checked out $actual."
             exit 1
           fi
+          if [[ -e "$TARGET" ]]; then
+            echo "::error::$TARGET already exists and requires human handling."
+            exit 1
+          fi
+
+      - name: Install website dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Archive documentation for the current released version
+        id: archive
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          previous="$({
+            git ls-files 'release-notes/v*.md' |
+              sed -nE 's#^release-notes/(v[0-9]+\.[0-9]+\.[0-9]+)\.md$#\1#p' |
+              sort -V |
+              tail -n 1
+          } || true)"
+
+          if [[ -z "$previous" ]]; then
+            echo "No stable release-note file exists; skipping the initial archive."
+            echo "tag=none" >> "$GITHUB_OUTPUT"
+            echo "version=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Latest stable release note identifies the current documentation as $previous."
+          echo "tag=$previous" >> "$GITHUB_OUTPUT"
+
+          if [[ "$previous" == "$TAG" ]]; then
+            echo "::error::The requested release note already exists for $TAG."
+            exit 1
+          fi
+
+          if ! git -C upstream-cradlexc rev-parse --verify --quiet "refs/tags/$previous" >/dev/null; then
+            echo "::error::The latest release-note version does not exist as an upstream tag: $previous"
+            exit 1
+          fi
+          if ! git -C upstream-cradlexc merge-base --is-ancestor "$previous" "$TAG"; then
+            echo "::warning::$previous is not an ancestor of $TAG; skipping documentation archiving for this historical or divergent-tag run."
+            echo "version=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          version="${previous#v}"
+          if jq -e --arg version "$version" 'index($version) != null' versions.json >/dev/null; then
+            echo "Documentation version $version is already archived."
+            echo "version=$version (already present)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          npm run docusaurus -- docs:version "$version"
+
+          test -d "versioned_docs/version-$version"
+          test -f "versioned_sidebars/version-$version-sidebars.json"
+          jq -e --arg version "$version" 'index($version) != null' versions.json >/dev/null
+
+          # Stage the deterministic snapshot before Copilot runs. Any later AI
+          # modification to these files will then appear as an unstaged change
+          # and be rejected by the approved-path guard.
+          git add -- \
+            versions.json \
+            "versioned_docs/version-$version" \
+            "versioned_sidebars/version-$version-sidebars.json"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Install GitHub Copilot CLI
         shell: bash
         run: npm install --global @github/copilot@1.0.83
 
-      - name: Synchronize documentation
+      - name: Prepare release documentation
         shell: bash
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
           TAG: ${{ inputs.tag }}
+          TARGET: release-notes/${{ inputs.tag }}.md
+          PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
         run: |
           set -euo pipefail
           if [[ -z "$COPILOT_GITHUB_TOKEN" ]]; then
@@ -77,9 +149,11 @@ jobs:
             exit 1
           fi
 
-          prompt="$(cat .github/prompts/update-cradlexc-docs.md)
+          prompt="$(cat .github/prompts/prepare-cradlexc-release.md)
 
-          Requested release tag: $TAG"
+          Requested release tag: $TAG
+          Release-note output path: $TARGET
+          Latest stable release-note tag before this run: $PREVIOUS_TAG"
 
           copilot \
             --prompt "$prompt" \
@@ -87,7 +161,7 @@ jobs:
             --no-custom-instructions \
             --disable-builtin-mcps \
             --secret-env-vars=COPILOT_GITHUB_TOKEN \
-            --max-ai-credits 40 \
+            --max-ai-credits 60 \
             --allow-tool write \
             --allow-tool 'shell(cat)' \
             --allow-tool 'shell(cd)' \
@@ -114,9 +188,16 @@ jobs:
             --allow-tool 'shell(tail)' \
             --allow-tool 'shell(wc)'
 
-      - name: Verify Copilot changed only documentation paths
+          if [[ ! -s "$TARGET" ]]; then
+            echo "::error::Copilot did not create the required $TARGET."
+            exit 1
+          fi
+
+      - name: Verify Copilot changed only approved paths
         id: changes
         shell: bash
+        env:
+          TARGET: release-notes/${{ inputs.tag }}.md
         run: |
           set -euo pipefail
           mapfile -t changed < <(
@@ -126,10 +207,11 @@ jobs:
             } | grep -v '^upstream-cradlexc/$' | sort -u
           )
 
+          found_target=false
           for path in "${changed[@]}"; do
             case "$path" in
-              docs/*|src/pages/index.tsx|src/components/homepage/*|static/img/home/*)
-                ;;
+              "$TARGET") found_target=true ;;
+              docs/*|src/pages/index.tsx|src/components/homepage/*|static/img/home/*|README.rst|CONTRIBUTING.md) ;;
               *)
                 echo "::error::Copilot changed a disallowed path: $path"
                 exit 1
@@ -137,14 +219,16 @@ jobs:
             esac
           done
 
+          if [[ "$found_target" != true ]]; then
+            echo "::error::Copilot did not create the required $TARGET."
+            exit 1
+          fi
           echo "count=${#changed[@]}" >> "$GITHUB_OUTPUT"
 
-      - name: Validate documentation
+      - name: Validate release documentation
         shell: bash
         run: |
           set -euo pipefail
-          npm ci
-
           mapfile -t markdown_files < <(
             {
               git diff --name-only --diff-filter=ACM -- '*.md' '*.mdx'
@@ -159,13 +243,14 @@ jobs:
           npm run build
           git restore --worktree src/data/release-notes.json
 
-      - name: Commit and push automation branch
+      - name: Commit and push combined branch
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
-          BRANCH: docs-sync/${{ inputs.tag }}
+          BRANCH: release/${{ inputs.tag }}
         run: |
           set -euo pipefail
+          printf '%s\n' "$TAG" > release-notes/.last-processed-release
           printf '%s\n' "$TAG" > .cradlexc-docs-source-tag
           git rm --ignore-unmatch .cradlexc-docs-source-revision
 
@@ -175,12 +260,18 @@ jobs:
             "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
           git switch -C "$BRANCH"
           git add -- \
+            release-notes \
             .cradlexc-docs-source-tag \
+            versions.json \
+            versioned_docs \
+            versioned_sidebars \
             docs \
             src/pages/index.tsx \
             src/components/homepage \
-            static/img/home
-          git commit -m "Sync docs with CradleXC $TAG"
+            static/img/home \
+            README.rst \
+            CONTRIBUTING.md
+          git commit -m "Prepare documentation for CradleXC $TAG"
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
       - name: Create or update draft pull request
@@ -188,31 +279,38 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
           TAG: ${{ inputs.tag }}
-          BRANCH: docs-sync/${{ inputs.tag }}
-          CONTENT_CHANGE_COUNT: ${{ steps.changes.outputs.count }}
+          BRANCH: release/${{ inputs.tag }}
+          CHANGE_COUNT: ${{ steps.changes.outputs.count }}
+          ARCHIVED_VERSION: ${{ steps.archive.outputs.version }}
         run: |
           set -euo pipefail
           body="$(printf '%s\n' \
             "## Summary" \
             "" \
-            "Synchronizes the website documentation with CradleXC tag \`$TAG\`. Copilot found $CONTENT_CHANGE_COUNT documentation file change(s), excluding the source-tag marker." \
+            "Prepares release notes and related documentation for CradleXC \`$TAG\`. Copilot created or updated $CHANGE_COUNT content file(s), excluding processing markers." \
+            "The workflow archived the previous current-documentation snapshot as version \`$ARCHIVED_VERSION\`." \
             "" \
-            "## Validation" \
+            "## Change type" \
             "" \
-            "- Ran Markdown/MDX linting on changed documentation files." \
+            "- [x] Documentation/content" \
+            "- [x] Documentation versioning" \
+            "" \
+            "## Testing and verification" \
+            "" \
+            "- Ran Markdown/MDX linting on changed files." \
             "- Ran \`npm run build\`." \
-            "- Restricted changes to approved documentation and homepage paths." \
+            "- Restricted changes to approved release, documentation, homepage, README, and contributing paths." \
             "" \
             "This draft requires human technical and editorial review before merging.")"
 
           number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
           if [[ -n "$number" ]]; then
-            gh pr edit "$number" --title "Sync docs with CradleXC $TAG" --body "$body"
+            gh pr edit "$number" --title "Prepare documentation for CradleXC $TAG" --body "$body"
           else
             gh pr create \
               --draft \
               --base main \
               --head "$BRANCH" \
-              --title "Sync docs with CradleXC $TAG" \
+              --title "Prepare documentation for CradleXC $TAG" \
               --body "$body"
           fi

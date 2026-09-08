@@ -51,7 +51,6 @@ jobs:
               echo "::error::The requested tag is invalid: $REQUESTED_TAG"
               exit 1
             fi
-
             gh api "repos/${UPSTREAM_REPOSITORY}/git/ref/tags/${REQUESTED_TAG}" > /dev/null
             tag="$REQUESTED_TAG"
           else
@@ -59,7 +58,6 @@ jobs:
             gh api --paginate \
               "repos/${UPSTREAM_REPOSITORY}/tags?per_page=100" \
               --jq '.[].name' > "$tags_file"
-
             tag="$(grep -m 1 -E '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$' "$tags_file" || true)"
           fi
 
@@ -70,7 +68,7 @@ jobs:
 
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-      - name: Check whether the release needs processing
+      - name: Check whether the tag needs processing
         id: status
         shell: bash
         env:
@@ -79,33 +77,35 @@ jobs:
         run: |
           set -euo pipefail
 
-          marker='release-notes/.last-processed-release'
-          previous=''
+          latest_documented="$({
+            git ls-files 'release-notes/v*.md' |
+              sed -nE 's#^release-notes/(v[0-9]+\.[0-9]+\.[0-9]+)\.md$#\1#p' |
+              sort -V |
+              tail -n 1
+          } || true)"
 
-          if [[ -f "$marker" ]]; then
-            previous="$(tr -d '[:space:]' < "$marker")"
-          fi
-
-          if [[ "$TAG" == "$previous" ]]; then
-            echo "Tag $TAG has already been processed."
+          if git ls-files --error-unmatch "release-notes/${TAG}.md" >/dev/null 2>&1; then
+            echo "CradleXC tag $TAG already has a tracked release note."
+            echo "No documentation workflow will be dispatched."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           if gh pr list \
             --state open \
-            --head "release-notes/${TAG}" \
+            --head "release/${TAG}" \
             --json number \
             --jq 'length > 0' | grep -qx true; then
-            echo "A release-note PR for $TAG is already open."
+            echo "A combined release documentation PR for $TAG is already open."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "Detected tag $TAG (previously processed: ${previous:-none})."
+          echo "Detected new CradleXC tag $TAG."
+          echo "Latest documented release: ${latest_documented:-none}."
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Ask Copilot to author the release-note PR
+      - name: Prepare the combined release documentation PR
         if: steps.status.outputs.changed == 'true'
         shell: bash
         env:
@@ -113,7 +113,6 @@ jobs:
           TAG: ${{ steps.upstream-tag.outputs.tag }}
         run: |
           set -euo pipefail
-
-          gh workflow run generate-cradlexc-release-notes.yml \
+          gh workflow run prepare-cradlexc-release.yml \
             --ref "$GITHUB_REF_NAME" \
             -f "tag=$TAG"
