@@ -194,7 +194,7 @@ jobs:
           fi
 
       - name: Verify Copilot changed only approved paths
-        id: changes
+        id: initial_changes
         shell: bash
         env:
           TARGET: release-notes/${{ inputs.tag }}.md
@@ -238,10 +238,14 @@ jobs:
             echo "contributing_changed=$contributing_changed"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Validate release documentation
+      - name: Validate release documentation (attempt 1)
+        id: validation_first
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          log="$RUNNER_TEMP/release-validation-attempt-1.log"
+          status=0
           mapfile -t markdown_files < <(
             {
               git diff --name-only --diff-filter=ACM -- '*.md' '*.mdx'
@@ -249,7 +253,7 @@ jobs:
             } | grep -v '^upstream-cradlexc/' | sort -u
           )
           if [[ "${#markdown_files[@]}" -gt 0 ]]; then
-            npx --yes markdownlint-cli2@0.18.1 --fix "${markdown_files[@]}"
+            npx --yes markdownlint-cli2@0.18.1 --fix "${markdown_files[@]}" 2>&1 | tee -a "$log" || status=1
           fi
 
           npx --yes markdownlint-cli2@0.18.1 \
@@ -259,12 +263,166 @@ jobs:
             '#build/**' \
             '#.docusaurus/**' \
             '#.venv/**' \
-            '#upstream-cradlexc/**'
+            '#upstream-cradlexc/**' 2>&1 | tee -a "$log" || status=1
 
-          npm run build
+          npm run build 2>&1 | tee -a "$log" || status=1
           git restore --worktree src/data/release-notes.json
+          exit "$status"
 
-      - name: Check generated-site links
+      - name: Check generated-site links (attempt 1)
+        id: links_first
+        continue-on-error: true
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --verbose
+            --no-progress
+            --root-dir ./build
+            --remap
+            '^https://cradle-lang\.org/(.*)$ file://${{ github.workspace }}/build/$1'
+            './build/**/*.html'
+          fail: true
+
+      - name: Ask Copilot to repair failed checks
+        if: >-
+          always() &&
+          (steps.validation_first.outcome == 'failure' ||
+          steps.links_first.outcome == 'failure')
+        id: repair
+        continue-on-error: true
+        shell: bash
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+          TAG: ${{ inputs.tag }}
+          VALIDATION_OUTCOME: ${{ steps.validation_first.outcome }}
+          LINKS_OUTCOME: ${{ steps.links_first.outcome }}
+        run: |
+          set -euo pipefail
+          validation_log="$RUNNER_TEMP/release-validation-attempt-1.log"
+          details='No Markdown or build log was captured.'
+          if [[ -s "$validation_log" ]]; then
+            details="$(tail -n 400 "$validation_log")"
+          fi
+
+          prompt="The first automated validation of the CradleXC $TAG documentation update failed.
+
+          Markdown/build result: $VALIDATION_OUTCOME
+          Generated-site link result: $LINKS_OUTCOME
+
+          Fix only failures caused by the generated release documentation. You may edit only release-notes/$TAG.md, docs/**, src/pages/index.tsx, src/components/homepage/**, static/img/home/**, README.rst, and CONTRIBUTING.md. Do not edit workflows, dependencies, lockfiles, markers, versions.json, versioned_docs/, versioned_sidebars/, generated data, or build output. Do not commit, push, or create a pull request.
+
+          Validation output:
+          $details"
+
+          copilot \
+            --prompt "$prompt" \
+            --no-ask-user \
+            --no-custom-instructions \
+            --disable-builtin-mcps \
+            --secret-env-vars=COPILOT_GITHUB_TOKEN \
+            --max-ai-credits 20 \
+            --allow-tool write \
+            --allow-tool 'shell(cat)' \
+            --allow-tool 'shell(find)' \
+            --allow-tool 'shell(git diff:*)' \
+            --allow-tool 'shell(git status)' \
+            --allow-tool 'shell(grep)' \
+            --allow-tool 'shell(head)' \
+            --allow-tool 'shell(ls)' \
+            --allow-tool 'shell(rg)' \
+            --allow-tool 'shell(sed)' \
+            --allow-tool 'shell(tail)'
+
+      - name: Verify final changes use only approved paths
+        if: always()
+        id: changes
+        shell: bash
+        env:
+          TARGET: release-notes/${{ inputs.tag }}.md
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | grep -v '^upstream-cradlexc/$' | sort -u
+          )
+
+          found_target=false
+          docs_changed=false
+          homepage_changed=false
+          readme_changed=false
+          contributing_changed=false
+          for path in "${changed[@]}"; do
+            case "$path" in
+              "$TARGET") found_target=true ;;
+              docs/*) docs_changed=true ;;
+              src/pages/index.tsx|src/components/homepage/*|static/img/home/*) homepage_changed=true ;;
+              README.rst) readme_changed=true ;;
+              CONTRIBUTING.md) contributing_changed=true ;;
+              *)
+                echo "::error::Copilot changed a disallowed path: $path"
+                exit 1
+                ;;
+            esac
+          done
+
+          if [[ "$found_target" != true ]]; then
+            echo "::error::Copilot did not create the required $TARGET."
+            exit 1
+          fi
+          {
+            echo 'safe=true'
+            echo "count=${#changed[@]}"
+            echo "docs_changed=$docs_changed"
+            echo "homepage_changed=$homepage_changed"
+            echo "readme_changed=$readme_changed"
+            echo "contributing_changed=$contributing_changed"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Validate release documentation (attempt 2)
+        if: >-
+          always() &&
+          steps.changes.outputs.safe == 'true' &&
+          (steps.validation_first.outcome == 'failure' ||
+          steps.links_first.outcome == 'failure')
+        id: validation_second
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          mapfile -t markdown_files < <(
+            {
+              git diff --name-only --diff-filter=ACM -- '*.md' '*.mdx'
+              git ls-files --others --exclude-standard -- '*.md' '*.mdx'
+            } | grep -v '^upstream-cradlexc/' | sort -u
+          )
+          if [[ "${#markdown_files[@]}" -gt 0 ]]; then
+            npx --yes markdownlint-cli2@0.18.1 --fix "${markdown_files[@]}" || status=1
+          fi
+
+          npx --yes markdownlint-cli2@0.18.1 \
+            '**/*.md' \
+            '**/*.mdx' \
+            '#node_modules/**' \
+            '#build/**' \
+            '#.docusaurus/**' \
+            '#.venv/**' \
+            '#upstream-cradlexc/**' || status=1
+
+          npm run build || status=1
+          git restore --worktree src/data/release-notes.json
+          exit "$status"
+
+      - name: Check generated-site links (attempt 2)
+        if: >-
+          always() &&
+          steps.changes.outputs.safe == 'true' &&
+          (steps.validation_first.outcome == 'failure' ||
+          steps.links_first.outcome == 'failure')
+        id: links_second
+        continue-on-error: true
         uses: lycheeverse/lychee-action@v2
         with:
           args: >-
@@ -277,6 +435,8 @@ jobs:
           fail: true
 
       - name: Commit and push combined branch
+        if: always() && steps.changes.outputs.safe == 'true'
+        id: commit
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
@@ -308,6 +468,7 @@ jobs:
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
       - name: Create or update draft pull request
+        if: always() && steps.commit.outcome == 'success'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
@@ -319,8 +480,33 @@ jobs:
           HOMEPAGE_CHANGED: ${{ steps.changes.outputs.homepage_changed }}
           README_CHANGED: ${{ steps.changes.outputs.readme_changed }}
           CONTRIBUTING_CHANGED: ${{ steps.changes.outputs.contributing_changed }}
+          VALIDATION_FIRST: ${{ steps.validation_first.outcome }}
+          LINKS_FIRST: ${{ steps.links_first.outcome }}
+          REPAIR_OUTCOME: ${{ steps.repair.outcome }}
+          VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
+          LINKS_SECOND: ${{ steps.links_second.outcome }}
         run: |
           set -euo pipefail
+
+          title="Prepare documentation for CradleXC $TAG"
+          if [[ "$VALIDATION_FIRST" == "success" && "$LINKS_FIRST" == "success" ]]; then
+            validation_notice="All automated checks passed on the first attempt."
+            validation_details="- Attempt 1 — Markdown/MDX and build: passed; generated-site links: passed."
+          elif [[ "$VALIDATION_SECOND" == "success" && "$LINKS_SECOND" == "success" ]]; then
+            validation_notice="All automated checks passed on the second attempt after a Copilot repair pass."
+            validation_details="$(printf '%s\n' \
+              "- Attempt 1 — Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
+              "- Copilot repair: $REPAIR_OUTCOME." \
+              "- Attempt 2 — Markdown/MDX and build: passed; generated-site links: passed.")"
+          else
+            title="[Validation failing] $title"
+            validation_notice="> [!WARNING]
+          > Automated validation is still failing after two attempts. This draft was opened so a maintainer can inspect and fix the remaining problems before merging."
+            validation_details="$(printf '%s\n' \
+              "- Attempt 1 — Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
+              "- Copilot repair: $REPAIR_OUTCOME." \
+              "- Attempt 2 — Markdown/MDX and build: $VALIDATION_SECOND; generated-site links: $LINKS_SECOND.")"
+          fi
 
           if [[ "$ARCHIVED_VERSION" == "none" ]]; then
             archive_summary="No documentation snapshot was created because there was no eligible previous stable version."
@@ -359,6 +545,8 @@ jobs:
             "" \
             "Prepares the release notes and user documentation for CradleXC \`$TAG\`. This keeps the current documentation aligned with the tagged compiler behavior while preserving eligible documentation for users of the previous release." \
             "" \
+            "$validation_notice" \
+            "" \
             "## Related issue" \
             "" \
             "N/A - automated maintenance triggered by a verified CradleXC release tag." \
@@ -388,9 +576,8 @@ jobs:
             "- Automated checks:" \
             "  - Verified that the private upstream checkout exactly matches tag \`$TAG\`." \
             "  - Verified that Copilot created the required release note and changed only approved content paths ($CHANGE_COUNT content file(s))." \
-            "  - Ran Markdown/MDX formatting fixes on changed content, then linted all repository Markdown and MDX files." \
-            "  - Ran \`npm run build\` to generate release data and compile the production Docusaurus site." \
-            "  - Checked links in the generated site with Lychee." \
+            "  - Each validation attempt runs Markdown/MDX linting, \`npm run build\`, and a generated-site link check with Lychee." \
+            "$validation_details" \
             "- Manual verification: Pending human technical, editorial, rendered-page, navigation, and version-menu review before this draft is marked ready." \
             "" \
             "## User-facing evidence" \
@@ -413,12 +600,12 @@ jobs:
 
           number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
           if [[ -n "$number" ]]; then
-            gh pr edit "$number" --title "Prepare documentation for CradleXC $TAG" --body "$body"
+            gh pr edit "$number" --title "$title" --body "$body"
           else
             gh pr create \
               --draft \
               --base main \
               --head "$BRANCH" \
-              --title "Prepare documentation for CradleXC $TAG" \
+              --title "$title" \
               --body "$body"
           fi
