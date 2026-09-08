@@ -85,10 +85,8 @@ jobs:
           } || true)"
 
           if [[ -z "$previous" ]]; then
-            echo "No stable release-note file exists; skipping the initial archive."
-            echo "tag=none" >> "$GITHUB_OUTPUT"
-            echo "version=none" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::A previous stable release note is required before preparing a new release."
+            exit 1
           fi
 
           echo "Latest stable release note identifies the current documentation as $previous."
@@ -104,9 +102,9 @@ jobs:
             exit 1
           fi
           if ! git -C upstream-cradlexc merge-base --is-ancestor "$previous" "$TAG"; then
-            echo "::warning::$previous is not an ancestor of $TAG; skipping documentation archiving for this historical or divergent-tag run."
-            echo "version=none" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::$TAG is not a new descendant of the current documented release $previous."
+            echo "::error::Historical or divergent tags cannot produce the required previous-version snapshot."
+            exit 1
           fi
 
           version="${previous#v}"
@@ -228,6 +226,10 @@ jobs:
 
           if [[ "$found_target" != true ]]; then
             echo "::error::Copilot did not create the required $TARGET."
+            exit 1
+          fi
+          if [[ "$docs_changed" != true ]]; then
+            echo "::error::Copilot did not update any user documentation under docs/."
             exit 1
           fi
           {
@@ -379,6 +381,10 @@ jobs:
 
           if [[ "$found_target" != true ]]; then
             echo "::error::Copilot did not create the required $TARGET."
+            exit 1
+          fi
+          if [[ "$docs_changed" != true ]]; then
+            echo "::error::Copilot did not update any user documentation under docs/."
             exit 1
           fi
           {

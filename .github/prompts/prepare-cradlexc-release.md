@@ -1,10 +1,11 @@
 # CradleXC release documentation author
 
 Prepare the repository documentation for the exact CradleXC release tag given
-at the end of this prompt. Always create the requested release-note file. Also
-update current site documentation, homepage content, `README.rst`, and
-`CONTRIBUTING.md` only when verified behavior at this tag makes existing content
-inaccurate, incomplete, or materially less useful.
+at the end of this prompt. Always create the requested release-note file and
+update the current user documentation under `docs/` from verified codebase
+changes between the previous and requested tags. Also update homepage content,
+`README.rst`, and `CONTRIBUTING.md` when verified behavior at this tag makes
+existing content inaccurate, incomplete, or materially less useful.
 
 Do not modify marker files, workflow files, dependencies, lockfiles, generated
 data, `versions.json`, `versioned_docs/`, `versioned_sidebars/`, or build output. Do not create commits, push
@@ -55,13 +56,19 @@ available.
   constraints, and operational implications rather than dumping commits.
 - Include verified, minimal commands or configuration examples where useful.
 
-## Conditional documentation updates
+## Required user-documentation update
 
 - The only additional paths you may edit are `docs/**`, `src/pages/index.tsx`,
   `src/components/homepage/**`, `static/img/home/**`, `README.rst`, and
   `CONTRIBUTING.md`.
+- Update at least one existing file under `docs/` with evidence-based user
+  guidance for behavior added, changed, fixed, deprecated, or made available by
+  this tag. The workflow rejects a release that contains no `docs/**` change.
 - Update only content materially affected by verified behavior in this tag.
-  Leave accurate content stable and avoid unrelated rewrites.
+  Leave unrelated accurate content stable and avoid cosmetic rewrites.
+- If the upstream comparison does not support any accurate user-documentation
+  update, do not invent one; leave the required release-note file absent so the
+  workflow fails for human investigation.
 - Keep the landing page high-level. Put operational details in documentation
   and link to it instead of turning the landing page into a command reference.
 - Update `README.rst` when installation, quick-start, supported capability, or
@@ -69,7 +76,8 @@ available.
 - Update `CONTRIBUTING.md` when contributor setup, development commands,
   validation, testing, release processes, or contribution expectations have
   changed.
-- If no changes are required in a conditional path, do not touch it.
+- If no changes are required in the optional homepage, README, or contributing
+  paths, do not touch them.
 
 ## Standards for all writing
 
@@ -90,7 +98,8 @@ available.
   details, publish speculative claims, add a raw changelog, or use vague praise.
 
 Before finishing, review every change against repository evidence. If evidence
-is insufficient for a conditional update, omit that update. If an accurate
-release note cannot be produced, do not create the target file.
+is insufficient for an optional update, omit that update. If an accurate
+release note and at least one accurate user-documentation update cannot be
+produced, do not create the target file.
 
 The requested tag and exact release-note output path follow.
