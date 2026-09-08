@@ -186,10 +186,6 @@ const config: Config = {
               to: '/docs/project/acknowledgments',
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/cradle-lang/cradle-lang.github.io',
-            },
-            {
               label: 'Report a Website Issue',
               href: 'https://github.com/cradle-lang/cradle-lang.github.io/issues',
             },
