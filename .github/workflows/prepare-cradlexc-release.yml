@@ -514,6 +514,8 @@ jobs:
           set -euo pipefail
 
           title="Prepare documentation for CradleXC $TAG"
+          pr_mode='ready'
+          review_notice='This PR requires human technical and editorial review before merging.'
           if [[ "$VALIDATION_FIRST" == "success" && "$LINKS_FIRST" == "success" ]]; then
             validation_notice="All automated checks passed on the first attempt."
             validation_details="- Attempt 1 — Markdown/MDX and build: passed; generated-site links: passed."
@@ -524,6 +526,8 @@ jobs:
               "- Copilot repair: $REPAIR_OUTCOME." \
               "- Attempt 2 — Markdown/MDX and build: passed; generated-site links: passed.")"
           else
+            pr_mode='draft'
+            review_notice='This draft requires human technical and editorial review before it can be marked ready.'
             title="[Validation failing] $title"
             validation_notice="> [!WARNING]
           > Automated validation is still failing after two attempts. This draft was opened so a maintainer can inspect and fix the remaining problems before merging."
@@ -561,7 +565,7 @@ jobs:
           fi
 
           website_checkbox='- [ ] Website functionality'
-          manual_verification='Pending human technical, editorial, rendered-page, navigation, and version-menu review before this draft is marked ready.'
+          manual_verification='Pending human technical, editorial, rendered-page, navigation, and version-menu review before merging.'
           user_facing_evidence='N/A - no landing-page change was generated. Review affected documentation in the deploy preview or a local npm run serve session.'
           if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
             website_checkbox='- [x] Website functionality'
@@ -625,14 +629,24 @@ jobs:
             "- [x] I updated related documentation where behavior changed." \
             "- [x] I have not included unrelated changes." \
             "" \
-            "This draft requires human technical and editorial review before merging.")"
+            "$review_notice")"
 
           number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
           if [[ -n "$number" ]]; then
+            is_draft="$(gh pr view "$number" --json isDraft --jq '.isDraft')"
             gh pr edit "$number" --title "$title" --body "$body"
+            if [[ "$pr_mode" == "ready" && "$is_draft" == "true" ]]; then
+              gh pr ready "$number"
+            elif [[ "$pr_mode" == "draft" && "$is_draft" == "false" ]]; then
+              gh pr ready "$number" --undo
+            fi
           else
+            create_options=()
+            if [[ "$pr_mode" == "draft" ]]; then
+              create_options+=(--draft)
+            fi
             gh pr create \
-              --draft \
+              "${create_options[@]}" \
               --base main \
               --head "$BRANCH" \
               --title "$title" \
