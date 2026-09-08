@@ -459,21 +459,30 @@ jobs:
 
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git fetch origin \
-            "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" || true
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch origin \
+              "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+          fi
           git switch -C "$BRANCH"
-          git add -- \
-            release-notes \
-            .cradlexc-docs-source-tag \
-            versions.json \
-            versioned_docs \
-            versioned_sidebars \
-            docs \
-            src/pages/index.tsx \
-            src/components/homepage \
-            static/img/home \
-            README.rst \
+
+          approved_paths=(
+            release-notes
+            .cradlexc-docs-source-tag
+            versions.json
+            versioned_docs
+            versioned_sidebars
+            docs
+            src/pages/index.tsx
+            src/components/homepage
+            static/img/home
+            README.rst
             CONTRIBUTING.md
+          )
+          for path in "${approved_paths[@]}"; do
+            if [[ -e "$path" ]] || git ls-files --error-unmatch "$path" >/dev/null 2>&1; then
+              git add -A -- "$path"
+            fi
+          done
           git commit -m "Prepare documentation for CradleXC $TAG"
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
