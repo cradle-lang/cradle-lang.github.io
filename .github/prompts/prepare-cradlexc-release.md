@@ -26,6 +26,11 @@ branches, or create pull requests.
    release files, README files, and `upstream-cradlexc/docs/`.
 5. Search current site documentation, homepage components, `README.rst`, and
    `CONTRIBUTING.md` for claims affected by the verified release changes.
+6. Before editing the landing page, read the Project Goals and Audience,
+   Information Architecture, Architectural Choices, and Human-Computer
+   Interaction Rationale sections of `README.rst`, plus the UI, HCI and
+   Accessibility and Validation sections of `CONTRIBUTING.md`. Treat those
+   sections as controlling repository design requirements.
 
 When inspecting Git history in `upstream-cradlexc/`, change into that directory
 first and run one Git command per shell invocation. Do not use `git -C`, chain
@@ -69,13 +74,39 @@ available.
 - If the upstream comparison does not support any accurate user-documentation
   update, do not invent one; leave the required release-note file absent so the
   workflow fails for human investigation.
-- Keep the landing page high-level. Put operational details in documentation
-  and link to it instead of turning the landing page into a command reference.
+- Evaluate `README.rst`, `CONTRIBUTING.md`, and the landing page separately
+  for every release. Update each one when verified release behavior makes its
+  project guidance, contributor workflow, product positioning, supported
+  workflow, evidence, limitations, or next actions inaccurate or incomplete.
+- Keep the landing page high-level and task-oriented. Put operational details
+  in documentation and link to them instead of turning the landing page into a
+  command reference or changelog.
+- Preserve the landing-page information architecture documented in
+  `README.rst`: establish the problem and value, demonstrate the
+  source-to-environment relationship, provide evidence, explain the supported
+  workflow, and then guide users toward learning and installation. Change that
+  sequence only when the release evidence and an explicit HCI rationale justify
+  it.
+- Apply the repository's HCI principles to landing-page changes:
+  progressive disclosure and audience paths; recognition over recall; visible
+  system status; user control, error prevention, and recovery; complementary
+  text and visual representations; consistent hierarchy and visual grammar;
+  accessible, responsive, keyboard-usable interaction; and trustworthy,
+  calibrated claims with limitations near affected features.
+- Preserve semantic headings, native controls and links, visible focus,
+  sufficient light/dark contrast, usable mobile targets, 200% zoom behavior,
+  reduced-motion support, and text alternatives. Do not convey important
+  information through color or animation alone.
+- Reuse existing homepage components, shared tokens, terminology, interaction
+  patterns, and visual hierarchy where practical. Avoid decorative redesigns,
+  extra competing calls to action, duplicated content, or unsupported product
+  claims.
 - Update `README.rst` when installation, quick-start, supported capability, or
-  project-level guidance has changed.
+  project-level guidance, architecture, information architecture, versioning,
+  or HCI rationale has changed.
 - Update `CONTRIBUTING.md` when contributor setup, development commands,
-  validation, testing, release processes, or contribution expectations have
-  changed.
+  validation, testing, release processes, design review, accessibility checks,
+  or contribution expectations have changed.
 - If no changes are required in the optional homepage, README, or contributing
   paths, do not touch them.
 

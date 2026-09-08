@@ -561,8 +561,12 @@ jobs:
           fi
 
           website_checkbox='- [ ] Website functionality'
+          manual_verification='Pending human technical, editorial, rendered-page, navigation, and version-menu review before this draft is marked ready.'
+          user_facing_evidence='N/A - no landing-page change was generated. Review affected documentation in the deploy preview or a local npm run serve session.'
           if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
             website_checkbox='- [x] Website functionality'
+            manual_verification='Pending human landing-page review at desktop and mobile widths, in light and dark themes, with keyboard navigation, visible focus, 200% zoom, and reduced motion; technical and editorial review also remains required.'
+            user_facing_evidence='Pending - this automated run does not capture screenshots. Add desktop/mobile and light/dark evidence after reviewing the deploy preview or a local npm run serve session.'
           fi
 
           body="$(printf '%s\n' \
@@ -603,11 +607,11 @@ jobs:
             "  - Verified that Copilot created the required release note and changed only approved content paths ($CHANGE_COUNT content file(s))." \
             "  - Each validation attempt runs Markdown/MDX linting, \`npm run build\`, and a generated-site link check with Lychee." \
             "$validation_details" \
-            "- Manual verification: Pending human technical, editorial, rendered-page, navigation, and version-menu review before this draft is marked ready." \
+            "- Manual verification: $manual_verification" \
             "" \
             "## User-facing evidence" \
             "" \
-            "N/A - this automated run does not capture screenshots. Use the deploy preview or a local \`npm run serve\` session during human review." \
+            "$user_facing_evidence" \
             "" \
             "## Documentation and compatibility impact" \
             "" \
