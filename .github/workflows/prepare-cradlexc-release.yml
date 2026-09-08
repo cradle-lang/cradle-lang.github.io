@@ -208,10 +208,17 @@ jobs:
           )
 
           found_target=false
+          docs_changed=false
+          homepage_changed=false
+          readme_changed=false
+          contributing_changed=false
           for path in "${changed[@]}"; do
             case "$path" in
               "$TARGET") found_target=true ;;
-              docs/*|src/pages/index.tsx|src/components/homepage/*|static/img/home/*|README.rst|CONTRIBUTING.md) ;;
+              docs/*) docs_changed=true ;;
+              src/pages/index.tsx|src/components/homepage/*|static/img/home/*) homepage_changed=true ;;
+              README.rst) readme_changed=true ;;
+              CONTRIBUTING.md) contributing_changed=true ;;
               *)
                 echo "::error::Copilot changed a disallowed path: $path"
                 exit 1
@@ -223,7 +230,13 @@ jobs:
             echo "::error::Copilot did not create the required $TARGET."
             exit 1
           fi
-          echo "count=${#changed[@]}" >> "$GITHUB_OUTPUT"
+          {
+            echo "count=${#changed[@]}"
+            echo "docs_changed=$docs_changed"
+            echo "homepage_changed=$homepage_changed"
+            echo "readme_changed=$readme_changed"
+            echo "contributing_changed=$contributing_changed"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Validate release documentation
         shell: bash
@@ -237,11 +250,31 @@ jobs:
           )
           if [[ "${#markdown_files[@]}" -gt 0 ]]; then
             npx --yes markdownlint-cli2@0.18.1 --fix "${markdown_files[@]}"
-            npx --yes markdownlint-cli2@0.18.1 "${markdown_files[@]}"
           fi
+
+          npx --yes markdownlint-cli2@0.18.1 \
+            '**/*.md' \
+            '**/*.mdx' \
+            '#node_modules/**' \
+            '#build/**' \
+            '#.docusaurus/**' \
+            '#.venv/**' \
+            '#upstream-cradlexc/**'
 
           npm run build
           git restore --worktree src/data/release-notes.json
+
+      - name: Check generated-site links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --verbose
+            --no-progress
+            --root-dir ./build
+            --remap
+            '^https://cradle-lang\.org/(.*)$ file://${{ github.workspace }}/build/$1'
+            './build/**/*.html'
+          fail: true
 
       - name: Commit and push combined branch
         shell: bash
@@ -282,24 +315,99 @@ jobs:
           BRANCH: release/${{ inputs.tag }}
           CHANGE_COUNT: ${{ steps.changes.outputs.count }}
           ARCHIVED_VERSION: ${{ steps.archive.outputs.version }}
+          DOCS_CHANGED: ${{ steps.changes.outputs.docs_changed }}
+          HOMEPAGE_CHANGED: ${{ steps.changes.outputs.homepage_changed }}
+          README_CHANGED: ${{ steps.changes.outputs.readme_changed }}
+          CONTRIBUTING_CHANGED: ${{ steps.changes.outputs.contributing_changed }}
         run: |
           set -euo pipefail
+
+          if [[ "$ARCHIVED_VERSION" == "none" ]]; then
+            archive_summary="No documentation snapshot was created because there was no eligible previous stable version."
+            versioning_checkbox='- [ ] Documentation versioning'
+            compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. No historical snapshot was created by this run."
+          else
+            archive_summary="Archived the previous current documentation as version \`$ARCHIVED_VERSION\`."
+            versioning_checkbox='- [x] Documentation versioning'
+            compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. The previous documentation remains available under its versioned \`/docs/\` route."
+          fi
+
+          optional_changes=()
+          if [[ "$DOCS_CHANGED" == "true" ]]; then
+            optional_changes+=("- Updated affected pages under \`docs/\`.")
+          fi
+          if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
+            optional_changes+=("- Updated affected homepage content or assets.")
+          fi
+          if [[ "$README_CHANGED" == "true" ]]; then
+            optional_changes+=("- Updated \`README.rst\` where release behavior changed project guidance.")
+          fi
+          if [[ "$CONTRIBUTING_CHANGED" == "true" ]]; then
+            optional_changes+=("- Updated \`CONTRIBUTING.md\` where release behavior changed contributor guidance.")
+          fi
+          if [[ "${#optional_changes[@]}" -eq 0 ]]; then
+            optional_changes+=("- No conditional documentation, homepage, README, or contributing changes were required by the verified upstream changes.")
+          fi
+
+          website_checkbox='- [ ] Website functionality'
+          if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
+            website_checkbox='- [x] Website functionality'
+          fi
+
           body="$(printf '%s\n' \
             "## Summary" \
             "" \
-            "Prepares release notes and related documentation for CradleXC \`$TAG\`. Copilot created or updated $CHANGE_COUNT content file(s), excluding processing markers." \
-            "The workflow archived the previous current-documentation snapshot as version \`$ARCHIVED_VERSION\`." \
+            "Prepares the release notes and user documentation for CradleXC \`$TAG\`. This keeps the current documentation aligned with the tagged compiler behavior while preserving eligible documentation for users of the previous release." \
+            "" \
+            "## Related issue" \
+            "" \
+            "N/A - automated maintenance triggered by a verified CradleXC release tag." \
             "" \
             "## Change type" \
             "" \
             "- [x] Documentation/content" \
-            "- [x] Documentation versioning" \
+            "- [ ] UI/UX or visual design" \
+            "- [ ] Workbench/playground functionality" \
+            "$website_checkbox" \
+            "$versioning_checkbox" \
+            "- [ ] Build/CI/CD" \
+            "- [ ] Dependency/configuration" \
+            "- [ ] Bug fix" \
+            "- [ ] Refactor/maintenance" \
+            "- [ ] Other:" \
+            "" \
+            "## Changes made" \
+            "" \
+            "- Added \`release-notes/$TAG.md\` from the verified upstream tag and comparison history." \
+            "- $archive_summary" \
+            "${optional_changes[@]}" \
+            "- Updated the release-processing markers to \`$TAG\`." \
             "" \
             "## Testing and verification" \
             "" \
-            "- Ran Markdown/MDX linting on changed files." \
-            "- Ran \`npm run build\`." \
-            "- Restricted changes to approved release, documentation, homepage, README, and contributing paths." \
+            "- Automated checks:" \
+            "  - Verified that the private upstream checkout exactly matches tag \`$TAG\`." \
+            "  - Verified that Copilot created the required release note and changed only approved content paths ($CHANGE_COUNT content file(s))." \
+            "  - Ran Markdown/MDX formatting fixes on changed content, then linted all repository Markdown and MDX files." \
+            "  - Ran \`npm run build\` to generate release data and compile the production Docusaurus site." \
+            "  - Checked links in the generated site with Lychee." \
+            "- Manual verification: Pending human technical, editorial, rendered-page, navigation, and version-menu review before this draft is marked ready." \
+            "" \
+            "## User-facing evidence" \
+            "" \
+            "N/A - this automated run does not capture screenshots. Use the deploy preview or a local \`npm run serve\` session during human review." \
+            "" \
+            "## Documentation and compatibility impact" \
+            "" \
+            "$compatibility_summary Review the release note and changed documentation for any required migration or compatibility guidance." \
+            "" \
+            "## Contributor checklist" \
+            "" \
+            "- [x] I reviewed my own changes and kept this PR focused." \
+            "- [ ] I verified relevant documentation, navigation, and links manually." \
+            "- [x] I ran the relevant repository checks and recorded the results above." \
+            "- [x] I updated related documentation where behavior changed." \
+            "- [x] I have not included unrelated changes." \
             "" \
             "This draft requires human technical and editorial review before merging.")"
 
