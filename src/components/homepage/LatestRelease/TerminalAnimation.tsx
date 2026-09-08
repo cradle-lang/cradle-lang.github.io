@@ -4,29 +4,17 @@ import styles from './TerminalAnimation.module.css';
 
 const COMMAND = 'cxc doctor';
 const OUTPUT = [
-  'CRADLE v1.0 — dependency check',
+  'CRADLE v0.18.1 — dependency check',
   '',
   '## Dependency                     Status     Purpose',
   '',
-  'ansible-playbook               ✓ OK       infra/provisioning/event playbook execution [/usr/bin/ansible-playbook]',
-  'virsh                          ✓ OK       local qemu:///system connection check [/usr/bin/virsh]',
-  'vagrant                        ✓ OK       VM lifecycle management (boot/destroy VMs) [/usr/bin/vagrant]',
-  'ansible-playbook               ✓ OK       provisioning + event execution [/usr/bin/ansible-playbook]',
-  'ansible-galaxy                 ✓ OK       installs required ansible collections at bm_script time [/usr/bin/ansible-galaxy]',
-  'VBoxManage                     ✓ OK       VirtualBox CLI (provider=virtualbox, the default) [/usr/bin/VBoxManage]',
-  'virsh                          ✓ OK       libvirt management (provider=libvirt) [/usr/bin/virsh]',
-  'qemu-system-x86_64             ✓ OK       QEMU/KVM hypervisor binary (provider=libvirt) [/usr/bin/qemu-system-x86_64]',
-  'gcc                            ✓ OK       C compiler (artifact generation for Linux) [/usr/bin/gcc]',
-  'x86_64-w64-mingw32-gcc         ✓ OK       cross-compiler (artifact generation for Windows) [/usr/bin/x86_64-w64-mingw32-gcc]',
-  'bc                             ✓ OK       timing calculations [/usr/bin/bc]',
-  'mrg                            ✓ OK       SPHERE experiment/realization/materialization lifecycle [/usr/local/bin/mrg]',
+  'No plugin-specific checks configured',
   '',
   '✓ All required dependencies are installed.',
   '',
   'Configuration:',
   'Config file: /home/user/.cxc/config.toml',
-  'Forensic dir:    /opt/cxc/forensic',
-  'Dataset dir:     /opt/cxc/dataset',
+  'Backends: discovered from PATH and ~/.cxc/plugins/',
 ];
 
 const TYPE_SPEED = 45;

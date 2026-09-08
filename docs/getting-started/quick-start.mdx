@@ -10,7 +10,7 @@ This guide walks you through the basic CRADLE workflow using CradleXC and the `c
 
 You will:
 
-1. install CradleXC
+1. install CradleXC from source
 2. verify that `cxc` is available
 3. obtain a CRADLE scenario
 4. validate the scenario
@@ -28,23 +28,17 @@ Before starting, make sure you have:
 
 ## Install CradleXC
 
-1. CradleXC is distributed as a prebuilt binary through the
-   CRADLE APT repository:
+Install CradleXC from the upstream source repository:
 
-    ```text
-    https://repo.cradle-lang.org/apt/
-    ```
+```bash
+git clone https://github.com/cradle-lang/cradle-v2.git
+cd cradle-v2
+cargo install --path crates/cradle-cli
+```
 
-2. Add the CRADLE package repository, update your package index and install CradleXC.
-
-    For example:
-
-    ```bash
-    echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" | sudo tee /etc/apt/sources.list.d/cradle.list
-
-    sudo apt update
-    sudo apt install cxc
-    ```
+This production build provides the `cxc` commands used in this quick start.
+The development-only workflow is described in [Install
+CradleXC](./install-cradlexc).
 
 ## Verify the installation
 

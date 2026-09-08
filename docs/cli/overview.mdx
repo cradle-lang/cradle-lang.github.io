@@ -247,6 +247,10 @@ sudo cxc plugin install vagrant
 
 Backend installation and discovery are documented in [Use a Backend](../getting-started/use-a-backend).
 
+The production CLI has no deployment backend compiled into it. The selected
+external plugin performs target-specific rendering, while `cxc build` writes
+the generated files without executing target tooling.
+
 ## Check dependencies
 
 Use:

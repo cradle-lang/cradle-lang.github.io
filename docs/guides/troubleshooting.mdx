@@ -21,18 +21,12 @@ If your shell cannot find `cxc`, confirm whether the executable is installed:
 which cxc
 ```
 
-If no path is returned, verify that CradleXC was installed successfully through APT.
-
-Refresh the package index:
+If no path is returned, install CradleXC from the upstream source repository:
 
 ```bash
-sudo apt update
-```
-
-Install CradleXC:
-
-```bash
-sudo apt install cxc
+git clone https://github.com/cradle-lang/cradle-v2.git
+cd cradle-v2
+cargo install --path crates/cradle-cli
 ```
 
 Then confirm the installation:
@@ -155,7 +149,8 @@ If the expected backend is not listed, confirm that:
 - the backend executable follows the `cxc-backend-<name>` naming convention
 - the executable is available on the system `PATH`, under `/opt/cxc/plugins/` or under `~/.cxc/plugins/`
 
-Backend plugins can be installed with:
+If the selected plugin has been published to the CRADLE release repository, it
+can be installed with:
 
 ```bash
 sudo cxc plugin install <plugin_name>
@@ -166,6 +161,11 @@ After installation, check backend discovery again:
 ```bash
 cxc backend list
 ```
+
+If no release is available for that plugin, build the plugin from its own
+source repository and place the resulting `cxc-backend-<name>` executable on
+`PATH`. Plugin installation currently provides Linux x86_64 binaries and
+requires `curl` and `sha256sum`.
 
 For more information, see [Use a Backend](../getting-started/use-a-backend).
 
@@ -232,16 +232,12 @@ To check the currently installed version:
 cxc --version
 ```
 
-If you need to update CradleXC, refresh the package index:
+If you need to update CradleXC, pull the upstream source and reinstall it:
 
 ```bash
-sudo apt update
-```
-
-Then upgrade the installed package:
-
-```bash
-sudo apt install --only-upgrade cxc
+cd cradle-v2
+git pull
+cargo install --path crates/cradle-cli
 ```
 
 Confirm the version after updating:

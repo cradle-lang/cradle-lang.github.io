@@ -117,6 +117,12 @@ For example:
 sudo cxc plugin install vagrant
 ```
 
+The command downloads and verifies a published Linux x86_64 plugin release.
+It requires `curl` and `sha256sum`; the requested plugin must have a manifest
+and release in the CRADLE release repository. Use `--user` instead of
+`sudo` to install into `~/.cxc/plugins/` when a per-user installation is
+preferred.
+
 After installation, confirm that the backend can be discovered:
 
 ```bash

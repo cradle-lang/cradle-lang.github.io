@@ -73,7 +73,11 @@ For example:
 sudo cxc plugin install vagrant
 ```
 
-The exact plugin name depends on the backend you want to use. The release repository is the authoritative list of published plugin names.
+The command downloads a published Linux x86_64 plugin release and verifies
+its checksum. It requires `curl` and `sha256sum`, and only works when the
+requested plugin has a manifest and release in the CRADLE release repository.
+Use `--user` for an installation in `~/.cxc/plugins/` without a system-wide
+install. The exact plugin name depends on the backend you want to use.
 
 ## List installed backends
 

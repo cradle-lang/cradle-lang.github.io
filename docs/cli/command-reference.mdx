@@ -40,6 +40,8 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
 | `cxc backend list` | List backend plugins discovered by CradleXC. |
 | `cxc plugin install` | Install a backend plugin. |
+| `cxc configs list` | List configuration implementations available to the compiler. |
+| `cxc heuristics list` | List heuristic implementations available to the compiler. |
 | `cxc doctor` | Check dependencies and environment readiness. |
 | `cxc install-deps` | Display dependency installation guidance. |
 | `cxc config` | Inspect the current CradleXC configuration. |
@@ -84,6 +86,8 @@ cxc compile \
   -o <output.yml>
 ```
 
+Omit `-o` to write the compiled YAML to standard output.
+
 ### Example
 
 ```bash
@@ -104,6 +108,19 @@ The output is the compiled YAML representation produced by CradleXC.
 | `-o` | Specifies the output YAML file. |
 
 For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+
+## `cxc configs list` and `cxc heuristics list`
+
+List the content implementations available from the configured sources:
+
+```bash
+cxc configs list
+cxc heuristics list
+```
+
+Use `--config-dir <path>` or `--heuristics-dir <path>` to inspect a specific
+local content directory. These commands inspect available content; they do
+not generate target files or deploy an environment.
 
 ---
 

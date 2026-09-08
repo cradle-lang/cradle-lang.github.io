@@ -24,9 +24,8 @@ export default function LatestRelease(): ReactNode {
           </h2>
 
           <p className={sharedStyles.sectionDescription}>
-            Install CradleXC through the official CRADLE package
-            repository, verify your environment and start writing your
-            first scenario.
+            Install CradleXC from source, verify your environment and start
+            writing your first scenario.
           </p>
         </div>
 
@@ -35,17 +34,16 @@ export default function LatestRelease(): ReactNode {
           <div className={styles.installPanel}>
             <div className={styles.panelHeader}>
               <span className={styles.panelLabel}>
-                APT · Ubuntu / Debian
+                Source installation
               </span>
 
               <h3>
-                Install from the CRADLE repository.
+                Install from the upstream repository.
               </h3>
 
               <p className={styles.panelDescription}>
-                Configure the official CRADLE APT repository once, then
-                install and update CradleXC through your system package
-                manager.
+                Build the production CLI from the upstream repository, then
+                keep it current by pulling source updates.
               </p>
             </div>
 
@@ -61,7 +59,7 @@ export default function LatestRelease(): ReactNode {
                   </strong>
 
                   <span>
-                    Configure the CRADLE package source.
+                    Clone the upstream repository.
                   </span>
                 </div>
               </div>
@@ -79,7 +77,7 @@ export default function LatestRelease(): ReactNode {
                   </strong>
 
                   <code>
-                    sudo apt install cxc
+                    cargo install --path crates/cradle-cli
                   </code>
                 </div>
               </div>
@@ -97,7 +95,7 @@ export default function LatestRelease(): ReactNode {
                   </strong>
 
                   <span>
-                    Future releases are delivered through APT.
+                    Pull updates and reinstall the CLI.
                   </span>
                 </div>
               </div>

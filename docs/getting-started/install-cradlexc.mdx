@@ -7,33 +7,25 @@ title: Install CradleXC
 
 CradleXC provides the `cxc` command-line interface used to validate, compile and process CRADLE scenarios.
 
-This guide covers installing CradleXC, verifying the installation and checking the dependencies available on your system.
+This guide covers installing CradleXC from source, verifying the installation and checking the dependencies available on your system.
 
-## Install from the CRADLE APT repository
+## Install from source
 
-CradleXC is distributed as a prebuilt binary through the CRADLE APT repository.
-
-Add the repository to your system:
-
-```bash
-echo "deb [trusted=yes] https://repo.cradle-lang.org/apt/ /" \
-  | sudo tee /etc/apt/sources.list.d/cradle.list
-```
-
-Update the local package index:
+At the `v0.18.1` release, the upstream repository identifies building from
+source as the available CradleXC installation path. Install the CLI from the
+upstream checkout:
 
 ```bash
-sudo apt update
+git clone https://github.com/cradle-lang/cradle-v2.git
+cd cradle-v2
+cargo install --path crates/cradle-cli
 ```
 
-Install CradleXC:
-
-```bash
-sudo apt install cxc
-```
-
-You can browse the packages published in the
-[CRADLE repository](https://repo.cradle-lang.org/).
+The production build installs the `cxc` command. It does not include the
+development-only `migrate`, `import`, `deploy`, `update`, `destroy` or
+`extract` subcommands. A separate development build uses
+`cargo install --path crates/cradle-cli --features dev` and is intended for
+development workflows rather than production package installation.
 
 ## Verify the installation
 
@@ -86,18 +78,12 @@ other settings used by the CLI.
 
 ## Update CradleXC
 
-CradleXC is updated through APT.
-
-Refresh the package index:
+Pull the upstream source and reinstall the CLI:
 
 ```bash
-sudo apt update
-```
-
-Upgrade CradleXC:
-
-```bash
-sudo apt install --only-upgrade cxc
+cd cradle-v2
+git pull
+cargo install --path crates/cradle-cli
 ```
 
 Confirm the installed version:
