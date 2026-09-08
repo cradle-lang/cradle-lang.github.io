@@ -43,6 +43,13 @@ historical material, or stale prose by checking source and tests. Do not infer
 user-facing behavior from a commit title alone or present roadmap items as
 available.
 
+If Historical test mode is `true`, the requested tag may predate the latest
+documented tag. Treat this strictly as a simulation: reconstruct the behavior
+available at the requested historical tag from its source and tests, and update
+current user documentation to demonstrate what the workflow would generate for
+that tag. Do not describe features added only in later tags as available. The
+resulting PR is test-only and must never be merged.
+
 ## Required release note
 
 - Write only the new release note to the exact output path supplied below. Do

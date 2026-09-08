@@ -7,13 +7,18 @@ on:
         description: Existing CradleXC release tag to analyze
         required: true
         type: string
+      historical_test:
+        description: Test all outputs with an older tag; creates a test-only draft
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: prepare-cradlexc-release-${{ inputs.tag }}
+  group: prepare-cradlexc-release-${{ inputs.tag }}-${{ inputs.historical_test }}
   cancel-in-progress: false
 
 jobs:
@@ -26,6 +31,7 @@ jobs:
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
@@ -75,6 +81,7 @@ jobs:
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
           previous="$({
@@ -102,9 +109,13 @@ jobs:
             exit 1
           fi
           if ! git -C upstream-cradlexc merge-base --is-ancestor "$previous" "$TAG"; then
-            echo "::error::$TAG is not a new descendant of the current documented release $previous."
-            echo "::error::Historical or divergent tags cannot produce the required previous-version snapshot."
-            exit 1
+            if [[ "$HISTORICAL_TEST" != "true" ]]; then
+              echo "::error::$TAG is not a new descendant of the current documented release $previous."
+              echo "::error::Use historical_test only for a manual, test-only draft."
+              exit 1
+            fi
+            echo "::warning::Historical test mode is enabled for $TAG."
+            echo "::warning::The resulting PR is test-only and must never be merged."
           fi
 
           version="${previous#v}"
@@ -140,6 +151,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
           if [[ -z "$COPILOT_GITHUB_TOKEN" ]]; then
@@ -151,7 +163,8 @@ jobs:
 
           Requested release tag: $TAG
           Release-note output path: $TARGET
-          Latest stable release-note tag before this run: $PREVIOUS_TAG"
+          Latest stable release-note tag before this run: $PREVIOUS_TAG
+          Historical test mode: $HISTORICAL_TEST"
 
           copilot \
             --prompt "$prompt" \
@@ -456,12 +469,15 @@ jobs:
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
-          BRANCH: release/${{ inputs.tag }}
+          BRANCH: ${{ inputs.historical_test && format('test-release/{0}', inputs.tag) || format('release/{0}', inputs.tag) }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
-          printf '%s\n' "$TAG" > release-notes/.last-processed-release
-          printf '%s\n' "$TAG" > .cradlexc-docs-source-tag
-          git rm --ignore-unmatch .cradlexc-docs-source-revision
+          if [[ "$HISTORICAL_TEST" != "true" ]]; then
+            printf '%s\n' "$TAG" > release-notes/.last-processed-release
+            printf '%s\n' "$TAG" > .cradlexc-docs-source-tag
+            git rm --ignore-unmatch .cradlexc-docs-source-revision
+          fi
 
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -489,16 +505,21 @@ jobs:
               git add -A -- "$path"
             fi
           done
-          git commit -m "Prepare documentation for CradleXC $TAG"
+          if [[ "$HISTORICAL_TEST" == "true" ]]; then
+            git commit -m "Test documentation generation for CradleXC $TAG"
+          else
+            git commit -m "Prepare documentation for CradleXC $TAG"
+          fi
           git push --force-with-lease --set-upstream origin "$BRANCH"
 
-      - name: Create or update draft pull request
+      - name: Create or update pull request
         if: always() && steps.commit.outcome == 'success'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
           TAG: ${{ inputs.tag }}
-          BRANCH: release/${{ inputs.tag }}
+          BRANCH: ${{ inputs.historical_test && format('test-release/{0}', inputs.tag) || format('release/{0}', inputs.tag) }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
           CHANGE_COUNT: ${{ steps.changes.outputs.count }}
           ARCHIVED_VERSION: ${{ steps.archive.outputs.version }}
           DOCS_CHANGED: ${{ steps.changes.outputs.docs_changed }}
@@ -537,6 +558,17 @@ jobs:
               "- Attempt 2 — Markdown/MDX and build: $VALIDATION_SECOND; generated-site links: $LINKS_SECOND.")"
           fi
 
+          test_notice=''
+          marker_summary='- Updated the release-processing markers.'
+          if [[ "$HISTORICAL_TEST" == "true" ]]; then
+            pr_mode='draft'
+            title="[TEST ONLY] $title"
+            review_notice='This historical-test draft must never be merged. Close it and delete its branch after inspection.'
+            test_notice="> [!CAUTION]
+          > Historical test mode generated this PR only to inspect the automation. Do not merge it."
+            marker_summary='- Left production release-processing markers unchanged.'
+          fi
+
           if [[ "$ARCHIVED_VERSION" == "none" ]]; then
             archive_summary="No documentation snapshot was created because there was no eligible previous stable version."
             versioning_checkbox='- [ ] Documentation versioning'
@@ -545,6 +577,9 @@ jobs:
             archive_summary="Archived the previous current documentation as version \`$ARCHIVED_VERSION\`."
             versioning_checkbox='- [x] Documentation versioning'
             compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. The previous documentation remains available under its versioned \`/docs/\` route."
+          fi
+          if [[ "$HISTORICAL_TEST" == "true" ]]; then
+            compatibility_summary="Test-only simulation for historical CradleXC $TAG. The proposed current-doc changes intentionally model that older codebase and must not be published."
           fi
 
           optional_changes=()
@@ -578,6 +613,8 @@ jobs:
             "" \
             "Prepares the release notes and user documentation for CradleXC \`$TAG\`. This keeps the current documentation aligned with the tagged compiler behavior while preserving eligible documentation for users of the previous release." \
             "" \
+            "$test_notice" \
+            "" \
             "$validation_notice" \
             "" \
             "## Related issue" \
@@ -602,7 +639,7 @@ jobs:
             "- Added \`release-notes/$TAG.md\` from the verified upstream tag and comparison history." \
             "- $archive_summary" \
             "${optional_changes[@]}" \
-            "- Updated the release-processing markers to \`$TAG\`." \
+            "$marker_summary" \
             "" \
             "## Testing and verification" \
             "" \
