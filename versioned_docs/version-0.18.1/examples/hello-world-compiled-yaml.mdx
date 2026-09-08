@@ -1,0 +1,130 @@
+---
+sidebar_position: 2
+title: "Hello World: Compiled YAML"
+description: Inspect the compiled YAML produced from the HelloWorld CRADLE scenario.
+---
+
+# Hello World: Compiled YAML
+
+This example shows the compiler-oriented YAML produced from the
+[HelloWorld source scenario](./hello-world).
+
+Generate it with:
+
+```bash
+cxc compile \
+  -i scenarios/HelloWorld.cradle \
+  -o HelloWorld.yml
+```
+
+## Complete generated YAML
+
+The indentation is significant: entries under `metadata`, `instances`,
+`networks` and `events` belong to those sections.
+
+<details>
+<summary>Show the complete HelloWorld.yml output</summary>
+
+```yaml
+metadata:
+  screenplayName: HelloWorld
+  eventType: sequence
+  repositories:
+    uriRemote: https://172.18.178.10:4443
+  objects:
+    - id: HelloWorld
+      uri: ${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh
+instances:
+  - name: win7
+    os:
+      platform: windows
+      release: windows
+      version: '2019'
+      bit: AMD64
+    objects: []
+    config:
+      - win-icmpv4
+      - win-pktmon
+      - win-winrm
+      - win-routing
+  - name: router
+    os:
+      platform: linux
+      release: linux
+      version: '20.04'
+      bit: AMD64
+    objects:
+      - id: HelloWorld
+    config:
+      - linux-vsftpd
+      - linux-auditd
+      - linux-mail
+      - linux-python3
+      - python3-pip
+      - linux-router
+networks:
+  - name: lan_0
+    subnet: 192.168.56.0/24
+    endpoints:
+      - name: win7
+        ip: 192.168.56.121
+      - name: router
+        ip: 192.168.56.122
+events:
+  preEvent: []
+  mainEvent:
+    - order: initialize_client
+      place: router
+      needRoot: true
+      subject: ''
+      object: ''
+      delay_before: '0'
+      delay_after: '0'
+      wait_for: 'false'
+      scheduledExecution: 2018-11-13T20:20:39+00:00
+      description: HelloWorld Event
+  postEvent: []
+```
+
+</details>
+
+The repository URL reflects the environment that produced this example. A
+different installation can compile the scenario with a different repository
+value.
+
+## Read the sections
+
+| YAML section | What it records in this example |
+| --- | --- |
+| `metadata` | The `HelloWorld` scenario name, sequence event model, artifact repository and `HelloWorld` object. |
+| `instances` | The Windows `win7` machine and Linux `router`, including their operating systems, objects and requested configurations. |
+| `networks` | One `lan_0` subnet with fixed addresses for both instances. |
+| `events` | Empty pre-event and post-event phases plus `initialize_client` on the router. |
+
+## Check the source-to-YAML mapping
+
+Use the compiled YAML to confirm that the source-level declarations were
+preserved:
+
+| CRADLE source concept | Compiled YAML location |
+| --- | --- |
+| `name("HelloWorld")` | `metadata.screenplayName` |
+| `repositoryRemote(...)` | `metadata.repositories.uriRemote` |
+| `object("HelloWorld")` | `metadata.objects` and the router's `objects` list |
+| `instance("win7")` and `instance("router")` | `instances` |
+| `network("lan_0")` and its endpoints | `networks` |
+| `mainEvent()` and `initialize_client` | `events.mainEvent` |
+
+The YAML remains generated compiler output. Make scenario changes in the
+`.cradle` source and compile it again.
+
+## Continue to the backend-ready representation
+
+Compiled YAML stays close to the authored structure. CradleXC performs another
+lowering step to produce backend-ready values such as resource defaults,
+interfaces, gateways, resolved object sources, platform flags and startup
+order.
+
+Continue to [Hello World: Deployment IR](./hello-world-deployment-ir) to see
+that resolved representation, or return to [Inspect Output](../getting-started/inspect-output)
+for the shorter workflow guide.

@@ -1,0 +1,14 @@
+---
+sidebar_position: 4
+title: Deployment IR
+---
+
+# Deployment IR
+
+Deployment IR is the compiler-to-backend boundary. It contains a resolved deployment plan: instances, interfaces, addresses, routes, artifacts, role values, event ordering, and boot order.
+
+```bash
+cxc dump-ir -i scenarios/Example.cradle
+```
+
+The IR is serialized for external backend plugins. Its `ir_version` lets a plugin declare the minimum compatible IR version. Plugin implementations should tolerate additive fields and rely on the documented compatibility check for breaking changes.
