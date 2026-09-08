@@ -69,9 +69,6 @@ const config: Config = {
             current: {
               label: 'Current',
             },
-            '1.0.0': {
-              label: '1.0.0',
-            },
           },
         },
         blog: false,

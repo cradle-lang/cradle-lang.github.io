@@ -1,10 +1,11 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useLocation} from '@docusaurus/router';
 import Link from '@docusaurus/Link';
+import archivedVersions from '@site/versions.json';
 
 import styles from './styles.module.css';
 
-type VersionName = 'current' | '1.0.0';
+type VersionName = string;
 
 type VersionOption = {
   value: VersionName;
@@ -18,18 +19,22 @@ const VERSION_OPTIONS: VersionOption[] = [
     value: 'current',
     label: 'Current',
   },
-  {
-    value: '1.0.0',
-    label: '1.0.0',
-  },
+  ...(archivedVersions as string[]).map((version) => ({
+    value: version,
+    label: version,
+  })),
 ];
 
 function getVersionFromPath(pathname: string): VersionName {
-  if (
-    pathname === '/docs/1.0.0' ||
-    pathname.startsWith('/docs/1.0.0/')
-  ) {
-    return '1.0.0';
+  for (const version of archivedVersions as string[]) {
+    const versionPath = `/docs/${version}`;
+
+    if (
+      pathname === versionPath ||
+      pathname.startsWith(`${versionPath}/`)
+    ) {
+      return version;
+    }
   }
 
   return 'current';
@@ -40,18 +45,19 @@ function isDocsPath(pathname: string): boolean {
 }
 
 function removeVersionFromDocsPath(pathname: string): string {
-  if (
-    pathname === '/docs/1.0.0' ||
-    pathname === '/docs/1.0.0/'
-  ) {
+  const version = getVersionFromPath(pathname);
+
+  if (version === 'current') {
+    return pathname;
+  }
+
+  const versionPath = `/docs/${version}`;
+
+  if (pathname === versionPath || pathname === `${versionPath}/`) {
     return '/docs/';
   }
 
-  if (pathname.startsWith('/docs/1.0.0/')) {
-    return pathname.replace('/docs/1.0.0/', '/docs/');
-  }
-
-  return pathname;
+  return pathname.replace(`${versionPath}/`, '/docs/');
 }
 
 function getVersionedDocsPath(
@@ -110,8 +116,10 @@ export default function CustomVersionDropdownNavbarItem(): React.ReactNode {
       localStorage.getItem(STORAGE_KEY) as VersionName | null;
 
     if (
-      savedVersion === 'current' ||
-      savedVersion === '1.0.0'
+      savedVersion &&
+      VERSION_OPTIONS.some(
+        (option) => option.value === savedVersion,
+      )
     ) {
       setSelectedVersion(savedVersion);
     }
