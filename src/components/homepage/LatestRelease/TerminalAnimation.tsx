@@ -1,33 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import terminalData from '../../../data/homepage-terminal.json';
 import styles from './TerminalAnimation.module.css';
 
-const COMMAND = 'cxc doctor';
-const OUTPUT = [
-  'CRADLE v1.0 — dependency check',
-  '',
-  '## Dependency                     Status     Purpose',
-  '',
-  'ansible-playbook               ✓ OK       infra/provisioning/event playbook execution [/usr/bin/ansible-playbook]',
-  'virsh                          ✓ OK       local qemu:///system connection check [/usr/bin/virsh]',
-  'vagrant                        ✓ OK       VM lifecycle management (boot/destroy VMs) [/usr/bin/vagrant]',
-  'ansible-playbook               ✓ OK       provisioning + event execution [/usr/bin/ansible-playbook]',
-  'ansible-galaxy                 ✓ OK       installs required ansible collections at bm_script time [/usr/bin/ansible-galaxy]',
-  'VBoxManage                     ✓ OK       VirtualBox CLI (provider=virtualbox, the default) [/usr/bin/VBoxManage]',
-  'virsh                          ✓ OK       libvirt management (provider=libvirt) [/usr/bin/virsh]',
-  'qemu-system-x86_64             ✓ OK       QEMU/KVM hypervisor binary (provider=libvirt) [/usr/bin/qemu-system-x86_64]',
-  'gcc                            ✓ OK       C compiler (artifact generation for Linux) [/usr/bin/gcc]',
-  'x86_64-w64-mingw32-gcc         ✓ OK       cross-compiler (artifact generation for Windows) [/usr/bin/x86_64-w64-mingw32-gcc]',
-  'bc                             ✓ OK       timing calculations [/usr/bin/bc]',
-  'mrg                            ✓ OK       SPHERE experiment/realization/materialization lifecycle [/usr/local/bin/mrg]',
-  '',
-  '✓ All required dependencies are installed.',
-  '',
-  'Configuration:',
-  'Config file: /home/user/.cxc/config.toml',
-  'Forensic dir:    /opt/cxc/forensic',
-  'Dataset dir:     /opt/cxc/dataset',
-];
+type TerminalTranscript = {
+  tag: string;
+  command: string;
+  ariaLabel: string;
+  output: string[];
+};
+
+const VERSION_STORAGE_KEY = 'cradle-docs-version';
+const VERSION_CHANGE_EVENT = 'cradle-docs-version-change';
+const CURRENT_TRANSCRIPT = terminalData.current as TerminalTranscript;
+const VERSION_TRANSCRIPTS =
+  terminalData.versions as Record<string, TerminalTranscript>;
 
 const TYPE_SPEED = 45;
 const COMMAND_PAUSE = 500;
@@ -39,7 +26,10 @@ function outputClassName(line: string): string {
     return styles.outputBanner;
   }
 
-  if (line.startsWith('## ') || line === 'Configuration:') {
+  if (
+    line.startsWith('Dependency ') ||
+    line === 'Configuration:'
+  ) {
     return styles.outputHeading;
   }
 
@@ -51,10 +41,36 @@ function outputClassName(line: string): string {
 }
 
 export default function TerminalAnimation() {
+  const [transcript, setTranscript] =
+    useState<TerminalTranscript>(CURRENT_TRANSCRIPT);
   const [charIndex, setCharIndex] = useState(0);
   const [visibleOutputLines, setVisibleOutputLines] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const terminalBodyRef = useRef<HTMLDivElement>(null);
+  const { ariaLabel, command, output } = transcript;
+
+  useEffect(() => {
+    const selectTranscript = (version: string | null) => {
+      const selected =
+        version && version !== 'current'
+          ? VERSION_TRANSCRIPTS[version]
+          : undefined;
+
+      setTranscript(selected ?? CURRENT_TRANSCRIPT);
+    };
+
+    const handleVersionChange = (event: Event) => {
+      const version = (event as CustomEvent<{version: string}>).detail.version;
+      selectTranscript(version);
+    };
+
+    selectTranscript(localStorage.getItem(VERSION_STORAGE_KEY));
+    window.addEventListener(VERSION_CHANGE_EVENT, handleVersionChange);
+
+    return () => {
+      window.removeEventListener(VERSION_CHANGE_EVENT, handleVersionChange);
+    };
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -63,8 +79,8 @@ export default function TerminalAnimation() {
       setReducedMotion(mediaQuery.matches);
 
       if (mediaQuery.matches) {
-        setCharIndex(COMMAND.length);
-        setVisibleOutputLines(OUTPUT.length);
+        setCharIndex(command.length);
+        setVisibleOutputLines(output.length);
       }
     };
 
@@ -72,14 +88,19 @@ export default function TerminalAnimation() {
     mediaQuery.addEventListener('change', updateMotionPreference);
 
     return () => mediaQuery.removeEventListener('change', updateMotionPreference);
-  }, []);
+  }, [command.length, output.length]);
+
+  useEffect(() => {
+    setCharIndex(reducedMotion ? command.length : 0);
+    setVisibleOutputLines(reducedMotion ? output.length : 0);
+  }, [command, output, reducedMotion]);
 
   useEffect(() => {
     if (reducedMotion) {
       return undefined;
     }
 
-    if (charIndex < COMMAND.length) {
+    if (charIndex < command.length) {
       const timeout = window.setTimeout(
         () => setCharIndex((previous) => previous + 1),
         TYPE_SPEED,
@@ -88,7 +109,7 @@ export default function TerminalAnimation() {
       return () => window.clearTimeout(timeout);
     }
 
-    if (visibleOutputLines < OUTPUT.length) {
+    if (visibleOutputLines < output.length) {
       const timeout = window.setTimeout(
         () => setVisibleOutputLines((previous) => previous + 1),
         visibleOutputLines === 0 ? COMMAND_PAUSE : OUTPUT_LINE_SPEED,
@@ -103,7 +124,7 @@ export default function TerminalAnimation() {
     }, LOOP_PAUSE);
 
     return () => window.clearTimeout(timeout);
-  }, [charIndex, reducedMotion, visibleOutputLines]);
+  }, [charIndex, command.length, output.length, reducedMotion, visibleOutputLines]);
 
   useEffect(() => {
     const terminalBody = terminalBodyRef.current;
@@ -116,16 +137,16 @@ export default function TerminalAnimation() {
     }
   }, [reducedMotion, visibleOutputLines]);
 
-  const commandIsComplete = charIndex === COMMAND.length;
-  const animationIsComplete = visibleOutputLines === OUTPUT.length;
+  const commandIsComplete = charIndex === command.length;
+  const animationIsComplete = visibleOutputLines === output.length;
 
   return (
     <div
       className={styles.terminalContainer}
-      aria-label="Example output from a successful CradleXC dependency check"
+      aria-label={ariaLabel}
     >
       <span className={styles.screenReaderOnly}>
-        {`$ ${COMMAND}\n${OUTPUT.join('\n')}`}
+        {`$ ${command}\n${output.join('\n')}`}
       </span>
 
       <div className={styles.terminalHeader} aria-hidden="true">
@@ -152,13 +173,13 @@ export default function TerminalAnimation() {
         <p className={styles.line}>
           <span className={styles.prompt}>$</span>
           <span className={styles.cmdText}>
-            {COMMAND.slice(0, charIndex)}
+            {command.slice(0, charIndex)}
           </span>
 
           {!commandIsComplete && <span className={styles.cursor} />}
         </p>
 
-        {OUTPUT.slice(0, visibleOutputLines).map((outputLine, index) => (
+        {output.slice(0, visibleOutputLines).map((outputLine, index) => (
           <p
             key={`${index}-${outputLine}`}
             className={outputClassName(outputLine)}

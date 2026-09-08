@@ -161,6 +161,11 @@ Repository Structure
 ``src/components/homepage/``
    Homepage sections, each colocated with a CSS Module.
 
+``src/data/homepage-terminal.json``
+   Curated current and versioned ``cxc doctor`` transcripts used by the
+   animated homepage terminal. The current transcript is updated from tagged
+   CradleXC source; previous transcripts are immutable release snapshots.
+
 ``src/components/workbench/``
    Workbench state, parser, editor, inspector, diagnostics, samples and SVG
    visualizations.
@@ -213,7 +218,10 @@ Versioned documentation
 ``docs/`` describes the active product. A published snapshot preserves the
 contract users saw for that release. Historical pages are therefore not updated
 automatically with current behavior; corrections to them must be deliberate and
-must update their matching versioned sidebar when navigation changes.
+must update their matching versioned sidebar when navigation changes. The
+homepage terminal follows the same contract: before its current transcript is
+updated for a release, the workflow stores the previous transcript by version in
+``src/data/homepage-terminal.json``.
 
 Backend separation
 ~~~~~~~~~~~~~~~~~~

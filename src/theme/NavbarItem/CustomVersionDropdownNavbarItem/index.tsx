@@ -13,6 +13,7 @@ type VersionOption = {
 };
 
 const STORAGE_KEY = 'cradle-docs-version';
+const VERSION_CHANGE_EVENT = 'cradle-docs-version-change';
 
 const VERSION_OPTIONS: VersionOption[] = [
   {
@@ -147,6 +148,11 @@ export default function CustomVersionDropdownNavbarItem(): React.ReactNode {
 
   function handleVersionSelection(version: VersionName): void {
     localStorage.setItem(STORAGE_KEY, version);
+    window.dispatchEvent(
+      new CustomEvent(VERSION_CHANGE_EVENT, {
+        detail: {version},
+      }),
+    );
     setSelectedVersion(version);
     setIsOpen(false);
   }

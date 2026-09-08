@@ -119,9 +119,28 @@ jobs:
           fi
 
           version="${previous#v}"
+          terminal_data='src/data/homepage-terminal.json'
+          terminal_snapshot="$RUNNER_TEMP/homepage-terminal.json"
+          if [[ ! -f "$terminal_data" ]]; then
+            echo "::error::Missing animated-terminal data file: $terminal_data"
+            exit 1
+          fi
+          jq --arg tag "$previous" --arg version "$version" '
+            if .current.tag != $tag then
+              error("current terminal transcript does not match " + $tag)
+            elif .versions[$version] != null then
+              .
+            else
+              .versions[$version] = .current
+            end
+          ' "$terminal_data" > "$terminal_snapshot"
+          mv "$terminal_snapshot" "$terminal_data"
+          jq -e --arg version "$version" '.versions[$version] != null' "$terminal_data" >/dev/null
+          git add -- "$terminal_data"
+
           if jq -e --arg version "$version" 'index($version) != null' versions.json >/dev/null; then
             echo "Documentation version $version is already archived."
-            echo "version=$version (already present)" >> "$GITHUB_OUTPUT"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -208,6 +227,7 @@ jobs:
         id: initial_changes
         shell: bash
         env:
+          TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
         run: |
           set -euo pipefail
@@ -221,6 +241,7 @@ jobs:
           found_target=false
           docs_changed=false
           homepage_changed=false
+          terminal_changed=false
           readme_changed=false
           contributing_changed=false
           for path in "${changed[@]}"; do
@@ -228,6 +249,10 @@ jobs:
               "$TARGET") found_target=true ;;
               docs/*) docs_changed=true ;;
               src/pages/index.tsx|src/components/homepage/*|static/img/home/*) homepage_changed=true ;;
+              src/data/homepage-terminal.json)
+                homepage_changed=true
+                terminal_changed=true
+                ;;
               README.rst) readme_changed=true ;;
               CONTRIBUTING.md) contributing_changed=true ;;
               *)
@@ -243,6 +268,20 @@ jobs:
           fi
           if [[ "$docs_changed" != true ]]; then
             echo "::error::Copilot did not update any user documentation under docs/."
+            exit 1
+          fi
+          if [[ "$terminal_changed" != true ]]; then
+            echo "::error::Copilot did not update the animated-terminal transcript."
+            exit 1
+          fi
+          if ! jq -e --arg tag "$TAG" '.current.tag == $tag' src/data/homepage-terminal.json >/dev/null; then
+            echo "::error::The current terminal transcript does not identify $TAG."
+            exit 1
+          fi
+          staged_versions="$(git show :src/data/homepage-terminal.json | jq -S -c '.versions')"
+          current_versions="$(jq -S -c '.versions' src/data/homepage-terminal.json)"
+          if [[ "$current_versions" != "$staged_versions" ]]; then
+            echo "::error::Copilot modified an archived terminal transcript."
             exit 1
           fi
           {
@@ -334,7 +373,7 @@ jobs:
           Markdown/build result: $VALIDATION_OUTCOME
           Generated-site link result: $LINKS_OUTCOME
 
-          Fix only failures caused by the generated release documentation. You may edit only release-notes/$TAG.md, docs/**, src/pages/index.tsx, src/components/homepage/**, static/img/home/**, README.rst, and CONTRIBUTING.md. Do not edit workflows, dependencies, lockfiles, markers, versions.json, versioned_docs/, versioned_sidebars/, generated data, or build output. Do not commit, push, or create a pull request.
+          Fix only failures caused by the generated release documentation. You may edit only release-notes/$TAG.md, docs/**, src/pages/index.tsx, src/components/homepage/**, static/img/home/**, the current transcript under .current in src/data/homepage-terminal.json, README.rst, and CONTRIBUTING.md. Never edit .versions in the terminal data. Do not edit workflows, dependencies, lockfiles, markers, versions.json, versioned_docs/, versioned_sidebars/, other generated data, or build output. Do not commit, push, or create a pull request.
 
           Validation output:
           $details"
@@ -363,6 +402,7 @@ jobs:
         id: changes
         shell: bash
         env:
+          TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
         run: |
           set -euo pipefail
@@ -376,6 +416,7 @@ jobs:
           found_target=false
           docs_changed=false
           homepage_changed=false
+          terminal_changed=false
           readme_changed=false
           contributing_changed=false
           for path in "${changed[@]}"; do
@@ -383,6 +424,10 @@ jobs:
               "$TARGET") found_target=true ;;
               docs/*) docs_changed=true ;;
               src/pages/index.tsx|src/components/homepage/*|static/img/home/*) homepage_changed=true ;;
+              src/data/homepage-terminal.json)
+                homepage_changed=true
+                terminal_changed=true
+                ;;
               README.rst) readme_changed=true ;;
               CONTRIBUTING.md) contributing_changed=true ;;
               *)
@@ -398,6 +443,20 @@ jobs:
           fi
           if [[ "$docs_changed" != true ]]; then
             echo "::error::Copilot did not update any user documentation under docs/."
+            exit 1
+          fi
+          if [[ "$terminal_changed" != true ]]; then
+            echo "::error::Copilot did not update the animated-terminal transcript."
+            exit 1
+          fi
+          if ! jq -e --arg tag "$TAG" '.current.tag == $tag' src/data/homepage-terminal.json >/dev/null; then
+            echo "::error::The current terminal transcript does not identify $TAG."
+            exit 1
+          fi
+          staged_versions="$(git show :src/data/homepage-terminal.json | jq -S -c '.versions')"
+          current_versions="$(jq -S -c '.versions' src/data/homepage-terminal.json)"
+          if [[ "$current_versions" != "$staged_versions" ]]; then
+            echo "::error::Copilot modified an archived terminal transcript."
             exit 1
           fi
           {
@@ -496,6 +555,7 @@ jobs:
             docs
             src/pages/index.tsx
             src/components/homepage
+            src/data/homepage-terminal.json
             static/img/home
             README.rst
             CONTRIBUTING.md
@@ -574,7 +634,7 @@ jobs:
             versioning_checkbox='- [ ] Documentation versioning'
             compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. No historical snapshot was created by this run."
           else
-            archive_summary="Archived the previous current documentation as version \`$ARCHIVED_VERSION\`."
+            archive_summary="Archived the previous current documentation and animated-terminal transcript as version \`$ARCHIVED_VERSION\`."
             versioning_checkbox='- [x] Documentation versioning'
             compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. The previous documentation remains available under its versioned \`/docs/\` route."
           fi
@@ -638,6 +698,7 @@ jobs:
             "" \
             "- Added \`release-notes/$TAG.md\` from the verified upstream tag and comparison history." \
             "- $archive_summary" \
+            "- Updated the animated \`cxc doctor\` transcript from verified tagged source and runtime-dependent plugin evidence." \
             "${optional_changes[@]}" \
             "$marker_summary" \
             "" \

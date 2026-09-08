@@ -48,6 +48,7 @@ Use the appropriate source location:
 | Published snapshot correction | `versioned_docs/version-*/` |
 | Current or versioned navigation | `config/sidebars.ts` or `versioned_sidebars/` |
 | Homepage or Workbench | `src/components/` |
+| Homepage terminal transcript | `src/data/homepage-terminal.json` |
 | Standalone route | `src/pages/` |
 | Shared theme rules | `src/css/custom.css` |
 | Component styles | Colocated `*.module.css` |
@@ -72,6 +73,13 @@ rg "term-or-command" docs src README.rst CONTRIBUTING.md
 - Use MDX only when ordinary Markdown cannot express the required result.
 
 When adding, moving or deleting a current page, update the sidebar and incoming links. Do not copy current changes into every published snapshot automatically; edit a historical version only when the issue explicitly applies to it.
+
+The animated homepage terminal is curated data rather than captured output from
+one maintainer's machine. Verify its current transcript against the tagged
+CradleXC package version, doctor formatting, configuration display, tests and
+available plugin manifests. Normalize user-specific paths, avoid duplicate
+dependency rows and do not add fields that the tagged command does not print.
+Entries under `versions` are immutable release snapshots.
 
 ## Release Notes
 

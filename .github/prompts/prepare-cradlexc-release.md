@@ -8,8 +8,11 @@ changes between the previous and requested tags. Also update homepage content,
 existing content inaccurate, incomplete, or materially less useful.
 
 Do not modify marker files, workflow files, dependencies, lockfiles, generated
-data, `versions.json`, `versioned_docs/`, `versioned_sidebars/`, or build output. Do not create commits, push
-branches, or create pull requests.
+data other than the curated `src/data/homepage-terminal.json` file,
+`versions.json`, `versioned_docs/`, `versioned_sidebars/`, or build output.
+Within `src/data/homepage-terminal.json`, modify only `.current`; never edit
+or remove entries under `.versions`. Do not create commits, push branches, or
+create pull requests.
 
 ## Establish the release comparison
 
@@ -31,6 +34,10 @@ branches, or create pull requests.
    Interaction Rationale sections of `README.rst`, plus the UI, HCI and
    Accessibility and Validation sections of `CONTRIBUTING.md`. Treat those
    sections as controlling repository design requirements.
+7. Verify the animated `cxc doctor` transcript from the tagged codebase:
+   inspect the workspace package version, doctor command dispatch,
+   `doctor::print_summary`, configuration display, dependency discovery,
+   backend/plugin manifests available in the checkout, and relevant tests.
 
 When inspecting Git history in `upstream-cradlexc/`, change into that directory
 first and run one Git command per shell invocation. Do not use `git -C`, chain
@@ -71,8 +78,8 @@ resulting PR is test-only and must never be merged.
 ## Required user-documentation update
 
 - The only additional paths you may edit are `docs/**`, `src/pages/index.tsx`,
-  `src/components/homepage/**`, `static/img/home/**`, `README.rst`, and
-  `CONTRIBUTING.md`.
+  `src/components/homepage/**`, `static/img/home/**`,
+  `src/data/homepage-terminal.json`, `README.rst`, and `CONTRIBUTING.md`.
 - Update at least one existing file under `docs/` with evidence-based user
   guidance for behavior added, changed, fixed, deprecated, or made available by
   this tag. The workflow rejects a release that contains no `docs/**` change.
@@ -116,6 +123,26 @@ resulting PR is test-only and must never be merged.
   or contribution expectations have changed.
 - If no changes are required in the optional homepage, README, or contributing
   paths, do not touch them.
+
+## Required animated-terminal update
+
+- Update `.current` in `src/data/homepage-terminal.json` for the requested
+  tag. Do not modify `.versions`; the workflow snapshots that map
+  deterministically before you run.
+- Set `.current.tag` to the exact requested tag and keep the command as
+  `cxc doctor`.
+- Derive the banner, headings, separators, success/failure wording, and
+  configuration fields from the tagged CradleXC source and tests.
+- Dependency rows are supplied by installed backend plugin manifests and may
+  vary by environment. Include only representative rows supported by manifests
+  or other repository evidence available at the requested tag. Do not present
+  the transcript as universal output.
+- Normalize machine-specific usernames and paths, remove accidental duplicate
+  rows, and omit fields not printed by the tagged implementation. Preserve
+  spacing where it communicates the CLI's table structure.
+- Keep the transcript concise enough for the animated landing-page panel while
+  retaining a complete screen-reader equivalent and an accurate, explicitly
+  illustrative accessible label.
 
 ## Standards for all writing
 
