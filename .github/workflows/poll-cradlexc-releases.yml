@@ -5,11 +5,6 @@ on:
     - cron: '*/30 * * * *'
 
   workflow_dispatch:
-    inputs:
-      tag:
-        description: Optional existing CradleXC tag (defaults to latest)
-        required: false
-        type: string
 
 permissions:
   actions: write
@@ -30,14 +25,14 @@ jobs:
     steps:
       - name: Checkout documentation repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
-      - name: Resolve upstream tag
-        id: upstream-tag
+      - name: Fetch all upstream tags
         shell: bash
         env:
           CRADLE_RELEASES_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN }}
           GH_TOKEN: ${{ secrets.CRADLE_RELEASES_TOKEN || github.token }}
-          REQUESTED_TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
 
@@ -46,73 +41,88 @@ jobs:
             exit 1
           fi
 
-          if [[ -n "$REQUESTED_TAG" ]]; then
-            if [[ ! "$REQUESTED_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
-              echo "::error::The requested tag is invalid: $REQUESTED_TAG"
-              exit 1
-            fi
-            gh api "repos/${UPSTREAM_REPOSITORY}/git/ref/tags/${REQUESTED_TAG}" > /dev/null
-            tag="$REQUESTED_TAG"
-          else
-            tags_file="$RUNNER_TEMP/cradlexc-tags.txt"
-            gh api --paginate \
-              "repos/${UPSTREAM_REPOSITORY}/tags?per_page=100" \
-              --jq '.[].name' > "$tags_file"
-            tag="$(grep -m 1 -E '^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$' "$tags_file" || true)"
-          fi
+          gh api --paginate \
+            "repos/${UPSTREAM_REPOSITORY}/tags?per_page=100" \
+            --jq '.[] | [.name, .commit.sha] | @tsv' \
+            > "$RUNNER_TEMP/cradlexc-tags.txt"
 
-          if [[ -z "$tag" ]]; then
-            echo "::error::No valid version tags were found in ${UPSTREAM_REPOSITORY}."
+          if [[ ! -s "$RUNNER_TEMP/cradlexc-tags.txt" ]]; then
+            echo "::error::No tags were found in ${UPSTREAM_REPOSITORY}."
             exit 1
           fi
 
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Reconcile release queue
+        id: reconcile
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
 
-      - name: Check whether the tag needs processing
+          open_pull_request_tags="$(gh pr list \
+            --state open \
+            --limit 100 \
+            --json headRefName \
+            --jq '[.[] | .headRefName | select(startswith("release/")) | sub("^release/"; "")]')"
+          processing_tags="$(gh run list \
+            --workflow prepare-cradlexc-release.yml \
+            --limit 100 \
+            --json displayTitle,status \
+            --jq '[.[] | select((.status == "queued" or .status == "in_progress") and (.displayTitle | endswith(" historical=false"))) | .displayTitle | split(" ")[2]]')"
+          jq -n \
+            --argjson open_pull_request_tags "$open_pull_request_tags" \
+            --argjson processing_tags "$processing_tags" \
+            '{
+              openPullRequestTags: $open_pull_request_tags,
+              processingTags: $processing_tags
+            }' \
+            > "$RUNNER_TEMP/cradlexc-queue-signals.json"
+
+          node scripts/reconcile-cradlexc-releases.mjs \
+            "$RUNNER_TEMP/cradlexc-tags.txt" \
+            release-notes \
+            "$RUNNER_TEMP/cradlexc-queue-signals.json" \
+            "$RUNNER_TEMP/cradlexc-release-queue.json"
+
+      - name: Preserve release queue snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: cradlexc-release-queue-${{ github.run_id }}
+          path: ${{ runner.temp }}/cradlexc-release-queue.json
+          retention-days: 14
+
+      - name: Apply selected release state
+        if: steps.reconcile.outputs.has_outstanding == 'true'
         id: status
         shell: bash
         env:
-          TAG: ${{ steps.upstream-tag.outputs.tag }}
-          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.reconcile.outputs.selected }}
+          STATE: ${{ steps.reconcile.outputs.selected_state }}
+          SHOULD_DISPATCH: ${{ steps.reconcile.outputs.should_dispatch }}
         run: |
           set -euo pipefail
 
-          latest_documented="$({
-            git ls-files 'release-notes/v*.md' |
-              sed -nE 's#^release-notes/(v[0-9]+\.[0-9]+\.[0-9]+)\.md$#\1#p' |
-              sort -V |
-              tail -n 1
-          } || true)"
-
-          if git ls-files --error-unmatch "release-notes/${TAG}.md" >/dev/null 2>&1; then
-            echo "CradleXC tag $TAG already has a tracked release note."
-            echo "No documentation workflow will be dispatched."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          if [[ "$SHOULD_DISPATCH" != 'true' ]]; then
+            echo "Oldest outstanding release $TAG is $STATE; no dispatch is required."
+            echo "should_dispatch=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          if gh pr list \
-            --state open \
-            --head "release/${TAG}" \
-            --json number \
-            --jq 'length > 0' | grep -qx true; then
-            echo "A combined release documentation PR for $TAG is already open."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          echo "Oldest outstanding release $TAG is $STATE and may proceed."
+          echo "should_dispatch=true" >> "$GITHUB_OUTPUT"
 
-          echo "Detected new CradleXC tag $TAG."
-          echo "Latest documented release: ${latest_documented:-none}."
-          echo "changed=true" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare the combined release documentation PR
-        if: steps.status.outputs.changed == 'true'
+      - name: Prepare the selected release documentation
+        if: steps.status.outputs.should_dispatch == 'true'
         shell: bash
         env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          EXPECTED_SHA: ${{ steps.reconcile.outputs.selected_sha }}
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.upstream-tag.outputs.tag }}
+          TAG: ${{ steps.reconcile.outputs.selected }}
         run: |
           set -euo pipefail
+
           gh workflow run prepare-cradlexc-release.yml \
-            --ref "$GITHUB_REF_NAME" \
-            -f "tag=$TAG"
+            --ref "$DEFAULT_BRANCH" \
+            -f "tag=$TAG" \
+            -f "expected_sha=$EXPECTED_SHA"

@@ -194,6 +194,10 @@ Repository Structure
    Build, Markdown/MDX quality, link checking, release publication and GitHub
    Pages deployment automation.
 
+Selected technical documentation and release information are maintained through
+automated workflows. See ``CONTRIBUTING.md`` for details on the documentation
+update and review process.
+
 Architectural Choices
 ---------------------
 

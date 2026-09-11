@@ -6,32 +6,147 @@ Published file names must match the release tag:
 
 - `v0.18.1.md`
 - `v0.19.0.md`
-- `v1.0.0-rc.1.md`
+- `v1.0.0.md`
 
-`v0.18.1` is the first public release. Files with earlier versions are omitted from the website release index and never create GitHub Releases.
+The release policy in `config/release-policy.json` defines `v0.18.1` as the
+first production release and currently excludes prereleases. Files outside that
+policy are omitted from the website release index and never create GitHub
+Releases.
 
 Merging a release-note file for `v0.18.1` or later into `main` creates or updates
 the corresponding GitHub Release.
 
 ## Automatic upstream polling
 
-The `Poll for new CradleXC tags` workflow checks
-`cradle-lang/CradleXC` every 30 minutes. When it finds a version tag that does
-not match `.last-processed-release` and has no open release-note pull request,
-it dispatches the `Generate CradleXC release notes with Copilot` workflow.
-Copilot examines the source changes and relevant documentation, follows
-`v0.18.1.md` as its editorial reference, writes in American English, and opens a
-draft pull request for human review. It does not merge or publish the release.
+The `Poll for new CradleXC tags` workflow checks `cradle-lang/CradleXC` every 30
+minutes and can also be run manually. Each run fetches all upstream tags, applies
+the production release policy, records each tag's upstream commit SHA, and
+subtracts release-note files already merged into downstream `main`. It sorts the
+remaining releases by semantic version and selects the oldest one, so multiple
+releases are processed in FIFO order.
 
-The polling workflow can also be run manually with an optional existing version
-tag. The Copilot workflow accepts that same tag when a maintainer needs to
-invoke it directly.
+Each reconciliation derives a queue snapshot from authoritative tags, merged
+release notes, verified evidence, active production preparation runs and open
+release pull requests. Every eligible release is assigned one of these states:
+
+```text
+QUEUED
+PRECOMPUTING
+READY
+PROCESSING
+PR_OPEN
+COMPLETED
+BLOCKED
+```
+
+The oldest non-completed release remains selected even when it cannot proceed,
+so the workflow never skips a blocked or in-review predecessor. A `QUEUED` or
+`READY` selected release may be dispatched; other states wait or require
+recovery. The workflow writes the state table to its job summary and preserves
+the complete JSON snapshot as a 14-day workflow artifact. The snapshot is an
+audit record, not a mutable queue database: every run reconstructs current
+state from its authoritative sources.
+
+If the selected release already has an open `release/<tag>` pull request, the
+poller waits instead of selecting a later release. All production preparation
+runs also share one concurrency group. A second run queued before the first pull
+request appears checks final-generation capacity and exits before expensive work
+when a production release pull request is already open.
+
+The preparation workflow uses Copilot to examine verified source changes and
+relevant documentation, follows `v0.18.1.md` as its editorial reference, and
+opens a pull request for human review. It does not merge or publish the release.
+Before doing that work, it independently resolves the checked-out tag and
+requires both that result and the checked-out commit to match the SHA supplied
+by the reconciler. A mismatch blocks production generation before AI is called.
 
 Set the repository secret `CRADLE_RELEASES_TOKEN` to a fine-grained token with
 read access to the private CradleXC repository's contents and tags. The polling
 workflow reports a clear error when this secret is missing.
 
-Release tags are not translated. An upstream tag such as `v0.18.1` produces
-`release-notes/v0.18.1.md`, a `release-notes/v0.18.1` branch, and a release-note
-pull request for `v0.18.1`. The `.last-processed-release` marker stores that same
-tag for comparison with the CradleXC API response.
+Release tags are not translated. An upstream tag such as `v0.19.0` produces
+`release-notes/v0.19.0.md`, a `release/v0.19.0` branch, and a release
+documentation pull request for `v0.19.0`. The release-note files merged into
+`main` are the authoritative completion state. The `.last-processed-release`
+marker is retained for compatibility but does not determine queue correctness.
+
+## Release provenance
+
+Every newly automated production release also creates
+`release-notes/provenance/<tag>.json`. The deterministic sidecar records the
+release tag and commit SHA together with the preceding release tag and commit
+SHA. The current documentation identity is also written to
+`.cradlexc-docs-source-tag` and `.cradlexc-docs-source-revision`.
+
+The existing `v0.18.1` baseline is explicitly listed in
+`provenanceExemptTags` because its commit SHA was not recorded when its release
+note was created. All other completed production releases require a valid
+sidecar. During reconciliation, the workflow compares recorded provenance with
+the current upstream inventory. A missing record, missing upstream tag, moved
+release tag, or moved predecessor tag blocks queue processing instead of
+silently regenerating documentation.
+
+Provenance files are generated by the workflow and must not be edited manually
+to bypass a failed integrity check. Correct the authoritative upstream or
+downstream state, then rerun reconciliation.
+
+## Deterministic release evidence
+
+Before invoking Copilot, the preparation workflow compares the verified
+predecessor and target tags and writes
+`release-notes/evidence/<tag>.json`. This package contains:
+
+- both tags and full commit SHAs;
+- the merge-base and whether the predecessor is an ancestor;
+- every commit SHA and subject in the comparison range;
+- added, modified, deleted, copied, renamed and type-changed file records;
+- deterministic file and commit counts and top-level source areas; and
+- a SHA-256 checksum covering the package contents.
+
+The package has no timestamp, machine path or AI-generated classification, so
+the same Git history produces the same JSON. Copilot reads it as the comparison
+inventory and then inspects relevant implementation and tests before making
+user-facing claims. The evidence is committed with the release pull request so
+reviewers and later validation phases can reuse it.
+
+Before Copilot runs, a separate verification pass resolves both tags again,
+checks their full SHAs, release ordering and production ancestry, recalculates
+the commit and changed-file range, validates the JSON checksum, and requires an
+exact structural match. Authoritative tag, SHA, ordering or ancestry failures
+block immediately and are never repaired automatically.
+
+Missing, malformed or inconsistent JSON is derived data and can be recovered
+safely. The workflow discards it, reconstructs it once from the verified Git
+history, and performs the complete verification again. A second failure blocks
+the workflow; there is no unbounded retry loop. Reconciliation also verifies
+merged evidence metadata against the current upstream inventory and release
+provenance. As with provenance, `v0.18.1` is the explicit legacy exemption.
+
+Generate a package locally with:
+
+```bash
+node scripts/generate-release-evidence.mjs \
+  path/to/CradleXC \
+  release-notes/evidence \
+  v0.18.1 \
+  v0.19.0
+```
+
+Evidence files are deterministic workflow outputs. Do not edit them manually;
+rerun the generator against the authoritative Git tags instead.
+
+## Historical workflow testing
+
+Tags older than `v0.18.1` may be passed directly to the preparation workflow
+only with `historical_test` enabled. Such runs use `test-release/<tag>` branches,
+open test-only draft pull requests, leave production markers unchanged, and must
+never be merged or published. Historical tags never enter the production queue.
+The expected SHA is optional for a historical test because the workflow still
+verifies the checked-out commit against the locally resolved tag. A direct
+production run must supply the full expected commit SHA.
+
+Run the deterministic release-automation tests locally with:
+
+```bash
+npm run test:release-automation
+```

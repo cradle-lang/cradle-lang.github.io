@@ -1,0 +1,7 @@
+{
+  "minimumProductionTag": "v0.18.1",
+  "includePrereleases": false,
+  "provenanceExemptTags": [
+    "v0.18.1"
+  ]
+}
