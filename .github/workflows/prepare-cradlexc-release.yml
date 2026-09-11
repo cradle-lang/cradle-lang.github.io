@@ -305,6 +305,21 @@ jobs:
             "$PREVIOUS_SHA"
           git add -- "release-notes/provenance/$TAG.json"
 
+      - name: Preprocess release impact
+        id: prework
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
+        run: |
+          set -euo pipefail
+          node scripts/generate-release-prework.mjs \
+            upstream-cradlexc \
+            "$EVIDENCE_PATH" \
+            docs \
+            release-notes/prework
+          git add -- "release-notes/prework/$TAG.json"
+
       - name: Install GitHub Copilot CLI
         shell: bash
         run: npm install --global @github/copilot@1.0.83
@@ -318,6 +333,9 @@ jobs:
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
           EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
           EVIDENCE_SHA256: ${{ steps.evidence.outputs.sha256 }}
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
+          REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
           HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
@@ -333,6 +351,9 @@ jobs:
           Latest stable release-note tag before this run: $PREVIOUS_TAG
           Deterministic release-evidence path: $EVIDENCE_PATH
           Release-evidence SHA-256: $EVIDENCE_SHA256
+          Deterministic prework path: $PREWORK_PATH
+          Documentation-impact classification: $IMPACT_CLASSIFICATION
+          User-documentation update required: $REQUIRES_DOCUMENTATION
           Historical test mode: $HISTORICAL_TEST"
 
           copilot \
@@ -379,6 +400,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
+          REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
         run: |
           set -euo pipefail
           mapfile -t changed < <(
@@ -416,7 +438,7 @@ jobs:
             echo "::error::Copilot did not create the required $TARGET."
             exit 1
           fi
-          if [[ "$docs_changed" != true ]]; then
+          if [[ "$REQUIRES_DOCUMENTATION" == true && "$docs_changed" != true ]]; then
             echo "::error::Copilot did not update any user documentation under docs/."
             exit 1
           fi
@@ -554,6 +576,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
+          REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
         run: |
           set -euo pipefail
           mapfile -t changed < <(
@@ -591,7 +614,7 @@ jobs:
             echo "::error::Copilot did not create the required $TARGET."
             exit 1
           fi
-          if [[ "$docs_changed" != true ]]; then
+          if [[ "$REQUIRES_DOCUMENTATION" == true && "$docs_changed" != true ]]; then
             echo "::error::Copilot did not update any user documentation under docs/."
             exit 1
           fi
@@ -750,6 +773,11 @@ jobs:
           EVIDENCE_COMMITS: ${{ steps.evidence.outputs.commit_count }}
           EVIDENCE_FILES: ${{ steps.evidence.outputs.file_count }}
           EVIDENCE_REBUILT: ${{ steps.evidence.outputs.rebuilt }}
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          PREWORK_SHA256: ${{ steps.prework.outputs.sha256 }}
+          IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
+          REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
+          RISK_COUNT: ${{ steps.prework.outputs.risk_count }}
         run: |
           set -euo pipefail
 
@@ -858,6 +886,7 @@ jobs:
             "- Added \`release-notes/$TAG.md\` from the verified upstream tag and comparison history." \
             "- Recorded deterministic source evidence in \`$EVIDENCE_PATH\` ($EVIDENCE_COMMITS commits and $EVIDENCE_FILES changed files; SHA-256 \`$EVIDENCE_SHA256\`)." \
             "- Evidence reconstruction required: \`$EVIDENCE_REBUILT\`." \
+            "- Recorded deterministic impact prework in \`$PREWORK_PATH\` (classification \`$IMPACT_CLASSIFICATION\`, $RISK_COUNT risk indicator(s); SHA-256 \`$PREWORK_SHA256\`)." \
             "- $archive_summary" \
             "- Updated the animated \`cxc doctor\` transcript from verified tagged source and runtime-dependent plugin evidence." \
             "${optional_changes[@]}" \
@@ -868,6 +897,8 @@ jobs:
             "- Automated checks:" \
             "  - Verified that the private upstream checkout exactly matches tag \`$TAG\`." \
             "  - Generated the release evidence directly from the verified \`$PREVIOUS_TAG..$TAG\` Git comparison." \
+            "  - Classified documentation impact as \`$IMPACT_CLASSIFICATION\`; user-documentation update required: \`$REQUIRES_DOCUMENTATION\`." \
+            "  - Required the animated terminal's current transcript to identify \`$TAG\` for every classification." \
             "  - Verified that Copilot created the required release note and changed only approved content paths ($CHANGE_COUNT content file(s))." \
             "  - Each validation attempt runs Markdown/MDX linting, \`npm run build\`, and a generated-site link check with Lychee." \
             "$validation_details" \

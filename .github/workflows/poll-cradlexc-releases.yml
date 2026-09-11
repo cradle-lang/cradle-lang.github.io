@@ -84,7 +84,15 @@ jobs:
             "$RUNNER_TEMP/cradlexc-queue-signals.json" \
             "$RUNNER_TEMP/cradlexc-release-queue.json"
 
+      - name: Report queue is up to date
+        if: steps.reconcile.outputs.has_outstanding == 'false'
+        shell: bash
+        run: |
+          echo 'No outstanding CradleXC releases found.'
+          echo 'Queue is up to date. No prepare workflow will be triggered.'
+
       - name: Preserve release queue snapshot
+        if: steps.reconcile.outputs.has_outstanding == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: cradlexc-release-queue-${{ github.run_id }}

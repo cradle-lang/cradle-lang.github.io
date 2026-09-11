@@ -162,12 +162,32 @@ or mismatched evidence JSON file is derived data: the workflow regenerates it
 once and repeats verification. If that retry fails, the workflow stops for
 human investigation instead of weakening the integrity check.
 
+The next deterministic step writes `release-notes/prework/<tag>.json`. It
+groups changed source, tests, CLI, configuration, schemas, dependencies, build
+files and upstream documentation; extracts CLI flag and default-line signals;
+identifies likely current documentation; records risk indicators; and assigns
+one of `INTERNAL_ONLY`, `RELEASE_NOTE_ONLY`, `SMALL_USER_FACING` or
+`COMPLEX_USER_FACING`.
+
+The classification controls whether an update under `docs/` is mandatory.
+Internal and release-note-only changes must not receive artificial user
+documentation edits. User-facing classifications require a focused or broader
+update. The prework signals route investigation but do not replace inspecting
+implementation and tests before documenting behavior.
+
+Classification never skips release maintenance. Every release must still add
+its release note and update `.current` in
+`src/data/homepage-terminal.json`, including setting `.current.tag` to the new
+release tag. Only the requirement for an additional `docs/**` edit varies by
+classification.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:
 
 - release information
 - deterministic Git comparison evidence
+- deterministic impact preprocessing and documentation classification
 - technical references that reflect the current CradleXC implementation
 - selected user documentation affected by source changes
 - generated documentation data used by the website

@@ -135,6 +135,58 @@ node scripts/generate-release-evidence.mjs \
 Evidence files are deterministic workflow outputs. Do not edit them manually;
 rerun the generator against the authoritative Git tags instead.
 
+## Deterministic preprocessing and impact classification
+
+After evidence verification, the workflow writes
+`release-notes/prework/<tag>.json` without invoking Copilot. The prework package
+derives reusable routing information from the verified Git comparison:
+
+- source, test, CLI, configuration, schema, dependency, build and upstream
+  documentation file inventories;
+- command candidates inferred from CLI paths;
+- added and removed long-form CLI flags;
+- counts of changed lines containing defaults;
+- likely current documentation based on deterministic term matches;
+- risk indicators for removals, renames, CLI/configuration/schema changes,
+  large change sets and possible breaking changes; and
+- a checksum binding the package to its source evidence.
+
+These signals focus later source inspection; they are not treated as proof of
+runtime behavior. The workflow classifies each release conservatively as:
+
+```text
+INTERNAL_ONLY
+RELEASE_NOTE_ONLY
+SMALL_USER_FACING
+COMPLEX_USER_FACING
+```
+
+CLI, configuration, schema or upstream-documentation signals require an update
+under `docs/`. Test, CI, build, release or dependency-only changes do not.
+Source changes without a deterministic user-facing signal require release notes
+but do not force an artificial documentation edit. Multi-domain, removal or
+possible-breaking signals require broader documentation and review.
+
+Every classification still requires the new release-note file and an updated
+`.current` transcript in `src/data/homepage-terminal.json`. In particular, the
+terminal's `.current.tag` must equal the release tag, so its displayed CradleXC
+version advances even for `INTERNAL_ONLY` and `RELEASE_NOTE_ONLY` releases.
+Only the requirement to edit a page under `docs/` is conditional.
+
+Copilot still inspects the relevant source and tests before making claims. It
+may correct a conservative false negative by updating documentation, but it
+must never use the classification to invent unsupported content.
+
+Generate prework locally after generating evidence with:
+
+```bash
+node scripts/generate-release-prework.mjs \
+  path/to/CradleXC \
+  release-notes/evidence/v0.19.0.json \
+  docs \
+  release-notes/prework
+```
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow
