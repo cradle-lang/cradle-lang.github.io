@@ -181,6 +181,45 @@ its release note and update `.current` in
 release tag. Only the requirement for an additional `docs/**` edit varies by
 classification.
 
+Immediately before Copilot is invoked, a just-in-time gate fetches the latest
+documentation default branch and confirms that the checkout is still current,
+the predecessor note is complete, the target note is not complete, production
+release-PR capacity is available, and the evidence/prework integrity chain is
+unchanged. A failure stops before AI generation; do not weaken this gate to
+make a stale run continue.
+
+Copilot receives a temporary, checksummed context package containing the
+verified deterministic packages, the previous release note, and every relevant
+source/test and current-documentation file. Individual file content is capped
+at 20,000 characters; inspect the remainder only to resolve a material
+ambiguity or truncation. Because this temporary package may include private
+upstream code, never stage, commit, upload or paste it into a pull request. The
+pull request records only its checksum and counts.
+
+The preparation workflow also compiles the exact verified CradleXC checkout
+with `cargo build --locked -p cradle-cli --no-default-features` and runs
+`cxc doctor` before Copilot. This temporary debug build does not require the
+private attestation values used for upstream release packaging and is never
+published. Its build directory is deleted before Copilot starts.
+
+The command runs with colour disabled and temporary home, configuration, data,
+cache, state and empty plugin directories. Machine-specific paths are
+normalized in the checksummed capture. A nonzero diagnostic result is valid
+when the command ran and reported missing dependencies; a build or launch
+failure blocks generation and retains a sanitized diagnostic artifact.
+
+Both pre-repair and final change guards structurally compare `.current` in
+`src/data/homepage-terminal.json` with that capture. Keep the observed banner,
+heading order, configuration-field order, dependency checks and outcome
+wording. Every observed check must remain in the same order; do not keep or add
+an unobserved check. Do not weaken the validator or substitute an invented
+transcript when the capture fails.
+
+The upstream binary stripping, `.deb`/`.rpm` creation, Gemfury upload and
+custom repository domain are not part of release-documentation preparation.
+Change domain documentation manually only when its authoritative upstream
+configuration actually changes.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:
@@ -188,6 +227,8 @@ Automation is used where information can be derived reliably from the source rep
 - release information
 - deterministic Git comparison evidence
 - deterministic impact preprocessing and documentation classification
+- just-in-time generation readiness and bounded AI context assembly
+- locked CradleXC build, controlled doctor capture and transcript validation
 - technical references that reflect the current CradleXC implementation
 - selected user documentation affected by source changes
 - generated documentation data used by the website

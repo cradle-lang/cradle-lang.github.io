@@ -320,9 +320,108 @@ jobs:
             release-notes/prework
           git add -- "release-notes/prework/$TAG.json"
 
+      - name: Install the upstream Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build CradleXC and capture cxc doctor
+        id: doctor
+        continue-on-error: true
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          TAG_SHA: ${{ steps.upstream.outputs.sha }}
+        run: |
+          set -euo pipefail
+          node scripts/run-release-doctor.mjs \
+            upstream-cradlexc \
+            "$TAG" \
+            "$TAG_SHA" \
+            "$RUNNER_TEMP/cradlexc-doctor-$TAG.json" \
+            "$RUNNER_TEMP/cradlexc-doctor-$TAG.log"
+
+      - name: Retain CradleXC doctor diagnostics on failure
+        if: steps.doctor.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cradlexc-doctor-${{ inputs.tag }}-diagnostics
+          path: ${{ runner.temp }}/cradlexc-doctor-${{ inputs.tag }}.log
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Require a valid CradleXC doctor capture
+        if: always()
+        shell: bash
+        env:
+          DOCTOR_OUTCOME: ${{ steps.doctor.outcome }}
+          DOCTOR_PATH: ${{ steps.doctor.outputs.path }}
+        run: |
+          set -euo pipefail
+          if [[ "$DOCTOR_OUTCOME" != 'success' || ! -s "$DOCTOR_PATH" ]]; then
+            echo '::error::CradleXC could not be built or cxc doctor could not be captured.'
+            echo '::error::Copilot will not run. Inspect the retained diagnostic artifact.'
+            exit 1
+          fi
+
+      - name: Build bounded AI context
+        id: context
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
+          EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
+        run: |
+          set -euo pipefail
+          node scripts/generate-release-ai-context.mjs \
+            upstream-cradlexc \
+            "$EVIDENCE_PATH" \
+            "$PREWORK_PATH" \
+            "$DOCTOR_CAPTURE_PATH" \
+            "release-notes/$PREVIOUS_TAG.md" \
+            "$RUNNER_TEMP/release-ai-context-$TAG.json"
+
       - name: Install GitHub Copilot CLI
         shell: bash
         run: npm install --global @github/copilot@1.0.83
+
+      - name: Confirm JIT generation readiness
+        id: jit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          TAG: ${{ inputs.tag }}
+          PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
+          EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$DEFAULT_BRANCH"
+          current_main_sha="$(git rev-parse HEAD)"
+          latest_main_sha="$(git rev-parse "origin/$DEFAULT_BRANCH")"
+          blocking_count="$(
+            gh pr list \
+              --state open \
+              --limit 100 \
+              --json headRefName \
+              --jq '[.[] | select(.headRefName | startswith("release/"))] | length'
+          )"
+
+          node scripts/check-release-jit-readiness.mjs \
+            release-notes \
+            "$TAG" \
+            "$PREVIOUS_TAG" \
+            "$EVIDENCE_PATH" \
+            "$PREWORK_PATH" \
+            "$DOCTOR_CAPTURE_PATH" \
+            "$current_main_sha" \
+            "$latest_main_sha" \
+            "$blocking_count" \
+            "$HISTORICAL_TEST"
 
       - name: Prepare release documentation
         shell: bash
@@ -336,6 +435,10 @@ jobs:
           PREWORK_PATH: ${{ steps.prework.outputs.path }}
           IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
           REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
+          CONTEXT_PATH: ${{ steps.context.outputs.path }}
+          CONTEXT_SHA256: ${{ steps.context.outputs.sha256 }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
+          DOCTOR_CAPTURE_SHA256: ${{ steps.doctor.outputs.sha256 }}
           HISTORICAL_TEST: ${{ inputs.historical_test }}
         run: |
           set -euo pipefail
@@ -354,6 +457,10 @@ jobs:
           Deterministic prework path: $PREWORK_PATH
           Documentation-impact classification: $IMPACT_CLASSIFICATION
           User-documentation update required: $REQUIRES_DOCUMENTATION
+          Bounded AI context path: $CONTEXT_PATH
+          Bounded AI context SHA-256: $CONTEXT_SHA256
+          Deterministic cxc doctor capture path: $DOCTOR_CAPTURE_PATH
+          Deterministic cxc doctor capture SHA-256: $DOCTOR_CAPTURE_SHA256
           Historical test mode: $HISTORICAL_TEST"
 
           copilot \
@@ -369,16 +476,10 @@ jobs:
             --allow-tool 'shell(date)' \
             --allow-tool 'shell(find)' \
             --allow-tool 'shell(git cat-file:*)' \
-            --allow-tool 'shell(git describe:*)' \
             --allow-tool 'shell(git diff:*)' \
-            --allow-tool 'shell(git log:*)' \
-            --allow-tool 'shell(git merge-base:*)' \
-            --allow-tool 'shell(git rev-list:*)' \
             --allow-tool 'shell(git rev-parse:*)' \
             --allow-tool 'shell(git show:*)' \
-            --allow-tool 'shell(git show-ref:*)' \
             --allow-tool 'shell(git status)' \
-            --allow-tool 'shell(git tag:*)' \
             --allow-tool 'shell(grep)' \
             --allow-tool 'shell(head)' \
             --allow-tool 'shell(ls)' \
@@ -401,6 +502,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
           REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
         run: |
           set -euo pipefail
           mapfile -t changed < <(
@@ -450,6 +552,10 @@ jobs:
             echo "::error::The current terminal transcript does not identify $TAG."
             exit 1
           fi
+          node scripts/validate-release-doctor-transcript.mjs \
+            "$DOCTOR_CAPTURE_PATH" \
+            src/data/homepage-terminal.json \
+            "$TAG"
           staged_versions="$(git show :src/data/homepage-terminal.json | jq -S -c '.versions')"
           current_versions="$(jq -S -c '.versions' src/data/homepage-terminal.json)"
           if [[ "$current_versions" != "$staged_versions" ]]; then
@@ -577,6 +683,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
           REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
         run: |
           set -euo pipefail
           mapfile -t changed < <(
@@ -626,6 +733,10 @@ jobs:
             echo "::error::The current terminal transcript does not identify $TAG."
             exit 1
           fi
+          node scripts/validate-release-doctor-transcript.mjs \
+            "$DOCTOR_CAPTURE_PATH" \
+            src/data/homepage-terminal.json \
+            "$TAG"
           staged_versions="$(git show :src/data/homepage-terminal.json | jq -S -c '.versions')"
           current_versions="$(jq -S -c '.versions' src/data/homepage-terminal.json)"
           if [[ "$current_versions" != "$staged_versions" ]]; then
@@ -778,6 +889,13 @@ jobs:
           IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
           REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
           RISK_COUNT: ${{ steps.prework.outputs.risk_count }}
+          JIT_STATE: ${{ steps.jit.outputs.state }}
+          CONTEXT_SHA256: ${{ steps.context.outputs.sha256 }}
+          CONTEXT_UPSTREAM_FILES: ${{ steps.context.outputs.upstream_file_count }}
+          CONTEXT_DOCUMENTATION_FILES: ${{ steps.context.outputs.documentation_file_count }}
+          DOCTOR_CAPTURE_SHA256: ${{ steps.doctor.outputs.sha256 }}
+          DOCTOR_EXIT_CODE: ${{ steps.doctor.outputs.exit_code }}
+          DOCTOR_DEPENDENCY_COUNT: ${{ steps.doctor.outputs.dependency_count }}
         run: |
           set -euo pipefail
 
@@ -887,6 +1005,9 @@ jobs:
             "- Recorded deterministic source evidence in \`$EVIDENCE_PATH\` ($EVIDENCE_COMMITS commits and $EVIDENCE_FILES changed files; SHA-256 \`$EVIDENCE_SHA256\`)." \
             "- Evidence reconstruction required: \`$EVIDENCE_REBUILT\`." \
             "- Recorded deterministic impact prework in \`$PREWORK_PATH\` (classification \`$IMPACT_CLASSIFICATION\`, $RISK_COUNT risk indicator(s); SHA-256 \`$PREWORK_SHA256\`)." \
+            "- Passed the just-in-time generation gate with state \`$JIT_STATE\`." \
+            "- Supplied a temporary AI context package (SHA-256 \`$CONTEXT_SHA256\`) containing $CONTEXT_UPSTREAM_FILES upstream file comparison(s) and $CONTEXT_DOCUMENTATION_FILES current documentation file(s), with oversized individual files safely marked and truncated." \
+            "- Built the verified upstream checkout with Cargo's locked core debug build and captured \`cxc doctor\` (exit code \`$DOCTOR_EXIT_CODE\`, $DOCTOR_DEPENDENCY_COUNT observed dependency row(s); SHA-256 \`$DOCTOR_CAPTURE_SHA256\`)." \
             "- $archive_summary" \
             "- Updated the animated \`cxc doctor\` transcript from verified tagged source and runtime-dependent plugin evidence." \
             "${optional_changes[@]}" \

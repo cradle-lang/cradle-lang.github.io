@@ -187,6 +187,89 @@ node scripts/generate-release-prework.mjs \
   release-notes/prework
 ```
 
+## Just-in-time generation and bounded AI context
+
+Deterministic preparation does not itself authorize an AI generation pass.
+Immediately before Copilot starts, the workflow fetches the documentation
+repository's default branch and applies a separate just-in-time gate. The gate
+requires all of the following:
+
+- the checked-out documentation commit still equals the latest default-branch
+  commit;
+- the predecessor release note exists and the target release note does not;
+- no production `release/*` pull request is open (historical tests are exempt
+  from production capacity); and
+- the evidence and prework checksums, release identities and evidence linkage
+  are valid.
+
+Any failed condition ends the run before AI credits are used. This repeats the
+important capacity check at the point where it matters, protecting against a
+pull request or main-branch update that occurred after initial admission.
+
+The workflow then gives Copilot a JSON context generated in `$RUNNER_TEMP`. It
+contains the verified evidence and prework, the previous release note, and the
+before/after contents of every relevant upstream and likely current
+documentation file. Individual files are limited to 20,000 characters and
+marked explicitly when truncated, allowing Copilot to inspect the remainder
+directly when necessary.
+
+This context file may contain private upstream source. It is deliberately not
+staged, committed, uploaded as an artifact or copied into the pull-request
+body. Only its checksum and aggregate file counts are recorded for review.
+
+Before assembling that context, the workflow installs stable Rust to match the
+upstream toolchain, reads locked Cargo metadata, verifies that the `cradle-cli`
+package owns the `cxc` binary target, and runs a core-only debug build:
+
+```bash
+cargo build --locked -p cradle-cli --no-default-features
+```
+
+The debug build deliberately avoids the three private attestation values that
+the upstream packaging workflow requires for release mode. The binary is used
+only to observe `cxc doctor`; it is never packaged or published. Cargo writes
+it into a temporary target directory that is deleted before Copilot starts.
+This keeps the documentation workflow operable without copying upstream
+secrets into the documentation repository.
+
+It then runs the resulting core-only `cxc doctor` binary with terminal colour
+disabled inside temporary home, configuration, data, cache, state and empty
+plugin directories. External Vagrant, SPHERE and libvirt-ansible backends are
+not compiled into `cxc`; their dependency rows appear only when corresponding
+external plugins are installed. The command may legitimately return a nonzero
+diagnostic status when a required dependency is missing; that output is still
+valid runtime evidence. A build failure, process-launch failure, missing
+version banner or SHA mismatch blocks the workflow before Copilot.
+
+The captured stdout and stderr are normalized to remove runner-specific paths,
+protected by a checksum, linked to the verified tag/SHA, and embedded in the
+temporary AI context. After Copilot edits the animated terminal data, a
+structural validator requires the captured banner, heading order,
+configuration-field order, dependency checks and outcome wording. It rejects
+missing or invented checks and fields. It intentionally does not require an
+exact text match because illustrative paths and presentation spacing can vary.
+
+If compilation or execution cannot complete, Copilot is skipped and the
+sanitized diagnostic log is retained as a private workflow artifact for 14
+days. Successful logs and the complete context are not uploaded.
+
+The upstream binary stripping, `.deb`/`.rpm` packaging, Gemfury upload and
+custom `repo.cradle-lang.org` domain are intentionally outside this
+documentation workflow. Domain changes remain manual documentation maintenance
+unless a separate verified requirement is introduced.
+
+Generate a local context package with:
+
+```bash
+node scripts/generate-release-ai-context.mjs \
+  path/to/CradleXC \
+  release-notes/evidence/v0.19.0.json \
+  release-notes/prework/v0.19.0.json \
+  /tmp/cradlexc-doctor-v0.19.0.json \
+  release-notes/v0.18.1.md \
+  /tmp/release-ai-context-v0.19.0.json
+```
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow
