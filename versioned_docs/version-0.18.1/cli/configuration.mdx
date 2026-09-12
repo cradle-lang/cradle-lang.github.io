@@ -5,8 +5,7 @@ title: CLI Configuration
 
 # CLI Configuration
 
-CradleXC v0.16.0 reads local settings from TOML. Inspect the active
-configuration with:
+CradleXC reads local settings from TOML. Inspect the active configuration with:
 
 ```bash
 cxc config
@@ -20,21 +19,21 @@ cxc --config <path> <command>
 
 ## Configuration search order
 
-When `--config` is not supplied, CradleXC uses the first configuration file it
-finds:
+When `--config` is not supplied, CradleXC uses the first configuration file it finds:
 
 1. `./config.toml`
 2. `config.toml` beside the `cxc` executable
 3. `~/.cxc/config.toml`
-4. built-in defaults
+4. `/opt/cxc/config.toml`
+5. built-in defaults
 
 ## Complete example
 
 ```toml
+config_dir = "https://github.com/cradle-lang/cradle-lib"
+heuristics_dir = "https://github.com/cradle-lang/cradle-lib"
 artifact_repo = "https://artifacts.example.org"
 artifact_dir = "/home/user/artifact"
-forensic_dir = "/opt/cxc/forensic"
-dataset_dir = "/opt/cxc/dataset"
 
 [deployment]
 timezone = "Asia/Singapore"
@@ -60,15 +59,32 @@ memory = 1024
 provider = "libvirt"
 ```
 
+## Content sources
+
+`config_dir` supplies the implementation for each instance `config()` entry. `heuristics_dir` supplies implementation content for instance heuristics. Each value can be either a local directory or a Git URL.
+
+The built-in default for both settings is:
+
+```text
+https://github.com/cradle-lang/cradle-lib
+```
+
+When a Git URL is configured, CradleXC fetches the referenced content into its local cache as needed by `build` and `rebuild`.
+
+List locally available content with:
+
+```bash
+cxc configs list
+cxc heuristics list
+```
+
+Use `--config-dir` or `--heuristics-dir` on those commands to inspect a specific local directory.
+
 ## Artifact settings
 
 `artifact_repo` is the fallback used when a scenario references `${uriRemote}` without defining `repositoryRemote()` in metadata. It is empty by default.
 
 `artifact_dir` is the local staging directory for artifacts. Its default is `$HOME/artifact`.
-
-`forensic_dir` and `dataset_dir` identify the default locations used for
-forensic output and dataset organization. Their defaults are
-`/opt/cxc/forensic` and `/opt/cxc/dataset`.
 
 ## Generation settings
 
@@ -108,9 +124,10 @@ Command-line `--backend-arg key=value` options override matching values from the
 
 ## Environment overrides
 
-Environment variables override matching runtime values. Supported variables
-include:
+Environment variables override matching TOML values. Supported variables include:
 
+- `CXC_CONFIG_DIR`
+- `CXC_HEURISTICS_DIR`
 - `CXC_ARTIFACT_REPO`
 - `CXC_ARTIFACT_DIR`
 - `CXC_TIMEZONE`
@@ -119,10 +136,6 @@ include:
 - `CXC_DISABLE_DEFENDER`
 - `CXC_DISABLE_ADAPTER`
 - `CXC_USE_NFS`
-
-The artifact repository can also be supplied by the scenario's
-`repositoryRemote` metadata. Backend-specific options remain under the
-corresponding `[backend.<name>]` table and are interpreted by that plugin.
 
 ## Validate the configuration
 
