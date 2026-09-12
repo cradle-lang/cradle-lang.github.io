@@ -133,6 +133,9 @@ export function createReleaseReviewPacket({
   const titlePrefix = historicalTest
     ? '[TEST ONLY] '
     : validation.passed ? '' : '[Validation failing] ';
+  const sourceBranch = historicalTest
+    ? `test-release/${tag}`
+    : `release/${tag}`;
   const testNotice = historicalTest
     ? '> [!CAUTION]\n> Historical test output must never be merged or published.'
     : '';
@@ -196,6 +199,7 @@ export function createReleaseReviewPacket({
     ARCHIVE_SUMMARY: archiveSummary,
     REVIEW_SUMMARY_ROWS: [
       `| Run mode | ${historicalTest ? 'Historical test — never merge' : 'Production'} |`,
+      `| Branch | ${code(sourceBranch)} → ${code('main')} |`,
       `| Automated validation | ${validation.status} |`,
       `| Impact | ${code(prework.classification.level)} |`,
       `| Upstream scope | ${evidence.counts.commits} commit(s), ${evidence.counts.files} changed file(s) |`,

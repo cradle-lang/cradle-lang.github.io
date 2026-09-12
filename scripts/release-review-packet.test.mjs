@@ -140,6 +140,7 @@ test('renders a decision-ready review packet from verified inputs', () => {
   assert.match(packet.body, /none configured; use the review labels/);
   assert.match(packet.body, /docs\/reference\/configuration\.md/);
   assert.match(packet.body, /### Review at a glance/);
+  assert.match(packet.body, /\| Branch \| `release\/v0\.19\.0` → `main` \|/);
   assert.match(packet.body, /3 changed file\(s\) — expand for the complete list/);
   assert.match(packet.body, /1 documentation page\(s\) matched for focused review/);
   assert.match(packet.body, /- \[ \] Confirm configuration names, paths, defaults/);
@@ -164,6 +165,12 @@ test('omits temporary link-check output from the changed-file review list', () =
 
   assert.doesNotMatch(packet.body, /lychee\/out\.md/);
   assert.match(packet.body, /2 changed file\(s\) — expand for the complete list/);
+});
+
+test('shows the historical-test branch in the review summary', () => {
+  const packet = create({historicalTest: true});
+
+  assert.match(packet.body, /\| Branch \| `test-release\/v0\.19\.0` → `main` \|/);
 });
 
 test('retains the default pull-request template structure and checklist tone', () => {
