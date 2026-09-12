@@ -1,3 +1,5 @@
+import {renderMarkdownTemplate} from './release-markdown-template.mjs';
+
 const ISSUE_MARKER_PREFIX = 'cradlexc-release-escalation';
 
 function unique(values) {
@@ -79,36 +81,10 @@ function requiredDecision(category) {
   }
 }
 
-function issueBodyFromTemplate(template) {
-  if (typeof template !== 'string' || template.trim() === '') {
-    throw new TypeError('The release escalation issue template must be a non-empty string.');
-  }
-
-  const normalized = template.replaceAll('\r\n', '\n');
-  if (!normalized.startsWith('---\n')) return normalized;
-
-  const frontmatterEnd = normalized.indexOf('\n---\n', 4);
-  if (frontmatterEnd === -1) {
-    throw new Error('The release escalation issue template has unclosed YAML frontmatter.');
-  }
-  return normalized.slice(frontmatterEnd + '\n---\n'.length);
-}
-
 export function renderEscalationIssueTemplate(template, values) {
-  let body = issueBodyFromTemplate(template).trimStart();
-
-  for (const [name, value] of Object.entries(values)) {
-    body = body.replaceAll(`{{${name}}}`, String(value));
-  }
-
-  const unresolved = unique(
-    [...body.matchAll(/\{\{([A-Z0-9_]+)\}\}/g)].map((match) => match[1]),
-  );
-  if (unresolved.length > 0) {
-    throw new Error(`Unresolved release issue template placeholders: ${unresolved.join(', ')}`);
-  }
-
-  return `${body.trimEnd()}\n`;
+  return renderMarkdownTemplate(template, values, {
+    description: 'Release escalation issue template',
+  });
 }
 
 export function createEscalationIssue({

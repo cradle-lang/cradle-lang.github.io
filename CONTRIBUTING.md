@@ -247,6 +247,15 @@ before retrying. Raw logs and private upstream content remain in Actions rather
 than the public issue. A successful production rerun closes the matching issue;
 historical tests and normal WIP-capacity waits do not create one.
 
+Every generated release pull request includes a deterministic structured review
+packet. It records the verified release range and SHAs, affected components,
+generated documentation files, regression outcomes, risk indicators, automatic
+repairs, AI calls, supporting evidence and the decisions still requiring human
+judgement. The workflow renders this from verified evidence rather than asking
+Copilot to summarize its own work. Its editable layout is stored in
+`.github/release-pull-request-template.md`; preserve its runtime placeholders
+when changing the wording or section order.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:
@@ -256,7 +265,7 @@ Automation is used where information can be derived reliably from the source rep
 - deterministic impact preprocessing and documentation classification
 - just-in-time generation readiness and bounded AI context assembly
 - locked CradleXC build, controlled doctor capture and transcript validation
-- regression contracts, targeted repair and structured escalation
+- regression contracts, targeted repair, structured escalation and review packets
 - technical references that reflect the current CradleXC implementation
 - selected user documentation affected by source changes
 - generated documentation data used by the website

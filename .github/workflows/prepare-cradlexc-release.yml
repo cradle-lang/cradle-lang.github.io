@@ -931,8 +931,42 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Commit and push combined branch
+      - name: Render structured review packet
         if: always() && steps.changes.outputs.safe == 'true'
+        id: review_packet
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          EXPECTED_SHA: ${{ steps.upstream.outputs.sha }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
+          ARCHIVED_VERSION: ${{ steps.archive.outputs.version }}
+          CONTRACTS_FIRST: ${{ steps.contracts_first.outcome }}
+          CONTRACTS_SECOND: ${{ steps.contracts_second.outcome }}
+          VALIDATION_FIRST: ${{ steps.validation_first.outcome }}
+          VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
+          LINKS_FIRST: ${{ steps.links_first.outcome }}
+          LINKS_SECOND: ${{ steps.links_second.outcome }}
+          REPAIR_OUTCOME: ${{ steps.repair.outcome }}
+          EVIDENCE_REBUILT: ${{ steps.evidence.outputs.rebuilt }}
+          DOCTOR_CAPTURE_SHA256: ${{ steps.doctor.outputs.sha256 }}
+          DOCTOR_EXIT_CODE: ${{ steps.doctor.outputs.exit_code }}
+          DOCTOR_DEPENDENCY_COUNT: ${{ steps.doctor.outputs.dependency_count }}
+          CONTEXT_SHA256: ${{ steps.context.outputs.sha256 }}
+          CONTEXT_UPSTREAM_FILES: ${{ steps.context.outputs.upstream_file_count }}
+          CONTEXT_DOCUMENTATION_FILES: ${{ steps.context.outputs.documentation_file_count }}
+        run: |
+          set -euo pipefail
+          node scripts/render-release-review-packet.mjs \
+            .github/release-pull-request-template.md \
+            "${{ steps.evidence.outputs.path }}" \
+            "${{ steps.prework.outputs.path }}" \
+            "$RUNNER_TEMP/release-review-packet-${RELEASE_TAG}.md"
+
+      - name: Commit and push combined branch
+        if: >-
+          always() &&
+          steps.changes.outputs.safe == 'true' &&
+          steps.review_packet.outcome == 'success'
         id: commit
         shell: bash
         env:
@@ -988,194 +1022,24 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
-          TAG: ${{ inputs.tag }}
           BRANCH: ${{ inputs.historical_test && format('test-release/{0}', inputs.tag) || format('release/{0}', inputs.tag) }}
-          HISTORICAL_TEST: ${{ inputs.historical_test }}
-          CHANGE_COUNT: ${{ steps.changes.outputs.count }}
-          ARCHIVED_VERSION: ${{ steps.archive.outputs.version }}
-          DOCS_CHANGED: ${{ steps.changes.outputs.docs_changed }}
-          HOMEPAGE_CHANGED: ${{ steps.changes.outputs.homepage_changed }}
-          README_CHANGED: ${{ steps.changes.outputs.readme_changed }}
-          CONTRIBUTING_CHANGED: ${{ steps.changes.outputs.contributing_changed }}
-          VALIDATION_FIRST: ${{ steps.validation_first.outcome }}
-          LINKS_FIRST: ${{ steps.links_first.outcome }}
-          REPAIR_OUTCOME: ${{ steps.repair.outcome }}
-          VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
-          LINKS_SECOND: ${{ steps.links_second.outcome }}
-          CONTRACTS_FIRST: ${{ steps.contracts_first.outcome }}
-          CONTRACTS_SECOND: ${{ steps.contracts_second.outcome }}
-          EXCEPTION_REQUIRED: ${{ steps.exception.outputs.required }}
-          UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
-          PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
-          EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
-          EVIDENCE_SHA256: ${{ steps.evidence.outputs.sha256 }}
-          EVIDENCE_COMMITS: ${{ steps.evidence.outputs.commit_count }}
-          EVIDENCE_FILES: ${{ steps.evidence.outputs.file_count }}
-          EVIDENCE_REBUILT: ${{ steps.evidence.outputs.rebuilt }}
-          PREWORK_PATH: ${{ steps.prework.outputs.path }}
-          PREWORK_SHA256: ${{ steps.prework.outputs.sha256 }}
-          IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
-          REQUIRES_DOCUMENTATION: ${{ steps.prework.outputs.requires_documentation }}
-          RISK_COUNT: ${{ steps.prework.outputs.risk_count }}
-          JIT_STATE: ${{ steps.jit.outputs.state }}
-          CONTEXT_SHA256: ${{ steps.context.outputs.sha256 }}
-          CONTEXT_UPSTREAM_FILES: ${{ steps.context.outputs.upstream_file_count }}
-          CONTEXT_DOCUMENTATION_FILES: ${{ steps.context.outputs.documentation_file_count }}
-          DOCTOR_CAPTURE_SHA256: ${{ steps.doctor.outputs.sha256 }}
-          DOCTOR_EXIT_CODE: ${{ steps.doctor.outputs.exit_code }}
-          DOCTOR_DEPENDENCY_COUNT: ${{ steps.doctor.outputs.dependency_count }}
+          PACKET_TITLE: ${{ steps.review_packet.outputs.title }}
+          PACKET_DRAFT: ${{ steps.review_packet.outputs.draft }}
+          PACKET_BODY_PATH: ${{ steps.review_packet.outputs.body_path }}
         run: |
           set -euo pipefail
 
-          title="Prepare documentation for CradleXC $TAG"
           pr_mode='ready'
-          review_notice='This PR requires human technical and editorial review before merging.'
-          if [[ "$CONTRACTS_FIRST" == "success" && "$VALIDATION_FIRST" == "success" && "$LINKS_FIRST" == "success" ]]; then
-            validation_notice="All automated checks passed on the first attempt."
-            validation_details="- Attempt 1 — regression contracts: passed; Markdown/MDX and build: passed; generated-site links: passed."
-          elif [[ "$CONTRACTS_SECOND" == "success" && "$VALIDATION_SECOND" == "success" && "$LINKS_SECOND" == "success" ]]; then
-            validation_notice="All automated checks passed on the second attempt after a Copilot repair pass."
-            validation_details="$(printf '%s\n' \
-              "- Attempt 1 — regression contracts: $CONTRACTS_FIRST; Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
-              "- Copilot repair: $REPAIR_OUTCOME." \
-              "- Attempt 2 — regression contracts: passed; Markdown/MDX and build: passed; generated-site links: passed.")"
-          else
+          if [[ "$PACKET_DRAFT" == 'true' ]]; then
             pr_mode='draft'
-            review_notice='This draft requires human technical and editorial review before it can be marked ready.'
-            title="[Validation failing] $title"
-            validation_notice="> [!WARNING]
-          > Automated validation is still failing after two attempts. This draft was opened so a maintainer can inspect and fix the remaining problems before merging."
-            validation_details="$(printf '%s\n' \
-              "- Attempt 1 — regression contracts: $CONTRACTS_FIRST; Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
-              "- Copilot repair: $REPAIR_OUTCOME." \
-              "- Attempt 2 — regression contracts: $CONTRACTS_SECOND; Markdown/MDX and build: $VALIDATION_SECOND; generated-site links: $LINKS_SECOND." \
-              "- Structured exception artifact required: $EXCEPTION_REQUIRED.")"
           fi
-
-          test_notice=''
-          marker_summary='- Updated the release-processing markers.'
-          if [[ "$HISTORICAL_TEST" == "true" ]]; then
-            pr_mode='draft'
-            title="[TEST ONLY] $title"
-            review_notice='This historical-test draft must never be merged. Close it and delete its branch after inspection.'
-            test_notice="> [!CAUTION]
-          > Historical test mode generated this PR only to inspect the automation. Do not merge it."
-            marker_summary='- Left production release-processing markers unchanged.'
-          fi
-
-          if [[ "$ARCHIVED_VERSION" == "none" ]]; then
-            archive_summary="No documentation snapshot was created because there was no eligible previous stable version."
-            versioning_checkbox='- [ ] Documentation versioning'
-            compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. No historical snapshot was created by this run."
-          else
-            archive_summary="Archived the previous current documentation and animated-terminal transcript as version \`$ARCHIVED_VERSION\`."
-            versioning_checkbox='- [x] Documentation versioning'
-            compatibility_summary="Current documentation and release notes now describe CradleXC $TAG. The previous documentation remains available under its versioned \`/docs/\` route."
-          fi
-          if [[ "$HISTORICAL_TEST" == "true" ]]; then
-            compatibility_summary="Test-only simulation for historical CradleXC $TAG. The proposed current-doc changes intentionally model that older codebase and must not be published."
-          fi
-
-          optional_changes=()
-          if [[ "$DOCS_CHANGED" == "true" ]]; then
-            optional_changes+=("- Updated affected pages under \`docs/\`.")
-          fi
-          if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
-            optional_changes+=("- Updated affected homepage content or assets.")
-          fi
-          if [[ "$README_CHANGED" == "true" ]]; then
-            optional_changes+=("- Updated \`README.rst\` where release behavior changed project guidance.")
-          fi
-          if [[ "$CONTRIBUTING_CHANGED" == "true" ]]; then
-            optional_changes+=("- Updated \`CONTRIBUTING.md\` where release behavior changed contributor guidance.")
-          fi
-          if [[ "${#optional_changes[@]}" -eq 0 ]]; then
-            optional_changes+=("- No conditional documentation, homepage, README, or contributing changes were required by the verified upstream changes.")
-          fi
-
-          website_checkbox='- [ ] Website functionality'
-          manual_verification='Pending human technical, editorial, rendered-page, navigation, and version-menu review before merging.'
-          user_facing_evidence='N/A - no landing-page change was generated. Review affected documentation in the deploy preview or a local npm run serve session.'
-          if [[ "$HOMEPAGE_CHANGED" == "true" ]]; then
-            website_checkbox='- [x] Website functionality'
-            manual_verification='Pending human landing-page review at desktop and mobile widths, in light and dark themes, with keyboard navigation, visible focus, 200% zoom, and reduced motion; technical and editorial review also remains required.'
-            user_facing_evidence='Pending - this automated run does not capture screenshots. Add desktop/mobile and light/dark evidence after reviewing the deploy preview or a local npm run serve session.'
-          fi
-
-          body="$(printf '%s\n' \
-            "## Summary" \
-            "" \
-            "Prepares the release notes and user documentation for CradleXC \`$TAG\` at verified commit \`$UPSTREAM_SHA\`. This keeps the current documentation aligned with the tagged compiler behavior while preserving eligible documentation for users of the previous release." \
-            "" \
-            "$test_notice" \
-            "" \
-            "$validation_notice" \
-            "" \
-            "## Related issue" \
-            "" \
-            "N/A - automated maintenance triggered by a verified CradleXC release tag." \
-            "" \
-            "## Change type" \
-            "" \
-            "- [x] Documentation/content" \
-            "- [ ] UI/UX or visual design" \
-            "- [ ] Workbench/playground functionality" \
-            "$website_checkbox" \
-            "$versioning_checkbox" \
-            "- [ ] Build/CI/CD" \
-            "- [ ] Dependency/configuration" \
-            "- [ ] Bug fix" \
-            "- [ ] Refactor/maintenance" \
-            "- [ ] Other:" \
-            "" \
-            "## Changes made" \
-            "" \
-            "- Added \`release-notes/$TAG.md\` from the verified upstream tag and comparison history." \
-            "- Recorded deterministic source evidence in \`$EVIDENCE_PATH\` ($EVIDENCE_COMMITS commits and $EVIDENCE_FILES changed files; SHA-256 \`$EVIDENCE_SHA256\`)." \
-            "- Evidence reconstruction required: \`$EVIDENCE_REBUILT\`." \
-            "- Recorded deterministic impact prework in \`$PREWORK_PATH\` (classification \`$IMPACT_CLASSIFICATION\`, $RISK_COUNT risk indicator(s); SHA-256 \`$PREWORK_SHA256\`)." \
-            "- Passed the just-in-time generation gate with state \`$JIT_STATE\`." \
-            "- Supplied a temporary AI context package (SHA-256 \`$CONTEXT_SHA256\`) containing $CONTEXT_UPSTREAM_FILES upstream file comparison(s) and $CONTEXT_DOCUMENTATION_FILES current documentation file(s), with oversized individual files safely marked and truncated." \
-            "- Built the verified upstream checkout with Cargo's locked core debug build and captured \`cxc doctor\` (exit code \`$DOCTOR_EXIT_CODE\`, $DOCTOR_DEPENDENCY_COUNT observed dependency row(s); SHA-256 \`$DOCTOR_CAPTURE_SHA256\`)." \
-            "- $archive_summary" \
-            "- Updated the animated \`cxc doctor\` transcript from verified tagged source and runtime-dependent plugin evidence." \
-            "${optional_changes[@]}" \
-            "$marker_summary" \
-            "" \
-            "## Testing and verification" \
-            "" \
-            "- Automated checks:" \
-            "  - Verified that the private upstream checkout exactly matches tag \`$TAG\`." \
-            "  - Generated the release evidence directly from the verified \`$PREVIOUS_TAG..$TAG\` Git comparison." \
-            "  - Classified documentation impact as \`$IMPACT_CLASSIFICATION\`; user-documentation update required: \`$REQUIRES_DOCUMENTATION\`." \
-            "  - Required the animated terminal's current transcript to identify \`$TAG\` for every classification." \
-            "  - Verified that Copilot created the required release note and changed only approved content paths ($CHANGE_COUNT content file(s))." \
-            "  - Each validation attempt runs Markdown/MDX linting, \`npm run build\`, and a generated-site link check with Lychee." \
-            "$validation_details" \
-            "- Manual verification: $manual_verification" \
-            "" \
-            "## User-facing evidence" \
-            "" \
-            "$user_facing_evidence" \
-            "" \
-            "## Documentation and compatibility impact" \
-            "" \
-            "$compatibility_summary Review the release note and changed documentation for any required migration or compatibility guidance." \
-            "" \
-            "## Contributor checklist" \
-            "" \
-            "- [x] I reviewed my own changes and kept this PR focused." \
-            "- [ ] I verified relevant documentation, navigation, and links manually." \
-            "- [x] I ran the relevant repository checks and recorded the results above." \
-            "- [x] I updated related documentation where behavior changed." \
-            "- [x] I have not included unrelated changes." \
-            "" \
-            "$review_notice")"
 
           number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
           if [[ -n "$number" ]]; then
             is_draft="$(gh pr view "$number" --json isDraft --jq '.isDraft')"
-            gh pr edit "$number" --title "$title" --body "$body"
+            gh pr edit "$number" \
+              --title "$PACKET_TITLE" \
+              --body-file "$PACKET_BODY_PATH"
             if [[ "$pr_mode" == "ready" && "$is_draft" == "true" ]]; then
               gh pr ready "$number"
             elif [[ "$pr_mode" == "draft" && "$is_draft" == "false" ]]; then
@@ -1190,8 +1054,8 @@ jobs:
               "${create_options[@]}" \
               --base main \
               --head "$BRANCH" \
-              --title "$title" \
-              --body "$body"
+              --title "$PACKET_TITLE" \
+              --body-file "$PACKET_BODY_PATH"
           fi
 
       - name: Enforce release preparation outcome

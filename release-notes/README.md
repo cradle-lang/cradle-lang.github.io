@@ -325,6 +325,15 @@ production preparation closes it with a link to the resolving run. Historical
 tests never create or close production escalation issues, and an ordinary
 capacity wait caused by an already-open release PR is not treated as a failure.
 
+Before committing a generated release branch, the workflow also renders a
+structured review packet from the verified evidence and prework records. The
+packet exposes the release range and SHAs, affected components, changed
+documentation, regression outcomes, high-risk areas, repair history, AI-call
+count and remaining human decisions. Its wording and layout live in
+`.github/release-pull-request-template.md`; the renderer rejects mismatched
+release evidence or any unresolved template placeholder. The same packet is
+used when creating a PR and when updating an existing release PR.
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow
