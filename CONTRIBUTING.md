@@ -264,6 +264,22 @@ is agreed; do not invent or guess reviewer accounts. Ready production PRs
 request all matched reviewers together. Draft and historical-test PRs keep the
 labels for triage but suppress reviewer notifications.
 
+Release-automation changes must keep the connected scenario suite current. It
+covers the 19 normal and abnormal cases in the operating proposal, including
+missed and duplicate releases, queue contention, stale evidence, identity
+failure, unsafe generated edits, publication failure, blocked releases and both
+successful and unsuccessful recovery. Each scenario asserts its decision and
+resulting lifecycle or queue state.
+
+Preparation and publication workflows retain checksummed operational-metrics
+artifacts for 90 days and add concise metrics to the Actions summary. These
+record workflow and dispatch duration, review duration when an associated PR is
+available, impact classification, context size, evidence reconstruction,
+validation outcomes, AI invocations and the maximum credits authorized. The
+credit value is a ceiling, not a claim of exact credits consumed. WIP, repair,
+and AI-credit limits are explicit environment controls near the top of the
+preparation workflow and must be changed only using observed metrics.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:

@@ -133,4 +133,5 @@ jobs:
           gh workflow run prepare-cradlexc-release.yml \
             --ref "$DEFAULT_BRANCH" \
             -f "tag=$TAG" \
-            -f "expected_sha=$EXPECTED_SHA"
+            -f "expected_sha=$EXPECTED_SHA" \
+            -f "queue_observed_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"

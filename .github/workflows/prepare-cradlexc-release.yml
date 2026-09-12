@@ -17,6 +17,10 @@ on:
         required: false
         default: false
         type: boolean
+      queue_observed_at:
+        description: UTC time when polling selected this release; optional for manual runs
+        required: false
+        type: string
 
 permissions:
   actions: read
@@ -30,6 +34,12 @@ concurrency:
     format('prepare-cradlexc-release-test-{0}', inputs.tag) ||
     'prepare-cradlexc-release-production' }}
   cancel-in-progress: false
+
+env:
+  RELEASE_PRODUCTION_WIP_LIMIT: '1'
+  RELEASE_REPAIR_ATTEMPT_LIMIT: '1'
+  RELEASE_INITIAL_AI_CREDIT_LIMIT: '60'
+  RELEASE_REPAIR_AI_CREDIT_LIMIT: '20'
 
 jobs:
   admission:
@@ -78,8 +88,8 @@ jobs:
               --jq '[.[] | select(.headRefName | startswith("release/"))] | length'
           )"
 
-          if [[ "$blocking_count" -gt 0 ]]; then
-            echo "A production release documentation PR is already open."
+          if [[ "$blocking_count" -ge "$RELEASE_PRODUCTION_WIP_LIMIT" ]]; then
+            echo "Production release-documentation WIP limit $RELEASE_PRODUCTION_WIP_LIMIT has been reached."
             gh pr list \
               --state open \
               --limit 100 \
@@ -99,6 +109,11 @@ jobs:
     timeout-minutes: 45
 
     steps:
+      - name: Start release operations timing
+        id: operations_start
+        shell: bash
+        run: echo "started_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
       - name: Validate input
         shell: bash
         env:
@@ -426,6 +441,7 @@ jobs:
             "$HISTORICAL_TEST"
 
       - name: Prepare release documentation
+        id: generation
         shell: bash
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
@@ -442,6 +458,7 @@ jobs:
           DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
           DOCTOR_CAPTURE_SHA256: ${{ steps.doctor.outputs.sha256 }}
           HISTORICAL_TEST: ${{ inputs.historical_test }}
+          AI_CREDIT_LIMIT: ${{ env.RELEASE_INITIAL_AI_CREDIT_LIMIT }}
         run: |
           set -euo pipefail
           if [[ -z "$COPILOT_GITHUB_TOKEN" ]]; then
@@ -471,7 +488,7 @@ jobs:
             --no-custom-instructions \
             --disable-builtin-mcps \
             --secret-env-vars=COPILOT_GITHUB_TOKEN \
-            --max-ai-credits 60 \
+            --max-ai-credits "$AI_CREDIT_LIMIT" \
             --allow-tool write \
             --allow-tool 'shell(cat)' \
             --allow-tool 'shell(cd)' \
@@ -653,6 +670,7 @@ jobs:
       - name: Ask Copilot to repair failed checks
         if: >-
           always() &&
+          env.RELEASE_REPAIR_ATTEMPT_LIMIT != '0' &&
           (steps.contracts_first.outcome == 'failure' ||
           steps.validation_first.outcome == 'failure' ||
           steps.links_first.outcome == 'failure')
@@ -665,6 +683,7 @@ jobs:
           VALIDATION_OUTCOME: ${{ steps.validation_first.outcome }}
           LINKS_OUTCOME: ${{ steps.links_first.outcome }}
           CONTRACTS_OUTCOME: ${{ steps.contracts_first.outcome }}
+          AI_CREDIT_LIMIT: ${{ env.RELEASE_REPAIR_AI_CREDIT_LIMIT }}
         run: |
           set -euo pipefail
           validation_log="$RUNNER_TEMP/release-validation-attempt-1.log"
@@ -698,7 +717,7 @@ jobs:
             --no-custom-instructions \
             --disable-builtin-mcps \
             --secret-env-vars=COPILOT_GITHUB_TOKEN \
-            --max-ai-credits 20 \
+            --max-ai-credits "$AI_CREDIT_LIMIT" \
             --allow-tool write \
             --allow-tool 'shell(cat)' \
             --allow-tool 'shell(find)' \
@@ -1037,6 +1056,7 @@ jobs:
 
       - name: Create or update pull request
         if: always() && steps.commit.outcome == 'success'
+        id: pull_request
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
@@ -1104,6 +1124,48 @@ jobs:
           if [[ "$PACKET_DRAFT" != 'true' && -n "$reviewers" ]]; then
             gh pr edit "$number" --add-reviewer "$reviewers"
           fi
+
+      - name: Record release operations metrics
+        if: always()
+        id: operations_metrics
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
+          QUEUE_OBSERVED_AT: ${{ inputs.queue_observed_at }}
+          PREPARATION_STARTED_AT: ${{ steps.operations_start.outputs.started_at }}
+          IMPACT_CLASSIFICATION: ${{ steps.prework.outputs.classification }}
+          EVIDENCE_REBUILT: ${{ steps.evidence.outputs.rebuilt }}
+          CONTEXT_UPSTREAM_FILES: ${{ steps.context.outputs.upstream_file_count }}
+          CONTEXT_DOCUMENTATION_FILES: ${{ steps.context.outputs.documentation_file_count }}
+          GENERATION_OUTCOME: ${{ steps.generation.outcome }}
+          REPAIR_OUTCOME: ${{ steps.repair.outcome }}
+          CONTRACTS_FIRST: ${{ steps.contracts_first.outcome }}
+          CONTRACTS_SECOND: ${{ steps.contracts_second.outcome }}
+          VALIDATION_FIRST: ${{ steps.validation_first.outcome }}
+          VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
+          LINKS_FIRST: ${{ steps.links_first.outcome }}
+          LINKS_SECOND: ${{ steps.links_second.outcome }}
+          EXCEPTION_REQUIRED: ${{ steps.exception.outputs.required }}
+          PULL_REQUEST_OUTCOME: ${{ steps.pull_request.outcome }}
+          PRODUCTION_WIP_LIMIT: ${{ env.RELEASE_PRODUCTION_WIP_LIMIT }}
+          REPAIR_ATTEMPT_LIMIT: ${{ env.RELEASE_REPAIR_ATTEMPT_LIMIT }}
+          INITIAL_AI_CREDIT_LIMIT: ${{ env.RELEASE_INITIAL_AI_CREDIT_LIMIT }}
+          REPAIR_AI_CREDIT_LIMIT: ${{ env.RELEASE_REPAIR_AI_CREDIT_LIMIT }}
+        run: |
+          set -euo pipefail
+          node scripts/write-release-preparation-metrics.mjs \
+            "$RUNNER_TEMP/release-operations-${RELEASE_TAG}.json" \
+            "${{ steps.context.outputs.path }}"
+
+      - name: Retain release operations metrics
+        if: always() && steps.operations_metrics.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cradlexc-release-${{ inputs.tag }}-operations
+          path: ${{ runner.temp }}/release-operations-${{ inputs.tag }}.json
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Enforce release preparation outcome
         if: always()

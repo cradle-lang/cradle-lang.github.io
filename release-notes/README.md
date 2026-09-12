@@ -342,6 +342,21 @@ with confirmed GitHub users or teams. All matching reviewers are requested in
 parallel only for a ready production PR; historical-test and validation-failing
 drafts do not notify them.
 
+The deterministic regression suite also exercises all 19 workflow scenarios
+from the operating proposal and checks both output correctness and the resulting
+queue or lifecycle state. This includes FIFO backlog behavior, duplicate and
+missed events, stale or mismatched evidence, unsafe generated changes,
+publication isolation, and recovery success or failure.
+
+Preparation and publication write checksummed operations JSON artifacts with a
+90-day retention period. Preparation metrics include dispatch and execution
+time, impact shape, evidence reconstruction, bounded-context size, validation
+outcomes, AI calls and maximum authorized AI credits. Publication metrics keep
+publication duration and, when GitHub can associate the merge commit with its
+release PR, human review duration. The Actions summary presents the small set
+needed for routine monitoring; artifacts retain the detailed record for later
+capacity and cost analysis.
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow
