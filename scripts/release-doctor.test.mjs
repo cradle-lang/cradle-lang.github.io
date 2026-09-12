@@ -156,7 +156,7 @@ test('rejects invented fields, dependencies and changed outcomes', () => {
       capture: doctorCapture,
       tag: 'v0.19.0',
     }),
-    /changed doctor outcome/,
+    /outcomes do not match/,
   );
 });
 

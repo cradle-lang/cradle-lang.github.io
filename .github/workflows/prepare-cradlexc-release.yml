@@ -19,7 +19,9 @@ on:
         type: boolean
 
 permissions:
+  actions: read
   contents: write
+  issues: write
   pull-requests: write
 
 concurrency:
@@ -497,6 +499,7 @@ jobs:
 
       - name: Verify Copilot changed only approved paths
         id: initial_changes
+        continue-on-error: true
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
@@ -570,7 +573,28 @@ jobs:
             echo "contributing_changed=$contributing_changed"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Check release regression contracts (attempt 1)
+        id: contracts_first
+        continue-on-error: true
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          TARGET: release-notes/${{ inputs.tag }}.md
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
+        run: |
+          set -euo pipefail
+          node scripts/check-release-contracts.mjs \
+            "$TAG" \
+            "$TARGET" \
+            "$PREWORK_PATH" \
+            "$DOCTOR_CAPTURE_PATH" \
+            src/data/homepage-terminal.json \
+            "$RUNNER_TEMP/release-contracts-attempt-1.json" \
+            2>&1 | tee "$RUNNER_TEMP/release-contracts-attempt-1.log"
+
       - name: Validate release documentation (attempt 1)
+        if: steps.contracts_first.outcome == 'success'
         id: validation_first
         continue-on-error: true
         shell: bash
@@ -602,6 +626,7 @@ jobs:
           exit "$status"
 
       - name: Check generated-site links (attempt 1)
+        if: steps.contracts_first.outcome == 'success'
         id: links_first
         continue-on-error: true
         uses: lycheeverse/lychee-action@v2
@@ -628,7 +653,8 @@ jobs:
       - name: Ask Copilot to repair failed checks
         if: >-
           always() &&
-          (steps.validation_first.outcome == 'failure' ||
+          (steps.contracts_first.outcome == 'failure' ||
+          steps.validation_first.outcome == 'failure' ||
           steps.links_first.outcome == 'failure')
         id: repair
         continue-on-error: true
@@ -638,6 +664,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           VALIDATION_OUTCOME: ${{ steps.validation_first.outcome }}
           LINKS_OUTCOME: ${{ steps.links_first.outcome }}
+          CONTRACTS_OUTCOME: ${{ steps.contracts_first.outcome }}
         run: |
           set -euo pipefail
           validation_log="$RUNNER_TEMP/release-validation-attempt-1.log"
@@ -645,13 +672,22 @@ jobs:
           if [[ -s "$validation_log" ]]; then
             details="$(tail -n 400 "$validation_log")"
           fi
+          contract_details='No regression-contract failure was captured.'
+          contract_log="$RUNNER_TEMP/release-contracts-attempt-1.log"
+          if [[ -s "$contract_log" ]]; then
+            contract_details="$(tail -n 200 "$contract_log")"
+          fi
 
           prompt="The first automated validation of the CradleXC $TAG documentation update failed.
 
           Markdown/build result: $VALIDATION_OUTCOME
           Generated-site link result: $LINKS_OUTCOME
+          Regression-contract result: $CONTRACTS_OUTCOME
 
-          Fix only failures caused by the generated release documentation. You may edit only release-notes/$TAG.md, docs/**, src/pages/index.tsx, src/components/homepage/**, static/img/home/**, the current transcript under .current in src/data/homepage-terminal.json, README.rst, and CONTRIBUTING.md. Never edit .versions in the terminal data. Do not edit workflows, dependencies, lockfiles, markers, versions.json, versioned_docs/, versioned_sidebars/, other generated data, or build output. Do not commit, push, or create a pull request.
+          Make one targeted repair of only the exact failed controls below. Do not regenerate or broadly rewrite correct release content. You may edit only release-notes/$TAG.md, docs/**, src/pages/index.tsx, src/components/homepage/**, static/img/home/**, the current transcript under .current in src/data/homepage-terminal.json, README.rst, and CONTRIBUTING.md. Never edit .versions in the terminal data. Do not edit workflows, dependencies, lockfiles, markers, versions.json, versioned_docs/, versioned_sidebars/, other generated data, or build output. Do not commit, push, or create a pull request.
+
+          Regression-contract output:
+          $contract_details
 
           Validation output:
           $details"
@@ -678,6 +714,7 @@ jobs:
       - name: Verify final changes use only approved paths
         if: always()
         id: changes
+        continue-on-error: true
         shell: bash
         env:
           TAG: ${{ inputs.tag }}
@@ -752,11 +789,34 @@ jobs:
             echo "contributing_changed=$contributing_changed"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Check release regression contracts (attempt 2)
+        if: always()
+        id: contracts_second
+        continue-on-error: true
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          TARGET: release-notes/${{ inputs.tag }}.md
+          PREWORK_PATH: ${{ steps.prework.outputs.path }}
+          DOCTOR_CAPTURE_PATH: ${{ steps.doctor.outputs.path }}
+        run: |
+          set -euo pipefail
+          node scripts/check-release-contracts.mjs \
+            "$TAG" \
+            "$TARGET" \
+            "$PREWORK_PATH" \
+            "$DOCTOR_CAPTURE_PATH" \
+            src/data/homepage-terminal.json \
+            "$RUNNER_TEMP/release-contracts-attempt-2.json" \
+            2>&1 | tee "$RUNNER_TEMP/release-contracts-attempt-2.log"
+
       - name: Validate release documentation (attempt 2)
         if: >-
           always() &&
           steps.changes.outputs.safe == 'true' &&
-          (steps.validation_first.outcome == 'failure' ||
+          steps.contracts_second.outcome == 'success' &&
+          (steps.contracts_first.outcome == 'failure' ||
+          steps.validation_first.outcome == 'failure' ||
           steps.links_first.outcome == 'failure')
         id: validation_second
         continue-on-error: true
@@ -791,7 +851,9 @@ jobs:
         if: >-
           always() &&
           steps.changes.outputs.safe == 'true' &&
-          (steps.validation_first.outcome == 'failure' ||
+          steps.contracts_second.outcome == 'success' &&
+          (steps.contracts_first.outcome == 'failure' ||
+          steps.validation_first.outcome == 'failure' ||
           steps.links_first.outcome == 'failure')
         id: links_second
         continue-on-error: true
@@ -805,6 +867,69 @@ jobs:
             '^https://cradle-lang\.org/(.*)$ file://${{ github.workspace }}/build/$1'
             './build/**/*.html'
           fail: true
+
+      - name: Record unresolved release exception
+        if: always()
+        id: exception
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          CONTRACTS_FIRST: ${{ steps.contracts_first.outcome }}
+          CONTRACTS_SECOND: ${{ steps.contracts_second.outcome }}
+          VALIDATION_FIRST: ${{ steps.validation_first.outcome }}
+          VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
+          LINKS_FIRST: ${{ steps.links_first.outcome }}
+          LINKS_SECOND: ${{ steps.links_second.outcome }}
+          REPAIR_OUTCOME: ${{ steps.repair.outcome }}
+        run: |
+          set -euo pipefail
+          first_pass=false
+          second_pass=false
+          if [[ "$CONTRACTS_FIRST" == success && \
+                "$VALIDATION_FIRST" == success && \
+                "$LINKS_FIRST" == success ]]; then
+            first_pass=true
+          fi
+          if [[ "$CONTRACTS_SECOND" == success && \
+                "$VALIDATION_SECOND" == success && \
+                "$LINKS_SECOND" == success ]]; then
+            second_pass=true
+          fi
+          if [[ "$first_pass" == true || "$second_pass" == true ]]; then
+            echo 'required=false' >> "$GITHUB_OUTPUT"
+            echo 'Release regression contracts and validation are satisfied.'
+            exit 0
+          fi
+
+          output="$RUNNER_TEMP/release-exception-$TAG.json"
+          contract_log="$RUNNER_TEMP/release-contracts-attempt-2.log"
+          validation_log="$RUNNER_TEMP/release-validation-attempt-1.log"
+          node scripts/write-release-exception.mjs \
+            "$TAG" \
+            "$output" \
+            "$contract_log" \
+            "$validation_log" \
+            "$CONTRACTS_SECOND" \
+            "$VALIDATION_SECOND" \
+            "$LINKS_SECOND" \
+            "$REPAIR_OUTCOME"
+          echo 'required=true' >> "$GITHUB_OUTPUT"
+          echo "path=$output" >> "$GITHUB_OUTPUT"
+
+      - name: Retain structured release exception
+        if: always() && steps.exception.outputs.required == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cradlexc-release-${{ inputs.tag }}-exception
+          path: |
+            ${{ steps.exception.outputs.path }}
+            ${{ runner.temp }}/release-contracts-attempt-1.json
+            ${{ runner.temp }}/release-contracts-attempt-1.log
+            ${{ runner.temp }}/release-contracts-attempt-2.json
+            ${{ runner.temp }}/release-contracts-attempt-2.log
+            ${{ runner.temp }}/release-validation-attempt-1.log
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Commit and push combined branch
         if: always() && steps.changes.outputs.safe == 'true'
@@ -877,6 +1002,9 @@ jobs:
           REPAIR_OUTCOME: ${{ steps.repair.outcome }}
           VALIDATION_SECOND: ${{ steps.validation_second.outcome }}
           LINKS_SECOND: ${{ steps.links_second.outcome }}
+          CONTRACTS_FIRST: ${{ steps.contracts_first.outcome }}
+          CONTRACTS_SECOND: ${{ steps.contracts_second.outcome }}
+          EXCEPTION_REQUIRED: ${{ steps.exception.outputs.required }}
           UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
           EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
@@ -902,15 +1030,15 @@ jobs:
           title="Prepare documentation for CradleXC $TAG"
           pr_mode='ready'
           review_notice='This PR requires human technical and editorial review before merging.'
-          if [[ "$VALIDATION_FIRST" == "success" && "$LINKS_FIRST" == "success" ]]; then
+          if [[ "$CONTRACTS_FIRST" == "success" && "$VALIDATION_FIRST" == "success" && "$LINKS_FIRST" == "success" ]]; then
             validation_notice="All automated checks passed on the first attempt."
-            validation_details="- Attempt 1 — Markdown/MDX and build: passed; generated-site links: passed."
-          elif [[ "$VALIDATION_SECOND" == "success" && "$LINKS_SECOND" == "success" ]]; then
+            validation_details="- Attempt 1 — regression contracts: passed; Markdown/MDX and build: passed; generated-site links: passed."
+          elif [[ "$CONTRACTS_SECOND" == "success" && "$VALIDATION_SECOND" == "success" && "$LINKS_SECOND" == "success" ]]; then
             validation_notice="All automated checks passed on the second attempt after a Copilot repair pass."
             validation_details="$(printf '%s\n' \
-              "- Attempt 1 — Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
+              "- Attempt 1 — regression contracts: $CONTRACTS_FIRST; Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
               "- Copilot repair: $REPAIR_OUTCOME." \
-              "- Attempt 2 — Markdown/MDX and build: passed; generated-site links: passed.")"
+              "- Attempt 2 — regression contracts: passed; Markdown/MDX and build: passed; generated-site links: passed.")"
           else
             pr_mode='draft'
             review_notice='This draft requires human technical and editorial review before it can be marked ready.'
@@ -918,9 +1046,10 @@ jobs:
             validation_notice="> [!WARNING]
           > Automated validation is still failing after two attempts. This draft was opened so a maintainer can inspect and fix the remaining problems before merging."
             validation_details="$(printf '%s\n' \
-              "- Attempt 1 — Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
+              "- Attempt 1 — regression contracts: $CONTRACTS_FIRST; Markdown/MDX and build: $VALIDATION_FIRST; generated-site links: $LINKS_FIRST." \
               "- Copilot repair: $REPAIR_OUTCOME." \
-              "- Attempt 2 — Markdown/MDX and build: $VALIDATION_SECOND; generated-site links: $LINKS_SECOND.")"
+              "- Attempt 2 — regression contracts: $CONTRACTS_SECOND; Markdown/MDX and build: $VALIDATION_SECOND; generated-site links: $LINKS_SECOND." \
+              "- Structured exception artifact required: $EXCEPTION_REQUIRED.")"
           fi
 
           test_notice=''
@@ -1064,3 +1193,152 @@ jobs:
               --title "$title" \
               --body "$body"
           fi
+
+      - name: Enforce release preparation outcome
+        if: always()
+        shell: bash
+        env:
+          EXCEPTION_REQUIRED: ${{ steps.exception.outputs.required }}
+        run: |
+          set -euo pipefail
+          if [[ "$EXCEPTION_REQUIRED" == 'true' ]]; then
+            echo '::error::Release preparation is BLOCKED. Review the structured exception artifact.'
+            exit 1
+          fi
+
+  escalate:
+    name: Notify maintainers of blocked production release
+    needs: [admission, prepare]
+    if: >-
+      always() &&
+      inputs.historical_test != true &&
+      (needs.admission.result == 'failure' ||
+      needs.admission.result == 'cancelled' ||
+      needs.prepare.result == 'failure' ||
+      needs.prepare.result == 'cancelled')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout escalation reporter
+        uses: actions/checkout@v4
+
+      - name: Collect failed workflow state
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh run view "$GITHUB_RUN_ID" --json jobs > "$RUNNER_TEMP/release-run.json"
+
+          mkdir -p "$RUNNER_TEMP/release-exception"
+          gh run download "$GITHUB_RUN_ID" \
+            --name "cradlexc-release-$TAG-exception" \
+            --dir "$RUNNER_TEMP/release-exception" || true
+
+      - name: Render professional escalation report
+        id: report
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          set -euo pipefail
+          exception="$RUNNER_TEMP/release-exception/release-exception-$RELEASE_TAG.json"
+          if [[ ! -s "$exception" ]]; then
+            exception='none'
+          fi
+          node scripts/render-release-escalation-issue.mjs \
+            "$RUNNER_TEMP/release-run.json" \
+            "$exception" \
+            "$RUNNER_TEMP/release-escalation-issue.md"
+
+      - name: Create or update blocked-release issue
+        id: issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_MARKER: ${{ steps.report.outputs.marker }}
+          ISSUE_TITLE: ${{ steps.report.outputs.title }}
+        run: |
+          set -euo pipefail
+          gh label create release-automation \
+            --color 1D76DB \
+            --description 'Created by release documentation automation' \
+            2>/dev/null || true
+          gh label create blocked \
+            --color B60205 \
+            --description 'Requires maintainer action before processing can continue' \
+            2>/dev/null || true
+
+          number="$(
+            gh issue list \
+              --state all \
+              --limit 200 \
+              --json number,state,body \
+              --jq ".[] | select(.body | contains(\"$ISSUE_MARKER\")) | .number" |
+              head -n 1
+          )"
+          if [[ -n "$number" ]]; then
+            gh issue reopen "$number" 2>/dev/null || true
+            gh issue edit "$number" \
+              --title "$ISSUE_TITLE" \
+              --body-file "$RUNNER_TEMP/release-escalation-issue.md" \
+              --add-label release-automation \
+              --add-label blocked
+            issue_url="$(gh issue view "$number" --json url --jq .url)"
+          else
+            issue_url="$(
+              gh issue create \
+                --title "$ISSUE_TITLE" \
+                --body-file "$RUNNER_TEMP/release-escalation-issue.md" \
+                --label release-automation \
+                --label blocked
+            )"
+          fi
+          echo "url=$issue_url" >> "$GITHUB_OUTPUT"
+
+          {
+            echo '## Production release escalation'
+            echo
+            cat "$RUNNER_TEMP/release-escalation-issue.md"
+            echo
+            echo "Issue: $issue_url"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  resolve_escalation:
+    name: Close resolved production-release escalation
+    needs: [admission, prepare]
+    if: >-
+      always() &&
+      inputs.historical_test != true &&
+      needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Close matching blocked-release issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          marker="<!-- cradlexc-release-escalation:$TAG -->"
+          number="$(
+            gh issue list \
+              --state open \
+              --limit 200 \
+              --json number,body \
+              --jq ".[] | select(.body | contains(\"$marker\")) | .number" |
+              head -n 1
+          )"
+          if [[ -z "$number" ]]; then
+            echo "No open escalation issue exists for $TAG."
+            exit 0
+          fi
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh issue close "$number" \
+            --comment "Resolved by successful production workflow run: $run_url"

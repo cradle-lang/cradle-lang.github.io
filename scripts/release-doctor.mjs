@@ -136,10 +136,6 @@ export function verifyReleaseDoctorIntegrity(capture) {
   return capture;
 }
 
-function includesExactLine(lines, expected) {
-  return lines.some((line) => line.trim() === expected);
-}
-
 function arraysEqual(left, right) {
   return left.length === right.length &&
     left.every((value, index) => value === right[index]);
@@ -158,7 +154,6 @@ export function validateTerminalAgainstDoctor({terminal, capture, tag}) {
   }
 
   const transcript = normalizeDoctorOutput(terminal.output.join('\n'));
-  const transcriptLines = transcript.split('\n');
   const structure = analyzeDoctorOutput(transcript);
   if (structure.banner !== capture.structure.banner) {
     throw new Error('Terminal banner does not match the captured doctor banner');
@@ -174,10 +169,8 @@ export function validateTerminalAgainstDoctor({terminal, capture, tag}) {
       'Terminal dependency checks do not match the captured dependency checks',
     );
   }
-  for (const outcome of capture.structure.outcomeLines) {
-    if (!includesExactLine(transcriptLines, outcome)) {
-      throw new Error(`Terminal transcript changed doctor outcome: ${outcome}`);
-    }
+  if (!arraysEqual(structure.outcomeLines, capture.structure.outcomeLines)) {
+    throw new Error('Terminal doctor outcomes do not match the captured outcomes');
   }
 
   const expectedAriaTerm = capture.exitCode === 0

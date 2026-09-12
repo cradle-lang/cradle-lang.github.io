@@ -220,6 +220,33 @@ custom repository domain are not part of release-documentation preparation.
 Change domain documentation manually only when its authoritative upstream
 configuration actually changes.
 
+After generation, two passes of explicit release regression contracts protect
+scope, version identity, required documentation, archived terminal history,
+the captured doctor structure, deletion risk and deterministic source-path
+coverage. The contract report gives every relevant upstream path a disposition,
+but does not replace technical review of the explanation.
+
+Formatting and generated-data recovery run deterministically before any repair
+credits are spent. If the first contract/build/link pass fails, one targeted
+Copilot repair receives only the exact failure output and a bounded validation
+log. A complete second pass follows. Do not replace this with broad
+regeneration or an unbounded retry loop.
+
+Unresolved failures create a checksummed `BLOCKED` exception artifact. It
+records the failure category (`DETERMINISTIC_RECOVERABLE`,
+`TRANSIENT_INFRASTRUCTURE`, `SEMANTIC_RECOVERABLE` or
+`INTEGRITY_GOVERNANCE`), expected and observed state, recovery attempts,
+impact, ownership and the human decision required. Review that artifact and
+the retained logs, correct the authoritative cause, and then rerun preparation.
+
+Production failures also create or update a professional GitHub issue labelled
+`release-automation` and `blocked`. One issue is maintained per release tag. It
+identifies the failed job and step, links the workflow run, directs the reviewer
+to the most relevant workflow/script/artifact, and states the decision required
+before retrying. Raw logs and private upstream content remain in Actions rather
+than the public issue. A successful production rerun closes the matching issue;
+historical tests and normal WIP-capacity waits do not create one.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:
@@ -229,6 +256,7 @@ Automation is used where information can be derived reliably from the source rep
 - deterministic impact preprocessing and documentation classification
 - just-in-time generation readiness and bounded AI context assembly
 - locked CradleXC build, controlled doctor capture and transcript validation
+- regression contracts, targeted repair and structured escalation
 - technical references that reflect the current CradleXC implementation
 - selected user documentation affected by source changes
 - generated documentation data used by the website

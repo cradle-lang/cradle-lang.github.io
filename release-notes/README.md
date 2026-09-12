@@ -270,6 +270,55 @@ node scripts/generate-release-ai-context.mjs \
   /tmp/release-ai-context-v0.19.0.json
 ```
 
+## Regression contracts and bounded recovery
+
+After Copilot writes the release documentation, the workflow evaluates an
+explicit, checksummed regression-contract report. It checks:
+
+- AI changes remain inside the approved documentation and homepage paths;
+- the release note exists and has the exact release heading;
+- a `docs/**` update exists when deterministic classification requires one;
+- archived terminal transcripts remain unchanged;
+- the current terminal preserves the captured `cxc doctor` structure;
+- unusually deletion-heavy edits have a corresponding upstream removal,
+  rename or possible-breaking-change signal; and
+- every relevant upstream path receives a deterministic disposition as a user
+  documentation update, release-note coverage, or no-user-documentation
+  change.
+
+This disposition is deliberately conservative. It proves that no relevant
+path silently disappeared from the workflow; human review still decides
+whether the resulting explanation is technically and editorially sufficient.
+
+Deterministic correction runs first: Markdown is formatted automatically,
+generated site data is refreshed by the build, and previously implemented
+evidence reconstruction remains available. If a contract, Markdown/build or
+link check still fails, Copilot receives only the failed contract output and
+bounded validation log for one targeted repair. It is instructed not to
+regenerate correct content or broaden the edit.
+
+The full contract suite, build and link validation then run again. An unresolved
+failure produces a deterministic exception record with state `BLOCKED`, one of
+the four failure categories, the expected and observed state, failed controls,
+recovery attempts, impact, responsible owner, suggested actions and required
+human decision. That record and relevant bounded logs are retained privately
+for 14 days. The final enforcement step fails the workflow so a blocked release
+cannot be mistaken for a successful preparation.
+
+For production releases, any admission or preparation failure that remains
+unresolved creates or updates one GitHub issue for that release. The issue uses
+the `release-automation` and `blocked` labels and follows a consistent technical
+incident format: summary, impact, failure category, failed job and step,
+expected and observed behavior, completed recovery, investigation locations,
+required maintainer decision, suggested actions, workflow link and private
+artifact guidance. It reports no raw logs or private upstream content publicly.
+
+A hidden release marker makes notification idempotent: repeated failures update
+and reopen the same issue rather than creating duplicates. A later successful
+production preparation closes it with a link to the resolving run. Historical
+tests never create or close production escalation issues, and an ordinary
+capacity wait caused by an already-open release PR is not treated as a failure.
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow

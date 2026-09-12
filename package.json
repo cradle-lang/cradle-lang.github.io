@@ -14,7 +14,7 @@
     "test:release-evidence": "node --test scripts/release-evidence.test.mjs",
     "test:release-policy": "node --test scripts/release-policy.test.mjs",
     "test:release-reconciler": "node --test scripts/release-reconciler.test.mjs",
-    "test:release-automation": "node --test scripts/release-policy.test.mjs scripts/release-identity.test.mjs scripts/release-evidence.test.mjs scripts/release-prework.test.mjs scripts/release-doctor.test.mjs scripts/run-release-doctor.test.mjs scripts/release-ai-context.test.mjs scripts/release-jit.test.mjs scripts/release-provenance.test.mjs scripts/release-reconciler.test.mjs scripts/reconcile-cradlexc-releases.test.mjs",
+    "test:release-automation": "node --test scripts/release-policy.test.mjs scripts/release-identity.test.mjs scripts/release-evidence.test.mjs scripts/release-prework.test.mjs scripts/release-doctor.test.mjs scripts/run-release-doctor.test.mjs scripts/release-ai-context.test.mjs scripts/release-jit.test.mjs scripts/release-contracts.test.mjs scripts/release-exception.test.mjs scripts/release-escalation-issue.test.mjs scripts/release-provenance.test.mjs scripts/release-reconciler.test.mjs scripts/reconcile-cradlexc-releases.test.mjs",
     "fetch-releases": "node scripts/fetch-releases.mjs",
     "build": "npm run generate-release-notes && docusaurus build",
     "swizzle": "docusaurus swizzle",
