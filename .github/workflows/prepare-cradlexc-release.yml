@@ -1252,7 +1252,8 @@ jobs:
           node scripts/render-release-escalation-issue.mjs \
             "$RUNNER_TEMP/release-run.json" \
             "$exception" \
-            "$RUNNER_TEMP/release-escalation-issue.md"
+            "$RUNNER_TEMP/release-escalation-issue.md" \
+            ".github/ISSUE_TEMPLATE/release-automation-blocked.md"
 
       - name: Create or update blocked-release issue
         id: issue

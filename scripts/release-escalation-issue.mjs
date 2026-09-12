@@ -79,7 +79,40 @@ function requiredDecision(category) {
   }
 }
 
+function issueBodyFromTemplate(template) {
+  if (typeof template !== 'string' || template.trim() === '') {
+    throw new TypeError('The release escalation issue template must be a non-empty string.');
+  }
+
+  const normalized = template.replaceAll('\r\n', '\n');
+  if (!normalized.startsWith('---\n')) return normalized;
+
+  const frontmatterEnd = normalized.indexOf('\n---\n', 4);
+  if (frontmatterEnd === -1) {
+    throw new Error('The release escalation issue template has unclosed YAML frontmatter.');
+  }
+  return normalized.slice(frontmatterEnd + '\n---\n'.length);
+}
+
+export function renderEscalationIssueTemplate(template, values) {
+  let body = issueBodyFromTemplate(template).trimStart();
+
+  for (const [name, value] of Object.entries(values)) {
+    body = body.replaceAll(`{{${name}}}`, String(value));
+  }
+
+  const unresolved = unique(
+    [...body.matchAll(/\{\{([A-Z0-9_]+)\}\}/g)].map((match) => match[1]),
+  );
+  if (unresolved.length > 0) {
+    throw new Error(`Unresolved release issue template placeholders: ${unresolved.join(', ')}`);
+  }
+
+  return `${body.trimEnd()}\n`;
+}
+
 export function createEscalationIssue({
+  template,
   tag,
   expectedSha,
   repository,
@@ -108,78 +141,30 @@ export function createEscalationIssue({
     'Rerun the production workflow only after the cause is corrected or confirmed transient.',
   ];
 
-  const body = [
-    marker,
-    `# CradleXC ${tag} release documentation is blocked`,
-    '',
-    '## Summary',
-    '',
-    `The automated release-documentation workflow could not complete for \`${tag}\`. The failure remained after all safe recovery available in this run, so processing stopped without bypassing the failed control.`,
-    '',
-    '> [!IMPORTANT]',
-    '> This issue requires maintainer review before the release is retried. Do not close it merely by rerunning an unchanged workflow.',
-    '',
-    '## Impact',
-    '',
-    exception?.impact ?? 'Release documentation could not be accepted or published automatically. Later releases remain ordered behind this release.',
-    '',
-    '## Failure context',
-    '',
-    '| Field | Value |',
-    '| --- | --- |',
-    `| Release | \`${tag}\` |`,
-    `| Expected upstream SHA | \`${expectedSha || 'not supplied'}\` |`,
-    `| Category | \`${category}\` |`,
-    `| Repository | \`${repository}\` |`,
-    `| Workflow | ${workflowName} |`,
-    `| Run | [${runId}, attempt ${runAttempt}](${runUrl}) |`,
-    `| State | \`BLOCKED\` |`,
-    '',
-    '### Failed controls',
-    '',
-    '| Job | Failed step |',
-    '| --- | --- |',
-    failureRows || '| Unknown | Inspect the linked workflow run |',
-    '',
-    '## Expected behavior',
-    '',
-    exception
+  const body = renderEscalationIssueTemplate(template, {
+    MARKER: marker,
+    TAG: tag,
+    IMPACT: exception?.impact ?? 'Release documentation could not be accepted or published automatically. Later releases remain ordered behind this release.',
+    EXPECTED_SHA: expectedSha || 'not supplied',
+    CATEGORY: category,
+    REPOSITORY: repository,
+    WORKFLOW_NAME: workflowName,
+    RUN_ID: runId,
+    RUN_ATTEMPT: runAttempt,
+    RUN_URL: runUrl,
+    FAILURE_ROWS: failureRows || '| Unknown | Inspect the linked workflow run |',
+    EXPECTED_BEHAVIOR: exception
       ? `The regression controls were expected to complete successfully: \`${JSON.stringify(exception.expectedState)}\`.`
       : 'The verified release should complete preparation, validation and pull-request creation without weakening an integrity, scope or quality control.',
-    '',
-    '## Observed behavior',
-    '',
-    exception
+    OBSERVED_BEHAVIOR: exception
       ? `The structured exception recorded: \`${JSON.stringify(exception.observedState)}\`.`
       : 'One or more workflow controls failed. Detailed command output and annotations remain in the linked private Actions run.',
-    '',
-    '## Automated recovery performed',
-    '',
-    ...recoveryAttempts.map((attempt) => `- ${attempt}`),
-    '',
-    '## Where to investigate first',
-    '',
-    ...locations.map((location) => `- ${location}`),
-    '',
-    '## Required maintainer decision',
-    '',
-    exception?.requiredHumanDecision ?? requiredDecision(category),
-    '',
-    '## Suggested actions',
-    '',
-    ...suggestedActions.map((action, index) => `${index + 1}. ${action}`),
-    '',
-    '## Evidence and diagnostics',
-    '',
-    `- [Workflow run and step logs](${runUrl})`,
-    '- Download any retained exception, contract, validation or doctor artifacts from the workflow run before they expire.',
-    '- Logs and artifacts may describe private upstream implementation details. Do not paste sensitive content into this public issue.',
-    '',
-    `Responsible owner: **${exception?.responsibleOwner ?? 'CradleXC release documentation maintainer'}**`,
-    '',
-    '_This issue is maintained automatically. A later successful production run for the same tag will close it._',
-    '',
-  ].join('\n');
+    RECOVERY_ATTEMPTS: recoveryAttempts.map((attempt) => `- ${attempt}`).join('\n'),
+    INVESTIGATION_LOCATIONS: locations.map((location) => `- ${location}`).join('\n'),
+    REQUIRED_DECISION: exception?.requiredHumanDecision ?? requiredDecision(category),
+    SUGGESTED_ACTIONS: suggestedActions.map((action, index) => `${index + 1}. ${action}`).join('\n'),
+    RESPONSIBLE_OWNER: exception?.responsibleOwner ?? 'CradleXC release documentation maintainer',
+  });
 
   return {
     title: `[Release automation blocked] CradleXC ${tag}`,

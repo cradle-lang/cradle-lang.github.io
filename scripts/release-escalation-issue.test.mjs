@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import test from 'node:test';
 
 import {createEscalationIssue} from './release-escalation-issue.mjs';
 
+const template = await fs.readFile(
+  new URL('../.github/ISSUE_TEMPLATE/release-automation-blocked.md', import.meta.url),
+  'utf8',
+);
+
 test('renders a professional, actionable, idempotent production issue', () => {
   const issue = createEscalationIssue({
+    template,
     tag: 'v0.19.0',
     expectedSha: '1'.repeat(40),
     repository: 'cradle-lang/cradle-dsl.github.io',
@@ -29,11 +36,14 @@ test('renders a professional, actionable, idempotent production issue', () => {
   assert.match(issue.body, /scripts\/run-release-doctor\.mjs/);
   assert.match(issue.body, /Required maintainer decision/);
   assert.match(issue.body, /attempt 2/);
+  assert.doesNotMatch(issue.body, /^---$/m);
+  assert.doesNotMatch(issue.body, /\{\{[A-Z0-9_]+\}\}/);
   assert.doesNotMatch(issue.body, /undefined|null/);
 });
 
 test('uses a structured exception to describe exhausted recovery', () => {
   const issue = createEscalationIssue({
+    template,
     tag: 'v0.20.0',
     expectedSha: '2'.repeat(40),
     repository: 'example/docs',
@@ -62,4 +72,21 @@ test('uses a structured exception to describe exhausted recovery', () => {
   assert.match(issue.body, /Ran one targeted repair/);
   assert.match(issue.body, /Confirm the documented default/);
   assert.match(issue.body, /Documentation maintainer/);
+});
+
+test('uses edited template copy without changing renderer code', () => {
+  const issue = createEscalationIssue({
+    template: template.replace('## Impact', '## Operational impact'),
+    tag: 'v0.21.0',
+    expectedSha: '3'.repeat(40),
+    repository: 'example/docs',
+    workflowName: 'Prepare release',
+    runId: '100',
+    runAttempt: '1',
+    runUrl: 'https://github.com/example/docs/actions/runs/100',
+    jobs: [],
+  });
+
+  assert.match(issue.body, /## Operational impact/);
+  assert.doesNotMatch(issue.body, /## Impact/);
 });

@@ -2,20 +2,27 @@ import fs from 'node:fs/promises';
 
 import {createEscalationIssue} from './release-escalation-issue.mjs';
 
-const [runPath, exceptionPath, bodyPath] = process.argv.slice(2);
+const [
+  runPath,
+  exceptionPath,
+  bodyPath,
+  templatePath = '.github/ISSUE_TEMPLATE/release-automation-blocked.md',
+] = process.argv.slice(2);
 
 async function main() {
   if (!runPath || !exceptionPath || !bodyPath) {
     throw new Error(
       'Usage: node scripts/render-release-escalation-issue.mjs ' +
-        '<run-json> <exception-json|none> <body-output>',
+        '<run-json> <exception-json|none> <body-output> [issue-template]',
     );
   }
   const run = JSON.parse(await fs.readFile(runPath, 'utf8'));
+  const template = await fs.readFile(templatePath, 'utf8');
   const exception = exceptionPath === 'none'
     ? null
     : await fs.readFile(exceptionPath, 'utf8').then(JSON.parse).catch(() => null);
   const issue = createEscalationIssue({
+    template,
     tag: process.env.RELEASE_TAG,
     expectedSha: process.env.EXPECTED_SHA,
     repository: process.env.GITHUB_REPOSITORY,

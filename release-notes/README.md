@@ -313,6 +313,12 @@ expected and observed behavior, completed recovery, investigation locations,
 required maintainer decision, suggested actions, workflow link and private
 artifact guidance. It reports no raw logs or private upstream content publicly.
 
+The issue wording and layout live in
+`.github/ISSUE_TEMPLATE/release-automation-blocked.md`. Maintainers can edit
+that Markdown template without changing the renderer script. Keep its
+`{{UPPERCASE_PLACEHOLDER}}` fields intact where runtime values should appear,
+especially `{{MARKER}}`, which identifies the issue for later updates.
+
 A hidden release marker makes notification idempotent: repeated failures update
 and reopen the same issue rather than creating duplicates. A later successful
 production preparation closes it with a link to the resolving run. Historical
