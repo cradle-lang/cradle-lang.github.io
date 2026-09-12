@@ -2,7 +2,7 @@ name: Poll for new CradleXC tags
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '13,43 * * * *'
 
   workflow_dispatch:
 
