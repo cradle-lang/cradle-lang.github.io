@@ -8,7 +8,7 @@ filled deterministically before the pull request is created or updated.
 
 Prepares release notes and user documentation for CradleXC `{{TAG}}` at
 verified commit `{{EXPECTED_SHA}}`. This keeps the current documentation aligned
-with the tagged compiler behaviour while preserving relevant release history.
+with the tagged compiler behavior while preserving relevant release history.
 
 {{TEST_NOTICE}}
 
@@ -41,8 +41,50 @@ N/A - automated maintenance triggered by a verified CradleXC release tag.
 
 ## Structured review packet
 
-### Verified source delta
+### Review at a glance
 
+<!-- markdownlint-disable MD055 MD056 -->
+| Review item | Result |
+| --- | --- |
+{{REVIEW_SUMMARY_ROWS}}
+<!-- markdownlint-enable MD055 MD056 -->
+
+### Required human review
+
+Complete these checks before approving the pull request:
+
+{{HUMAN_VERIFICATION}}
+
+### Regression results
+
+<!-- markdownlint-disable MD055 MD056 -->
+| Control | Attempt 1 | Attempt 2 |
+| --- | --- | --- |
+{{REGRESSION_ROWS}}
+<!-- markdownlint-enable MD055 MD056 -->
+
+An initial failure followed by a successful second attempt means the bounded
+repair ran and the complete validation suite passed afterward.
+
+### Risk and impact
+
+Impact classification: `{{IMPACT_CLASSIFICATION}}`
+
+Affected components:
+
+{{AFFECTED_COMPONENTS}}
+
+Risk signals:
+
+{{RISK_INDICATORS}}
+
+Classification basis:
+
+{{CLASSIFICATION_REASONS}}
+
+### Verified source
+
+<!-- markdownlint-disable MD055 MD056 -->
 | Field | Verified value |
 | --- | --- |
 | Release | `{{TAG}}` |
@@ -52,57 +94,47 @@ N/A - automated maintenance triggered by a verified CradleXC release tag.
 | Comparison | `{{SOURCE_RANGE}}` |
 | Commits | {{COMMIT_COUNT}} |
 | Changed upstream files | {{SOURCE_FILE_COUNT}} |
+<!-- markdownlint-enable MD055 MD056 -->
 
-Source areas:
+<details>
+<summary>Show affected upstream source areas</summary>
 
 {{SOURCE_AREAS}}
 
-### Affected components and impact
+</details>
 
-Classification: `{{IMPACT_CLASSIFICATION}}`
+### Changed files
 
-{{AFFECTED_COMPONENTS}}
-
-Classification reasons:
-
-{{CLASSIFICATION_REASONS}}
-
-### Generated documentation files
+<details>
+<summary>{{GENERATED_FILE_SUMMARY}}</summary>
 
 {{GENERATED_FILES}}
 
-### Regression results
+</details>
 
-| Control | Attempt 1 | Attempt 2 |
-| --- | --- | --- |
-<!-- markdownlint-disable MD055 MD056 -->
-{{REGRESSION_ROWS}}
-<!-- markdownlint-enable MD055 MD056 -->
+### Additional investigation context
 
-### High-risk areas
-
-{{RISK_INDICATORS}}
-
-Likely documentation requiring particular attention:
+<details>
+<summary>{{LIKELY_DOCUMENTATION_SUMMARY}}</summary>
 
 {{LIKELY_DOCUMENTATION}}
 
-### Automatic recovery performed
+</details>
+
+### Automation details
+
+#### Recovery performed
 
 {{AUTOMATIC_REPAIRS}}
 
-### AI usage
-
-{{AI_CALLS}}
-
-### Supporting deterministic evidence
+#### Deterministic evidence
 
 - Controlled `cxc doctor` capture: {{DOCTOR_SUMMARY}}
 - Bounded AI context: {{CONTEXT_SUMMARY}}
 
-### Changes requiring human judgement
+#### AI usage
 
-{{HUMAN_VERIFICATION}}
+{{AI_CALLS}}
 
 ### Specialist review routing
 

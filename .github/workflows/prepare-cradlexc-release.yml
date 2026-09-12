@@ -907,6 +907,16 @@ jobs:
             './build/**/*.html'
           fail: true
 
+      - name: Remove final generated link-check report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f lychee/out.md ]]; then
+            rm -- lychee/out.md
+          fi
+          rmdir lychee 2>/dev/null || true
+
       - name: Record unresolved release exception
         if: always()
         id: exception

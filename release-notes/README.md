@@ -350,7 +350,12 @@ documentation, regression outcomes, high-risk areas, repair history, AI-call
 count and remaining human decisions. Its wording and layout live in
 `.github/release-pull-request-template.md`; the renderer rejects mismatched
 release evidence or any unresolved template placeholder. The same packet is
-used when creating a PR and when updating an existing release PR.
+used when creating a PR and when updating an existing release PR. The rendered
+body leads with a review-at-a-glance summary, required human checks and the
+regression table. Exhaustive changed-file, source-area and investigation lists
+are collapsed so they remain available without obscuring the approval decision.
+Temporary link-check output is removed and excluded from the reported change
+set because it is not part of the pull request.
 
 Review routing is controlled by `config/release-review-routing.json`. Every
 release receives documentation review, while CLI, configuration, schema,

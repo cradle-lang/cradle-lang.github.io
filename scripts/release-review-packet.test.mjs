@@ -139,7 +139,29 @@ test('renders a decision-ready review packet from verified inputs', () => {
   assert.match(packet.body, /CLI technical review/);
   assert.match(packet.body, /none configured; use the review labels/);
   assert.match(packet.body, /docs\/reference\/configuration\.md/);
+  assert.match(packet.body, /### Review at a glance/);
+  assert.match(packet.body, /3 changed file\(s\) — expand for the complete list/);
+  assert.match(packet.body, /1 documentation page\(s\) matched for focused review/);
+  assert.match(packet.body, /- \[ \] Confirm configuration names, paths, defaults/);
+  assert.match(packet.body, /<details>/);
+  assert.match(
+    packet.body,
+    /\| Control \| Attempt 1 \| Attempt 2 \|\n\| --- \| --- \| --- \|\n\| Regression contracts/u,
+  );
   assert.doesNotMatch(packet.body, /\{\{[A-Z0-9_]+\}\}/);
+});
+
+test('omits temporary link-check output from the changed-file review list', () => {
+  const packet = create({
+    changedPaths: [
+      'docs/reference/configuration.md',
+      'lychee/out.md',
+      'release-notes/v0.19.0.md',
+    ],
+  });
+
+  assert.doesNotMatch(packet.body, /lychee\/out\.md/);
+  assert.match(packet.body, /2 changed file\(s\) — expand for the complete list/);
 });
 
 test('retains the default pull-request template structure and checklist tone', () => {

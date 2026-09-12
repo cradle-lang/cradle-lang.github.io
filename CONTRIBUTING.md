@@ -273,7 +273,12 @@ repairs, AI calls, supporting evidence and the decisions still requiring human
 judgement. The workflow renders this from verified evidence rather than asking
 Copilot to summarize its own work. Its editable layout is stored in
 `.github/release-pull-request-template.md`; preserve its runtime placeholders
-when changing the wording or section order.
+when changing the wording or section order. Keep the decision path short: show
+run mode, validation, impact, scope and required human checks first; keep the
+regression table directly readable; and place exhaustive changed-file, source
+area and investigation lists in expandable sections. Never insert an HTML
+comment between a Markdown table header and its data rows because GitHub will
+render them as separate blocks instead of one table.
 
 The same impact record selects parallel specialist review lanes using
 `config/release-review-routing.json`. The workflow creates and applies the

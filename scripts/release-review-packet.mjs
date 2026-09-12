@@ -17,6 +17,13 @@ function bulletList(values, fallback) {
     : `- ${fallback}`;
 }
 
+function checklist(values, fallback) {
+  const items = [...new Set(values.filter(Boolean))];
+  return items.length > 0
+    ? items.map((value) => `- [ ] ${value}`).join('\n')
+    : `- [ ] ${fallback}`;
+}
+
 function outcome(value) {
   return code(value || 'not run');
 }
@@ -70,17 +77,20 @@ function validationSummary(results) {
   if (firstPassed) {
     return {
       passed: true,
+      status: 'Passed on the first attempt',
       notice: 'All automated checks passed on the first attempt.',
     };
   }
   if (secondPassed) {
     return {
       passed: true,
+      status: 'Passed after one targeted repair',
       notice: 'All automated checks passed after one targeted repair and complete revalidation.',
     };
   }
   return {
     passed: false,
+    status: 'Failing — do not merge',
     notice: '> [!WARNING]\n> Automated validation is still failing. This draft must not be merged until the failed controls are corrected and rerun.',
   };
 }
@@ -127,12 +137,15 @@ export function createReleaseReviewPacket({
     ? 'No previous documentation snapshot was created.'
     : `Archived current documentation as version ${code(archivedVersion)}.`;
   const likelyDocumentation = prework.likelyDocumentation.map(({path, matchedTerms}) =>
-    `${code(path)} — matched ${matchedTerms.map(code).join(', ')}`,
+    `${code(path)} — ${matchedTerms.length} matched routing term(s)`,
   );
   const affectedComponents = prework.classification.domains.map(code);
   const sourceAreas = evidence.sourceAreas.map(code);
   const riskIndicators = prework.riskIndicators.map(code);
-  const generatedFiles = changedPaths.map(code);
+  const reviewableChangedPaths = changedPaths.filter((path) =>
+    path !== 'lychee/out.md',
+  );
+  const generatedFiles = reviewableChangedPaths.map(code);
   const repairs = [
     `Evidence reconstruction required: ${code(evidenceRebuilt)}.`,
     'Deterministic Markdown formatting and generated-data refresh ran before final validation.',
@@ -148,7 +161,7 @@ export function createReleaseReviewPacket({
       : routing.reviewers.length > 0
         ? `Requested reviewers: ${routing.reviewers.map(code).join(', ')}.`
         : 'Requested reviewers: none configured; use the review labels to assign an appropriate maintainer.';
-  const homepageChanged = changedPaths.some((path) =>
+  const homepageChanged = reviewableChangedPaths.some((path) =>
     path === 'src/pages/index.tsx' ||
     path === 'src/data/homepage-terminal.json' ||
     path.startsWith('src/components/homepage/') ||
@@ -175,13 +188,23 @@ export function createReleaseReviewPacket({
     RISK_INDICATORS: bulletList(riskIndicators, 'No deterministic high-risk indicator was detected.'),
     LIKELY_DOCUMENTATION: bulletList(likelyDocumentation, 'No likely existing documentation page was identified.'),
     GENERATED_FILES: bulletList(generatedFiles, 'No generated content path was reported.'),
+    GENERATED_FILE_SUMMARY: `${reviewableChangedPaths.length} changed file(s) — expand for the complete list`,
+    LIKELY_DOCUMENTATION_SUMMARY: `${likelyDocumentation.length} documentation page(s) matched for focused review`,
     ARCHIVE_SUMMARY: archiveSummary,
+    REVIEW_SUMMARY_ROWS: [
+      `| Run mode | ${historicalTest ? 'Historical test — never merge' : 'Production'} |`,
+      `| Automated validation | ${validation.status} |`,
+      `| Impact | ${code(prework.classification.level)} |`,
+      `| Upstream scope | ${evidence.counts.commits} commit(s), ${evidence.counts.files} changed file(s) |`,
+      `| Generated scope | ${reviewableChangedPaths.length} changed file(s) |`,
+      `| AI calls | ${aiCalls} bounded call(s) |`,
+    ].join('\n'),
     REGRESSION_ROWS: regressionRows(results),
     AUTOMATIC_REPAIRS: bulletList(repairs, 'No automatic repair was recorded.'),
     AI_CALLS: `${aiCalls} total: 1 initial generation and ${repairRan ? '1' : '0'} targeted repair call(s).`,
     DOCTOR_SUMMARY: `Exit code ${code(doctor.exitCode)}; ${doctor.dependencyCount} dependency row(s); capture SHA-256 ${code(doctor.sha256)}.`,
     CONTEXT_SUMMARY: `${context.upstreamFiles} upstream file comparison(s), ${context.documentationFiles} documentation file(s); context SHA-256 ${code(context.sha256)}.`,
-    HUMAN_VERIFICATION: bulletList(manualChecks, 'Perform technical and editorial review.'),
+    HUMAN_VERIFICATION: checklist(manualChecks, 'Perform technical and editorial review.'),
     REVIEW_ROUTING: [
       'Review lanes:',
       '',
