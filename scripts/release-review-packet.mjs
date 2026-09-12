@@ -94,6 +94,7 @@ export function createReleaseReviewPacket({
   evidence,
   prework,
   changedPaths,
+  routing,
   results,
   evidenceRebuilt,
   doctor,
@@ -106,6 +107,10 @@ export function createReleaseReviewPacket({
   }
   if (expectedSha && evidence.to.sha !== expectedSha.toLowerCase()) {
     throw new Error('Review packet evidence does not match the expected release SHA.');
+  }
+  if (routing?.release !== tag || !Array.isArray(routing?.lanes) ||
+      !Array.isArray(routing?.reviewers)) {
+    throw new Error('Review routing does not belong to the requested release tag.');
   }
 
   const validation = validationSummary(results);
@@ -136,6 +141,13 @@ export function createReleaseReviewPacket({
       : 'No targeted Copilot repair was required.',
   ];
   const manualChecks = humanVerification(prework);
+  const reviewerStatus = historicalTest
+    ? 'Requested reviewers: suppressed for historical-test mode.'
+    : !validation.passed
+      ? 'Requested reviewers: deferred until the validation-failing draft is ready.'
+      : routing.reviewers.length > 0
+        ? `Requested reviewers: ${routing.reviewers.map(code).join(', ')}.`
+        : 'Requested reviewers: none configured; use the review labels to assign an appropriate maintainer.';
   const homepageChanged = changedPaths.some((path) =>
     path === 'src/pages/index.tsx' ||
     path === 'src/data/homepage-terminal.json' ||
@@ -170,6 +182,13 @@ export function createReleaseReviewPacket({
     DOCTOR_SUMMARY: `Exit code ${code(doctor.exitCode)}; ${doctor.dependencyCount} dependency row(s); capture SHA-256 ${code(doctor.sha256)}.`,
     CONTEXT_SUMMARY: `${context.upstreamFiles} upstream file comparison(s), ${context.documentationFiles} documentation file(s); context SHA-256 ${code(context.sha256)}.`,
     HUMAN_VERIFICATION: bulletList(manualChecks, 'Perform technical and editorial review.'),
+    REVIEW_ROUTING: [
+      'Review lanes:',
+      '',
+      bulletList(routing.lanes, 'Documentation review'),
+      '',
+      reviewerStatus,
+    ].join('\n'),
     USER_FACING_EVIDENCE: homepageChanged
       ? 'Pending — add desktop/mobile and light/dark screenshots after reviewing the deploy preview.'
       : 'N/A — no landing-page change was generated.',

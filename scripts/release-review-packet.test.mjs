@@ -96,6 +96,15 @@ function create(overrides = {}) {
       'release-notes/v0.19.0.md',
       'src/data/homepage-terminal.json',
     ],
+    routing: {
+      release: 'v0.19.0',
+      lanes: [
+        'CLI technical review',
+        'Configuration technical review',
+        'Documentation review',
+      ],
+      reviewers: [],
+    },
     results: {
       contractsFirst: 'success',
       contractsSecond: 'success',
@@ -127,6 +136,8 @@ test('renders a decision-ready review packet from verified inputs', () => {
   assert.match(packet.body, /`cli`/);
   assert.match(packet.body, /`configuration-change`/);
   assert.match(packet.body, /Confirm configuration names, paths, defaults/);
+  assert.match(packet.body, /CLI technical review/);
+  assert.match(packet.body, /none configured; use the review labels/);
   assert.match(packet.body, /docs\/reference\/configuration\.md/);
   assert.doesNotMatch(packet.body, /\{\{[A-Z0-9_]+\}\}/);
 });
@@ -164,6 +175,7 @@ test('records a targeted repair and keeps unresolved validation in draft', () =>
   assert.match(packet.title, /^\[Validation failing\]/);
   assert.match(packet.body, /2 total: 1 initial generation and 1 targeted repair/);
   assert.match(packet.body, /must not be merged/);
+  assert.match(packet.body, /reviewers: deferred until the validation-failing draft is ready/);
 });
 
 test('rejects evidence for a different release SHA', () => {

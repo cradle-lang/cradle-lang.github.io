@@ -104,6 +104,10 @@ Likely documentation requiring particular attention:
 
 {{HUMAN_VERIFICATION}}
 
+### Specialist review routing
+
+{{REVIEW_ROUTING}}
+
 ## Testing and verification
 
 - Automated checks:

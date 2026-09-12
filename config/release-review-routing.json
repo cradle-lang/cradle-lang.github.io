@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "base": {
+    "lanes": ["Documentation review"],
+    "labels": [
+      {
+        "name": "review:documentation",
+        "color": "0E8A16",
+        "description": "Requires documentation and editorial review"
+      }
+    ],
+    "reviewers": []
+  },
+  "domains": {
+    "cli": {
+      "lanes": ["CLI technical review"],
+      "labels": [
+        {
+          "name": "review:cli",
+          "color": "1D76DB",
+          "description": "Requires review of CLI behavior and examples"
+        }
+      ],
+      "reviewers": []
+    },
+    "configuration": {
+      "lanes": ["Configuration technical review"],
+      "labels": [
+        {
+          "name": "review:configuration",
+          "color": "5319E7",
+          "description": "Requires review of configuration behavior and compatibility"
+        }
+      ],
+      "reviewers": []
+    },
+    "schema": {
+      "lanes": ["Schema compatibility review"],
+      "labels": [
+        {
+          "name": "review:schema",
+          "color": "D93F0B",
+          "description": "Requires schema and compatibility review"
+        }
+      ],
+      "reviewers": []
+    },
+    "documentation": {
+      "lanes": ["Upstream documentation consistency review"],
+      "labels": [
+        {
+          "name": "review:upstream-docs",
+          "color": "006B75",
+          "description": "Requires comparison with upstream documentation changes"
+        }
+      ],
+      "reviewers": []
+    }
+  },
+  "risks": {
+    "possible-breaking-change": {
+      "lanes": ["Breaking-change and migration review"],
+      "labels": [
+        {
+          "name": "review:compatibility",
+          "color": "B60205",
+          "description": "Requires breaking-change and migration review"
+        }
+      ],
+      "reviewers": []
+    },
+    "removed-cli-flag": {
+      "lanes": ["Breaking-change and migration review"],
+      "labels": [
+        {
+          "name": "review:compatibility",
+          "color": "B60205",
+          "description": "Requires breaking-change and migration review"
+        }
+      ],
+      "reviewers": []
+    },
+    "file-removal": {
+      "lanes": ["Removal and migration review"],
+      "labels": [
+        {
+          "name": "review:compatibility",
+          "color": "B60205",
+          "description": "Requires breaking-change and migration review"
+        }
+      ],
+      "reviewers": []
+    },
+    "large-change-set": {
+      "lanes": ["Broad change-set review"],
+      "labels": [
+        {
+          "name": "review:broad-change",
+          "color": "FBCA04",
+          "description": "Requires review across a broad release change set"
+        }
+      ],
+      "reviewers": []
+    }
+  }
+}

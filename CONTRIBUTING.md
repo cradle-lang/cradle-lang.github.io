@@ -256,6 +256,14 @@ Copilot to summarize its own work. Its editable layout is stored in
 `.github/release-pull-request-template.md`; preserve its runtime placeholders
 when changing the wording or section order.
 
+The same impact record selects parallel specialist review lanes using
+`config/release-review-routing.json`. The workflow creates and applies the
+configured `review:*` labels immediately. Maintainers may add real GitHub user
+names or `organization/team` slugs to a route's `reviewers` array when ownership
+is agreed; do not invent or guess reviewer accounts. Ready production PRs
+request all matched reviewers together. Draft and historical-test PRs keep the
+labels for triage but suppress reviewer notifications.
+
 ### What is automated
 
 Automation is used where information can be derived reliably from the source repository, such as:

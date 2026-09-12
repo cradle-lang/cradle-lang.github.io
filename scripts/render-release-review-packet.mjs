@@ -3,7 +3,8 @@ import fs from 'node:fs/promises';
 
 import {createReleaseReviewPacket} from './release-review-packet.mjs';
 
-const [templatePath, evidencePath, preworkPath, bodyPath] = process.argv.slice(2);
+const [templatePath, evidencePath, preworkPath, routingPath, bodyPath] =
+  process.argv.slice(2);
 
 function changedPaths() {
   const tracked = execFileSync(
@@ -22,16 +23,17 @@ function changedPaths() {
 }
 
 async function main() {
-  if (!templatePath || !evidencePath || !preworkPath || !bodyPath) {
+  if (!templatePath || !evidencePath || !preworkPath || !routingPath || !bodyPath) {
     throw new Error(
       'Usage: node scripts/render-release-review-packet.mjs ' +
-        '<template> <evidence-json> <prework-json> <body-output>',
+        '<template> <evidence-json> <prework-json> <routing-json> <body-output>',
     );
   }
-  const [template, evidence, prework] = await Promise.all([
+  const [template, evidence, prework, routing] = await Promise.all([
     fs.readFile(templatePath, 'utf8'),
     fs.readFile(evidencePath, 'utf8').then(JSON.parse),
     fs.readFile(preworkPath, 'utf8').then(JSON.parse),
+    fs.readFile(routingPath, 'utf8').then(JSON.parse),
   ]);
   const packet = createReleaseReviewPacket({
     template,
@@ -42,6 +44,7 @@ async function main() {
     evidence,
     prework,
     changedPaths: changedPaths(),
+    routing,
     results: {
       contractsFirst: process.env.CONTRACTS_FIRST,
       contractsSecond: process.env.CONTRACTS_SECOND,

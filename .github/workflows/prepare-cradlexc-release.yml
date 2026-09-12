@@ -931,8 +931,25 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Render structured review packet
+      - name: Plan specialist review routing
         if: always() && steps.changes.outputs.safe == 'true'
+        id: review_routing
+        shell: bash
+        env:
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          node scripts/plan-release-review-routing.mjs \
+            config/release-review-routing.json \
+            "${{ steps.prework.outputs.path }}" \
+            "$RUNNER_TEMP/release-review-routing-${RELEASE_TAG}.json"
+
+      - name: Render structured review packet
+        if: >-
+          always() &&
+          steps.changes.outputs.safe == 'true' &&
+          steps.review_routing.outcome == 'success'
         id: review_packet
         shell: bash
         env:
@@ -960,6 +977,7 @@ jobs:
             .github/release-pull-request-template.md \
             "${{ steps.evidence.outputs.path }}" \
             "${{ steps.prework.outputs.path }}" \
+            "${{ steps.review_routing.outputs.path }}" \
             "$RUNNER_TEMP/release-review-packet-${RELEASE_TAG}.md"
 
       - name: Commit and push combined branch
@@ -1026,6 +1044,7 @@ jobs:
           PACKET_TITLE: ${{ steps.review_packet.outputs.title }}
           PACKET_DRAFT: ${{ steps.review_packet.outputs.draft }}
           PACKET_BODY_PATH: ${{ steps.review_packet.outputs.body_path }}
+          REVIEW_ROUTING_PATH: ${{ steps.review_routing.outputs.path }}
         run: |
           set -euo pipefail
 
@@ -1056,6 +1075,34 @@ jobs:
               --head "$BRANCH" \
               --title "$PACKET_TITLE" \
               --body-file "$PACKET_BODY_PATH"
+          fi
+
+          if [[ -z "$number" ]]; then
+            number="$(gh pr list --state open --head "$BRANCH" --json number --jq '.[0].number // empty')"
+          fi
+          if [[ -z "$number" ]]; then
+            echo '::error::Could not resolve the created release pull request.'
+            exit 1
+          fi
+
+          while IFS=$'\t' read -r label color description; do
+            gh label create "$label" \
+              --color "$color" \
+              --description "$description" \
+              2>/dev/null || true
+          done < <(
+            jq -r '.labels[] | [.name, .color, .description] | @tsv' \
+              "$REVIEW_ROUTING_PATH"
+          )
+
+          labels="$(jq -r '[.labels[].name] | join(",")' "$REVIEW_ROUTING_PATH")"
+          if [[ -n "$labels" ]]; then
+            gh pr edit "$number" --add-label "$labels"
+          fi
+
+          reviewers="$(jq -r '.reviewers | join(",")' "$REVIEW_ROUTING_PATH")"
+          if [[ "$PACKET_DRAFT" != 'true' && -n "$reviewers" ]]; then
+            gh pr edit "$number" --add-reviewer "$reviewers"
           fi
 
       - name: Enforce release preparation outcome

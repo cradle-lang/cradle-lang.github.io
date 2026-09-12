@@ -334,6 +334,14 @@ count and remaining human decisions. Its wording and layout live in
 release evidence or any unresolved template placeholder. The same packet is
 used when creating a PR and when updating an existing release PR.
 
+Review routing is controlled by `config/release-review-routing.json`. Every
+release receives documentation review, while CLI, configuration, schema,
+upstream-documentation and compatibility signals add specialist lanes and
+`review:*` labels. Reviewer arrays are empty by default and can be populated
+with confirmed GitHub users or teams. All matching reviewers are requested in
+parallel only for a ready production PR; historical-test and validation-failing
+drafts do not notify them.
+
 ## Historical workflow testing
 
 Tags older than `v0.18.1` may be passed directly to the preparation workflow
