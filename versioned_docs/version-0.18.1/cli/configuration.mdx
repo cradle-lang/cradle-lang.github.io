@@ -1,0 +1,149 @@
+---
+sidebar_position: 3
+title: CLI Configuration
+---
+
+# CLI Configuration
+
+CradleXC reads local settings from TOML. Inspect the active configuration with:
+
+```bash
+cxc config
+```
+
+Pass a specific file for one invocation with the global option:
+
+```bash
+cxc --config <path> <command>
+```
+
+## Configuration search order
+
+When `--config` is not supplied, CradleXC uses the first configuration file it finds:
+
+1. `./config.toml`
+2. `config.toml` beside the `cxc` executable
+3. `~/.cxc/config.toml`
+4. `/opt/cxc/config.toml`
+5. built-in defaults
+
+## Complete example
+
+```toml
+config_dir = "https://github.com/cradle-lang/cradle-lib"
+heuristics_dir = "https://github.com/cradle-lang/cradle-lib"
+artifact_repo = "https://artifacts.example.org"
+artifact_dir = "/home/user/artifact"
+
+[deployment]
+timezone = "Asia/Singapore"
+windows_timezone = "Singapore Standard Time"
+dns_server = "192.168.56.2"
+disable_windows_defender = true
+disable_default_adapter = true
+use_nfs = false
+
+[hardware.linux]
+cpu = 2
+memory = 2048
+
+[hardware.windows]
+cpu = 2
+memory = 4096
+
+[hardware.router]
+cpu = 1
+memory = 1024
+
+[backend.vagrant]
+provider = "libvirt"
+```
+
+## Content sources
+
+`config_dir` supplies the implementation for each instance `config()` entry. `heuristics_dir` supplies implementation content for instance heuristics. Each value can be either a local directory or a Git URL.
+
+The built-in default for both settings is:
+
+```text
+https://github.com/cradle-lang/cradle-lib
+```
+
+When a Git URL is configured, CradleXC fetches the referenced content into its local cache as needed by `build` and `rebuild`.
+
+List locally available content with:
+
+```bash
+cxc configs list
+cxc heuristics list
+```
+
+Use `--config-dir` or `--heuristics-dir` on those commands to inspect a specific local directory.
+
+## Artifact settings
+
+`artifact_repo` is the fallback used when a scenario references `${uriRemote}` without defining `repositoryRemote()` in metadata. It is empty by default.
+
+`artifact_dir` is the local staging directory for artifacts. Its default is `$HOME/artifact`.
+
+## Generation settings
+
+The `[deployment]` table contains values used while generating target files:
+
+| Setting | Default |
+| --- | --- |
+| `timezone` | `Asia/Singapore` |
+| `windows_timezone` | `Singapore Standard Time` |
+| `dns_server` | `192.168.56.2` |
+| `disable_windows_defender` | `true` |
+| `disable_default_adapter` | `true` |
+| `use_nfs` | `false` |
+
+These values affect generated output only where the selected backend supports them.
+
+## Hardware defaults
+
+The `[hardware.linux]`, `[hardware.windows]`, and `[hardware.router]` tables define default CPU counts and memory in MiB:
+
+| Instance class | CPU | Memory |
+| --- | ---: | ---: |
+| Linux | 2 | 2048 MiB |
+| Windows | 2 | 4096 MiB |
+| Router | 1 | 1024 MiB |
+
+## Backend options
+
+Use `[backend.<name>]` tables for plugin-specific string options. For example:
+
+```toml
+[backend.vagrant]
+provider = "libvirt"
+```
+
+Command-line `--backend-arg key=value` options override matching values from the selected backend table.
+
+## Environment overrides
+
+Environment variables override matching TOML values. Supported variables include:
+
+- `CXC_CONFIG_DIR`
+- `CXC_HEURISTICS_DIR`
+- `CXC_ARTIFACT_REPO`
+- `CXC_ARTIFACT_DIR`
+- `CXC_TIMEZONE`
+- `CXC_WINDOWS_TIMEZONE`
+- `CXC_DNS_SERVER`
+- `CXC_DISABLE_DEFENDER`
+- `CXC_DISABLE_ADAPTER`
+- `CXC_USE_NFS`
+
+## Validate the configuration
+
+After editing the file, inspect the resolved values and check the environment:
+
+```bash
+cxc config
+cxc doctor
+```
+
+For backend-specific values, consult the documentation supplied by that plugin.

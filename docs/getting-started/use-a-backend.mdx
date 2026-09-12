@@ -123,12 +123,12 @@ The corresponding backend target can then be selected when generating target-spe
 
 ## Generate target-specific files
 
-Use `cxc build` to generate files for a selected backend.
+Use `cxc emit` to generate files for a selected backend without running them.
 
 The general command is:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -137,7 +137,7 @@ cxc build \
 For example, using the Hello World scenario:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -207,7 +207,7 @@ A typical backend workflow is:
 
     <div className="cradle-lifecycle-content">
       <strong>Generate target files</strong>
-      <span>Generate backend-specific output with <code>cxc build</code>.</span>
+      <span>Generate backend-specific output with <code>cxc emit</code>.</span>
     </div>
   </div>
 
@@ -289,7 +289,7 @@ Backend-specific documentation can contain additional requirements that are not 
 
 ## Validate before generating output
 
-Validate the scenario before running `cxc build`:
+Validate the scenario before running `cxc emit`:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
@@ -298,7 +298,7 @@ cxc validate -i scenarios/HelloWorld.cradle
 Then generate the backend-specific output:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
@@ -308,7 +308,7 @@ This helps identify CRADLE syntax problems before backend processing begins.
 
 ## Inspect generated files
 
-After `cxc build` completes, inspect the output directory:
+After `cxc emit` completes, inspect the output directory:
 
 ```bash
 ls -la ./output
@@ -381,7 +381,7 @@ cxc backend list
 Then generate target-specific files:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output

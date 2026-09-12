@@ -67,7 +67,7 @@ The most common workflow uses:
 cxc validate
 cxc compile
 cxc dump-ir
-cxc build
+cxc emit
 ```
 
 Conceptually:
@@ -90,7 +90,7 @@ Conceptually:
 
   <span>↓</span>
 
-  <div className="architecture-flow-step-backend"><code>cxc build</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc emit</code></div>
 
   <span>↓</span>
 
@@ -165,7 +165,7 @@ CradleXC uses external backend plugins for target-specific generation.
 Use:
 
 ```bash
-cxc build \
+cxc emit \
   -i <scenario.cradle> \
   --target <plugin_name> \
   -o <output_directory>
@@ -174,7 +174,7 @@ cxc build \
 For example:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target vagrant \
   -o ./output
@@ -182,20 +182,16 @@ cxc build \
 
 The selected backend generates files for its supported target.
 
-To regenerate an existing output directory after changing the scenario, use
-the previous build as a comparison baseline:
+To run deployment stages through a selected backend, use:
 
 ```bash
-cxc rebuild \
+cxc deploy \
   -i scenarios/HelloWorld.cradle \
-  --target vagrant \
-  -o ./output
+  --backend vagrant \
+  --stage provision
 ```
 
-`cxc rebuild` reports what changed and rewrites the complete generated file
-set. It does not modify a live deployment. See the
-[Command Reference](./command-reference#cxc-rebuild) for its baseline and
-network-change rules.
+Use `cxc emit` when you want generated files without running deployment stages.
 
 :::important
 CradleXC does not automatically execute backend-generated files. Use those files with the corresponding tools in your own testbed environment.
@@ -332,14 +328,14 @@ The current CLI can be thought of in several groups.
     <div className="cxc-command-description">
       Generate target-specific files through a backend.
     </div>
-    <code>cxc build</code>
+    <code>cxc emit</code>
   </div>
 
   <div className="cxc-command-card">
     <div className="cxc-command-description">
       Compare with the previous build and regenerate the complete file set.
     </div>
-    <code>cxc rebuild</code>
+    <code>cxc deploy</code>
   </div>
 
 </div>
@@ -430,7 +426,7 @@ cxc <command> --help
 For example:
 
 ```bash
-cxc build --help
+cxc emit --help
 ```
 
 See [Troubleshooting](../guides/troubleshooting) for additional diagnostic guidance.

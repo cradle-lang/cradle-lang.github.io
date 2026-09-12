@@ -169,16 +169,16 @@ rather than functionality built directly into CRADLE or CradleXC.
 
 Backend plugins are used when a CRADLE scenario needs to be converted into files for a specific target.
 
-Once a compatible backend plugin is installed, use `cxc build`:
+Once a compatible backend plugin is installed, use `cxc emit`:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
 ```
 
 For example:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
 The backend generates the files required by its target.

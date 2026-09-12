@@ -154,17 +154,18 @@ Backend installation and configuration are covered separately in the [backend gu
 Once a compatible backend plugin is installed, generate target-specific output with:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
+cxc emit -i scenarios/HelloWorld.cradle --target <plugin_name> -o /path/to/output
 ```
 
 For example:
 
 ```bash
-cxc build -i scenarios/HelloWorld.cradle --target vagrant -o ./output
+cxc emit -i scenarios/HelloWorld.cradle --target vagrant -o ./output
 ```
 
 The backend plugin generates the files required by its target.
-These files are not automatically executed by CradleXC.
+These files are not automatically executed by CradleXC. Use `cxc deploy` when
+you explicitly want a backend to run deployment stages.
 You can use the generated files with the corresponding tools in your own testbed environment.
 
 ## Next steps

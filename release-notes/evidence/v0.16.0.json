@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "from": {
+    "tag": "v0.18.1",
+    "sha": "61b97868f3e60afaf0c2ef3a162e40fd85a3635d"
+  },
+  "to": {
+    "tag": "v0.16.0",
+    "sha": "7bd9f25ae9e838b5f72515975302fbf6538bf061"
+  },
+  "comparison": {
+    "range": "v0.18.1..v0.16.0",
+    "mergeBaseSha": "7bd9f25ae9e838b5f72515975302fbf6538bf061",
+    "fromIsAncestor": false
+  },
+  "counts": {
+    "commits": 0,
+    "files": 109,
+    "byStatus": {
+      "added": 3,
+      "deleted": 59,
+      "modified": 47
+    }
+  },
+  "sourceAreas": [
+    ".github",
+    ".gitignore",
+    "Cargo.lock",
+    "Cargo.toml",
+    "README.md",
+    "TASKS.md",
+    "config.example.toml",
+    "configs",
+    "crates",
+    "docs",
+    "graphify-out",
+    "scenarios",
+    "scripts",
+    "smoke"
+  ],
+  "commits": [],
+  "files": [
+    {
+      "status": "deleted",
+      "path": ".github/workflows/dev-release.yml"
+    },
+    {
+      "status": "modified",
+      "path": ".gitignore"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.lock"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "README.md"
+    },
+    {
+      "status": "deleted",
+      "path": "TASKS.md"
+    },
+    {
+      "status": "modified",
+      "path": "config.example.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/attacker/ansible/attacker.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/benign-firefox-win/ansible/benign-firefox-win.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-apache2/ansible/linux-apache2.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-auditd/ansible/linux-auditd.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-dns/ansible/linux-dns.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-docker/ansible/linux-docker.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-mail/ansible/linux-mail.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-msf/ansible/linux-msf.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-mysql/ansible/linux-mysql.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-netcat/ansible/linux-netcat.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-nmap/ansible/linux-nmap.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-ntp/ansible/linux-ntp.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-python3/ansible/linux-python3.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-router/ansible/linux-router.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-smb/ansible/linux-smb.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-sysdig/ansible/linux-sysdig.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-tcpdump/ansible/linux-tcpdump.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-ufw/ansible/linux-ufw.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-unzip/ansible/linux-unzip.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/linux-vsftpd/ansible/linux-vsftpd.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/net-tools/ansible/net-tools.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/python-benign-mail-packages-win/ansible/python-benign-mail-packages-win.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/python-benign-mail-packages/ansible/python-benign-mail-packages.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/python-benign-web-packages-win/ansible/python-benign-web-packages-win.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/python-benign-web-packages/ansible/python-benign-web-packages.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/python3-pip/ansible/python3-pip.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-allow-ports/ansible/win-allow-ports.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-audit/ansible/win-audit.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-chocolatey/ansible/win-chocolatey.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-dotnet8/ansible/win-dotnet8.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-icmpv4/ansible/win-icmpv4.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-myl/ansible/win-myl.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-nodejs/ansible/win-nodejs.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-pktmon/ansible/win-pktmon.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-power-option/ansible/win-power-option.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-pyenv/ansible/win-pyenv.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-python/ansible/win-python.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-sysmon/ansible/win-sysmon.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-tellerApp/ansible/win-tellerApp.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-winrar/ansible/win-winrar.j2"
+    },
+    {
+      "status": "deleted",
+      "path": "configs/win-winrm/ansible/win-winrm.j2"
+    },
+    {
+      "status": "added",
+      "path": "crates/cradle-artifact-generator/Cargo.toml"
+    },
+    {
+      "status": "added",
+      "path": "crates/cradle-artifact-generator/src/lib.rs"
+    },
+    {
+      "status": "added",
+      "path": "crates/cradle-artifact-generator/src/models.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/attest.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/configs.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/event_playbook.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-assembler/src/heuristics.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/options.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/provisioning.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-backend-api/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/build.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/debian/postinst"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/backends/external.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/config.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/src/confirm.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/main.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/plugin_install.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/deploy_dispatch.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/external_backend.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-echo"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-noscope"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-with-manifest"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/heuristics_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/migrate_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/rebuild_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/update_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-core/src/artifact_path.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/ast.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-core/src/diff.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-core/src/heuristic_ids.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/ir.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/lower.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/validation.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-import/src/playbook.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/src/migrate.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/tests/scenario_tests.rs"
+    },
+    {
+      "status": "modified",
+      "path": "docs/PENDING.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/backend-plugin-architecture-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/backend-plugin-protocol.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/compiler-architecture-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/cradle-v2-architecture.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/developer-guide.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/external-configs.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/server-setup.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/sphere-deployment-guide.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/tlosphere-architecture-overview.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/tlosphere-sphere-run-guide.md"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/.graphify_labels.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/GRAPH_REPORT.md"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/cache/stat-index.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/graph.html"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/graph.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/manifest.json"
+    },
+    {
+      "status": "modified",
+      "path": "scenarios/APT28.cradle"
+    },
+    {
+      "status": "modified",
+      "path": "scenarios/TheLastOnes.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "scripts/dev-setup.sh"
+    },
+    {
+      "status": "modified",
+      "path": "smoke/SMOKE_TEST_REPORT.md"
+    }
+  ],
+  "sha256": "ee99afd819b4472a4fcb0d3742b0381507059a2d9d4fba613fff8f5e0825c7c9"
+}

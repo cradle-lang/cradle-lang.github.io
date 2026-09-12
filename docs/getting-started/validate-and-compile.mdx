@@ -226,12 +226,13 @@ The workflow can be viewed as:
 
 </div>
 
-When target-specific files are required, use a compatible backend plugin separately.
+When target-specific files are required, use a compatible backend plugin with
+`cxc emit`. To provision or run events, use the explicit `cxc deploy` command.
 
 For example:
 
 ```bash
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o /path/to/output

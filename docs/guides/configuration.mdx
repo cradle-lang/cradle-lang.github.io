@@ -10,12 +10,6 @@ CradleXC reads local settings from `~/.cxc/config.toml` by default. Pass `--conf
 ## Core paths
 
 ```toml
-# Local directory or Git URL containing configuration implementations.
-config_dir = "https://github.com/cradle-lang/cradle-lib"
-
-# Local directory or Git URL containing heuristic implementations.
-heuristics_dir = "https://github.com/cradle-lang/cradle-lib"
-
 # Base repository used when a scenario does not set repositoryRemote.
 artifact_repo = "/srv/cradle/artifacts"
 
@@ -23,7 +17,8 @@ artifact_repo = "/srv/cradle/artifacts"
 artifact_dir = "/srv/cradle/staging"
 ```
 
-`config_dir` and `heuristics_dir` provide content used during `build` and `rebuild`. `artifact_repo` is a fallback source location. `artifact_dir` is a local working location; it is not the same thing as the repository itself.
+`artifact_repo` is a fallback source location. `artifact_dir` is a local
+working location; it is not the same thing as the repository itself.
 
 ## Backend settings
 

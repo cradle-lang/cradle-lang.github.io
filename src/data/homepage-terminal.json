@@ -1,31 +1,50 @@
 {
   "current": {
-    "tag": "v0.18.1",
+    "tag": "v0.16.0",
     "command": "cxc doctor",
-    "ariaLabel": "Illustrative output from a successful CradleXC dependency check",
+    "ariaLabel": "Illustrative output from a successful CradleXC 0.16.0 dependency check",
     "output": [
-      "CRADLE v0.18.1 — dependency check",
+      "CRADLE v0.16.0 — dependency check",
       "",
       "Dependency                     Status     Purpose",
       "--------------------------------------------------------------------------------",
-      "vagrant                        ✓ OK       VM lifecycle management (boot/destroy VMs) [/usr/bin/vagrant]",
-      "ansible-playbook               ✓ OK       provisioning + event execution [/usr/bin/ansible-playbook]",
-      "ansible-galaxy                 ✓ OK       installs required ansible collections at build time [/usr/bin/ansible-galaxy]",
-      "VBoxManage                     ✓ OK       VirtualBox CLI (provider=virtualbox) [/usr/bin/VBoxManage]",
-      "virsh                          ✓ OK       libvirt management (provider=libvirt) [/usr/bin/virsh]",
-      "qemu-system-x86_64             ✓ OK       QEMU/KVM hypervisor binary (provider=libvirt) [/usr/bin/qemu-system-x86_64]",
-      "gcc                            ✓ OK       C compiler (artifact generation for Linux) [/usr/bin/gcc]",
-      "x86_64-w64-mingw32-gcc         ✓ OK       cross-compiler (artifact generation for Windows) [/usr/bin/x86_64-w64-mingw32-gcc]",
-      "bc                             ✓ OK       timing calculations [/usr/bin/bc]",
-      "mrg                            ✓ OK       SPHERE experiment lifecycle [/home/user/.local/bin/mrg]",
       "",
       "✓ All required dependencies are installed.",
       "",
       "Configuration:",
       "  Config file: /home/user/.cxc/config.toml",
-      "  Config dir:      /home/user/cxc_example/configs",
-      "  Heuristics dir:  https://github.com/cradle-lang/cradle-lib.git"
+      "  Forensic dir:    /opt/cxc/forensic",
+      "  Dataset dir:     /opt/cxc/dataset"
     ]
   },
-  "versions": {}
+  "versions": {
+    "0.18.1": {
+      "tag": "v0.18.1",
+      "command": "cxc doctor",
+      "ariaLabel": "Illustrative output from a successful CradleXC dependency check",
+      "output": [
+        "CRADLE v0.18.1 — dependency check",
+        "",
+        "Dependency                     Status     Purpose",
+        "--------------------------------------------------------------------------------",
+        "vagrant                        ✓ OK       VM lifecycle management (boot/destroy VMs) [/usr/bin/vagrant]",
+        "ansible-playbook               ✓ OK       provisioning + event execution [/usr/bin/ansible-playbook]",
+        "ansible-galaxy                 ✓ OK       installs required ansible collections at build time [/usr/bin/ansible-galaxy]",
+        "VBoxManage                     ✓ OK       VirtualBox CLI (provider=virtualbox) [/usr/bin/VBoxManage]",
+        "virsh                          ✓ OK       libvirt management (provider=libvirt) [/usr/bin/virsh]",
+        "qemu-system-x86_64             ✓ OK       QEMU/KVM hypervisor binary (provider=libvirt) [/usr/bin/qemu-system-x86_64]",
+        "gcc                            ✓ OK       C compiler (artifact generation for Linux) [/usr/bin/gcc]",
+        "x86_64-w64-mingw32-gcc         ✓ OK       cross-compiler (artifact generation for Windows) [/usr/bin/x86_64-w64-mingw32-gcc]",
+        "bc                             ✓ OK       timing calculations [/usr/bin/bc]",
+        "mrg                            ✓ OK       SPHERE experiment lifecycle [/home/user/.local/bin/mrg]",
+        "",
+        "✓ All required dependencies are installed.",
+        "",
+        "Configuration:",
+        "  Config file: /home/user/.cxc/config.toml",
+        "  Config dir:      /home/user/cxc_example/configs",
+        "  Heuristics dir:  https://github.com/cradle-lang/cradle-lib.git"
+      ]
+    }
+  }
 }

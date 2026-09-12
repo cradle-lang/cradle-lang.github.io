@@ -32,7 +32,7 @@ Examples include:
 - `cxc validate` found no error-level diagnostics
 - `cxc compile` parsed and wrote its output successfully
 - `cxc dump-ir` lowered and serialized Deployment IR successfully
-- `cxc build` completed target-file generation with the selected plugin
+- `cxc emit` completed target-file generation with the selected plugin
 - `cxc backend list` completed, even when no backends are installed
 - `cxc doctor` found every required dependency
 - `cxc install-deps` printed installation guidance
@@ -55,8 +55,8 @@ Common causes include:
 - Deployment IR lowering fails because a reference, network, route, artifact or
   event dependency cannot be resolved
 - output serialization or filesystem writing fails
-- a `build` or `rebuild` target is unknown
-- `cxc rebuild` cannot find a previous build snapshot or detects a network topology change
+- an `emit` target is unknown
+- a deployment backend cannot complete a requested stage
 - a plugin cannot complete compatibility checks
 - a plugin does not support the requested operation or IR version
 - a plugin process cannot be started or exits unsuccessfully
@@ -90,8 +90,8 @@ summary or a suggestion to run `--help`.
 | `cxc validate --json` | JSON contains `"valid": true`. | JSON contains `"valid": false` or a `parse_error`. |
 | `cxc compile` | Input parsing, YAML serialization and optional file writing succeed. | Input parsing, serialization or file writing fails. |
 | `cxc dump-ir` | Parsing, HIR/IR lowering and JSON serialization succeed. | Parsing or any lowering/serialization step fails. |
-| `cxc build` | The target is found, IR lowering succeeds and target-file generation completes. | Target lookup, IR lowering, plugin compatibility, plugin startup or target-file generation fails. |
-| `cxc rebuild` | A prior build exists, a supported change is detected and the target files are regenerated, or there is nothing to do. | The baseline is missing, network topology changed, or target lookup, lowering or generation fails. |
+| `cxc emit` | The target is found, IR lowering succeeds and target-file generation completes. | Target lookup, IR lowering, plugin compatibility, plugin startup or target-file generation fails. |
+| `cxc deploy` | The selected deployment stages complete. | Backend lookup, lowering, provisioning or event execution fails. |
 | `cxc backend list` | Registry discovery completes. An empty list is still success. | No ordinary command-level failure path is currently defined. |
 | `cxc plugin install` | Download, checksum verification, permission update and final installation succeed. | Plugin metadata lookup, download, checksum verification or filesystem installation fails. |
 | `cxc doctor` | All required dependency checks pass. Optional missing dependencies are allowed. | At least one required dependency is missing. |

@@ -65,7 +65,7 @@ are the authoritative sources for those details.
 
 CradleXC and its documentation can be evaluated independently of backend availability.
 
-A target can only be evaluated through `cxc build` when a compatible backend for that target
+A target can only be evaluated through `cxc emit` when a compatible backend for that target
 has been published and is available for installation.
 
 | Capability | Availability |
@@ -91,7 +91,7 @@ Before generating target-specific files:
 4. Install the backend and verify discovery with `cxc backend list`.
 5. Run `cxc doctor` and resolve required host dependencies.
 6. Validate the scenario with `cxc validate`.
-7. Generate output with `cxc build`.
+7. Generate output with `cxc emit`.
 8. Inspect and validate the generated files using the target tool before
    operating them in a testbed.
 
@@ -110,7 +110,7 @@ After selecting and installing a compatible backend, use:
 cxc validate -i scenarios/HelloWorld.cradle
 cxc backend list
 cxc doctor
-cxc build \
+cxc emit \
   -i scenarios/HelloWorld.cradle \
   --target <plugin_name> \
   -o ./output
