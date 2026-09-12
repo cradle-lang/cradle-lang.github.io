@@ -228,9 +228,18 @@ but does not replace technical review of the explanation.
 
 Formatting and generated-data recovery run deterministically before any repair
 credits are spent. If the first contract/build/link pass fails, one targeted
-Copilot repair receives only the exact failure output and a bounded validation
-log. A complete second pass follows. Do not replace this with broad
-regeneration or an unbounded retry loop.
+Copilot repair receives the exact failure output, a bounded validation log and
+the verified doctor contract containing the captured release identity, command,
+exit code and structural fields. The repair prompt directs terminal corrections
+to that evidence instead of asking Copilot to infer missing headings, fields,
+dependency rows or outcome wording. A complete second pass follows. The repair
+budget is currently 30 AI credits, the minimum accepted by the pinned Copilot
+CLI. Do not replace this with broad regeneration or an unbounded retry loop.
+
+When terminal validation fails, its diagnostic lists the expected, observed,
+missing and unexpected structural values. Use those values together with the
+private doctor capture to correct the transcript; do not weaken the contract or
+copy private diagnostic output into a public issue.
 
 Unresolved failures create a checksummed `BLOCKED` exception artifact. It
 records the failure category (`DETERMINISTIC_RECOVERABLE`,
@@ -245,7 +254,17 @@ identifies the failed job and step, links the workflow run, directs the reviewer
 to the most relevant workflow/script/artifact, and states the decision required
 before retrying. Raw logs and private upstream content remain in Actions rather
 than the public issue. A successful production rerun closes the matching issue;
-historical tests and normal WIP-capacity waits do not create one.
+normal WIP-capacity waits do not create one.
+
+Historical tests remain quiet by default. To exercise escalation deliberately,
+manually enable both `historical_test` and `create_test_escalation`. An
+unresolved run then creates or updates a separately identified issue titled
+`[Release automation test blocked]`, with the additional `historical-test`
+label and an explicit statement that production is unaffected. Its hidden
+marker cannot collide with a production issue for the same tag. A successful
+historical rerun closes the test issue only when `create_test_escalation` is
+enabled again. Test issues must not be used as evidence that a production
+release is blocked.
 
 Every generated release pull request includes a deterministic structured review
 packet. It records the verified release range and SHAs, affected components,

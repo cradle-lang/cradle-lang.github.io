@@ -196,7 +196,10 @@ Repository Structure
 
 Selected technical documentation and release information are maintained through
 automated workflows. See ``CONTRIBUTING.md`` for details on the documentation
-update and review process.
+update and review process. Production preparation failures maintain one blocked
+issue per release. Historical simulations remain quiet unless a maintainer
+explicitly enables their separate test-escalation option; test issues cannot
+collide with production escalation state.
 
 Architectural Choices
 ---------------------

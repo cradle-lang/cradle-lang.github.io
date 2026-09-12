@@ -141,6 +141,18 @@ function arraysEqual(left, right) {
     left.every((value, index) => value === right[index]);
 }
 
+function describeArrayMismatch(description, expected, observed) {
+  const missing = expected.filter((value) => !observed.includes(value));
+  const unexpected = observed.filter((value) => !expected.includes(value));
+  return [
+    `${description} do not match the captured values.`,
+    `Expected: ${JSON.stringify(expected)}.`,
+    `Observed: ${JSON.stringify(observed)}.`,
+    `Missing: ${JSON.stringify(missing)}.`,
+    `Unexpected: ${JSON.stringify(unexpected)}.`,
+  ].join(' ');
+}
+
 export function validateTerminalAgainstDoctor({terminal, capture, tag}) {
   verifyReleaseDoctorIntegrity(capture);
   if (capture.release.tag !== tag) {
@@ -159,18 +171,32 @@ export function validateTerminalAgainstDoctor({terminal, capture, tag}) {
     throw new Error('Terminal banner does not match the captured doctor banner');
   }
   if (!arraysEqual(structure.headings, capture.structure.headings)) {
-    throw new Error('Terminal doctor headings do not match the captured headings');
+    throw new Error(describeArrayMismatch(
+      'Terminal doctor headings',
+      capture.structure.headings,
+      structure.headings,
+    ));
   }
   if (!arraysEqual(structure.fieldNames, capture.structure.fieldNames)) {
-    throw new Error('Terminal doctor fields do not match the captured fields');
+    throw new Error(describeArrayMismatch(
+      'Terminal doctor fields',
+      capture.structure.fieldNames,
+      structure.fieldNames,
+    ));
   }
   if (!arraysEqual(structure.dependencies, capture.structure.dependencies)) {
-    throw new Error(
-      'Terminal dependency checks do not match the captured dependency checks',
-    );
+    throw new Error(describeArrayMismatch(
+      'Terminal dependency checks',
+      capture.structure.dependencies,
+      structure.dependencies,
+    ));
   }
   if (!arraysEqual(structure.outcomeLines, capture.structure.outcomeLines)) {
-    throw new Error('Terminal doctor outcomes do not match the captured outcomes');
+    throw new Error(describeArrayMismatch(
+      'Terminal doctor outcomes',
+      capture.structure.outcomeLines,
+      structure.outcomeLines,
+    ));
   }
 
   const expectedAriaTerm = capture.exitCode === 0

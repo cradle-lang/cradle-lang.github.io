@@ -293,9 +293,18 @@ whether the resulting explanation is technically and editorially sufficient.
 Deterministic correction runs first: Markdown is formatted automatically,
 generated site data is refreshed by the build, and previously implemented
 evidence reconstruction remains available. If a contract, Markdown/build or
-link check still fails, Copilot receives only the failed contract output and
-bounded validation log for one targeted repair. It is instructed not to
-regenerate correct content or broaden the edit.
+link check still fails, Copilot receives the failed contract output, bounded
+validation log and verified doctor contract for one targeted repair. The doctor
+contract contains the captured release identity, command, exit code, banner,
+headings, configuration-field names, dependency checks and outcome lines. This
+lets Copilot repair `.current` against exact runtime evidence instead of
+guessing the missing structure. The repair is instructed not to regenerate
+correct content or broaden the edit and is limited to 30 AI credits, the
+minimum supported by the pinned Copilot CLI.
+
+A structural mismatch reports the expected and observed values plus the missing
+and unexpected entries. This diagnostic is retained in the contract log so a
+failed repair remains actionable without relaxing the validator.
 
 The full contract suite, build and link validation then run again. An unresolved
 failure produces a deterministic exception record with state `BLOCKED`, one of
@@ -324,6 +333,15 @@ and reopen the same issue rather than creating duplicates. A later successful
 production preparation closes it with a link to the resolving run. Historical
 tests never create or close production escalation issues, and an ordinary
 capacity wait caused by an already-open release PR is not treated as a failure.
+
+Historical issue creation is available only as an explicit workflow test. Run
+the preparation workflow manually with both `historical_test` and
+`create_test_escalation` enabled. An unresolved run then maintains a separate
+`[Release automation test blocked]` issue carrying the `release-automation`,
+`blocked` and `historical-test` labels. Its test-specific hidden marker prevents
+it from updating a production issue for the same tag, and its body states that
+production is unaffected. A later successful historical run closes that test
+issue only when `create_test_escalation` is enabled again.
 
 Before committing a generated release branch, the workflow also renders a
 structured review packet from the verified evidence and prework records. The
@@ -366,6 +384,11 @@ never be merged or published. Historical tags never enter the production queue.
 The expected SHA is optional for a historical test because the workflow still
 verifies the checked-out commit against the locally resolved tag. A direct
 production run must supply the full expected commit SHA.
+
+Leave `create_test_escalation` disabled for an ordinary simulation. Enable it
+only when testing blocked-issue creation, updating or resolution. Use the same
+setting on the successful rerun that should close the test issue. An earlier
+failed run is not processed retroactively after this option is enabled.
 
 Run the deterministic release-automation tests locally with:
 

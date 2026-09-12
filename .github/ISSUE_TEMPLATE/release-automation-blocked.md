@@ -12,7 +12,7 @@ assignees: ""
 
 ## Summary
 
-The automated release-documentation workflow could not complete for `{{TAG}}`.
+The automated {{RUN_KIND}} release-documentation workflow could not complete for `{{TAG}}`.
 The failure remained after all safe recovery available in this run, so
 processing stopped without bypassing the failed control.
 
@@ -29,6 +29,7 @@ processing stopped without bypassing the failed control.
 | Field | Value |
 | --- | --- |
 | Release | `{{TAG}}` |
+| Run mode | {{RUN_KIND}} |
 | Expected upstream SHA | `{{EXPECTED_SHA}}` |
 | Category | `{{CATEGORY}}` |
 | Repository | `{{REPOSITORY}}` |
@@ -78,5 +79,5 @@ processing stopped without bypassing the failed control.
 
 Responsible owner: **{{RESPONSIBLE_OWNER}}**
 
-_This issue is maintained automatically. A later successful production run for
+_This issue is maintained automatically. A later successful {{RUN_KIND}} run for
 the same tag will close it._

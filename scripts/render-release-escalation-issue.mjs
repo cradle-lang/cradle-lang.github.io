@@ -32,6 +32,7 @@ async function main() {
     runUrl: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
     jobs: run.jobs ?? [],
     exception,
+    historicalTest: process.env.HISTORICAL_TEST === 'true',
   });
   await fs.writeFile(bodyPath, issue.body, 'utf8');
   if (process.env.GITHUB_OUTPUT) {

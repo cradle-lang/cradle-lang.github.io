@@ -104,7 +104,20 @@ test('rejects invented fields, dependencies and changed outcomes', () => {
       capture: doctorCapture,
       tag: 'v0.19.0',
     }),
-    /fields do not match/,
+    (error) => {
+      assert.match(error.message, /Terminal doctor fields do not match/);
+      assert.match(
+        error.message,
+        /Expected: \["Configuration","Config file","Config dir"\]/,
+      );
+      assert.match(
+        error.message,
+        /Observed: \["Configuration","Config file","Config dir","Imaginary field"\]/,
+      );
+      assert.match(error.message, /Missing: \[\]/);
+      assert.match(error.message, /Unexpected: \["Imaginary field"\]/);
+      return true;
+    },
   );
 
   const inventedHeading = terminal({

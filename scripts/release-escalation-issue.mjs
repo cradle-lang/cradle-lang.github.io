@@ -1,6 +1,7 @@
 import {renderMarkdownTemplate} from './release-markdown-template.mjs';
 
 const ISSUE_MARKER_PREFIX = 'cradlexc-release-escalation';
+const TEST_ISSUE_MARKER_PREFIX = 'cradlexc-release-test-escalation';
 
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
@@ -68,10 +69,10 @@ function categoryFromFailures(failures, exception) {
   return 'SEMANTIC_RECOVERABLE';
 }
 
-function requiredDecision(category) {
+function requiredDecision(category, runKind) {
   switch (category) {
     case 'INTEGRITY_GOVERNANCE':
-      return 'Confirm the authoritative release identity or repository policy before permitting another production run.';
+      return `Confirm the authoritative release identity or repository policy before permitting another ${runKind} run.`;
     case 'TRANSIENT_INFRASTRUCTURE':
       return 'Confirm that the external service, token or runner dependency is healthy, then approve a rerun.';
     case 'DETERMINISTIC_RECOVERABLE':
@@ -98,12 +99,17 @@ export function createEscalationIssue({
   runUrl,
   jobs,
   exception = null,
+  historicalTest = false,
 }) {
   const failures = failedSteps(jobs);
   const failedJobs = jobs.filter((job) => job.conclusion === 'failure');
   const category = categoryFromFailures(failures, exception);
   const locations = investigationLocations(failures);
-  const marker = `<!-- ${ISSUE_MARKER_PREFIX}:${tag} -->`;
+  const markerPrefix = historicalTest
+    ? TEST_ISSUE_MARKER_PREFIX
+    : ISSUE_MARKER_PREFIX;
+  const marker = `<!-- ${markerPrefix}:${tag} -->`;
+  const runKind = historicalTest ? 'historical test' : 'production';
   const failureRows = failures.length > 0
     ? failures.map(({job, step}) => `| ${job} | ${step} |`).join('\n')
     : failedJobs.map((job) => `| ${job.name} | No failed step was reported by GitHub |`).join('\n');
@@ -114,13 +120,16 @@ export function createEscalationIssue({
   const suggestedActions = exception?.suggestedActions ?? [
     'Open the linked workflow run and inspect the first failed step and its annotations.',
     'Start with the files and evidence listed below; verify the authoritative cause before editing generated output.',
-    'Rerun the production workflow only after the cause is corrected or confirmed transient.',
+    `Rerun the ${runKind} workflow only after the cause is corrected or confirmed transient.`,
   ];
 
   const body = renderEscalationIssueTemplate(template, {
     MARKER: marker,
     TAG: tag,
-    IMPACT: exception?.impact ?? 'Release documentation could not be accepted or published automatically. Later releases remain ordered behind this release.',
+    RUN_KIND: runKind,
+    IMPACT: historicalTest
+      ? `This is an explicitly requested test-only escalation and does not represent a production release block. ${exception?.impact ?? 'The historical documentation simulation could not be accepted automatically.'}`
+      : exception?.impact ?? 'Release documentation could not be accepted or published automatically. Later releases remain ordered behind this release.',
     EXPECTED_SHA: expectedSha || 'not supplied',
     CATEGORY: category,
     REPOSITORY: repository,
@@ -137,13 +146,15 @@ export function createEscalationIssue({
       : 'One or more workflow controls failed. Detailed command output and annotations remain in the linked private Actions run.',
     RECOVERY_ATTEMPTS: recoveryAttempts.map((attempt) => `- ${attempt}`).join('\n'),
     INVESTIGATION_LOCATIONS: locations.map((location) => `- ${location}`).join('\n'),
-    REQUIRED_DECISION: exception?.requiredHumanDecision ?? requiredDecision(category),
+    REQUIRED_DECISION: exception?.requiredHumanDecision ?? requiredDecision(category, runKind),
     SUGGESTED_ACTIONS: suggestedActions.map((action, index) => `${index + 1}. ${action}`).join('\n'),
     RESPONSIBLE_OWNER: exception?.responsibleOwner ?? 'CradleXC release documentation maintainer',
   });
 
   return {
-    title: `[Release automation blocked] CradleXC ${tag}`,
+    title: historicalTest
+      ? `[Release automation test blocked] CradleXC ${tag}`
+      : `[Release automation blocked] CradleXC ${tag}`,
     body,
     marker,
     category,

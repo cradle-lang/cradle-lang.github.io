@@ -90,3 +90,34 @@ test('uses edited template copy without changing renderer code', () => {
   assert.match(issue.body, /## Operational impact/);
   assert.doesNotMatch(issue.body, /## Impact/);
 });
+
+test('clearly separates an opted-in historical-test issue from production', () => {
+  const issue = createEscalationIssue({
+    template,
+    tag: 'v0.16.0',
+    expectedSha: '',
+    repository: 'example/docs',
+    workflowName: 'Prepare release',
+    runId: '101',
+    runAttempt: '1',
+    runUrl: 'https://github.com/example/docs/actions/runs/101',
+    jobs: [{
+      name: 'prepare',
+      conclusion: 'failure',
+      steps: [{name: 'Enforce release preparation outcome', conclusion: 'failure'}],
+    }],
+    historicalTest: true,
+  });
+
+  assert.equal(
+    issue.title,
+    '[Release automation test blocked] CradleXC v0.16.0',
+  );
+  assert.equal(
+    issue.marker,
+    '<!-- cradlexc-release-test-escalation:v0.16.0 -->',
+  );
+  assert.match(issue.body, /historical test release-documentation workflow/);
+  assert.match(issue.body, /does not represent a production release block/);
+  assert.match(issue.body, /successful historical test run/);
+});
