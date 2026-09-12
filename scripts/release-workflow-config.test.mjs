@@ -4,6 +4,21 @@ import test from 'node:test';
 
 const WORKFLOW_PATH = '.github/workflows/prepare-cradlexc-release.yml';
 
+test('production PR automation uses the dedicated token only', async () => {
+  const workflow = await fs.readFile(WORKFLOW_PATH, 'utf8');
+  const tokenSelections = workflow.match(
+    /\$\{\{ inputs\.historical_test && github\.token \|\|\s+secrets\.CRADLE_LANG_TOKEN \}\}/gu,
+  );
+
+  assert.equal(tokenSelections?.length, 2);
+  assert.match(workflow, /Verify production automation token/u);
+  assert.match(
+    workflow,
+    /CRADLE_LANG_TOKEN is required for production release PRs/u,
+  );
+  assert.doesNotMatch(workflow, /GH_AW_CI_TRIGGER_TOKEN/u);
+});
+
 test('targeted repair has a valid credit budget and verified doctor context', async () => {
   const workflow = await fs.readFile(WORKFLOW_PATH, 'utf8');
 

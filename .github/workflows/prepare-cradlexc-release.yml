@@ -131,11 +131,25 @@ jobs:
             exit 1
           fi
 
+      - name: Verify production automation token
+        shell: bash
+        env:
+          AUTOMATION_TOKEN: ${{ secrets.CRADLE_LANG_TOKEN }}
+          HISTORICAL_TEST: ${{ inputs.historical_test }}
+        run: |
+          set -euo pipefail
+          if [[ "$HISTORICAL_TEST" != 'true' && -z "$AUTOMATION_TOKEN" ]]; then
+            echo "::error::CRADLE_LANG_TOKEN is required for production release PRs."
+            exit 1
+          fi
+
       - name: Checkout documentation repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
+          token: >-
+            ${{ inputs.historical_test && github.token ||
+            secrets.CRADLE_LANG_TOKEN }}
 
       - name: Apply release policy
         shell: bash
@@ -1089,7 +1103,9 @@ jobs:
         id: pull_request
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN || github.token }}
+          GH_TOKEN: >-
+            ${{ inputs.historical_test && github.token ||
+            secrets.CRADLE_LANG_TOKEN }}
           BRANCH: ${{ inputs.historical_test && format('test-release/{0}', inputs.tag) || format('release/{0}', inputs.tag) }}
           PACKET_TITLE: ${{ steps.review_packet.outputs.title }}
           PACKET_DRAFT: ${{ steps.review_packet.outputs.draft }}
