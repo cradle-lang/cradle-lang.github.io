@@ -79,6 +79,7 @@ function validationSummary(results) {
       passed: true,
       status: 'Passed on the first attempt',
       notice: 'All automated checks passed on the first attempt.',
+      guidance: 'All required controls passed on attempt 1. Entries marked `skipped` were not needed.',
     };
   }
   if (secondPassed) {
@@ -86,12 +87,14 @@ function validationSummary(results) {
       passed: true,
       status: 'Passed after one targeted repair',
       notice: 'All automated checks passed after one targeted repair and complete revalidation.',
+      guidance: 'The initial failure was corrected by one bounded repair, followed by a successful complete validation pass.',
     };
   }
   return {
     passed: false,
     status: 'Failing — do not merge',
     notice: '> [!WARNING]\n> Automated validation is still failing. This draft must not be merged until the failed controls are corrected and rerun.',
+    guidance: 'One or more required controls remain unsuccessful. Review the failed rows and retained exception before making changes.',
   };
 }
 
@@ -200,6 +203,7 @@ export function createReleaseReviewPacket({
       `| AI calls | ${aiCalls} bounded call(s) |`,
     ].join('\n'),
     REGRESSION_ROWS: regressionRows(results),
+    REGRESSION_GUIDANCE: validation.guidance,
     AUTOMATIC_REPAIRS: bulletList(repairs, 'No automatic repair was recorded.'),
     AI_CALLS: `${aiCalls} total: 1 initial generation and ${repairRan ? '1' : '0'} targeted repair call(s).`,
     DOCTOR_SUMMARY: `Exit code ${code(doctor.exitCode)}; ${doctor.dependencyCount} dependency row(s); capture SHA-256 ${code(doctor.sha256)}.`,

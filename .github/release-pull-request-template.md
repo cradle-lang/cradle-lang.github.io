@@ -63,8 +63,7 @@ Complete these checks before approving the pull request:
 {{REGRESSION_ROWS}}
 <!-- markdownlint-enable MD055 MD056 -->
 
-An initial failure followed by a successful second attempt means the bounded
-repair ran and the complete validation suite passed afterward.
+{{REGRESSION_GUIDANCE}}
 
 ### Risk and impact
 

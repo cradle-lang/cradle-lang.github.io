@@ -148,6 +148,8 @@ test('renders a decision-ready review packet from verified inputs', () => {
     packet.body,
     /\| Control \| Attempt 1 \| Attempt 2 \|\n\| --- \| --- \| --- \|\n\| Regression contracts/u,
   );
+  assert.match(packet.body, /All required controls passed on attempt 1/);
+  assert.doesNotMatch(packet.body, /initial failure was corrected/);
   assert.doesNotMatch(packet.body, /\{\{[A-Z0-9_]+\}\}/);
 });
 
@@ -197,7 +199,27 @@ test('records a targeted repair and keeps unresolved validation in draft', () =>
   assert.match(packet.title, /^\[Validation failing\]/);
   assert.match(packet.body, /2 total: 1 initial generation and 1 targeted repair/);
   assert.match(packet.body, /must not be merged/);
+  assert.match(packet.body, /required controls remain unsuccessful/);
   assert.match(packet.body, /reviewers: deferred until the validation-failing draft is ready/);
+});
+
+test('explains a successful bounded repair only after the second pass succeeds', () => {
+  const packet = create({
+    results: {
+      contractsFirst: 'failure',
+      contractsSecond: 'success',
+      validationFirst: 'skipped',
+      validationSecond: 'success',
+      linksFirst: 'skipped',
+      linksSecond: 'success',
+      repair: 'success',
+    },
+  });
+
+  assert.equal(packet.isDraft, false);
+  assert.match(packet.body, /Passed after one targeted repair/);
+  assert.match(packet.body, /initial failure was corrected by one bounded repair/);
+  assert.doesNotMatch(packet.body, /All required controls passed on attempt 1/);
 });
 
 test('rejects evidence for a different release SHA', () => {
