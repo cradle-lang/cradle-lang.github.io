@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "from": {
+    "tag": "v0.19.1",
+    "sha": "e5017266fc5fd36d5ea9ff9661d84f2caed3aca5"
+  },
+  "to": {
+    "tag": "v0.19.2",
+    "sha": "2a0ff2c8f9867be4a5755effdf4ba0a50c156220"
+  },
+  "comparison": {
+    "range": "v0.19.1..v0.19.2",
+    "mergeBaseSha": "e5017266fc5fd36d5ea9ff9661d84f2caed3aca5",
+    "fromIsAncestor": true
+  },
+  "counts": {
+    "commits": 5,
+    "files": 78,
+    "byStatus": {
+      "deleted": 72,
+      "modified": 6
+    }
+  },
+  "sourceAreas": [
+    ".github",
+    "Cargo.lock",
+    "Cargo.toml",
+    "README.md",
+    "data",
+    "docs",
+    "graphify-out"
+  ],
+  "commits": [
+    {
+      "sha": "9476d0d95c23c6dbb55a1c2b8462e4a02d7d70c3",
+      "subject": "Notify docs reconciler after releases"
+    },
+    {
+      "sha": "4a9182ca0207f412f1bd32f08bf17a34a03b5340",
+      "subject": "Merge pull request #27 from cradle-lang/notify-docs-release-reconciler"
+    },
+    {
+      "sha": "90a953105a80e43c2443340bda2917a594218bb0",
+      "subject": "Repo hygiene: drop dead artifacts and docs stale since the deploy/import/attestation removal"
+    },
+    {
+      "sha": "2e19be60478d2b2023567e1117d8467a720bfa92",
+      "subject": "Remove archived v0.1 archaeology docs and ADRs"
+    },
+    {
+      "sha": "2a0ff2c8f9867be4a5755effdf4ba0a50c156220",
+      "subject": "Bump version to 0.19.2 (#28)"
+    }
+  ],
+  "files": [
+    {
+      "status": "modified",
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.lock"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "README.md"
+    },
+    {
+      "status": "deleted",
+      "path": "data/cradle-web.db"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/PENDING.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/STATUS.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/adr-001-cradlepy-disposition.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/adr-002-parser-framework.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/adr-003-template-engine.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/architecture.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/artifact_generator_audit.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/backend-plugin-architecture-plan.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/backend-plugin-protocol.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/compiler-architecture-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/developer-guide.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/external-configs.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/heuristic-os-inference-plan.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/scenario_inventory.csv"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/scenario_inventory_report.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/server-setup.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/template_inventory.csv"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/template_inventory_report.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/tlosphere-architecture-overview.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/tlosphere-sphere-run-guide.md"
+    },
+    {
+      "status": "deleted",
+      "path": "docs/v1-v2-syntax-comparison.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/vagrant-custom-box-plan.md"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/.graphify_labels.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/.graphify_root"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/GRAPH_REPORT.md"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/0f8de7292c76d78379fc614095ce62e89acda223c52e3c51459e0345d1bd427f.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/1036d5309e420716ff0612ebce0c9789ab628e9b9c0ba1a83905987bce06abe1.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/17c327c361b3d993665e795c3676e85a1e6fd3c738ae7a790c97bb28211ae397.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/1bbb9d5125a51634fd1cb8f8201e2d1fa478f836842604109c8d4a41c97ed6f4.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/1e97044f9500c68bd7d946203fbc4e07487447d0c4a2a47bdf140d8bb66dfddb.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/223208f5bf4b4e48b89b102637ba337ec3445e609532595b68535bd174f8d13b.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/2ed922acbc8289d26efc76543d051d56558a82b1735182e6287eac0c626644e0.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/37b059ca9963118c061afd22cc00a1490177bf94aaeac7da859abbd3ed43c1a9.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/3f6f87ad1e7a9a15a0703beaf102fbfce67f7d6ae6113da6bacd0b741379fb56.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/3f8f65d0c344d7ed60688c1497c5f6b6e0007811d699e46c603168bf418fdb39.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/49f0f055accf86c0301b45c2c4ec485c10d8cf143fdf8a1951fa11562b8d0a85.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/5043d987bf6c426dde65bdc21dc9131d92d7d2973fa81f041d02bb9d86e67e14.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/5219f63f9a831915f075a25df711c8a717c95b140fe9b2ece0b370f50893c113.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/53c75fad17cb49f6671e5e5092d7f31283316ed6a9136ae98f24ad2775be6dd9.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/590ab9ce7e7f5c6d2488cf0be411d44adb7e0dbf35a41943b9e71e34b4ce8cb3.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/5bbe930bf61a947b36adbd42d97f6fb50d8e2ab6b26900bd1d32af4678e1ddeb.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/5c9cdcd4ca6c8addeacd0bc3bb5a63153db90e366bca0afc157bdfcbd24ba85b.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/5ed872fe1b611a6dc1a50e268b537e3d2fd71df6cda3318ddd8e0e2be4a4e20c.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/617ec154331dec4a3fecb7c1348d7ab400d4af8fd0dac406c323b82f4b310cbb.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/6c598bb1f223b9b899c23290b4053140bf54f0f96e6a46268c612dd49141d42c.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/6f45e5de3dce219e6e079667555be785b52b67d1fd6f739faea8733efd19dcf2.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/70955af41350c0ef989e4d78d26781dbdef5cf09453417f2fd9d19fdccf64cec.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/8527e14b77982b214ebdb9a066c3d38104ac3433e53fb3221f69b361e39274d2.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/8785547f55028825bfa23ff9f04e0917b5044d8df3c06362b541017ce8ef2740.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/937b2c68c7ef780e83dd2e4492ac107a30ebe29dfeac11aed924bb8b105a4d38.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/969be37de66aabb6d774a7e1e8640d0b8edd658c397b6df4097604ed54920324.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/99c24d8668f3b45c21fddba872fb04d3fc8571f7945ac73500d6476a728e0e54.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/9a456730bbe7e99ae53e9e95b966c3eece2dab4ad66a173af6b59761e1160ecc.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/9fee613db4e7f01144a16f96d4ed6c3a2fed1daa5f0b4b953d64a91297a286c1.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/a6c6178dfddd9d1febd9f8164bbf44d1fe9415cce2393bdd70e80e10712cb423.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/b31406ba61083b70e2172f8f46dda5bc82bcf9393e09893b929c1d4c649f5d08.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/bb6de57bf4a29271a5df8ed04a83962fcc8a1c39968dbd9df6dbfb8d8fcd8d66.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/c02dc627bcbc62000f604d9f9d0e607ebbcc4b2b62084172cea252e51cac0ae8.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/c3a76608b45852dbd3d20fd35720b48a121b02d6289d7b0a062d75f5f94e3958.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/dd0a604db2df5fd4188aa5c1b63f3d3d858e6eeb4021981554b8b9a51be0705a.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/e116a53a1d777995f2c7d98fc7b32c1ef03b571bae8d07f30752781a4fbd5859.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/e13c8a7c67dfff69e2b1a1f042116f6be1aa1cd339ce48a08954c98a9afeabcd.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/e6a06151f32b0c3a34cd8836534d8c7db9e3a79c145c3e297e02128dcc30d10b.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/e97a48adf36cf3010e12477e3604f23473269715581104593032ed3019553bb5.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/eb235a1d14e86cb60df4a030afff5ca2c9b55185a8cc7465b1de1af6162bb912.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/f78b6b5b45f66c610435cc6ce255428ac4bae0dabcbeaf70e1f582b5f0ac4351.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/f9989961a3b9a834e28d0a9827b469fbaff5335261de822f7c188a97ab6013b5.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/fbc3cab5d18d028f575cc336e771cf40a9b0e6603a92898c15e45b8afcf85eee.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/ast/fd863c6d92f9f2082ce78f34d169b2ea7bc94b488ad4fedb73e7a7d6cb749508.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/cache/stat-index.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/graph.html"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/graph.json"
+    },
+    {
+      "status": "deleted",
+      "path": "graphify-out/manifest.json"
+    }
+  ],
+  "sha256": "b0fba79cbd906f5720fbfe679c861ad53e7653dec91704b13a47ca8eceda3fe1"
+}

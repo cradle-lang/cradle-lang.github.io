@@ -80,7 +80,7 @@ The exact plugin name depends on the backend you want to use. The release reposi
 After installing a backend plugin, check whether CradleXC can discover it:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 The command lists compatible backend plugins currently available to CradleXC.
@@ -196,7 +196,7 @@ A typical backend workflow is:
     <div className="cradle-lifecycle-content">
       <strong>Verify backend discovery</strong>
       <span>Confirm that CradleXC can find the installed backend.</span>
-      <code>cxc backend list</code>
+      <code>cxc plugin list</code>
     </div>
   </div>
 
@@ -375,7 +375,7 @@ cxc validate -i scenarios/HelloWorld.cradle
 Check the available backend plugins:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 Then generate target-specific files:
@@ -401,7 +401,7 @@ The contents under `output/` depend on the selected backend plugin.
 
 ## Backend plugin not detected
 
-If `cxc backend list` does not show the expected plugin, confirm that:
+If `cxc plugin list` does not show the expected plugin, confirm that:
 
 - the plugin has been installed
 - the executable uses the `cxc-backend-<name>` naming convention
@@ -416,7 +416,7 @@ sudo cxc plugin install <plugin_name>
 Then run:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 again.

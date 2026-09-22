@@ -212,7 +212,7 @@ CradleXC provides commands for working with backend plugins.
 Use:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 to list compatible backend plugins currently discovered by CradleXC.
@@ -318,7 +318,7 @@ The current CLI can be thought of in several groups.
     <div className="cxc-command-description">
       Discover backend plugins available to CradleXC.
     </div>
-    <code>cxc backend list</code>
+    <code>cxc plugin list</code>
   </div>
 
   <div className="cxc-command-card">
@@ -380,7 +380,6 @@ The CLI sits between CRADLE source and the other CradleXC processing stages.
 | Source validation | Check CRADLE syntax. |
 | Compilation | Produce the compiled representation. |
 | Inspection | Expose intermediate representation and diagnostics. |
-| Import | Convert supported external definitions into CRADLE source. |
 | Backend discovery | Locate compatible external backend plugins. |
 | Backend generation | Pass a scenario to a selected backend for target-specific output. |
 | Environment checks | Inspect dependencies and configuration. |
