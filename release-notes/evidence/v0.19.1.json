@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "from": {
+    "tag": "v0.19.0",
+    "sha": "8fdbcef17cf923522dc9ddd13bf0fd19337483b5"
+  },
+  "to": {
+    "tag": "v0.19.1",
+    "sha": "e5017266fc5fd36d5ea9ff9661d84f2caed3aca5"
+  },
+  "comparison": {
+    "range": "v0.19.0..v0.19.1",
+    "mergeBaseSha": "8fdbcef17cf923522dc9ddd13bf0fd19337483b5",
+    "fromIsAncestor": true
+  },
+  "counts": {
+    "commits": 2,
+    "files": 3,
+    "byStatus": {
+      "modified": 3
+    }
+  },
+  "sourceAreas": [
+    "Cargo.lock",
+    "Cargo.toml",
+    "crates"
+  ],
+  "commits": [
+    {
+      "sha": "f7c28fe710ae4d9c90b0335815d08a72a6ebc896",
+      "subject": "Fetch linux-routing/win-routing configs like any other (#25)"
+    },
+    {
+      "sha": "e5017266fc5fd36d5ea9ff9661d84f2caed3aca5",
+      "subject": "Bump version to 0.19.1 (#26)"
+    }
+  ],
+  "files": [
+    {
+      "status": "modified",
+      "path": "Cargo.lock"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/main.rs"
+    }
+  ],
+  "sha256": "86fae33757a7a84982bd954957f34554b3056344d11eafc7832d5a3d37d6f7dc"
+}

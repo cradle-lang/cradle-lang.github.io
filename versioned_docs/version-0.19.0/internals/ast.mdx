@@ -1,0 +1,13 @@
+---
+sidebar_position: 2
+title: AST
+---
+
+# Abstract Syntax Tree
+
+The AST records the parsed CRADLE document: metadata, instances, networks, objects, and event declarations. It preserves the source-level structure before semantic resolution.
+
+Use `cxc validate` for parse-and-validation diagnostics. The parsed AST itself is
+an internal compiler representation and is not exposed by the documented CLI.
+
+The AST is an implementation representation, not a stable integration contract.
