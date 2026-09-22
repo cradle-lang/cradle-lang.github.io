@@ -86,8 +86,9 @@ Create and inspect a production build with:
    npm run serve
 
 The static output is written to ``build/``. ``npm run build`` also regenerates
-``src/data/release-notes.json`` from the Markdown files in ``release-notes/``.
-Do not hand-edit that generated JSON file.
+the current index in ``src/data/release-notes.json`` from the Markdown files in
+``release-notes/``. Archived documentation versions keep an immutable release-
+note snapshot in the same generated file. Do not hand-edit it.
 
 Useful Commands
 ---------------

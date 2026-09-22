@@ -61,3 +61,17 @@ test('historical escalation is explicit, labeled and independently resolved', as
   assert.match(workflow, /cradlexc-release-test-escalation/u);
   assert.match(workflow, /Resolved by successful \$run_kind workflow run/u);
 });
+
+test('archives release notes with each outgoing documentation version', async () => {
+  const workflow = await fs.readFile(WORKFLOW_PATH, 'utf8');
+
+  assert.match(
+    workflow,
+    /npm run generate-release-notes -- --snapshot "\$version"/u,
+  );
+  assert.match(
+    workflow,
+    /\.versions\[\$version\] != null[^\n]+release_notes_data/u,
+  );
+  assert.match(workflow, /git add -- "\$release_notes_data"/u);
+});

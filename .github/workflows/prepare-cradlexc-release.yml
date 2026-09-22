@@ -297,6 +297,11 @@ jobs:
           jq -e --arg version "$version" '.versions[$version] != null' "$terminal_data" >/dev/null
           git add -- "$terminal_data"
 
+          release_notes_data='src/data/release-notes.json'
+          npm run generate-release-notes -- --snapshot "$version"
+          jq -e --arg version "$version" '.versions[$version] != null' "$release_notes_data" >/dev/null
+          git add -- "$release_notes_data"
+
           if jq -e --arg version "$version" 'index($version) != null' versions.json >/dev/null; then
             echo "Documentation version $version is already archived."
             echo "version=$version" >> "$GITHUB_OUTPUT"

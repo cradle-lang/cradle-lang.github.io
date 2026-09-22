@@ -2,7 +2,7 @@ import {useEffect, useState, type ReactNode} from 'react';
 import Layout from '@theme/Layout';
 import ReactMarkdown from 'react-markdown';
 
-import releaseNotes from '../../data/release-notes.json';
+import releaseNotesData from '../../data/release-notes.json';
 
 import styles from './releases.module.css';
 
@@ -12,8 +12,20 @@ type ReleaseNote = {
   content: string;
 };
 
+type ReleaseNotesData = {
+  current: ReleaseNote[];
+  versions: Record<string, ReleaseNote[]>;
+};
+
+const VERSION_STORAGE_KEY = 'cradle-docs-version';
+const VERSION_CHANGE_EVENT = 'cradle-docs-version-change';
+
 export default function ReleasesPage(): ReactNode {
-  const notes = releaseNotes as ReleaseNote[];
+  const releaseNotes = releaseNotesData as ReleaseNotesData;
+  const [docsVersion, setDocsVersion] = useState('current');
+  const notes = docsVersion === 'current'
+    ? releaseNotes.current
+    : releaseNotes.versions[docsVersion] ?? releaseNotes.current;
   const latestNote = notes.at(-1);
   const displayedNotes = [...notes].reverse();
   const [selectedVersion, setSelectedVersion] = useState(
@@ -24,12 +36,37 @@ export default function ReleasesPage(): ReactNode {
   ) ?? latestNote;
 
   useEffect(() => {
+    const selectVersion = (version: string | null) => {
+      setDocsVersion(
+        version && version !== 'current' && releaseNotes.versions[version]
+          ? version
+          : 'current',
+      );
+    };
+
+    const handleVersionChange = (event: Event) => {
+      selectVersion(
+        (event as CustomEvent<{version: string}>).detail.version,
+      );
+    };
+
+    selectVersion(localStorage.getItem(VERSION_STORAGE_KEY));
+    window.addEventListener(VERSION_CHANGE_EVENT, handleVersionChange);
+
+    return () => {
+      window.removeEventListener(VERSION_CHANGE_EVENT, handleVersionChange);
+    };
+  }, [releaseNotes.versions]);
+
+  useEffect(() => {
     const versionFromHash = decodeURIComponent(window.location.hash.slice(1));
 
     if (notes.some((note) => note.version === versionFromHash)) {
       setSelectedVersion(versionFromHash);
+    } else {
+      setSelectedVersion(latestNote?.version ?? '');
     }
-  }, [notes]);
+  }, [docsVersion, latestNote?.version, notes]);
 
   function selectRelease(version: string) {
     setSelectedVersion(version);

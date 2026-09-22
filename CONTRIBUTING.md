@@ -356,7 +356,9 @@ Automated changes are reviewed in the same way as other documentation changes. O
 Author stable production release notes in `release-notes/` using names such as
 `v1.2.0.md`. Prerelease filenames such as `v1.2.0-rc.1.md` are valid semantic
 versions, but the current release policy excludes them from production indexing
-and publication. Do not edit `src/data/release-notes.json` directly.
+and publication. Do not edit `src/data/release-notes.json` directly. The release
+workflow snapshots the notes visible to the outgoing documentation version
+before it prepares the next release.
 
 ```bash
 npm run generate-release-notes

@@ -10,6 +10,7 @@ import {
 const RELEASE_NOTES_DIRECTORY = path.resolve('release-notes');
 const OUTPUT_FILE = path.resolve('src/data/release-notes.json');
 const RELEASE_NOTE_FILE = /^v(.+)\.md$/i;
+const SNAPSHOT_ARGUMENT = '--snapshot';
 
 function stripMarkdownlintDirectives(content) {
   return content.replace(
@@ -30,6 +31,15 @@ function compareReleaseNotes(left, right) {
 }
 
 async function main() {
+  const snapshotIndex = process.argv.indexOf(SNAPSHOT_ARGUMENT);
+  const snapshotVersion = snapshotIndex === -1
+    ? null
+    : process.argv[snapshotIndex + 1];
+
+  if (snapshotIndex !== -1 && !snapshotVersion) {
+    throw new Error('Usage: generate-release-notes.mjs [--snapshot <version>]');
+  }
+
   const entries = await fs.readdir(RELEASE_NOTES_DIRECTORY, {
     withFileTypes: true,
   });
@@ -58,13 +68,51 @@ async function main() {
   );
 
   await fs.mkdir(path.dirname(OUTPUT_FILE), {recursive: true});
+
+  let existingData = {versions: {}};
+
+  try {
+    const parsed = JSON.parse(await fs.readFile(OUTPUT_FILE, 'utf8'));
+
+    if (!Array.isArray(parsed) && parsed?.versions) {
+      existingData = {
+        versions: parsed.versions,
+      };
+    }
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
+  }
+
+  const output = snapshotVersion
+    ? {
+        // The current index is a build artifact. Keep the committed data small
+        // and persist only immutable archived snapshots.
+        current: [],
+        versions: {
+          ...existingData.versions,
+          [snapshotVersion]: releaseNotes.filter((note) =>
+            compareReleaseTags(note.version, `v${snapshotVersion}`) <= 0,
+          ),
+        },
+      }
+    : {
+        current: releaseNotes,
+        versions: existingData.versions,
+      };
+
   await fs.writeFile(
     OUTPUT_FILE,
-    `${JSON.stringify(releaseNotes, null, 2)}\n`,
+    `${JSON.stringify(output, null, 2)}\n`,
     'utf8',
   );
 
-  console.log(`Indexed ${releaseNotes.length} local release note(s).`);
+  console.log(
+    snapshotVersion
+      ? `Snapshotted ${output.versions[snapshotVersion].length} release note(s) for ${snapshotVersion}.`
+      : `Indexed ${releaseNotes.length} local release note(s).`,
+  );
 }
 
 main().catch((error) => {
