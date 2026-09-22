@@ -1,0 +1,533 @@
+---
+sidebar_position: 3
+title: Metadata
+---
+
+# Metadata
+
+The `metadata()` block defines scenario-level information and declares the external objects used by the scenario.
+
+A typical metadata block looks like:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("InitializationScript").
+```
+
+## Metadata properties
+
+| Property | Arguments | Status | Description |
+| --- | --- | --- | --- |
+| `name` | Scenario name | Schema required | Human-readable identifier for the scenario. |
+| `eventType` | `sequence` | Schema required | Selects the supported sequential event model. CradleXC defaults to `sequence` when omitted. |
+| `repositoryRemote` | URI | Optional | Defines the base location for remotely stored artifacts. |
+| `repositoryLocal` | Location | Optional | Defines the base location for locally available artifacts. |
+| `ssh_credential` | Username, password | Optional | Supplies SSH credentials when the selected workflow requires them. |
+| `object` | Object name | Optional | Declares an artifact used by the scenario. Repeat for multiple objects. |
+| `heuristic` | Framework, identifier | Optional | Associates a classification or framework identifier with the scenario. |
+
+## Scenario name
+
+Use `name()` to identify the scenario.
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment").
+```
+
+For example:
+
+```CRADLE
+name("HelloWorld")
+```
+
+The name is used as the human-readable identifier for the scenario.
+
+:::important
+Use a stable scenario name and keep its spelling and capitalization consistent wherever it is referenced.
+:::
+
+## Event type
+
+Use `eventType()` to define the event model used by the scenario.
+
+The supported value is:
+
+```text
+sequence
+```
+
+For example:
+
+```CRADLE
+metadata() >
+    eventType("sequence").
+```
+
+### Sequential events
+
+A sequential event model uses:
+
+```CRADLE
+eventType("sequence")
+```
+
+This indicates that the scenario uses sequential event handling.
+
+The Hello World scenario uses this form:
+
+```CRADLE
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("HelloWorld").
+```
+
+### Event dependencies
+
+Keep `eventType("sequence")` and express explicit ordering relationships with `dependsOn()` inside event definitions.
+
+Detailed dependency behavior is covered in [Events and Dependencies](./events-and-dependencies).
+
+:::note
+CradleXC currently defaults to `sequence` when `eventType()` is omitted.
+:::
+
+## Remote artifact repository
+
+Use `repositoryRemote()` to define the base location for remotely stored artifacts.
+
+For example:
+
+```CRADLE
+metadata() >
+    repositoryRemote("https://172.18.178.10:4443").
+```
+
+Objects can reference this repository through interpolation.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+Here:
+
+```text
+${uriRemote}
+```
+
+refers to the configured remote repository location.
+
+This allows the repository base path to be defined once and reused by object definitions.
+
+:::important
+Repository values identify artifact locations. Do not place credentials, access tokens or other secrets directly in the repository URI.
+:::
+
+## Local artifact repository
+
+CradleXC also recognizes:
+
+```CRADLE
+repositoryLocal("...")
+```
+
+for locally available artifacts.
+
+For example:
+
+```CRADLE
+metadata() >
+    repositoryLocal("/path/to/artifacts").
+```
+
+Objects can reference this value with `${uriLocal}`.
+
+## SSH credentials
+
+When a workflow requires SSH credentials, provide the username and password as two strings:
+
+```CRADLE
+metadata() >
+    ssh_credential("cradle", "replace-with-a-secret").
+```
+
+Avoid committing real credentials to source control.
+
+## Scenario heuristics
+
+Metadata can carry scenario-level heuristic annotations:
+
+```CRADLE
+metadata() >
+    heuristic("ttp", "T1566.001").
+```
+
+See [Heuristic Annotations](./heuristics) for the supported frameworks and validation behavior.
+
+## Declare objects
+
+Objects used by the scenario are declared in `metadata()`.
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+Multiple objects can be declared by repeating the property:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("InitializationScript"),
+    object("CollectEvidence"),
+    object("CleanupScript").
+```
+
+Each declared object should have a corresponding named object definition.
+
+For example:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+and:
+
+```CRADLE
+object("CollectEvidence") >
+    location("${uriRemote}/scripts/collect-evidence.sh").
+```
+
+## Declaration and definition
+
+Declaring an object in `metadata()` does not define its location.
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+```
+
+declares the object.
+
+The corresponding object block defines it:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+Conceptually:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript") declaration</div>
+
+  <span>↓</span>
+
+  <div>object("InitializationScript") definition</div>
+
+  <span>↓</span>
+
+  <div>Artifact location</div>
+
+</div>
+
+:::important
+Object names must match exactly between metadata declarations, object definitions, instance associations and event references.
+:::
+
+## Complete example
+
+The following metadata block defines a scenario with one remote repository and one external object:
+
+```CRADLE
+metadata() >
+    name("ExampleEnvironment"),
+    eventType("sequence"),
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("InitializationScript").
+```
+
+The associated object definition is:
+
+```CRADLE
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The relationship is:
+
+| Element | Value |
+| --- | --- |
+| Scenario name | `ExampleEnvironment` |
+| Event type | `sequence` |
+| Remote repository | `https://172.18.178.10:4443` |
+| Declared object | `InitializationScript` |
+| Object location | `${uriRemote}/scripts/initialize.sh` |
+
+## Hello World metadata
+
+The Hello World example uses:
+
+```CRADLE
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("HelloWorld").
+```
+
+This:
+
+1. names the scenario `HelloWorld`
+2. selects sequential event handling
+3. defines the remote artifact repository
+4. declares the `HelloWorld` object
+
+The corresponding object is:
+
+```CRADLE
+object("HelloWorld") >
+    location("${uriRemote}/TTP/HelloWorld/artifact/HelloWorld.sh").
+```
+
+:::note
+This value matches the canonical `HelloWorld.cradle` file. Use only an
+authorized and reachable artifact repository in your own scenario.
+:::
+
+## Repository interpolation
+
+A repository value can be reused through interpolation.
+
+For example:
+
+```CRADLE
+metadata() >
+    repositoryRemote("https://172.18.178.10:4443"),
+    object("InitializationScript").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The object location is constructed from:
+
+```text
+${uriRemote}
+```
+
+plus:
+
+```text
+/scripts/initialize.sh
+```
+
+Conceptually:
+
+<div
+  className="interpolation-equation"
+  aria-label="The repository base and artifact path combine to form the resolved artifact location"
+>
+
+  <div className="interpolation-equation-inputs">
+
+    <div className="interpolation-equation-value">
+      <span>Repository base</span>
+      <code>{'https://172.18.178.10:4443'}</code>
+    </div>
+
+    <span className="interpolation-equation-plus" aria-hidden="true">+</span>
+
+    <div className="interpolation-equation-value">
+      <span>Artifact path</span>
+      <code>/scripts/initialize.sh</code>
+    </div>
+
+  </div>
+
+  <div className="interpolation-equation-connector" aria-hidden="true">
+    <span>combine</span>
+    <strong>↓</strong>
+  </div>
+
+  <div className="interpolation-equation-result">
+    <span>Resolved artifact location</span>
+    <code>{'https://172.18.178.10:4443/scripts/initialize.sh'}</code>
+  </div>
+
+</div>
+
+Detailed object and interpolation behavior is covered in [Objects and Interpolation](./objects-and-interpolation).
+
+## Metadata and other scenario elements
+
+Metadata provides scenario-level values that are used by other sections.
+
+A common relationship is:
+
+<div className="architecture-flow">
+
+  <div>metadata()</div>
+
+  <span>↓</span>
+
+  <div>Declared object</div>
+
+  <span>↓</span>
+
+  <div>Object definition</div>
+
+  <span>↓</span>
+
+  <div>Instance association</div>
+
+  <span>↓</span>
+
+  <div>Event reference</div>
+
+</div>
+
+For example:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+instance("Client") >
+    object("InitializationScript").
+
+event("initialize_client") >
+    runObject("InitializationScript", "").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The same object name connects all four parts.
+
+## Schema and compiler behavior
+
+The current parser, validator and compiled representation handle metadata as follows:
+
+| Property | Current behavior |
+| --- | --- |
+| `name` | Required and must be non-empty. |
+| `eventType` | Defaults to `sequence` when omitted; `sequence` is the supported value. |
+| `repositoryRemote` | Optional. Supplies `${uriRemote}` during object-location resolution. |
+| `repositoryLocal` | Optional. Supplies `${uriLocal}` during object-location resolution. |
+| `ssh_credential` | Optional. Preserved in compiled scenario output. |
+| `object` | Optional and repeatable. Each declared name must have a matching object definition. |
+| `heuristic` | Optional and repeatable. Preserved as scenario metadata. |
+
+## Validate metadata
+
+Validate the scenario with:
+
+```bash
+cxc validate -i <scenario.cradle>
+```
+
+For example:
+
+```bash
+cxc validate -i scenarios/HelloWorld.cradle
+```
+
+If validation reports an issue, check:
+
+- the `metadata()` block syntax
+- required properties
+- quoted values
+- object declarations
+- object name consistency
+- repository values
+
+For general syntax rules, see [Syntax and Types](./syntax-and-types).
+
+## Common mistakes
+
+### Object declaration does not match the definition
+
+Incorrect:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+object("InitialisationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+The names differ.
+
+Use the same spelling:
+
+```CRADLE
+metadata() >
+    object("InitializationScript").
+
+object("InitializationScript") >
+    location("${uriRemote}/scripts/initialize.sh").
+```
+
+### Object reference does not match metadata
+
+If metadata contains:
+
+```CRADLE
+object("InitializationScript")
+```
+
+avoid referencing a different name:
+
+```CRADLE
+runObject("InitScript", "")
+```
+
+Use:
+
+```CRADLE
+runObject("InitializationScript", "")
+```
+
+### Credentials embedded in repository URLs
+
+Avoid:
+
+```CRADLE
+repositoryRemote("https://username:password@example.com/repository")
+```
+
+Repository metadata should identify the artifact location without embedding credentials.
+
+## Related documentation
+
+- [Syntax and Types](./syntax-and-types)
+- [Objects and Interpolation](./objects-and-interpolation)
+- [Events and Dependencies](./events-and-dependencies)
+- [First Scenario](../getting-started/first-scenario)
+- [Deployment IR](../internals/deployment-ir)
+
+## Next steps
+
+Continue with [Instances and Roles](./instances-and-roles) to learn how systems are declared and configured within a CRADLE scenario.
