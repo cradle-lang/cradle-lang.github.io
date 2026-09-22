@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "tag": "v0.19.1",
+    "sha": "e5017266fc5fd36d5ea9ff9661d84f2caed3aca5"
+  },
+  "previous": {
+    "tag": "v0.19.0",
+    "sha": "8fdbcef17cf923522dc9ddd13bf0fd19337483b5"
+  },
+  "evidenceSha256": "86fae33757a7a84982bd954957f34554b3056344d11eafc7832d5a3d37d6f7dc",
+  "inventory": {
+    "sourceFiles": [
+      "crates/cradle-cli/src/main.rs"
+    ],
+    "testFiles": [],
+    "ciFiles": [],
+    "upstreamDocumentationFiles": [],
+    "cliFiles": [],
+    "configurationFiles": [],
+    "schemaFiles": [],
+    "dependencyFiles": [
+      "Cargo.lock",
+      "Cargo.toml"
+    ],
+    "buildAndReleaseFiles": []
+  },
+  "signals": {
+    "changedCommands": [],
+    "removedCommands": [],
+    "addedFlags": [],
+    "removedFlags": [],
+    "defaultLineChanges": {
+      "added": 0,
+      "removed": 0
+    }
+  },
+  "likelyDocumentation": [],
+  "riskIndicators": [],
+  "classification": {
+    "level": "RELEASE_NOTE_ONLY",
+    "requiresUserDocumentation": false,
+    "reasons": [
+      "No deterministic CLI, configuration, schema, or documentation signal was found."
+    ],
+    "domains": [],
+    "possibleBreakingChange": false
+  },
+  "sha256": "0a45652777adc37723108062cc0c9319f2b77a930b7336354c7a730c9747da39"
+}
