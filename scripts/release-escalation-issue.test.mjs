@@ -33,6 +33,10 @@ test('renders a professional, actionable, idempotent production issue', () => {
   assert.match(issue.body, /<!-- cradlexc-release-escalation:v0\.19\.0 -->/);
   assert.match(issue.body, /## Impact/);
   assert.match(issue.body, /Build CradleXC and capture cxc doctor/);
+  assert.match(
+    issue.body,
+    /\| Job \| Failed step \|\n\| --- \| --- \|\n\| prepare \| Build CradleXC and capture cxc doctor \|/u,
+  );
   assert.match(issue.body, /scripts\/run-release-doctor\.mjs/);
   assert.match(issue.body, /Required maintainer decision/);
   assert.match(issue.body, /attempt 2/);

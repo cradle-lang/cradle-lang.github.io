@@ -39,9 +39,9 @@ processing stopped without bypassing the failed control.
 
 ### Failed controls
 
+<!-- markdownlint-disable MD055 MD056 -->
 | Job | Failed step |
 | --- | --- |
-<!-- markdownlint-disable MD055 MD056 -->
 {{FAILURE_ROWS}}
 <!-- markdownlint-enable MD055 MD056 -->
 

@@ -33,7 +33,19 @@ test('targeted repair has a valid credit budget and verified doctor context', as
   );
   assert.match(
     workflow,
-    /doctor-transcript control failed[\s\S]*match this captured structure exactly/u,
+    /doctor-transcript control failed[\s\S]*match the captured output exactly/u,
+  );
+  assert.match(
+    workflow,
+    /release-notes\/\.release-automation\/cradlexc-doctor-\$TAG\.json/u,
+  );
+  assert.match(
+    workflow,
+    /release-notes\/\.release-automation\/release-ai-context-\$TAG\.json/u,
+  );
+  assert.doesNotMatch(
+    workflow,
+    /\$RUNNER_TEMP\/(?:cradlexc-doctor|release-ai-context)-\$TAG\.json/u,
   );
 });
 

@@ -213,9 +213,12 @@ documentation file. Individual files are limited to 20,000 characters and
 marked explicitly when truncated, allowing Copilot to inspect the remainder
 directly when necessary.
 
-This context file may contain private upstream source. It is deliberately not
-staged, committed, uploaded as an artifact or copied into the pull-request
-body. Only its checksum and aggregate file counts are recorded for review.
+This context file may contain private upstream source. During automation it is
+written beneath the ignored `release-notes/.release-automation/` workspace
+directory so the bounded Copilot process can read it without gaining access to
+the runner's broader temporary directory. It is deliberately not staged,
+committed, uploaded as an artifact or copied into the pull-request body. Only
+its checksum and aggregate file counts are recorded for review.
 
 Before assembling that context, the workflow installs stable Rust to match the
 upstream toolchain, reads locked Cargo metadata, verifies that the `cradle-cli`
@@ -242,8 +245,9 @@ valid runtime evidence. A build failure, process-launch failure, missing
 version banner or SHA mismatch blocks the workflow before Copilot.
 
 The captured stdout and stderr are normalized to remove runner-specific paths,
-protected by a checksum, linked to the verified tag/SHA, and embedded in the
-temporary AI context. After Copilot edits the animated terminal data, a
+protected by a checksum, linked to the verified tag/SHA, and written alongside
+the temporary AI context in the ignored automation workspace. The context also
+embeds the capture. After Copilot edits the animated terminal data, a
 structural validator requires the captured banner, heading order,
 configuration-field order, dependency checks and outcome wording. It rejects
 missing or invented checks and fields. It intentionally does not require an
