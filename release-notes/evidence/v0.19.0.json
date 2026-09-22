@@ -1,0 +1,595 @@
+{
+  "schemaVersion": 1,
+  "from": {
+    "tag": "v0.18.1",
+    "sha": "61b97868f3e60afaf0c2ef3a162e40fd85a3635d"
+  },
+  "to": {
+    "tag": "v0.19.0",
+    "sha": "8fdbcef17cf923522dc9ddd13bf0fd19337483b5"
+  },
+  "comparison": {
+    "range": "v0.18.1..v0.19.0",
+    "mergeBaseSha": "61b97868f3e60afaf0c2ef3a162e40fd85a3635d",
+    "fromIsAncestor": true
+  },
+  "counts": {
+    "commits": 21,
+    "files": 115,
+    "byStatus": {
+      "added": 9,
+      "deleted": 40,
+      "modified": 65,
+      "renamed": 1
+    }
+  },
+  "sourceAreas": [
+    ".github",
+    "Cargo.lock",
+    "Cargo.toml",
+    "Dockerfile.cli",
+    "README.md",
+    "TASKS.md",
+    "config.example.toml",
+    "configs",
+    "crates",
+    "dist",
+    "docker-compose.yml",
+    "docs",
+    "graphify-out",
+    "scenarios",
+    "scripts",
+    "smoke"
+  ],
+  "commits": [
+    {
+      "sha": "5aa2c25ae86372a00749794ec96e81c7f5cc9197",
+      "subject": "Add design docs for heuristic os/config inference and a custom Vagrant box"
+    },
+    {
+      "sha": "64c77af8b997bc4304b35dabcb4ea411bbf64240",
+      "subject": "Resolve os()/config() from a heuristic at compile time, via a packaged DB"
+    },
+    {
+      "sha": "7112cbc694a65734462147e7a44a7b134f3db37a",
+      "subject": "Drop the internal \"v2\" version label from generated file headers"
+    },
+    {
+      "sha": "62e7a0ddadb277d9d623ff1b09700012d86881e5",
+      "subject": "Add a CVE-2021-42013 row to heuristics.db"
+    },
+    {
+      "sha": "99e3cb556d2d3a31293c2fc9a05d3cc03e952277",
+      "subject": "Hide config/heuristic sparse-fetch \"Pulled\" messages by default"
+    },
+    {
+      "sha": "17b60f7be34c65dbf70540e742c97d352dbb1773",
+      "subject": "Add a linux-auditd config requirement to both CVE rows"
+    },
+    {
+      "sha": "b4bcfc03e7f7b930d7ed2c8ad3707307bc8841af",
+      "subject": "Generate and install shell completions during package install"
+    },
+    {
+      "sha": "b73bcafc2bd69a70c340121bb16b99b40597d5f7",
+      "subject": "Apply CradleXC branding to heuristic-os-inference"
+    },
+    {
+      "sha": "2c6a6010b47c9ba35c47302b6760b2c0e968385a",
+      "subject": "Refactor project references from CradleXC to CRADLE across documentation and codebase"
+    },
+    {
+      "sha": "8e27cac646a156f563234fc84cb39ecd00fa11fc",
+      "subject": "Format dependency check output for better readability"
+    },
+    {
+      "sha": "18eabd05a49812c1b1fe98124fd7c1c32f0f9577",
+      "subject": "cxc CLI cleanup, remove dead Docker files, add design proposals (#15)"
+    },
+    {
+      "sha": "21ed4feb2baa01ae0e0d0b313d798b6c80b6fb54",
+      "subject": "Fix heuristics DB path at /opt/cxc and drop path override (#16)"
+    },
+    {
+      "sha": "2ee7f38adee0f5b473f2a3f53282924d91b93292",
+      "subject": "Layered config/heuristics dirs, .yml support, and manifest.json-based heuristics (#17)"
+    },
+    {
+      "sha": "5d6718252808d04a80b79c2f28af767ba14998f8",
+      "subject": "Fix incremental rebuild issues and improve parameter validation (#18)"
+    },
+    {
+      "sha": "38de1bc8118035440abab666888ddae8e11442bb",
+      "subject": "Document cxc-backend-vagrant's box.<key> normalization contract (#19)"
+    },
+    {
+      "sha": "4044477c2fa901b8733fef2b6816dd6d146c458e",
+      "subject": "Remove dead code: attestation, cradle-import, legacy subcommands (#20)"
+    },
+    {
+      "sha": "1b894bdb14e9d73d47b0028eaca3b7705a9c2efd",
+      "subject": "Move provisioning/event_playbook out of cradle-assembler into each plugin (#21)"
+    },
+    {
+      "sha": "3eec0fc91f1013eff196333079622ae8187ff17a",
+      "subject": "Add missing linux-auditd/tcpdump/sysdig config assets"
+    },
+    {
+      "sha": "d8d85fd1091e6919a18dda10218c6d83b0d35e7f",
+      "subject": "Fix parser determinism, rebuild invalidation, and plugin settings (#22)"
+    },
+    {
+      "sha": "ff954ab9623540e27cb1cbc6aee6d0bb3deabde5",
+      "subject": "Say CradleXC in metadata, drop the pre-rename dist bundle, and give extraction a configurable dataset_dir (#23)"
+    },
+    {
+      "sha": "8fdbcef17cf923522dc9ddd13bf0fd19337483b5",
+      "subject": "Bump version to 0.19.0 (#24)"
+    }
+  ],
+  "files": [
+    {
+      "status": "deleted",
+      "path": ".github/workflows/dev-release.yml"
+    },
+    {
+      "status": "modified",
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.lock"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "Dockerfile.cli"
+    },
+    {
+      "status": "modified",
+      "path": "README.md"
+    },
+    {
+      "status": "modified",
+      "path": "TASKS.md"
+    },
+    {
+      "status": "modified",
+      "path": "config.example.toml"
+    },
+    {
+      "status": "added",
+      "path": "configs/linux-auditd/audit.rules"
+    },
+    {
+      "status": "added",
+      "path": "configs/linux-sysdig/sysdig/sysdig.deb"
+    },
+    {
+      "status": "added",
+      "path": "configs/linux-sysdig/sysdig/sysdig.service"
+    },
+    {
+      "status": "added",
+      "path": "configs/linux-tcpdump/linux_tcpdump.sh"
+    },
+    {
+      "status": "added",
+      "path": "configs/linux-tcpdump/tcpdump.service"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/Cargo.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-assembler/src/attest.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/configs.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-assembler/src/event_playbook.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/heuristics.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-assembler/src/options.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-assembler/src/provisioning.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-backend-api/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/Cargo.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/build.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/debian/postinst"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/debian/postrm"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/backends/external.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/backends/mod.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/config.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/src/confirm.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/doctor.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/main.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/src/plugin_install.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/deploy_dispatch.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/external_backend.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-attest-echo"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-broken"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/fixtures/cxc-backend-with-manifest"
+    },
+    {
+      "status": "added",
+      "path": "crates/cradle-cli/tests/heuristics_manifest_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/migrate_dispatch.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-cli/tests/rebuild_dispatch.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-cli/tests/update_dispatch.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/artifact_path.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/ast.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/diff.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/error.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/heuristic_ids.rs"
+    },
+    {
+      "status": "added",
+      "path": "crates/cradle-core/src/heuristic_resolve.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/ir.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/lib.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/lower.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/validation.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-core/src/yaml.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/Cargo.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/generator.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/hosts.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/lib.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/os_map.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/playbook.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/types.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-import/src/vagrantfile.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/benches/bench_parse.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/src/cradle.pest"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/src/lib.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-parser/src/migrate.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "crates/cradle-parser/tests/migrate_tests.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-parser/tests/scenario_tests.rs"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1-linux-x86_64.tar.gz"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/README.md"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/bin/cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/bin/cradle-web"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/config.example.toml"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/docs/developer-guide.md"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/docs/language-reference.md"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/install.sh"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/APT28.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/Benign.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/FoxKitten.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/HelloWorld.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/Log4ShellEnv.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/MultiHostEnv.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "dist/cradle-0.12.1/scenarios/OceanLotusLinux.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "docker-compose.yml"
+    },
+    {
+      "status": "modified",
+      "path": "docs/PENDING.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/STATUS.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/adr-002-parser-framework.md"
+    },
+    {
+      "status": "renamed",
+      "similarity": 95,
+      "oldPath": "docs/cradle-v2-architecture.md",
+      "path": "docs/architecture.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/artifact_generator_audit.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/backend-plugin-architecture-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/backend-plugin-protocol.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/compiler-architecture-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/developer-guide.md"
+    },
+    {
+      "status": "added",
+      "path": "docs/heuristic-os-inference-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/language-reference.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/server-setup.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/sphere-deployment-guide.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/tlosphere-architecture-overview.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/tlosphere-sphere-run-guide.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/v1-v2-syntax-comparison.md"
+    },
+    {
+      "status": "added",
+      "path": "docs/vagrant-custom-box-plan.md"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/.graphify_labels.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/GRAPH_REPORT.md"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/cache/stat-index.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/graph.html"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/graph.json"
+    },
+    {
+      "status": "modified",
+      "path": "graphify-out/manifest.json"
+    },
+    {
+      "status": "modified",
+      "path": "scenarios/TheLastOnes.cradle"
+    },
+    {
+      "status": "deleted",
+      "path": "scripts/capture_golden.py"
+    },
+    {
+      "status": "modified",
+      "path": "scripts/dev-setup.sh"
+    },
+    {
+      "status": "modified",
+      "path": "scripts/package.sh"
+    },
+    {
+      "status": "deleted",
+      "path": "scripts/scenario_inventory.py"
+    },
+    {
+      "status": "deleted",
+      "path": "scripts/template_inventory.py"
+    },
+    {
+      "status": "modified",
+      "path": "smoke/SMOKE_TEST_REPORT.md"
+    }
+  ],
+  "sha256": "8b9521a7e8dd3731895558c9e7f3db63981175da3390e00f998a03ad5459dad6"
+}

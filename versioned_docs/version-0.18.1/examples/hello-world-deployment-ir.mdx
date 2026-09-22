@@ -1,0 +1,306 @@
+---
+sidebar_position: 3
+title: "Hello World: Deployment IR"
+description: Inspect and understand the Deployment IR generated from the HelloWorld scenario.
+---
+
+# Hello World: Deployment IR
+
+This example shows the backend-neutral Deployment IR produced from the
+[HelloWorld source scenario](./hello-world).
+
+:::important
+For backend authors, this JSON is the central integration artifact. The
+backend reads these resolved values and converts them into files understood by
+its target testbed. It should not parse the original `.cradle` source or infer
+values that CradleXC has already resolved.
+:::
+
+Use this page together with [Building a Backend](../backend-development/building-a-backend):
+
+1. generate and save the IR
+2. validate `ir_version`
+3. map networks, instances, objects, events and `boot_order`
+4. generate deterministic target files
+5. test the translator against this JSON as a fixture
+
+Generate it with:
+
+```bash
+cxc dump-ir \
+  -i scenarios/HelloWorld.cradle \
+  > HelloWorld.ir.json
+```
+
+## Complete generated IR
+
+<details>
+<summary>Show the complete Deployment IR JSON</summary>
+
+```json
+{
+  "ir_version": 1,
+  "project_name": "HelloWorld",
+  "instances": [
+    {
+      "name": "win7",
+      "platform": "windows",
+      "version": "2019",
+      "bit": "AMD64",
+      "cpu": 2,
+      "memory": 4096,
+      "configs": [
+        "win-icmpv4",
+        "win-pktmon",
+        "win-winrm",
+        "win-routing"
+      ],
+      "objects": [],
+      "primary_ip": "192.168.56.121",
+      "interfaces": [
+        {
+          "network": "lan_0",
+          "ip": "192.168.56.121"
+        }
+      ],
+      "routes": [],
+      "roles": [],
+      "is_router": false,
+      "is_windows": true
+    },
+    {
+      "name": "router",
+      "platform": "linux",
+      "version": "20.04",
+      "bit": "AMD64",
+      "cpu": 1,
+      "memory": 1024,
+      "configs": [
+        "linux-vsftpd",
+        "linux-auditd",
+        "linux-mail",
+        "linux-python3",
+        "python3-pip",
+        "linux-router",
+        "net-tools"
+      ],
+      "objects": [
+        "HelloWorld"
+      ],
+      "primary_ip": "192.168.56.122",
+      "interfaces": [
+        {
+          "network": "lan_0",
+          "ip": "192.168.56.122"
+        }
+      ],
+      "routes": [],
+      "roles": [],
+      "is_router": true,
+      "is_windows": false
+    }
+  ],
+  "networks": [
+    {
+      "name": "lan_0",
+      "subnet": "192.168.56.0/24",
+      "gateway": "192.168.56.1",
+      "netmask": "255.255.255.0",
+      "endpoints": [
+        [
+          "win7",
+          "192.168.56.121"
+        ],
+        [
+          "router",
+          "192.168.56.122"
+        ]
+      ],
+      "provider_name": "cradle-helloworld-lan-0"
+    }
+  ],
+  "pre_events": [],
+  "main_events": [
+    {
+      "name": "initialize_client",
+      "instance": "router",
+      "need_root": true,
+      "subject": null,
+      "run_object": null,
+      "pause_before": 0,
+      "pause_after": 0,
+      "depends_on": [],
+      "schedule": "2018-11-13T20:20:39+00:00",
+      "description": "HelloWorld Event",
+      "is_windows": false,
+      "artifact_ttp": "",
+      "artifact_filename": ""
+    }
+  ],
+  "post_events": [],
+  "objects": [
+    {
+      "id": "HelloWorld",
+      "source": {
+        "Remote": "https://172.18.178.10:4443/TTP/HelloWorld/artifact/HelloWorld.sh"
+      },
+      "ttp": "HelloWorld",
+      "filename": "HelloWorld.sh"
+    }
+  ],
+  "boot_order": [
+    "router",
+    "win7"
+  ]
+}
+```
+
+</details>
+
+This is generated output, not hand-written plugin input. The artifact URL
+reflects the repository configured on the machine that produced the capture.
+Other values can vary with the scenario, CradleXC version and local
+configuration. Consume the structure rather than comparing raw JSON text.
+
+## Read the top-level fields
+
+| Field | Meaning for a backend |
+| --- | --- |
+| `ir_version` | Version of the Deployment IR contract. Validate support before translating the document. |
+| `project_name` | Scenario name available for target-side project or resource names. |
+| `instances` | Resolved machines, resources, interfaces, routes, roles and platform flags. |
+| `networks` | Network plans with gateways, netmasks, endpoint addresses and provider-safe names. |
+| `pre_events` | Ordered events before the main phase. |
+| `main_events` | Ordered events in the main scenario phase. |
+| `post_events` | Ordered events in the final phase. |
+| `objects` | Resolved artifact sources and destination components. |
+| `boot_order` | Instance names in startup order. The router appears before `win7`. |
+
+## Read an instance
+
+Each `instances` entry is a target-ready machine description.
+
+| Field | Meaning |
+| --- | --- |
+| `name` | Identifier referenced by endpoints, events and `boot_order`. |
+| `platform`, `version`, `bit` | Resolved operating-system platform, release and architecture. |
+| `cpu`, `memory` | Virtual CPU count and memory in MB. |
+| `configs` | Canonical configuration identifiers that the backend must map to supported setup behavior. |
+| `objects` | Artifact IDs assigned to the instance. Resolve them against top-level `objects`. |
+| `primary_ip` | First resolved interface address, or `null` if no interface exists. |
+| `interfaces` | Network membership and resolved address for every interface. |
+| `routes` | Static routes with destination and gateway values. |
+| `roles` | Roles with `collection_name`, `role_name` and resolved variables. |
+| `is_router` | Whether the instance is routing infrastructure. |
+| `is_windows` | Whether platform-specific Windows handling is required. |
+
+For this scenario, `win7` requires two CPUs and 4096 MB of memory at
+`192.168.56.121`. The router requires one CPU and 1024 MB at
+`192.168.56.122`. Use these resolved values rather than recalculating them.
+
+## Read the network
+
+The `lan_0` entry provides everything needed to define and attach the example
+network:
+
+- `subnet` is `192.168.56.0/24`.
+- `gateway` is the resolved `192.168.56.1` address.
+- `netmask` is the dotted-decimal form, `255.255.255.0`.
+- `endpoints` pairs each instance name with its resolved address.
+- `provider_name` is a sanitized, project-scoped target identifier.
+
+Endpoints written as `DHCP` in CRADLE source are concrete addresses by the time
+they reach Deployment IR. Do not allocate replacements in the backend.
+
+## Read the event
+
+Events are already dependency-ordered inside their lifecycle phase. Preserve
+the order in `pre_events`, `main_events` and `post_events`.
+
+| Field | Meaning |
+| --- | --- |
+| `name`, `instance` | Event identity and the instance on which it runs. |
+| `need_root` | Whether elevated privileges are required. |
+| `subject` | `null`, or a two-item array containing a shell and its arguments. |
+| `run_object` | `null`, or an object containing `object_id` and resolved parameters. |
+| `pause_before`, `pause_after` | Delay in seconds before and after execution. |
+| `depends_on` | Event names that must complete first. |
+| `schedule` | Schedule supplied by the scenario. |
+| `description` | Optional user-facing description. |
+| `is_windows` | Platform flag copied from the target instance. |
+| `artifact_ttp`, `artifact_filename` | Resolved path components when an event uses an object. |
+
+In this capture, both `subject` and `run_object` are `null`. A backend should
+preserve the event metadata but must not invent an action that is absent from
+the IR.
+
+## Read the object
+
+The `HelloWorld` object tells a backend where its artifact comes from and which
+destination components to use:
+
+- `id` is referenced by the router's `objects` list.
+- `source` is tagged as `Remote` and contains the fully resolved URL.
+- `ttp` is `HelloWorld`.
+- `filename` is `HelloWorld.sh`.
+
+A source can have either of these forms:
+
+```json
+{"Remote": "https://example.org/path/file.sh"}
+```
+
+```json
+{"Local": "/absolute/path/file.sh"}
+```
+
+The `${uriRemote}` or `${uriLocal}` placeholder has already been resolved. Use
+`source` directly instead of reading repository metadata from the original
+scenario.
+
+## Compare compiled YAML and IR
+
+The [compiled YAML example](./hello-world-compiled-yaml) remains close to the
+authored structure. IR adds or reshapes backend-ready information:
+
+| Compiled YAML | Deployment IR |
+| --- | --- |
+| `screenplayName` | Becomes `project_name`. |
+| Nested `os` fields | Become instance-level `platform`, `version` and `bit`. |
+| Instance `config` | Becomes `configs`; lowering can canonicalize identifiers and add resolved requirements. The router IR contains `net-tools`. |
+| Network endpoint declarations | Become instance `interfaces` and network `endpoints`, plus `gateway`, `netmask` and `provider_name`. |
+| Object URI with a repository placeholder | Becomes resolved `source`, `ttp` and `filename` fields. |
+| Event source fields | Become normalized event fields and ordered lifecycle arrays. |
+| No explicit startup sequence | Becomes `boot_order`. |
+| No convenience platform flags | Becomes `is_router` and `is_windows`. |
+
+## What CradleXC resolves
+
+Before producing Deployment IR, CradleXC:
+
+1. validates source references and supported values
+2. merges included scenarios
+3. canonicalizes known configuration aliases
+4. applies architecture and hardware defaults
+5. assigns concrete addresses to DHCP endpoints
+6. computes gateways, interfaces, routes and provider-safe names
+7. resolves repository placeholders and artifact path components
+8. resolves topology variables in role and object parameters
+9. orders events by dependencies within each lifecycle phase
+10. places routers first in `boot_order`
+
+This is why a backend should consume Deployment IR instead of reparsing the
+`.cradle` source or reconstructing values from compiled YAML.
+
+## Use this output for backend development
+
+Keep the generated JSON as a fixture and add more fixtures for the target
+features your backend supports. Parse objects by field name, accept unknown
+additive fields and avoid depending on key order or whitespace.
+
+Continue to [Building a Backend](../backend-development/building-a-backend) for
+a runnable translator that validates this IR and turns it into network,
+instance, event, artifact and startup-order files.
+
+Return to [Inspect Output](../getting-started/inspect-output) for the shorter
+command workflow.

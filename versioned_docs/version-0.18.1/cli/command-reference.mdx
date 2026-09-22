@@ -40,9 +40,6 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
 | `cxc backend list` | List backend plugins discovered by CradleXC. |
 | `cxc plugin install` | Install a backend plugin. |
-| `cxc completions` | Generate shell completion scripts. |
-| `cxc configs list` | List available configuration content. |
-| `cxc heuristics list` | List available heuristic content. |
 | `cxc doctor` | Check dependencies and environment readiness. |
 | `cxc install-deps` | Display dependency installation guidance. |
 | `cxc config` | Inspect the current CradleXC configuration. |
@@ -139,33 +136,6 @@ For more information, see [Inspect Output](../getting-started/inspect-output).
 
 ---
 
-## `cxc completions`
-
-Generates shell completion definitions for the selected shell:
-
-```bash
-cxc completions <shell>
-```
-
-The command is hidden from the top-level help output because Debian package
-installation generates and installs completions automatically. Use it directly
-when maintaining a manual installation.
-
-## `cxc configs list` and `cxc heuristics list`
-
-List the content available in the configured directories:
-
-```bash
-cxc configs list
-cxc heuristics list
-```
-
-Use `--config-dir` or `--heuristics-dir` to inspect a specific local directory.
-These commands inspect content; they do not generate target files or deploy a
-scenario.
-
----
-
 ## `cxc build`
 
 Generates target-specific files through a compatible backend plugin.
@@ -197,17 +167,9 @@ cxc build \
 | `-o` | Specifies the output location. When omitted, the default is `./build_<target>`. |
 | `--backend-arg key=value` | Passes a repeatable backend-specific option. |
 | `--config-dir` | Overrides the configured content directory for `config()` entries. |
-| `--extra-config-dir` | Adds a lower-precedence directory for missing `config()` entries; repeatable. |
 | `--heuristics-dir` | Overrides the configured content directory for instance heuristics. |
-| `--extra-heuristics-dir` | Adds a lower-precedence directory for missing heuristic entries; repeatable. |
 
 A compatible backend plugin must be available for the selected target.
-
-When a heuristic manifest or the packaged heuristics database supplies an
-instance's required operating system or configs, CradleXC resolves those
-requirements before validation. An explicit `os()` remains authoritative; a
-conflicting implied OS produces a warning, while conflicting implied operating
-systems without an explicit `os()` produce an error.
 
 When no backend plugin is registered, `build` and `rebuild` are hidden from the
 top-level `cxc --help` command list, although direct invocation still reports
