@@ -146,10 +146,18 @@ jobs:
       - name: Checkout documentation repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
           token: >-
             ${{ inputs.historical_test && github.token ||
             secrets.CRADLE_LANG_TOKEN }}
+
+      - name: Sync documentation repository to latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Apply release policy
         shell: bash
@@ -205,7 +213,9 @@ jobs:
           set -euo pipefail
 
           release_date="$(
-            git -C upstream-cradlexc               for-each-ref "refs/tags/$TAG"               --format='%(creatordate:short)'
+            git -C upstream-cradlexc \
+              for-each-ref "refs/tags/$TAG" \
+              --format='%(creatordate:short)'
           )"
 
           if [[ -z "$release_date" ]]; then
@@ -313,6 +323,7 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
+          RELEASE_DATE: ${{ steps.release_metadata.outputs.release_date }}
         run: |
           set -euo pipefail
           node scripts/generate-release-evidence.mjs \
@@ -486,7 +497,6 @@ jobs:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
-          RELEASE_DATE: ${{ steps.release_metadata.outputs.release_date }}
           EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
           EVIDENCE_SHA256: ${{ steps.evidence.outputs.sha256 }}
           PREWORK_PATH: ${{ steps.prework.outputs.path }}
