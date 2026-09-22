@@ -95,7 +95,7 @@ export default function SupportedWorkflow(): ReactNode {
             </h3>
 
             <p>
-              Use <code>cxc backend list</code> to confirm that CradleXC
+              Use <code>cxc plugin list</code> to confirm that CradleXC
               detects the installed backend.
             </p>
           </article>
@@ -111,7 +111,7 @@ export default function SupportedWorkflow(): ReactNode {
             </h3>
 
             <p>
-              Use <code>cxc emit</code> with the selected backend to
+              Use <code>cxc build</code> with the selected backend to
               generate target-specific output.
             </p>
           </article>

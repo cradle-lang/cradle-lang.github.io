@@ -33,7 +33,7 @@ Examples include:
 - `cxc compile` parsed and wrote its output successfully
 - `cxc dump-ir` lowered and serialized Deployment IR successfully
 - `cxc build` completed target-file generation with the selected plugin
-- `cxc backend list` completed, even when no backends are installed
+- `cxc plugin list` completed, even when no backends are installed
 - `cxc doctor` found every required dependency
 - `cxc install-deps` printed installation guidance
 - `cxc config` displayed either loaded configuration or defaults
@@ -92,7 +92,7 @@ summary or a suggestion to run `--help`.
 | `cxc dump-ir` | Parsing, HIR/IR lowering and JSON serialization succeed. | Parsing or any lowering/serialization step fails. |
 | `cxc build` | The target is found, IR lowering succeeds and target-file generation completes. | Target lookup, IR lowering, plugin compatibility, plugin startup or target-file generation fails. |
 | `cxc rebuild` | A prior build exists, a supported change is detected and the target files are regenerated, or there is nothing to do. | The baseline is missing, network topology changed, or target lookup, lowering or generation fails. |
-| `cxc backend list` | Registry discovery completes. An empty list is still success. | No ordinary command-level failure path is currently defined. |
+| `cxc plugin list` | Plugin discovery completes. An empty list is still success. | No ordinary command-level failure path is currently defined. |
 | `cxc plugin install` | Download, checksum verification, permission update and final installation succeed. | Plugin metadata lookup, download, checksum verification or filesystem installation fails. |
 | `cxc doctor` | All required dependency checks pass. Optional missing dependencies are allowed. | At least one required dependency is missing. |
 | `cxc install-deps` | Installation instructions are printed, including when dependencies are missing. | No ordinary missing-dependency failure is currently defined. |
@@ -150,7 +150,7 @@ Some conditions produce warnings or guidance but do not by themselves force a
 nonzero exit code:
 
 - validation warnings without validation errors
-- no backends discovered by `cxc backend list`
+- no backends discovered by `cxc plugin list`
 - optional dependencies missing during `cxc doctor`
 - missing dependencies reported by `cxc install-deps`
 - a missing default config file, which causes built-in defaults to be used

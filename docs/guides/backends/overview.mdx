@@ -24,7 +24,7 @@ cxc-backend-<name>
 CradleXC discovers them on `PATH`, in `/opt/cxc/plugins/` and in `~/.cxc/plugins/`.
 
 ```bash
-cxc backend list
+cxc plugin list
 sudo cxc plugin install <name>
 ```
 
@@ -44,7 +44,7 @@ Backend compatibility has several separate layers:
 | Target compatibility | The generated files match the intended provider, platform, API, or tool version. |
 | Runtime compatibility | Images, networks, artifacts, credentials, capacity, and external services required by the generated environment are available. |
 
-A successful `cxc backend list` result confirms discovery. A successful
+A successful `cxc plugin list` result confirms discovery. A successful
 `cxc doctor` result confirms only the dependency checks reported by CradleXC
 and the discovered plugins. Neither command proves that a particular scenario
 can be rendered or operated successfully on every target.
@@ -88,7 +88,7 @@ Before generating target-specific files:
 2. Select a published backend that documents support for that target.
 3. Confirm that the backend supports the installed CradleXC protocol and
    Deployment IR versions.
-4. Install the backend and verify discovery with `cxc backend list`.
+4. Install the backend and verify discovery with `cxc plugin list`.
 5. Run `cxc doctor` and resolve required host dependencies.
 6. Validate the scenario with `cxc validate`.
 7. Generate output with `cxc build`.
@@ -108,7 +108,7 @@ After selecting and installing a compatible backend, use:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
-cxc backend list
+cxc plugin list
 cxc doctor
 cxc build \
   -i scenarios/HelloWorld.cradle \

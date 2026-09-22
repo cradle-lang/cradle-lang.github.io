@@ -86,7 +86,7 @@ A backend only becomes available to CradleXC when its executable can be discover
 Use:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 to list the backend plugins currently discovered by CradleXC.
@@ -96,7 +96,7 @@ Run this command after installing a backend to confirm that the plugin is availa
 For example:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 The exact output depends on the backend plugins installed on the current system.
@@ -120,7 +120,7 @@ sudo cxc plugin install vagrant
 After installation, confirm that the backend can be discovered:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 :::note
@@ -200,7 +200,7 @@ sudo cxc plugin install vagrant
 Then:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 Once the backend is available:
@@ -224,7 +224,7 @@ The overall relationship is:
 
   <span>↓</span>
 
-  <div className="architecture-flow-step-backend"><code>cxc backend list</code></div>
+  <div className="architecture-flow-step-backend"><code>cxc plugin list</code></div>
 
   <span>↓</span>
 
@@ -338,7 +338,7 @@ A backend being discoverable does not necessarily mean every dependency required
 If:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 does not show the expected backend, check the following.
@@ -354,7 +354,7 @@ sudo cxc plugin install <plugin_name>
 Then check again:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 ### Confirm the executable name
@@ -430,7 +430,7 @@ cxc validate -i <scenario.cradle>
 Then confirm the backend:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 Retry generation:

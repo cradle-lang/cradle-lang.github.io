@@ -38,7 +38,7 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | `cxc dump-ir` | Display CradleXC's intermediate representation. |
 | `cxc build` | Generate target-specific files through a backend plugin. |
 | `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
-| `cxc backend list` | List backend plugins discovered by CradleXC. |
+| `cxc plugin list` | List installed backend plugins, or available plugins when none are installed. |
 | `cxc plugin install` | Install a backend plugin. |
 | `cxc completions` | Generate shell completion scripts. |
 | `cxc configs list` | List available configuration content. |
@@ -287,14 +287,15 @@ not executed by CradleXC.
 
 ---
 
-## `cxc backend list`
+## `cxc plugin list`
 
-Lists compatible backend plugins currently discovered by CradleXC.
+Lists installed backend plugins. If none are installed, it lists the plugins
+available from the configured release source.
 
 ### Usage
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 Backend executables follow the naming convention:
@@ -346,7 +347,7 @@ sudo cxc plugin install vagrant
 After installation, check whether the backend is available:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 The default install location is `/opt/cxc/plugins/`. Use `cxc plugin install --user <plugin_name>` only when you explicitly want a per-user installation in `~/.cxc/plugins/`.
@@ -490,7 +491,7 @@ cxc dump-ir -i scenarios/HelloWorld.cradle
 If target-specific files are required, confirm the backend:
 
 ```bash
-cxc backend list
+cxc plugin list
 ```
 
 Then generate the files:
@@ -567,7 +568,7 @@ The overall workflow is:
     <div className="cxc-command-description">
       List discovered backend plugins.
     </div>
-    <code>cxc backend list</code>
+    <code>cxc plugin list</code>
   </div>
 
   <div className="cxc-command-card">
