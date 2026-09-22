@@ -196,6 +196,25 @@ jobs:
             exit 1
           fi
 
+      - name: Resolve release date from tag
+        id: release_metadata
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          release_date="$(
+            git -C upstream-cradlexc               for-each-ref "refs/tags/$TAG"               --format='%(creatordate:short)'
+          )"
+
+          if [[ -z "$release_date" ]]; then
+            echo "::error::Could not resolve a release date for tag $TAG."
+            exit 1
+          fi
+
+          echo "release_date=$release_date" >> "$GITHUB_OUTPUT"
+
       - name: Install website dependencies
         shell: bash
         run: npm ci
@@ -467,6 +486,7 @@ jobs:
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
+          RELEASE_DATE: ${{ steps.release_metadata.outputs.release_date }}
           EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
           EVIDENCE_SHA256: ${{ steps.evidence.outputs.sha256 }}
           PREWORK_PATH: ${{ steps.prework.outputs.path }}
@@ -488,6 +508,7 @@ jobs:
           prompt="$(cat .github/prompts/prepare-cradlexc-release.md)
 
           Requested release tag: $TAG
+          Release date: $RELEASE_DATE
           Release-note output path: $TARGET
           Latest stable release-note tag before this run: $PREVIOUS_TAG
           Deterministic release-evidence path: $EVIDENCE_PATH
@@ -511,7 +532,6 @@ jobs:
             --allow-tool write \
             --allow-tool 'shell(cat)' \
             --allow-tool 'shell(cd)' \
-            --allow-tool 'shell(date)' \
             --allow-tool 'shell(find)' \
             --allow-tool 'shell(git cat-file:*)' \
             --allow-tool 'shell(git diff:*)' \
