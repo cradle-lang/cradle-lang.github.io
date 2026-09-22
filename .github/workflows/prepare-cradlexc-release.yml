@@ -323,7 +323,6 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
-          RELEASE_DATE: ${{ steps.release_metadata.outputs.release_date }}
         run: |
           set -euo pipefail
           node scripts/generate-release-evidence.mjs \
@@ -496,6 +495,7 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
           TAG: ${{ inputs.tag }}
           TARGET: release-notes/${{ inputs.tag }}.md
+          RELEASE_DATE: ${{ steps.release_metadata.outputs.release_date }}
           PREVIOUS_TAG: ${{ steps.archive.outputs.tag }}
           EVIDENCE_PATH: ${{ steps.evidence.outputs.path }}
           EVIDENCE_SHA256: ${{ steps.evidence.outputs.sha256 }}
