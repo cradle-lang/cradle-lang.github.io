@@ -34,7 +34,6 @@ config_dir = "https://github.com/cradle-lang/cradle-lib"
 heuristics_dir = "https://github.com/cradle-lang/cradle-lib"
 artifact_repo = "https://artifacts.example.org"
 artifact_dir = "/home/user/artifact"
-dataset_dir = "/opt/cxc/dataset"
 
 [deployment]
 timezone = "Asia/Singapore"
@@ -70,7 +69,7 @@ The built-in default for both settings is:
 https://github.com/cradle-lang/cradle-lib
 ```
 
-When a Git URL is configured, CradleXC fetches the referenced content into its local cache as needed by `build`, `rebuild`, and other generation workflows. The `config_dir` and `heuristics_dir` values may point to the same repository.
+When a Git URL is configured, CradleXC fetches the referenced content into its local cache as needed by `build` and `rebuild`.
 
 List locally available content with:
 
@@ -81,28 +80,11 @@ cxc heuristics list
 
 Use `--config-dir` or `--heuristics-dir` on those commands to inspect a specific local directory.
 
-Generation can layer additional local content directories on top of the primary
-directory. A name found in the primary directory takes precedence; an extra
-directory only fills in names that are not already present:
-
-```bash
-cxc build \
-  -i scenarios/HelloWorld.cradle \
-  --target vagrant \
-  --extra-config-dir ./project-configs \
-  --extra-heuristics-dir ./project-heuristics
-```
-
 ## Artifact settings
 
 `artifact_repo` is the fallback used when a scenario references `${uriRemote}` without defining `repositoryRemote()` in metadata. It is empty by default.
 
 `artifact_dir` is the local staging directory for artifacts. Its default is `$HOME/artifact`.
-
-`dataset_dir` is the controller-side base directory for extraction output such
-as network captures, node logs, and memory dumps. Its default is
-`/opt/cxc/dataset`; override it with `CXC_DATASET_DIR` or a backend-specific
-configuration where supported.
 
 ## Generation settings
 
@@ -148,7 +130,6 @@ Environment variables override matching TOML values. Supported variables include
 - `CXC_HEURISTICS_DIR`
 - `CXC_ARTIFACT_REPO`
 - `CXC_ARTIFACT_DIR`
-- `CXC_DATASET_DIR`
 - `CXC_TIMEZONE`
 - `CXC_WINDOWS_TIMEZONE`
 - `CXC_DNS_SERVER`
@@ -164,9 +145,5 @@ After editing the file, inspect the resolved values and check the environment:
 cxc config
 cxc doctor
 ```
-
-Package installation also generates shell completion scripts. Use the hidden
-`cxc completions <shell>` command when installing or maintaining completions
-manually.
 
 For backend-specific values, consult the documentation supplied by that plugin.
