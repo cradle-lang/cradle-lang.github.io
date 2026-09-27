@@ -1,6 +1,6 @@
 .. image:: static/img/cradle-favicon.png
    :alt: CRADLE logo
-   :width: 180px
+   :width: 120px
    :align: center
 
 CRADLE Documentation Website
