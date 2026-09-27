@@ -1,10 +1,9 @@
-.. image:: static/img/cradle-favicon.png
+.. |cradle-logo| image:: static/img/cradle-favicon.png
    :alt: CRADLE logo
-   :width: 120px
-   :align: center
+   :width: 48px
 
-CRADLE Documentation Website
-============================
+|cradle-logo| CRADLE Documentation Website
+===========================================
 
 .. image:: https://github.com/cradle-lang/cradle-lang.github.io/actions/workflows/docs-check.yml/badge.svg?branch=main
    :target: https://github.com/cradle-lang/cradle-lang.github.io/actions/workflows/docs-check.yml
