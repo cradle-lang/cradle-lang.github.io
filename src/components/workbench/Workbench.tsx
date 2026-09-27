@@ -610,13 +610,14 @@ export default function Workbench(): ReactNode {
             styles.brand
           }
         >
-          <div
+          <img
             className={
               styles.brandmark
             }
-          >
-            CR
-          </div>
+            src="/img/cradle-favicon.png"
+            alt=""
+            aria-hidden="true"
+          />
 
           <div
             className={

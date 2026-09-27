@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'CRADLE',
   tagline: 'Cyber Experimentation as Code',
-  favicon: 'img/cradle-favicon.svg',
+  favicon: 'img/cradle-favicon.png',
 
   headTags: [
     {
@@ -103,6 +103,12 @@ const config: Config = {
 
     navbar: {
       title: 'CRADLE',
+      logo: {
+        alt: 'CRADLE logo',
+        src: 'img/cradle-favicon.png',
+        width: 32,
+        height: 32,
+      },
 
       items: [
         {
