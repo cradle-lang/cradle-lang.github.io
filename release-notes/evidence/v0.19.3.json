@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "from": {
+    "tag": "v0.19.2",
+    "sha": "2a0ff2c8f9867be4a5755effdf4ba0a50c156220"
+  },
+  "to": {
+    "tag": "v0.19.3",
+    "sha": "31f82b9f1b7b3cb56b5d845d4b2893f44b3e99f2"
+  },
+  "comparison": {
+    "range": "v0.19.2..v0.19.3",
+    "mergeBaseSha": "2a0ff2c8f9867be4a5755effdf4ba0a50c156220",
+    "fromIsAncestor": true
+  },
+  "counts": {
+    "commits": 8,
+    "files": 9,
+    "byStatus": {
+      "added": 2,
+      "modified": 7
+    }
+  },
+  "sourceAreas": [
+    ".github",
+    "Cargo.lock",
+    "Cargo.toml",
+    "README.md",
+    "crates",
+    "docs"
+  ],
+  "commits": [
+    {
+      "sha": "c795e99ec8cf13c2e918637e9c9d9962c984bfe3",
+      "subject": "Document the compiler-first merge order for cross-repo changes, fix developer-guide staleness, and point README at it"
+    },
+    {
+      "sha": "fb9b298b0b9a1c7c418d5fb717059a3d793cc833",
+      "subject": "Fill 4 real documentation gaps: plugin protocol, release process, heuristics, and cxc rebuild semantics"
+    },
+    {
+      "sha": "e5b45f0c74c3e04084d3907bd4b161dde27b28f4",
+      "subject": "Update deployment secret"
+    },
+    {
+      "sha": "ea9315580dbcd0323ba770981394ca69deb5adfc",
+      "subject": "Merge pull request #29 from cradle-lang/update-actions-secret"
+    },
+    {
+      "sha": "2c526b4c17b9163461777fa09dad69b24462bf8e",
+      "subject": "Reject a subject() that leaves nothing to run (E013/E014); release token check; README (#30)"
+    },
+    {
+      "sha": "f5d8c0d2ae90bf74b11d19f3206a1f8a551f04b6",
+      "subject": "Make the host-only network gateway best-effort (drop N008) (#34)"
+    },
+    {
+      "sha": "380110d2d9cdc53dd9bdb7bf9ca8da5667828a51",
+      "subject": "Infer multi-hop routes through the router graph (#35)"
+    },
+    {
+      "sha": "31f82b9f1b7b3cb56b5d845d4b2893f44b3e99f2",
+      "subject": "Bump version to 0.19.3"
+    }
+  ],
+  "files": [
+    {
+      "status": "modified",
+      "path": ".github/workflows/release.yml"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.lock"
+    },
+    {
+      "status": "modified",
+      "path": "Cargo.toml"
+    },
+    {
+      "status": "modified",
+      "path": "README.md"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/lower.rs"
+    },
+    {
+      "status": "modified",
+      "path": "crates/cradle-core/src/validation.rs"
+    },
+    {
+      "status": "added",
+      "path": "docs/backend-plugin-protocol.md"
+    },
+    {
+      "status": "modified",
+      "path": "docs/developer-guide.md"
+    },
+    {
+      "status": "added",
+      "path": "docs/release-process.md"
+    }
+  ],
+  "sha256": "d2c19a8844be84d972e067ab01454f54752341c07a3c94269467cd2661e8bfc3"
+}

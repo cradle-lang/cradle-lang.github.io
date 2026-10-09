@@ -358,6 +358,35 @@ If the event identifier is misspelled or missing, the dependency does not resolv
 Omit `dependsOn()` when an event has no explicit dependency.
 :::
 
+## Events must have something to run
+
+An event with no `runObject()` must still provide an executable command.
+CradleXC reports `E013` when `subject()` is empty, because there is nothing
+for the event to run:
+
+```CRADLE
+event("empty_command") >
+    subject("", "").
+```
+
+An interpreter with no script or command is also rejected with `E014`. For
+example, this can leave a non-interactive deployment waiting for input:
+
+```CRADLE
+event("bare_shell") >
+    subject("bash", "").
+```
+
+Give the interpreter a command:
+
+```CRADLE
+event("run_command") >
+    subject("bash", "-c 'echo ready'").
+```
+
+Or attach a script with `runObject()`. The `subject("bash", "")` form is valid
+when `runObject()` supplies the script to execute.
+
 ## Inspect the intermediate representation
 
 When the source validates but the result is not what you expected, inspect the intermediate representation:
@@ -567,6 +596,7 @@ Before investigating a more complex problem, confirm that:
 - events belong to lifecycle phases
 - event references are unique and consistent
 - dependency references resolve
+- every event has a command or a `runObject()` script
 - repository values are valid for the intended environment
 - compiler extensions are supported by the CradleXC release being used
 

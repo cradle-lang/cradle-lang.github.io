@@ -4,7 +4,7 @@ import Link from '@docusaurus/Link';
 import sharedStyles from '../Homepage.module.css';
 import styles from './SupportedWorkflow.module.css';
 
-const BACKEND_REPOSITORY_URL = 'https://github.com/cradle-lang/cradle-release';
+const BACKEND_REPOSITORY_URL = 'https://github.com/cradle-lang/cradle-lang.github.io';
 
 export default function SupportedWorkflow(): ReactNode {
   return (

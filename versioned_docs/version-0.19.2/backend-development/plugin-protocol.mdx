@@ -1,0 +1,12 @@
+---
+sidebar_position: 3
+title: Plugin Protocol
+---
+
+# Plugin Protocol
+
+CradleXC handles communication with installed backend plugins through its backend API and compatibility layer. These internal invocation details are intentionally not part of the public user documentation.
+
+Plugin authors should treat Deployment IR as the authoritative input, write generated files only to the requested output location, and report failures with actionable diagnostics.
+
+Use the supported CradleXC backend API and the IR types as the implementation authority. Keep public documentation focused on compatibility, supported scenario features and generated outputs.

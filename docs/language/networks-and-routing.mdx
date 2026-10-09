@@ -391,6 +391,44 @@ The details of how routing is represented in generated target files depend on th
 Do not assume that the CRADLE network definition itself configures every provider-specific routing detail.
 :::
 
+CradleXC infers routes through connected routers when it builds the
+backend-neutral Deployment IR. A router graph is used to reach networks beyond
+an instance's directly connected router, and a non-router guest uses the local
+router as the next hop. Inspect the IR with `cxc dump-ir` when you need to
+verify the calculated destinations and gateways.
+
+Route rendering remains backend-specific. The compiler does not require every
+network to have a spare host-only gateway address; it uses one when available.
+A backend that needs such a gateway must report that requirement while
+rendering.
+
+### Multi-router example
+
+With routers connected through a shared transit network, CradleXC can infer
+routes beyond the first router:
+
+```CRADLE
+network("client_net") >
+    subnet("10.0.0.0/24"),
+    endpoint("Client", "10.0.0.10"),
+    endpoint("RouterA", "10.0.0.1").
+
+network("transit") >
+    subnet("10.255.255.0/24"),
+    endpoint("RouterA", "10.255.255.1"),
+    endpoint("RouterB", "10.255.255.2").
+
+network("server_net") >
+    subnet("10.2.0.0/24"),
+    endpoint("RouterB", "10.2.0.1"),
+    endpoint("Server", "10.2.0.10").
+```
+
+In this topology, `RouterA` receives a route to `10.2.0.0/24` through
+`RouterB`, and `Client` can use `RouterA` as its next hop to reach the server
+network. The selected backend determines how those routes are written to its
+generated files.
+
 ## Example routed topology
 
 Consider:
