@@ -1,0 +1,12 @@
+project:
+  label: Project updates
+  description: News and perspectives from the CRADLE project.
+guides:
+  label: Practical guides
+  description: Step-by-step approaches to planning, inspecting and documenting experiments.
+research:
+  label: Research perspectives
+  description: Ideas about reproducibility, evidence and experimental design.
+engineering:
+  label: Engineering
+  description: Design choices, tooling and the boundary between scenarios and deployment.

@@ -1,0 +1,139 @@
+.page {
+  min-height: 70vh;
+  background: var(--cradle-bg);
+}
+
+.inner {
+  width: min(calc(100% - 48px), var(--cradle-content-width));
+  margin: 0 auto;
+  padding: 96px 0 112px;
+}
+
+.header { max-width: 760px; }
+
+.eyebrow,
+.navigationLabel {
+  margin: 0 0 14px;
+  color: var(--cradle-accent);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--cradle-text);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.description {
+  max-width: 660px;
+  margin: 22px 0 0;
+  color: var(--cradle-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.back { font-weight: 650; }
+
+.resources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 64px;
+  margin-top: 64px;
+  border-top: 1px solid var(--cradle-border);
+}
+
+.withToc { grid-template-columns: 200px minmax(0, 1fr) 160px; gap: 40px; }
+.withoutSidebar { grid-template-columns: minmax(0, 1fr); }
+.withoutSidebar.withToc { grid-template-columns: minmax(0, 1fr) 160px; }
+.mobileToc { display: none; }
+
+.sidebar,
+.toc {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 28px);
+  align-self: start;
+  max-height: calc(100vh - var(--ifm-navbar-height) - 56px);
+  overflow-y: auto;
+  padding-top: 40px;
+}
+
+.navigationLabel { color: var(--cradle-text-subtle); }
+.sidebar nav { display: grid; gap: 6px; }
+
+.navigationItem {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-left: 2px solid transparent;
+  color: var(--cradle-text-muted);
+  font-size: 0.85rem;
+  font-weight: 550;
+  line-height: 1.5;
+}
+
+.navigationItem:hover,
+.active {
+  border-left-color: var(--cradle-accent);
+  background: var(--cradle-accent-soft);
+  color: var(--cradle-primary);
+  text-decoration: none;
+}
+
+.navigationMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--cradle-text-subtle);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.latest { color: var(--cradle-accent); font-weight: 700; }
+.content { min-width: 0; padding-top: 40px; }
+.content article { margin-bottom: 40px !important; padding-bottom: 40px; border-bottom: 1px solid var(--cradle-border); }
+.content article header h1,
+.content article header h2 { color: var(--cradle-text); font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.2; letter-spacing: -0.03em; }
+.content article header h2 a { color: inherit; }
+.content article header h2 a:hover { color: var(--cradle-primary); }
+.content :global(.markdown) { color: var(--cradle-text-muted); line-height: 1.8; overflow-wrap: anywhere; }
+.content :global(.markdown) h2,
+.content :global(.markdown) h3 { color: var(--cradle-text); letter-spacing: -0.015em; }
+.content :global(.markdown) img { display: block; max-width: 100%; height: auto; margin: 24px auto; border-radius: var(--cradle-radius-md); }
+.content :global(.markdown) iframe,
+.content :global(.markdown) object { max-width: 100%; }
+.content :global(.markdown) pre { max-width: 100%; overflow-x: auto; }
+.content :global(.markdown) table { display: block; overflow-x: auto; }
+.page a:focus-visible { outline: 3px solid var(--cradle-accent); outline-offset: 4px; border-radius: 2px; }
+
+@media (max-width: 1100px) {
+  .withToc { grid-template-columns: 200px minmax(0, 1fr); gap: 40px; }
+  .toc { display: none; }
+  .withoutSidebar.withToc { grid-template-columns: minmax(0, 1fr); }
+  .mobileToc { display: block; margin-bottom: 32px; padding: 16px; border: 1px solid var(--cradle-border); border-radius: var(--cradle-radius-md); }
+  .mobileToc summary { color: var(--cradle-text); cursor: pointer; font-weight: 600; }
+  .mobileToc > div { display: block; position: static; max-height: none; margin-top: 12px; }
+}
+
+@media (max-width: 700px) {
+  .inner { width: calc(100% - 32px); padding: 64px 0 80px; }
+  .layout,
+  .withToc { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 40px; }
+  .sidebar { position: static; max-height: 240px; padding: 24px 0; border-bottom: 1px solid var(--cradle-border); }
+  .content { padding-top: 32px; }
+  .content article { margin-bottom: 32px !important; padding-bottom: 32px; }
+}

@@ -138,6 +138,10 @@ layout:
 ``Releases``
    Locally maintained, version-ordered release notes with stable hash links.
 
+``Blog``
+   Date-ordered Markdown and MDX posts, with author details and attachments.
+   See ``blog/README.md`` for the authoring and publication workflow.
+
 Search, documentation-version selection and theme selection remain globally
 available. The documentation sidebar begins with orientation and progressively
 moves toward specialist reference material. This supports both sequential
@@ -159,6 +163,15 @@ Repository Structure
    Canonical local release-note Markdown. Published notes use semantic-version
    names such as ``v0.18.1.md`` or ``v1.2.0.md``. Versions before ``v0.18.1``
    are not indexed or published.
+
+``blog/``
+   Blog post sources and colocated attachments. Docusaurus compiles posts into
+   HTML and automatically updates article lists, archives, topics, counts and
+   search on each build. Start with ``blog/_template.md`` or
+   ``blog/_template.mdx`` and follow ``blog/README.md``. New tags can be written
+   directly in post front matter; every post requires at least one tag.
+   ``tags.yml`` optionally adds shared labels and
+   descriptions. Shared author metadata lives in ``authors.yml``.
 
 ``scripts/``
    Release-data generation and maintenance scripts.

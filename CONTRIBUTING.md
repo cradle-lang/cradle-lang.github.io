@@ -53,6 +53,7 @@ Use the appropriate source location:
 | Shared theme rules | `src/css/custom.css` |
 | Component styles | Colocated `*.module.css` |
 | Release note | `release-notes/v<semver>.md` |
+| Blog article and its attachments | `blog/YYYY-MM-DD-post-name/` |
 | Static asset | `static/` |
 
 Search for related content before changing terminology or commands:
@@ -60,6 +61,20 @@ Search for related content before changing terminology or commands:
 ```bash
 rg "term-or-command" docs src README.rst CONTRIBUTING.md
 ```
+
+## Blog Posts
+
+1. Create `blog/YYYY-MM-DD-post-name/` using your publication date.
+2. Copy `blog/_template.md` into it as `index.md` (or `_template.mdx` as `index.mdx`).
+3. Fill in the title, summary and unique slug, add at least one required tag, and write the article.
+4. Preview with `npm run start`. Set `draft: false` when ready, then run `npm run build`.
+5. Submit a pull request, including any images or PDF files beside the post.
+
+New posts and tags automatically populate the blog, archive, topics, counts,
+filters and search at build time. No page registration or `tags.yml` change is
+needed. See [the blog authoring guide](blog/README.md) for attachment examples,
+author details and optional MDX features. Remove the labelled demo posts before
+deploying the real blog.
 
 ## Documentation Changes
 

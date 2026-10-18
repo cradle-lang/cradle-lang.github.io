@@ -1,4 +1,5 @@
 import { themes as prismThemes } from 'prism-react-renderer';
+import path from 'node:path';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
@@ -39,6 +40,30 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  markdown: {
+    format: 'detect',
+    async parseFrontMatter(params) {
+      const result = await params.defaultParseFrontMatter(params);
+      const relativePath = path.relative(path.resolve(__dirname, 'blog'), params.filePath);
+      const isBlogPost = !path.isAbsolute(relativePath) &&
+        !relativePath.startsWith('..') && /\.mdx?$/.test(relativePath) &&
+        !relativePath.split(path.sep).some((part) => part.startsWith('_')) &&
+        path.basename(relativePath) !== 'README.md';
+
+      if (isBlogPost) {
+        const {tags} = result.frontMatter;
+        const validTag = (tag: unknown) => typeof tag === 'string'
+          ? tag.trim().length > 0
+          : Boolean(tag && typeof tag === 'object' && 'label' in tag &&
+            typeof tag.label === 'string' && tag.label.trim().length > 0);
+        if (!Array.isArray(tags) || tags.length === 0 || !tags.every(validTag)) {
+          throw new Error(`Blog post ${relativePath} must include at least one non-empty tag. Add front matter such as tags: [project].`);
+        }
+      }
+      return result;
+    },
+  },
+
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
@@ -46,6 +71,23 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  plugins: [
+    function blogSearchIndex() {
+      return {
+        name: 'blog-search-index',
+        async allContentLoaded({allContent, actions}) {
+          const blog = allContent['docusaurus-plugin-content-blog']?.default as
+            {blogPosts?: {metadata: {unlisted?: boolean}}[]} | undefined;
+          actions.setGlobalData({
+            posts: (blog?.blogPosts ?? [])
+              .filter(({metadata}) => !metadata.unlisted)
+              .map(({metadata}) => metadata),
+          });
+        },
+      };
+    },
+  ],
 
   presets: [
     [
@@ -71,7 +113,21 @@ const config: Config = {
             },
           },
         },
-        blog: false,
+        blog: {
+          blogTitle: 'CRADLE Blog',
+          blogDescription: 'Project updates, practical guides and research perspectives from CRADLE.',
+          blogSidebarTitle: 'Recent posts',
+          blogSidebarCount: 10,
+          sortPosts: 'descending',
+          postsPerPage: 10,
+          showReadingTime: true,
+          // Contributors can introduce topics directly in post front matter.
+          onInlineTags: 'ignore',
+          exclude: ['**/_*', '**/_*/**', '**/README.md'],
+          feedOptions: {
+            type: [],
+          },
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -132,6 +188,12 @@ const config: Config = {
           label: 'Releases',
           position: 'left',
         },
+        // Uncomment when the blog is ready to appear in navigation.
+        // {
+        //   to: '/blog/',
+        //   label: 'Blog',
+        //   position: 'left',
+        // },
         {
           type: 'custom-version-dropdown',
           position: 'right',
@@ -179,6 +241,11 @@ const config: Config = {
               label: 'Releases',
               to: '/releases/',
             },
+            // Uncomment alongside the Blog navbar entry above.
+            // {
+            //   label: 'Blog',
+            //   to: '/blog/',
+            // },
             {
               label: 'Support and Feedback',
               to: '/docs/project/support',
@@ -223,6 +290,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['json', 'yaml', 'go', 'bash', 'powershell', 'c', 'java'],
     },
   } satisfies Preset.ThemeConfig,
 };
