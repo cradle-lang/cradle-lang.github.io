@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "release": {
+    "tag": "v0.19.3",
+    "sha": "31f82b9f1b7b3cb56b5d845d4b2893f44b3e99f2"
+  },
+  "previous": {
+    "tag": "v0.19.2",
+    "sha": "2a0ff2c8f9867be4a5755effdf4ba0a50c156220"
+  },
+  "evidenceSha256": "d2c19a8844be84d972e067ab01454f54752341c07a3c94269467cd2661e8bfc3",
+  "inventory": {
+    "sourceFiles": [
+      "crates/cradle-core/src/lower.rs",
+      "crates/cradle-core/src/validation.rs"
+    ],
+    "testFiles": [],
+    "ciFiles": [
+      ".github/workflows/release.yml"
+    ],
+    "upstreamDocumentationFiles": [
+      "README.md",
+      "docs/backend-plugin-protocol.md",
+      "docs/developer-guide.md",
+      "docs/release-process.md"
+    ],
+    "cliFiles": [],
+    "configurationFiles": [],
+    "schemaFiles": [],
+    "dependencyFiles": [
+      "Cargo.lock",
+      "Cargo.toml"
+    ],
+    "buildAndReleaseFiles": []
+  },
+  "signals": {
+    "changedCommands": [],
+    "removedCommands": [],
+    "addedFlags": [
+      "--all-features",
+      "--arg",
+      "--backend-arg",
+      "--base",
+      "--delete-branch",
+      "--ff-only",
+      "--head",
+      "--ir",
+      "--jq",
+      "--no-default-features",
+      "--oneline",
+      "--only",
+      "--output-dir",
+      "--release",
+      "--squash",
+      "--stage",
+      "--title",
+      "--user",
+      "--version",
+      "--watch"
+    ],
+    "removedFlags": [
+      "--no-default-features",
+      "--release"
+    ],
+    "defaultLineChanges": {
+      "added": 22,
+      "removed": 2
+    }
+  },
+  "likelyDocumentation": [
+    {
+      "path": "docs/cli/command-reference.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "backend-arg",
+        "base",
+        "guide",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "release",
+        "stage",
+        "title",
+        "user",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/overview/what-is-cradle.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "developer",
+        "guide",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "stage",
+        "title",
+        "user",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/cli/outputs.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "guide",
+        "ir",
+        "plugin",
+        "process",
+        "release",
+        "stage",
+        "title",
+        "user",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/cli/overview.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "base",
+        "guide",
+        "ir",
+        "plugin",
+        "process",
+        "release",
+        "stage",
+        "title",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/guides/write-a-scenario.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "base",
+        "guide",
+        "head",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "title",
+        "user"
+      ]
+    },
+    {
+      "path": "docs/language/diagnostics.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "guide",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "release",
+        "stage",
+        "title",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/backend-development/building-a-backend.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "release",
+        "title",
+        "user",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/cli/backend-discovery.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "guide",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "release",
+        "title",
+        "user"
+      ]
+    },
+    {
+      "path": "docs/cli/exit-codes.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "backend-arg",
+        "base",
+        "ir",
+        "jq",
+        "plugin",
+        "process",
+        "title",
+        "version"
+      ]
+    },
+    {
+      "path": "docs/getting-started/use-a-backend.mdx",
+      "matchedTerms": [
+        "arg",
+        "backend",
+        "guide",
+        "ir",
+        "only",
+        "plugin",
+        "process",
+        "release",
+        "title",
+        "user"
+      ]
+    }
+  ],
+  "riskIndicators": [
+    "possible-breaking-change",
+    "removed-cli-flag"
+  ],
+  "classification": {
+    "level": "COMPLEX_USER_FACING",
+    "requiresUserDocumentation": true,
+    "reasons": [
+      "Multiple, breaking, or broad user-facing change signals require wider review."
+    ],
+    "domains": [
+      "cli",
+      "documentation"
+    ],
+    "possibleBreakingChange": true
+  },
+  "sha256": "b5b324d51cf20ec9ecba4322487df11c0d0b86854ccd624d52052e6f7b036b71"
+}

@@ -1,10 +1,10 @@
 {
   "current": {
-    "tag": "v0.19.2",
+    "tag": "v0.19.3",
     "command": "cxc doctor",
     "ariaLabel": "Illustrative output from a successful CradleXC dependency check",
     "output": [
-      "Cradle Cross Compiler v0.19.2 — dependency check",
+      "Cradle Cross Compiler v0.19.3 — dependency check",
       "",
       "Dependency                     Status     Purpose",
       "--------------------------------------------------------------------------------",
@@ -70,6 +70,24 @@
       "ariaLabel": "Illustrative output from a successful CradleXC dependency check",
       "output": [
         "Cradle Cross Compiler v0.19.1 — dependency check",
+        "",
+        "Dependency                     Status     Purpose",
+        "--------------------------------------------------------------------------------",
+        "",
+        "✓ All required dependencies are installed.",
+        "",
+        "Configuration:",
+        "  Config file: <TEMP>/home/.cxc/config.toml",
+        "  Config dir:      https://github.com/cradle-lang/cradle-lib",
+        "  Heuristics dir:  https://github.com/cradle-lang/cradle-lib"
+      ]
+    },
+    "0.19.2": {
+      "tag": "v0.19.2",
+      "command": "cxc doctor",
+      "ariaLabel": "Illustrative output from a successful CradleXC dependency check",
+      "output": [
+        "Cradle Cross Compiler v0.19.2 — dependency check",
         "",
         "Dependency                     Status     Purpose",
         "--------------------------------------------------------------------------------",
