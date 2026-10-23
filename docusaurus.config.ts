@@ -206,12 +206,13 @@ const config: Config = {
           position: 'left',
           label: 'Documentation',
         },
-        {
-          to: '/collection/',
-          label: 'Library',
-          activeBaseRegex: '/(collection|library)(/|$)',
-          position: 'left',
-        },
+        // Uncomment when the Library is ready to appear in navigation.
+        // {
+        //   to: '/collection/',
+        //   label: 'Library',
+        //   activeBaseRegex: '/(collection|library)(/|$)',
+        //   position: 'left',
+        // },
         {
           to: '/workbench/',
           label: 'Workbench',
