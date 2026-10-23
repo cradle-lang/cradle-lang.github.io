@@ -1,0 +1,16 @@
+.editor {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+.gutter {
+  overflow: hidden;
+  padding: 16px 10px 16px 0;
+  color: var(--cradle-text-subtle);
+  background: var(--cradle-surface);
+  border-right: 1px solid var(--cradle-border);
+  font: .8rem/1.6 var(--ifm-font-family-monospace);
+  text-align: right;
+  user-select: none;
+}

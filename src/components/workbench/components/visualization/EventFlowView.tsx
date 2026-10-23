@@ -10,6 +10,7 @@ import type {
 } from '../../types/workbench';
 
 import TopologyNode from './TopologyNode';
+import styles from './Diagram.module.css';
 
 type Props = {
   parsed: ParsedCradle;
@@ -159,6 +160,7 @@ export default function EventFlowView({
 
   return (
     <svg
+      className={styles.diagram}
       viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
       role="group"
       aria-labelledby="workbench-event-flow-title workbench-event-flow-description"

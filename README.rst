@@ -32,6 +32,51 @@ is its current compiler implementation and ``cxc`` is the command-line
 interface. This repository documents those projects; it does not contain the
 CradleXC compiler or a deployment backend.
 
+Contribute a Scenario
+---------------------
+
+To upload a scenario to the website, read and follow the
+`scenario submission guide <library/README.md>`_ from setup through publication.
+It includes the folder template, required metadata, supporting files, local
+checks, pull request steps and published-page verification. General contribution
+rules are in `CONTRIBUTING.md <CONTRIBUTING.md>`_.
+
+From a local checkout with dependencies installed, start with:
+
+.. code-block:: bash
+
+   npm run library:new -- scenario my-range
+
+Replace the template specification with your complete CRADLE source, write the
+Markdown or MDX article, add supporting files and set ``draft: false``. Submit
+``library/scenarios/my-range/`` in a pull request to ``main``. After merge and a
+successful GitHub Pages workflow, the scenario appears in the
+`Library <https://cradle-lang.org/collection/>`_ and at
+``https://cradle-lang.org/library/scenarios/my-range``. Docusaurus creates the
+HTML, catalog entry and static download automatically. Publishing the website
+does not run the simulation.
+
+Scenario artwork and thumbnails
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Each scenario can use the built-in ``auto``, ``network``, ``enterprise`` or
+``monitoring`` artwork. For a custom thumbnail, put the image in the scenario
+folder and add these fields to the existing front matter in ``index.md`` or
+``index.mdx``:
+
+.. code-block:: yaml
+
+   artwork: network
+   thumbnail: ./images/thumbnail.webp
+   thumbnailAlt: Training hosts connected to a management network.
+
+PNG, JPEG, WebP and GIF are supported. Use a landscape image, preferably
+1200 × 675 pixels, with important content near the centre. Commit the image
+along with the article. It appears in scenario cards, scenario details and the
+Workbench library browser; no React changes are required. Read the
+`thumbnail instructions <library/README.md#choose-artwork-or-add-a-custom-thumbnail>`_
+for the full workflow, defaults, fallback behaviour and validation checks.
+
 Project Goals and Audience
 --------------------------
 
@@ -107,6 +152,16 @@ Useful Commands
 ``npm run serve``
    Serve the completed ``build/`` directory for production-like inspection.
 
+``npm run library:new -- scenario my-range``
+   Create a draft scenario folder. Follow the
+   `scenario submission guide <library/README.md>`_ to complete and publish it.
+
+``npm run test:collection``
+   Check library discovery, metadata, parsing and compilation tooling.
+
+``npm run test:library-build``
+   After building, verify library HTML pages and downloadable specifications.
+
 ``npm run clear``
    Clear Docusaurus caches when generated state becomes stale.
 
@@ -131,6 +186,10 @@ layout:
 ``Documentation``
    Task guides, language concepts, CLI reference, examples, backend-development
    material and project information.
+
+``Library``
+   Browse scenarios, configurations and heuristics. Authors contribute complete
+   folders following the `scenario submission guide <library/README.md>`_.
 
 ``Workbench``
    An in-browser environment for editing and inspecting a scenario model.
@@ -172,6 +231,15 @@ Repository Structure
    directly in post front matter; every post requires at least one tag.
    ``tags.yml`` optionally adds shared labels and
    descriptions. Shared author metadata lives in ``authors.yml``.
+
+``library/``
+   Folder-based scenarios, configurations and heuristics. Copy a template from
+   ``library/_templates/`` or run ``npm run library:new -- scenario my-range``.
+   Write ``index.md`` or ``index.mdx`` and keep supporting files in the folder.
+   Docusaurus compiles the articles to HTML and updates the catalog automatically.
+   Configurations and heuristics merge discovered references with authored
+   entries. Read and follow the
+   `scenario submission guide <library/README.md>`_ for the complete workflow.
 
 ``scripts/``
    Release-data generation and maintenance scripts.

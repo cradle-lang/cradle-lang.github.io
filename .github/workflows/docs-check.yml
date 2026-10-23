@@ -34,5 +34,11 @@ jobs:
       - name: Test release automation
         run: npm run test:release-automation
 
+      - name: Test scenario collection
+        run: npm run test:collection
+
       - name: Build documentation
         run: npm run build
+
+      - name: Verify library pages and downloads
+        run: npm run test:library-build

@@ -37,6 +37,8 @@ import type {
 } from './types/workbench';
 
 import styles from './Workbench.module.css';
+import LibraryBrowser from '../collection/LibraryBrowser';
+import {findScenario, scenarioSource, type Scenario} from '../collection/catalog';
 
 const SOURCE_STORAGE =
   'cradleWorkbenchSource';
@@ -77,6 +79,8 @@ function describeWorkbenchError(
 }
 
 export default function Workbench(): ReactNode {
+  const [collectionScenario, setCollectionScenario] = useState<Scenario | null>(null);
+  const [collectionError, setCollectionError] = useState('');
   const [source, setSource] =
     useState('');
 
@@ -249,6 +253,12 @@ export default function Workbench(): ReactNode {
     ]);
 
   useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('scenario');
+    if (requested) {
+      const scenario = findScenario(requested);
+      if (scenario) setCollectionScenario(scenario);
+      else setCollectionError('The requested collection scenario was not found. Your saved source is still available.');
+    }
     const saved =
       window.localStorage.getItem(
         SOURCE_STORAGE,
@@ -334,7 +344,7 @@ export default function Workbench(): ReactNode {
       (
         nextSource: string,
         label: string,
-      ): void => {
+      ): boolean => {
         if (
           !confirmReplacement(
             nextSource,
@@ -344,7 +354,7 @@ export default function Workbench(): ReactNode {
           log(
             `Canceled loading ${label}.`,
           );
-          return;
+          return false;
         }
 
         clearDiagnostics();
@@ -374,6 +384,7 @@ export default function Workbench(): ReactNode {
         );
 
         logWarnings(result);
+        return true;
       },
       [
         confirmReplacement,
@@ -660,6 +671,14 @@ export default function Workbench(): ReactNode {
             styles.topActions
           }
         >
+          <LibraryBrowser onLoad={(scenario) => {
+            try {
+              return loadSample(scenarioSource(scenario), scenario.name);
+            } catch (error) {
+              setCollectionError(describeWorkbenchError(error).detail);
+              return false;
+            }
+          }} />
           <button
             type="button"
             onClick={() =>
@@ -699,6 +718,23 @@ export default function Workbench(): ReactNode {
           />
         </div>
       </header>
+
+      {(collectionScenario || collectionError) && <section className={styles.collectionBanner} aria-label="Collection import">
+        {collectionScenario ? <>
+          <span>From the collection: <strong>{collectionScenario.name}</strong>. Load it to replace the current source.</span>
+          <button type="button" onClick={() => {
+            try {
+              if (loadSample(scenarioSource(collectionScenario), collectionScenario.name)) {
+                setCollectionScenario(null);
+              }
+            } catch (error) {
+              setCollectionError(describeWorkbenchError(error).detail);
+            }
+          }}>Load scenario</button>
+          <button type="button" onClick={() => setCollectionScenario(null)}>Dismiss</button>
+        </> : <span role="alert">{collectionError}</span>}
+        {collectionScenario && collectionError && <span role="alert">{collectionError}</span>}
+      </section>}
 
       <nav
         className={styles.mobilePaneTabs}

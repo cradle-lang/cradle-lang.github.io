@@ -1,0 +1,50 @@
+name: Validate and compile collection scenario
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: Collection scenario ID
+        required: true
+        type: string
+      revision:
+        description: Git commit, tag or branch containing the scenario
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted content tooling
+        uses: actions/checkout@v4
+        with:
+          path: tooling
+          persist-credentials: false
+      - name: Checkout selected scenario
+        uses: actions/checkout@v4
+        with:
+          path: scenario
+          ref: ${{ inputs.revision }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install trusted content tooling
+        run: npm ci --ignore-scripts --prefix tooling
+      - name: Install CradleXC from the project repository
+        run: |
+          echo 'deb [trusted=yes] https://repo.cradle-lang.org/apt/ /' | sudo tee /etc/apt/sources.list.d/cradle.list
+          sudo apt-get update
+          sudo apt-get install -y cxc
+      - name: Validate and compile
+        env:
+          SCENARIO: ${{ inputs.scenario }}
+        run: |
+          bash tooling/scripts/compile-collection-scenario.sh "$SCENARIO" "$GITHUB_WORKSPACE/scenario" "$GITHUB_WORKSPACE/scenario-output"
+          cat "$GITHUB_WORKSPACE/scenario-output/report.md" >> "$GITHUB_STEP_SUMMARY"

@@ -1,43 +1,6 @@
 .workbench {
-  --workbench-node-bg:
-    var(--cradle-surface, #ffffff);
-
-  --workbench-node-text:
-    var(--cradle-text, #14202b);
-
-  --workbench-node-muted:
-    var(--cradle-text-muted, #657482);
-
-  --workbench-network-bg:
-    color-mix(
-      in srgb,
-      var(--cradle-surface, #ffffff) 94%,
-      transparent
-    );
-
-  --workbench-network:
-    #ce6f32;
-
-  --workbench-network-title:
-    #9a4f20;
-
-  --workbench-network-muted:
-    var(--cradle-text-muted, #657482);
-
-  --workbench-edge:
-    color-mix(
-      in srgb,
-      var(--cradle-text-muted) 45%,
-      transparent
-    );
-
-  --workbench-event:
-    #7656ad;
-
-  display: grid;
-  grid-template-rows:
-    48px
-    minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
 
   width: 100%;
 
@@ -58,14 +21,17 @@
    ========================================================= */
 
 .topbar {
-  display: flex;
+  min-height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content:
     space-between;
 
-  gap: 16px;
+  gap: 15px 20px;
 
-  padding: 0 14px;
+  padding: 18px 22px 15px;
 
   border-bottom:
     1px solid
@@ -100,7 +66,8 @@
   color:
     var(--cradle-text);
 
-  font-size: 0.82rem;
+  font-size: 1rem;
+  letter-spacing: -.025em;
 }
 
 .brandCopy span {
@@ -163,6 +130,11 @@
   align-items: center;
 
   gap: 6px;
+}
+
+.topActions {
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
 }
 
 .workbench button {
@@ -258,6 +230,7 @@
    ========================================================= */
 
 .workspace {
+  flex: 1;
   display: grid;
 
   grid-template-columns:
@@ -288,7 +261,7 @@
   display: grid;
 
   grid-template-rows:
-    42px
+    minmax(42px, auto)
     minmax(190px, 1fr)
     190px
     46px;
@@ -358,7 +331,7 @@
   overflow: hidden;
 
   max-width:
-    190px;
+    100px;
 
   padding:
     4px 7px;
@@ -401,7 +374,7 @@
   min-height: 0;
 
   background:
-    var(--cradle-code-bg);
+    var(--cradle-surface-raised);
 }
 
 .editor textarea {
@@ -418,10 +391,10 @@
   border: 0;
 
   background:
-    var(--cradle-code-bg);
+    var(--cradle-surface-raised);
 
   color:
-    var(--cradle-code-text);
+    var(--cradle-text);
 
   font-family:
     var(--ifm-font-family-monospace);
@@ -1029,4 +1002,38 @@
   .viewActions button {
     min-height: 44px;
   }
+}
+.collectionBanner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--cradle-accent-soft);
+  color: var(--cradle-text);
+  font-size: .85rem;
+  border-bottom: 1px solid var(--cradle-border);
+}
+.collectionBanner span { flex: 1; min-width: 220px; }
+.collectionBanner button {
+  border: 1px solid var(--cradle-border-strong);
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: var(--cradle-text);
+  background: var(--cradle-surface);
+  cursor: pointer;
+}
+
+/* Keep source controls legible when the editor shares the screen with topology. */
+.paneHeader {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 7px 10px;
+}
+.paneTitle strong { white-space: nowrap; font-size: .68rem; }
+.paneActions { flex-wrap: wrap; }
+.paneActions button { white-space: nowrap; font-size: .65rem; padding: 0 7px; }
+@media (max-width: 560px) {
+  .topbar { grid-template-columns: minmax(0, 1fr); }
+  .status { justify-self: start; }
 }

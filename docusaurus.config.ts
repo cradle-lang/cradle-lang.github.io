@@ -44,6 +44,11 @@ const config: Config = {
     format: 'detect',
     async parseFrontMatter(params) {
       const result = await params.defaultParseFrontMatter(params);
+      const libraryPath = path.relative(path.resolve(__dirname, 'library'), params.filePath);
+      if (!libraryPath.startsWith('..') && !path.isAbsolute(libraryPath) &&
+          /^(scenarios|configurations|heuristics)\/[a-z0-9-]+\/index\.mdx?$/.test(libraryPath)) {
+        result.frontMatter.slug = `/${path.dirname(libraryPath)}`;
+      }
       const relativePath = path.relative(path.resolve(__dirname, 'blog'), params.filePath);
       const isBlogPost = !path.isAbsolute(relativePath) &&
         !relativePath.startsWith('..') && /\.mdx?$/.test(relativePath) &&
@@ -73,6 +78,29 @@ const config: Config = {
   },
 
   plugins: [
+    './plugins/library/index.cjs',
+    ['@docusaurus/plugin-content-docs', {
+      id: 'library',
+      path: 'library',
+      routeBasePath: 'library',
+      sidebarPath: false,
+      include: ['scenarios/*/index.{md,mdx}', 'configurations/*/index.{md,mdx}', 'heuristics/*/index.{md,mdx}'],
+      exclude: ['**/_*/**'],
+      onInlineTags: 'ignore',
+    }],
+    function cradleSources() {
+      return {
+        name: 'cradle-sources',
+        configureWebpack(_config, isServer) {
+          return {module: {rules: [{test: /\.cradle$/, oneOf: [
+            {resourceQuery: /raw/, type: 'asset/source'},
+            {type: 'javascript/auto', use: [{loader: 'file-loader', options: {
+              name: 'assets/files/[name]-[contenthash].[ext]', emitFile: !isServer,
+            }}]},
+          ]}]}};
+        },
+      };
+    },
     function blogSearchIndex() {
       return {
         name: 'blog-search-index',
@@ -177,6 +205,12 @@ const config: Config = {
           sidebarId: 'docsSidebar',
           position: 'left',
           label: 'Documentation',
+        },
+        {
+          to: '/collection/',
+          label: 'Library',
+          activeBaseRegex: '/(collection|library)(/|$)',
+          position: 'left',
         },
         {
           to: '/workbench/',

@@ -54,6 +54,7 @@ Use the appropriate source location:
 | Component styles | Colocated `*.module.css` |
 | Release note | `release-notes/v<semver>.md` |
 | Blog article and its attachments | `blog/YYYY-MM-DD-post-name/` |
+| Library scenario, configuration or heuristic | `library/<type>/<entry-name>/` |
 | Static asset | `static/` |
 
 Search for related content before changing terminology or commands:
@@ -75,6 +76,49 @@ filters and search at build time. No page registration or `tags.yml` change is
 needed. See [the blog authoring guide](blog/README.md) for attachment examples,
 author details and optional MDX features. Remove the labelled demo posts before
 deploying the real blog.
+
+## Library Contributions
+
+**For scenario submissions, read and follow the complete
+[scenario submission guide](library/README.md)**. It covers a fresh checkout,
+the template, required metadata, source and attachments, preview, checks, pull
+request and verification on `cradle-lang.org`.
+
+1. Create a branch, then run `npm run library:new -- scenario my-range` from the repository root after `npm ci`.
+2. Replace the comment-only `scenario.cradle` stub with your complete working specification. Fill in `index.md` or `index.mdx`, document dependencies, validation evidence and licensing, and keep supporting files in the same folder.
+3. Set `draft: false`, preview `/collection/?scenario=my-range` and `/library/scenarios/my-range`, and check the topology, article, attachments and source download.
+4. Run `npm run typecheck`, `npm run test:collection`, `npm run build`, then `npm run test:library-build`. Inspect the production output using `npm run serve`.
+5. Commit the whole entry folder and open a pull request targeting `main`. Complete the PR template and resolve failing checks. After a maintainer merges it and **Deploy Docusaurus to GitHub Pages** succeeds, check the live article, collection entry and download.
+
+Creating a local folder or pushing a feature branch alone does not update the
+public website. Do not commit generated catalog files or `build/`. Docusaurus
+renders the article and discovers the entry automatically; no catalog, sidebar
+or workflow registration is needed. Website publication does not deploy or run
+the scenario's simulation.
+
+For card artwork, choose a built-in style or add a custom image using the
+[thumbnail instructions](library/README.md#choose-artwork-or-add-a-custom-thumbnail).
+The template includes commented examples; no React edits are needed. For example,
+place `thumbnail.webp` beside the article and add this inside its existing front
+matter:
+
+```yaml
+artwork: monitoring
+thumbnail: ./thumbnail.webp
+thumbnailAlt: Training and management networks in the Cron comparison lab.
+```
+
+Use PNG, JPEG, WebP or GIF, preferably 1200 × 675 pixels. Keep the focal content
+near the centre, document attribution, and commit the image with the scenario.
+`thumbnailAlt` is required. Preview the card, detail page and Workbench library
+browser, then run `npm run typecheck` and the production checks above. Omit
+`thumbnail` and `thumbnailAlt` to use the selected built-in illustration.
+
+Use `configuration` or `heuristic` instead of `scenario` in the template command
+to contribute a reusable building block. Published specifications populate
+configuration and heuristic references automatically; matching articles enrich
+them, and standalone articles appear with zero usages. Their required metadata
+and attachment instructions are in the same [submission guide](library/README.md).
 
 ## Documentation Changes
 
@@ -416,6 +460,7 @@ Run checks in proportion to the change:
 | Change | Required checks |
 | --- | --- |
 | Documentation | Build; inspect rendered content and links |
+| Library entry | Follow the [scenario submission checks](library/README.md#5-check-the-production-build); inspect collection, article, Workbench and downloads |
 | Navigation/versioning | Build; inspect sidebars, previous/next links and version menu |
 | Release notes | Regenerate data; build; inspect selection and hash links |
 | React/TypeScript | Build; exercise success, empty, warning and failure states |

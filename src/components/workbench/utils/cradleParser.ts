@@ -492,6 +492,7 @@ function parseCradle(code: string, compatibility: boolean): ParsedCradle {
   const objects = new Map<string, CradleObject>();
   const events = new Map<string, CradleEvent>();
   const metadata: ParsedCradle['metadata'] = {};
+  const metadataHeuristics: NonNullable<ParsedCradle['metadataHeuristics']> = [];
   const warnings: string[] = [];
   const namedDependencies: NamedDependency[] = [];
   const outline: ParsedCradle['outline'] = {
@@ -570,6 +571,11 @@ function parseCradle(code: string, compatibility: boolean): ParsedCradle {
     }
 
     if (currentBlock?.kind === 'metadata') {
+      if (parsedCall.name === 'heuristic') {
+        const type = asString(parsedCall.args[0]);
+        const value = asString(parsedCall.args[1]);
+        if (type && value) metadataHeuristics.push({type, value});
+      }
       metadata[parsedCall.name] = parsedCall.args.length > 1
         ? parsedCall.args
         : parsedCall.args[0] ?? true;
@@ -852,6 +858,7 @@ function parseCradle(code: string, compatibility: boolean): ParsedCradle {
 
   return {
     metadata,
+    metadataHeuristics,
     instances: [...instances.values()],
     networks: [...networks.values()],
     objects: [...objects.values()],

@@ -130,6 +130,7 @@ export type CradleOutline = {
 
 export type ParsedCradle = {
   metadata: Record<string, CradleValue>;
+  metadataHeuristics?: Heuristic[];
 
   instances: CradleInstance[];
   networks: CradleNetwork[];

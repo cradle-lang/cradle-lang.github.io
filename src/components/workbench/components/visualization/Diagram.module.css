@@ -1,0 +1,19 @@
+/* Diagram colors belong to the SVG so standalone library previews and
+   Workbench canvases always render with the same complete theme. */
+.diagram {
+  --workbench-node-bg: var(--cradle-surface, #ffffff);
+  --workbench-node-text: var(--cradle-text, #14202b);
+  --workbench-node-muted: var(--cradle-text-muted, #657482);
+  --workbench-network-bg: var(--cradle-surface, #ffffff);
+  --workbench-network: #ce6f32;
+  --workbench-network-title: #9a4f20;
+  --workbench-network-muted: var(--cradle-text-muted, #657482);
+  --workbench-edge: color-mix(in srgb, var(--cradle-text-muted, #657482) 65%, transparent);
+  --workbench-event: #7656ad;
+}
+
+:global([data-theme='dark']) .diagram {
+  --workbench-network: #d99b6e;
+  --workbench-network-title: #edb88f;
+  --workbench-event: #ba9ce8;
+}

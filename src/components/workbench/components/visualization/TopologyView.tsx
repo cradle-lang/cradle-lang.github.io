@@ -7,6 +7,7 @@ import {
 } from 'react';
 
 import NetworkGroup from './NetworkGroup';
+import styles from './Diagram.module.css';
 
 import type {
   ParsedCradle,
@@ -359,6 +360,7 @@ export default function TopologyView({
 
   return (
     <svg
+      className={styles.diagram}
       ref={svgRef}
       viewBox="0 0 1200 800"
       preserveAspectRatio="xMidYMid meet"

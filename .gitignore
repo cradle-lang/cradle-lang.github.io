@@ -4,6 +4,8 @@ node_modules/
 # Docusaurus
 .docusaurus/
 build/
+src/data/library.generated.json
+src/data/library-assets.generated.ts
 
 # Environment
 .env
