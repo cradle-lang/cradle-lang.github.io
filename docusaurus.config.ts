@@ -44,10 +44,11 @@ const config: Config = {
     format: 'detect',
     async parseFrontMatter(params) {
       const result = await params.defaultParseFrontMatter(params);
-      const libraryPath = path.relative(path.resolve(__dirname, 'library'), params.filePath);
-      if (!libraryPath.startsWith('..') && !path.isAbsolute(libraryPath) &&
+      const libraryRelativePath = path.relative(path.resolve(__dirname, 'library'), params.filePath);
+      const libraryPath = libraryRelativePath.split(path.sep).join('/');
+      if (!libraryPath.startsWith('..') && !path.isAbsolute(libraryRelativePath) &&
           /^(scenarios|configurations|heuristics)\/[a-z0-9-]+\/index\.mdx?$/.test(libraryPath)) {
-        result.frontMatter.slug = `/${path.dirname(libraryPath)}`;
+        result.frontMatter.slug = `/${path.posix.dirname(libraryPath)}`;
       }
       const relativePath = path.relative(path.resolve(__dirname, 'blog'), params.filePath);
       const isBlogPost = !path.isAbsolute(relativePath) &&

@@ -115,9 +115,8 @@ browser, then run `npm run typecheck` and the production checks above. Omit
 `thumbnail` and `thumbnailAlt` to use the selected built-in illustration.
 
 Use `configuration` or `heuristic` instead of `scenario` in the template command
-to contribute a reusable building block. Published specifications populate
-configuration and heuristic references automatically; matching articles enrich
-them, and standalone articles appear with zero usages. Their required metadata
+to contribute a reusable building block. Only published articles create configuration and heuristic cards; scenario
+references supply usage links for those entries. Articles can appear with zero usages. Their required metadata
 and attachment instructions are in the same [submission guide](library/README.md).
 
 ## Documentation Changes

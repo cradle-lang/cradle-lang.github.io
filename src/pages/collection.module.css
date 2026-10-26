@@ -73,7 +73,6 @@
 .cardBody > p { color: var(--lib-muted); font-size: 11px; line-height: 1.8; margin: 10px 0 14px; min-height: 40px; }
 .tags { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 .tags > span { display: inline-flex; align-items: center; gap: 3px; color: var(--lib-blue); background: var(--lib-blue-soft); padding: 2px 7px; border-radius: 5px; font-size: 9px; line-height: 1.6; }
-.tags > .neutralTag { color: var(--lib-muted); background: var(--lib-soft); }
 .tags > .readyTag { background: #e0f5ec; color: #237659; }
 :global([data-theme='dark']) .tags > .readyTag { background: #173a30; color: #8ed9b7; }
 .metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; font-size: 10px; color: var(--lib-muted); margin: 18px 0; }
@@ -189,5 +188,32 @@
 @media (prefers-reduced-motion: reduce) { .categoryCard, .scenarioCard, .primaryButton, .secondaryButton { transition: none; } }
 .guideLink { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 10px; color: var(--lib-blue); }
 
-.tagFilterHint { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-left: 65px; color: var(--lib-muted); font-size: 10px; }
-.tagFilterHint button { font-size: inherit; }
+
+.heuristicGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.heuristicCard { display: flex; flex-direction: column; gap: 22px; min-width: 0; padding: 26px; border: 1px solid var(--lib-line); border-radius: 10px; background: var(--lib-bg); }
+.heuristicHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.heuristicBody { flex: 1; }
+.heuristicBody h2 { color: var(--lib-ink); font-size: 18px; line-height: 1.4; letter-spacing: -.02em; margin: 0 0 12px; overflow-wrap: anywhere; }
+.heuristicIdentifier { display: inline-block; max-width: 100%; margin-bottom: 12px; font-size: 11px; overflow-wrap: anywhere; }
+.heuristicBody p, .heuristicUsage p { color: var(--lib-muted); font-size: 12px; line-height: 1.8; margin: 0; }
+.heuristicUsage { border-top: 1px solid var(--lib-line); padding-top: 18px; }
+.heuristicUsage h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 11px; font-weight: 600; }
+.heuristicUsage ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.heuristicUsage a { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--lib-blue); font-size: 12px; }
+.heuristicUsage a svg { flex-shrink: 0; }
+@media (max-width: 1150px) { .heuristicGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .heuristicGrid { grid-template-columns: 1fr; gap: 16px; } .heuristicCard { padding: 22px; } }
+
+.resourceCategories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.resourceCategories .categoryCard h2 { font-size: 20px; }
+.resourceCategories .categoryCard > div > span:last-child { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; }
+@media (max-width: 510px) { .resourceCategories { grid-template-columns: 1fr; gap: 16px; } }
+
+.resourceActions { display: flex; flex-wrap: wrap; gap: 12px 18px; }
+.configCard > a + a { margin-left: 16px; }
+
+.resourceCategories .categoryCard { position: relative; }
+.resourceCategoryLink { color: var(--lib-ink); }
+.resourceCategoryLink::after { content: ''; position: absolute; inset: 0; border-radius: 10px; }
+.resourceCategoryLink:focus-visible::after { outline: 2px solid var(--lib-blue); outline-offset: 4px; }
+.categorySource { position: relative; z-index: 1; margin-top: 18px; }

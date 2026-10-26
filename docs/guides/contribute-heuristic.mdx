@@ -1,0 +1,83 @@
+---
+title: Contribute a Heuristic
+sidebar_position: 9
+---
+
+# Contribute a Heuristic
+
+Publish a reusable framework mapping in the [Heuristics library](/collection/?section=heuristics).
+Each card comes from a published article under `library/heuristics/`. Adding a
+`heuristic()` annotation to a scenario does not create a library entry.
+
+## Prepare your checkout
+
+Fork and clone the [website repository](https://github.com/cradle-lang/cradle-lang.github.io),
+install Node.js 20 or newer and npm, then run these commands from its root:
+
+```bash
+git switch -c add-my-heuristic
+npm ci
+npm run library:new -- heuristic my-heuristic
+```
+
+This creates `library/heuristics/my-heuristic/index.md` as a draft. Use `--mdx`
+for MDX, or `--from "/path/to/module"` to import supporting files alongside the
+article. Keep exactly one `index.md` or `index.mdx` in the entry folder.
+
+## Describe the mapping
+
+Fill in the article's front matter:
+
+```yaml
+---
+title: Scheduled tasks through cron
+framework: ttp
+identifier: T1053.003
+description: Model scheduled execution through cron on a Linux instance.
+draft: true
+---
+```
+
+`title`, `description`, `framework` and `identifier` are required. The framework
+and identifier must match the annotation used in a specification; framework
+matching ignores case. For a CVE entry, use `framework: cve` and the full CVE
+identifier. The Heuristics library opens with TTP and CVE cards. Each card leads to a
+searchable list of published articles for that framework.
+
+Include an authoritative reference, the mapping's purpose, supported component
+types, operating systems, backend requirements, dependencies and verification
+steps. Show how to use the mapping:
+
+```cradle
+instance("cron-host") >
+    os("linux", "20.04"),
+    heuristic("ttp", "T1053.003").
+```
+
+Put implementation templates and assets in the same folder and link them using
+relative Markdown links. Explain where to install the implementation in the
+testbed's heuristic content library. Record attribution and licensing. Publishing
+the article does not install its implementation in a testbed.
+
+See [Heuristic Annotations](../language/heuristics) for compiler behavior and
+implementation layout. Describe which behavior you actually verified.
+
+## Preview and publish
+
+Set `draft: false` when the article is ready, then run:
+
+```bash
+npm run generate-library
+npm run typecheck
+npm run build
+npm run start
+```
+
+Inspect the article, relative asset links and the matching TTP or CVE list in the
+Heuristics library. Check search by title and identifier. A published entry appears even when no scenario uses it;
+matching scenarios provide usage counts and links. Removing or drafting the
+article removes its library card even if a scenario still references it.
+
+Stop the preview with Ctrl+C, commit the complete entry folder and open a pull
+request against `main`. Describe the mapping, implementation source and checks
+you ran. Maintainers review the contribution before it is published.

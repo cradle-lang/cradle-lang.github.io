@@ -1,0 +1,80 @@
+---
+title: Contribute a Configuration
+sidebar_position: 10
+---
+
+# Contribute a Configuration
+
+Share a reusable instance configuration in the [Configurations library](/collection/?section=configurations).
+Each card comes from a published article under `library/configurations/`. Adding
+a `config()` reference to a scenario does not create a library entry.
+
+## Prepare your checkout
+
+Fork and clone the [website repository](https://github.com/cradle-lang/cradle-lang.github.io),
+install Node.js 20 or newer and npm, then run these commands from its root:
+
+```bash
+git switch -c add-my-configuration
+npm ci
+npm run library:new -- configuration my-config
+```
+
+This creates `library/configurations/my-config/index.md` as a draft. Use `--mdx`
+for MDX, or `--from "/path/to/module"` to import an existing module with its
+supporting files. Keep exactly one `index.md` or `index.mdx` in the entry folder.
+
+## Document the configuration
+
+Fill in the article's front matter:
+
+```yaml
+---
+title: My configuration
+config: my-config
+os: Linux
+category: Networking
+description: Explain the behavior this configuration provides.
+draft: true
+---
+```
+
+`title`, `description` and `config` are required. Use the exact name passed to
+`config("my-config")`. Set `os` to `Linux`, `Windows`, `Cross-platform` or
+`Unspecified`, and use `category` to describe the configuration's purpose.
+
+Explain what the configuration changes, supported OS versions, dependencies,
+parameters and backend requirements. Include a usage example:
+
+```cradle
+instance("host") >
+    os("linux", "20.04"),
+    config("my-config").
+```
+
+Store implementation files, Ansible templates and assets alongside the article.
+Link them using relative Markdown links and explain how the testbed installs
+them in its configuration content library. Include verification steps, expected
+results, attribution and licensing. Publishing the article does not install the
+configuration in a testbed.
+
+## Preview and publish
+
+Set `draft: false` when ready, then run:
+
+```bash
+npm run generate-library
+npm run typecheck
+npm run build
+npm run start
+```
+
+Inspect the article, relative asset links and the Configurations library. Check
+search by name, operating system and description in the full list. A published entry appears even when no scenario uses
+it; matching scenarios provide usage counts and links. Removing or drafting the
+article removes its library card even if a scenario still references it.
+
+Stop the preview with Ctrl+C, commit the complete entry folder and open a pull
+request against `main`. Describe the behavior, implementation source, supported
+systems and checks you ran. Maintainers review the contribution before it is
+published.
