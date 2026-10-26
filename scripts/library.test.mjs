@@ -53,7 +53,7 @@ test('a new Markdown/MDX folder is discovered without a code or workflow registr
   } finally {await rm(temporary, {recursive: true, force: true});}
 });
 
-test('automatic references merge with authored entries and standalone resources retain zero usages', async () => {
+test('only published articles populate resources while scenario usages remain linked', async () => {
   const {scenarios} = await readLibrary(root);
   const source = scenarios.find(({id}) => id === 'hello-world');
   const parsed = parseCradleForWorkbench(source.spec);
@@ -61,10 +61,12 @@ test('automatic references merge with authored entries and standalone resources 
   parsed.instances[1].heuristics.push({type: 'cwe', value: 'CWE-89'});
   const entry = {...source, parsed};
   const documents = {
-    configurations: [{key: 'linux-router', name: 'Routing', description: 'Authored content', os: 'Linux', category: 'Networking', docUrl: '/library/configurations/routing'}, {key: 'new-config', name: 'Standalone', description: 'No usages yet', os: 'Linux', category: 'Services', docUrl: '/library/configurations/new-config'}],
-    heuristics: [{type: 'cwe', value: 'CWE-89', name: 'SQL injection', description: 'Authored heuristic', docUrl: '/library/heuristics/sql'}, {type: 'ttp', value: 'T1059', name: 'Command interpreter', description: 'Standalone mapping', docUrl: '/library/heuristics/command'}],
+    configurations: [{key: 'linux-router', name: 'Routing', description: 'Authored content', sourceUrl: 'https://github.com/cradle-lang/cradle-lib', os: 'Linux', category: 'Networking', docUrl: '/library/configurations/routing'}, {key: 'new-config', name: 'Standalone', description: 'No usages yet', os: 'Linux', category: 'Services', docUrl: '/library/configurations/new-config'}],
+    heuristics: [{type: 'cwe', value: 'CWE-89', name: 'SQL injection', description: 'Authored heuristic', sourceUrl: 'https://github.com/cradle-lang/cradle-lib', docUrl: '/library/heuristics/sql'}, {type: 'ttp', value: 'T1059', name: 'Command interpreter', description: 'Standalone mapping', docUrl: '/library/heuristics/command'}],
   };
   const result = mergeResources([entry], documents);
+  assert.equal(result.configurations.find(({name}) => name === 'linux-router').sourceUrl, 'https://github.com/cradle-lang/cradle-lib');
+  assert.equal(result.heuristics.find(({type}) => type === 'cwe').sourceUrl, 'https://github.com/cradle-lang/cradle-lib');
   assert.equal(result.configurations.filter(({name}) => name === 'linux-router').length, 1);
   assert.equal(result.configurations.find(({name}) => name === 'linux-router').description, 'Authored content');
   assert.equal(result.configurations.find(({name}) => name === 'linux-router').scenarios.length, 1);
@@ -74,10 +76,31 @@ test('automatic references merge with authored entries and standalone resources 
   assert.equal(result.heuristics.find(({type}) => type === 'cwe').scenarios.length, 1);
   assert.equal(result.heuristics.find(({type}) => type === 'ttp').scenarios.length, 0);
   assert.deepEqual(result.frameworks, ['cwe', 'ttp']);
+  assert.equal(result.configurations.length, 2, 'unpublished configuration references must not become entries');
   const automaticOnly = mergeResources([entry], {configurations: [], heuristics: []});
-  assert.ok(automaticOnly.configurations.some(({name}) => name === 'linux-router'));
-  assert.equal(automaticOnly.heuristics.length, 1);
+  assert.equal(automaticOnly.configurations.length, 0);
+  assert.equal(automaticOnly.heuristics.length, 0);
+  assert.deepEqual(automaticOnly.frameworks, []);
+  assert.equal(automaticOnly.heuristicUsages.length, 2, 'scenario details still show their own annotations');
+  parsed.instances[0].heuristics.push({type: 'cve', value: 'CVE-2024-1086'});
+  const withUnpublished = mergeResources([entry], documents);
+  assert.equal(withUnpublished.heuristics.length, 2, 'unpublished heuristic references must not become entries');
+  assert.deepEqual(withUnpublished.frameworks, ['cwe', 'ttp']);
   assert.equal(mergeResources([], {configurations: [], heuristics: []}).configurations.length, 0);
+});
+
+test('module links survive a catalog generated without optional source URLs', () => {
+  const documents = {
+    configurations: [{key: 'win-tellerApp', name: 'Teller app', description: 'Windows app', os: 'Windows', category: 'Other', docUrl: '/library/configurations/win-tellerapp'}],
+    heuristics: [
+      {type: 'ttp', value: 'T1053.003', name: 'Cron', description: 'Scheduled tasks', docUrl: '/library/heuristics/cron'},
+      {type: 'cve', value: 'CVE-2024-1086', name: 'Netfilter', description: 'Kernel module', docUrl: '/library/heuristics/netfilter'},
+    ],
+  };
+  const result = mergeResources([], documents);
+  assert.equal(result.configurations[0].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-tellerApp');
+  assert.equal(result.heuristics[0].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1053.003');
+  assert.equal(result.heuristics[1].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/cve/CVE-2024-1086');
 });
 
 test('invalid or ambiguous contributor entries fail with actionable paths', async () => {
@@ -111,15 +134,16 @@ test('the contributor command creates Markdown/MDX drafts and never overwrites a
   } finally {await rm(temporary, {recursive: true, force: true});}
 });
 
-test('automatic heuristic discovery includes repeated metadata annotations', async () => {
+test('metadata annotations retain usages without creating unpublished library entries', async () => {
   const {scenarios} = await readLibrary(root);
   const source = scenarios.find(({id}) => id === 'hello-world');
   assert.ok(source);
   const spec = source.spec.replace('metadata() >', 'metadata() >\n    heuristic("cwe", "CWE-89"),\n    heuristic("ttp", "T1059"),');
   const parsed = parseCradleForWorkbench(spec);
   const result = mergeResources([{...source, parsed}], {configurations: [], heuristics: []});
-  assert.deepEqual(result.frameworks, ['cwe', 'ttp']);
-  assert.equal(result.heuristics.length, 2);
+  assert.deepEqual(result.frameworks, []);
+  assert.equal(result.heuristics.length, 0);
+  assert.equal(result.heuristicUsages.length, 2);
   assert.ok(result.heuristicUsages.every(({component}) => component === 'metadata'));
 });
 
@@ -129,7 +153,7 @@ test('scenario artwork supports presets and colocated thumbnails with required a
     const folder = path.join(temporary, 'library/scenarios/custom-art');
     await cp(path.join(root, 'library/scenarios/hello-world'), folder, {recursive: true});
     const articlePath = path.join(folder, 'index.md');
-    const original = (await readFile(articlePath, 'utf8')).replace(/^artwork:.*\n/m, '');
+    const original = (await readFile(articlePath, 'utf8')).replace(/^artwork:[^\n]*\n/m, '');
     await mkdir(path.join(folder, 'images'));
     await writeFile(path.join(folder, 'images/thumbnail.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=', 'base64'));
     const setFields = (fields) => writeFile(articlePath, original.replace('source: CRADLE', `source: CRADLE\n${fields}`));

@@ -22,11 +22,12 @@ for (const scenario of entries.scenarios) {
     assert.ok(html.includes(`https://cradle-lang.org${scenario.docUrl}`), 'published articles must use the configured production domain');
   });
 }
-test('manually authored configuration articles are rendered as HTML', async () => {
-  for (const configuration of entries.configurations) {
-    const html = await readFile(path.join(root, 'build', configuration.docUrl, 'index.html'), 'utf8');
-    assert.ok(html.includes(configuration.name));
-    assert.ok(html.includes(configuration.description));
+test('every configuration and heuristic documentation link resolves to a rendered usage guide', async () => {
+  for (const entry of [...entries.configurations, ...entries.heuristics]) {
+    const html = await readFile(path.join(root, 'build', entry.docUrl, 'index.html'), 'utf8');
+    assert.ok(html.includes(entry.key || entry.value), `${entry.id}: module identifier is rendered`);
+    assert.ok(html.includes('id="use-in-a-specification"'), `${entry.id}: usage example is rendered`);
+    assert.ok(html.includes(`https://cradle-lang.org${entry.docUrl}`), `${entry.id}: canonical URL matches the card link`);
     assert.ok(!html.includes('Edit this page'), 'Library articles must not offer page editing');
   }
 });

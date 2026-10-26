@@ -39,6 +39,11 @@ export async function readLibrary(root = siteRoot) {
         docPath,
         docUrl: `/library/${kind}/${folder.name}`,
       };
+      if (data.sourceUrl !== undefined) {
+        const sourceUrl = required(data, 'sourceUrl', docPath);
+        if (!/^https:\/\//.test(sourceUrl)) throw new Error(`${docPath}: sourceUrl must use HTTPS`);
+        entry.sourceUrl = sourceUrl;
+      }
       if (kind === 'scenarios') {
         for (const key of ['source', 'category', 'requirements']) entry[key] = required(data, key, docPath);
         if (!Array.isArray(data.tags) || !data.tags.length || !data.tags.every((tag) => typeof tag === 'string' && tag.trim())) throw new Error(`${docPath}: tags must be a non-empty list of strings`);

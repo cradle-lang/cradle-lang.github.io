@@ -13,22 +13,24 @@ import type {Point, Selection} from '../components/workbench/types/workbench';
 import {downloadTextFile} from '../components/workbench/utils/download';
 import styles from './collection.module.css';
 
-type Section = 'overview' | 'scenarios' | 'heuristics' | 'configurations' | 'frameworks' | 'tags';
-const availableTags = [...new Set(libraryScenarios.flatMap(({tags}) => tags))].sort((a, b) => a.localeCompare(b));
+type Section = 'overview' | 'scenarios' | 'heuristics' | 'configurations' | 'frameworks';
 const sections: {id: Section; label: string; description: string; count: number}[] = [
   {id: 'scenarios', label: 'Scenarios', description: 'Ready-to-use cyber ranges. Discover a specification, explore its topology and make it your own.', count: libraryScenarios.length},
-  {id: 'tags', label: 'Tags', description: 'Explore every scenario tag and discover the ranges that use it.', count: availableTags.length},
-  {id: 'heuristics', label: 'Heuristics', description: 'Reusable annotations and security framework mappings from published scenarios and contributor-written entries.', count: heuristics.length},
+  {id: 'heuristics', label: 'Heuristics', description: 'Contributor-published heuristic mappings with documented usage and requirements.', count: heuristics.length},
   {id: 'configurations', label: 'Configurations', description: 'Reusable instance configurations for networking, services, monitoring and system settings.', count: configurations.length},
   {id: 'frameworks', label: 'Frameworks', description: 'External frameworks referenced by the heuristics in this collection.', count: frameworks.length},
 ];
+const heuristicGroups = [
+  {id: 'ttp', label: 'TTP', description: 'Tactics, techniques and procedures for modelling adversary behavior.'},
+  {id: 'cve', label: 'CVE', description: 'Known vulnerabilities with documented implementations and requirements.'},
+] as const;
 const detailTabs = ['Overview', 'Report', 'Topology', 'Components', 'Events', 'Heuristics', 'Provenance', 'Source'] as const;
 type DetailTab = typeof detailTabs[number];
 function libraryUrl(section: Section = 'overview') {return `/collection/${section === 'overview' ? '' : `?section=${section}`}`;}
 function detailUrl(id: string) {return `/collection/?scenario=${id}`;}
 
-function Tags({scenario}: {scenario: LibraryScenario}) {
-  return <div className={styles.tags}><span>{scenario.category}</span>{scenario.tags.filter((tag) => tag.toLowerCase() !== scenario.category.toLowerCase()).slice(0, 2).map((tag) => <span className={styles.neutralTag} key={tag}>{tag}</span>)}<span className={styles.readyTag}><Icon name="check" size={12} />Published</span></div>;
+function ScenarioStatus({scenario}: {scenario: LibraryScenario}) {
+  return <div className={styles.tags}><span>{scenario.category}</span><span className={styles.readyTag}><Icon name="check" size={12} />Published</span></div>;
 }
 function Metrics({scenario}: {scenario: LibraryScenario}) {
   return <div className={styles.metrics}><span><Icon name="monitor" size={15} />{scenario.parsed.instances.length} instances</span><span><Icon name="network" size={15} />{scenario.parsed.networks.length} {scenario.parsed.networks.length === 1 ? 'network' : 'networks'}</span><span><Icon name="configurations" size={15} />{scenario.parsed.events.length} {scenario.parsed.events.length === 1 ? 'event' : 'events'}</span></div>;
@@ -38,7 +40,7 @@ function ScenarioCard({scenario}: {scenario: LibraryScenario}) {
     <Link to={detailUrl(scenario.id)} className={styles.artLink} aria-label={`Explore ${scenario.name}`}><ScenarioArtwork scenario={scenario} className={styles.cardArt} /></Link>
     <div className={styles.cardBody}>
       <div className={styles.cardTitle}><Link to={detailUrl(scenario.id)}>{scenario.name}</Link><span className={styles.sourceBadge}>{scenario.source}</span></div>
-      <p>{scenario.description}</p><Tags scenario={scenario} /><Metrics scenario={scenario} />
+      <p>{scenario.description}</p><ScenarioStatus scenario={scenario} /><Metrics scenario={scenario} />
       <div className={styles.cardFooter}><Link to={detailUrl(scenario.id)}>Explore scenario <Icon name="arrow" size={15} /></Link><Link to={`/workbench/?scenario=${scenario.id}`} title={`Open ${scenario.name} in Workbench`}>Open in Workbench <Icon name="external" size={13} /></Link></div>
     </div>
   </article>;
@@ -69,8 +71,8 @@ function ScenarioDetail({scenario}: {scenario: LibraryScenario}) {
   }
   return <>
     <header className={styles.detailHeader}>
-      <div><div className={styles.titleRow}><h1>{scenario.name}</h1><span className={styles.sourceBadge}>{scenario.source}</span></div><p>{scenario.description}</p><Tags scenario={scenario} /><Link className={styles.guideLink} to={scenario.docUrl}>Read scenario guide <Icon name="book" size={13} /></Link></div>
-      <div className={styles.headerActions}><Link className={styles.primaryButton} to={`/workbench/?scenario=${scenario.id}`}>Open in Workbench <Icon name="arrow" size={15} /></Link><div><button className={styles.secondaryButton} onClick={() => downloadTextFile(`${scenario.id}.cradle`, 'text/plain;charset=utf-8', scenarioSource(scenario))}>Download .cradle</button></div></div>
+      <div><div className={styles.titleRow}><h1>{scenario.name}</h1><span className={styles.sourceBadge}>{scenario.source}</span></div><p>{scenario.description}</p><ScenarioStatus scenario={scenario} /><Link className={styles.guideLink} to={scenario.docUrl}>Read scenario guide <Icon name="book" size={13} /></Link></div>
+      <div className={styles.headerActions}><Link className={styles.primaryButton} to={`/workbench/?scenario=${scenario.id}`}>Open in Workbench <Icon name="arrow" size={15} /></Link><div><button className={styles.secondaryButton} onClick={() => downloadTextFile(`${scenario.id}.cradle`, 'text/plain;charset=utf-8', scenarioSource(scenario))}>Download .cradle</button><a className={styles.secondaryButton} href="https://github.com/cradle-lang/cradle-lib/tree/main">View on GitHub <Icon name="external" size={13} /></a></div></div>
     </header>
     <div ref={tabsRef} className={styles.tabs} role="tablist" aria-label="Scenario details">{detailTabs.map((name) => <button key={name} id={`detail-tab-${name}`} role="tab" aria-selected={tab === name} aria-controls="scenario-panel" tabIndex={tab === name ? 0 : -1} onKeyDown={tabKey} className={tab === name ? styles.activeTab : ''} onClick={() => setTab(name)}>{name}</button>)}</div>
     <section id="scenario-panel" role="tabpanel" aria-labelledby={`detail-tab-${tab}`} tabIndex={0} className={styles.tabPanel}>
@@ -112,43 +114,40 @@ export default function CollectionPage(): ReactNode {
   const scenarioId = params.get('scenario');
   const requestedSection = params.get('section') || (scenarioId ? 'scenarios' : 'overview');
   const section: Section = ['overview', ...sections.map(({id}) => id)].includes(requestedSection) ? requestedSection as Section : 'overview';
+  const heuristicGroup = section === 'heuristics' ? heuristicGroups.find(({id}) => id === params.get('framework')) : undefined;
   const active = libraryScenarios.find(({id}) => id === scenarioId);
   const [query, setQuery] = useState('');
-  const [sourceFilter, setSourceFilter] = useState('All');
-  const [domain, setDomain] = useState('All');
-  const selectedTags = [...new Set(params.getAll('tag'))].filter((tag) => availableTags.includes(tag));
-  function setSelectedTags(value: string[] | ((previous: string[]) => string[])) {
-    const next = typeof value === 'function' ? value(selectedTags) : value;
-    params.delete('tag');
-    next.forEach((tag) => params.append('tag', tag));
-    history.replace({pathname: location.pathname, search: params.toString()});
-  }
-  const [os, setOs] = useState('All');
   const [sort, setSort] = useState('Name');
   useEffect(() => {
-    setQuery(''); setSourceFilter('All'); setDomain('All'); setOs('All'); setSort('Name');
-  }, [section]);
+    setQuery(''); setSort('Name');
+  }, [section, heuristicGroup?.id]);
   const search = (params.get('q') ?? query).trim().toLowerCase();
   function updateQuery(value: string) {
     setQuery(value);
     if (params.has('q')) {params.delete('q'); history.replace({pathname: location.pathname, search: params.toString()});}
   }
-  const filtered = libraryScenarios.filter((scenario) => (sourceFilter === 'All' || sourceFilter === scenario.source) && (domain === 'All' || domain === scenario.category) && selectedTags.every((tag) => scenario.tags.includes(tag)) && [scenario.name, scenario.category, scenario.description, ...scenario.tags].join(' ').toLowerCase().includes(search)).sort((a, b) => sort === 'Instances' ? b.parsed.instances.length - a.parsed.instances.length : a.name.localeCompare(b.name));
-  const filteredConfigs = useMemo(() => configurations.filter((config) => (os === 'All' || config.os === os) && [config.name, config.title, config.description, config.category].join(" ").toLowerCase().includes(search)), [os, search]);
+  const filtered = libraryScenarios.filter((scenario) => [scenario.name, scenario.category, scenario.description].join(' ').toLowerCase().includes(search)).sort((a, b) => sort === 'Instances' ? b.parsed.instances.length - a.parsed.instances.length : a.name.localeCompare(b.name));
+  const filteredConfigs = useMemo(() => configurations.filter((config) => [config.name, config.title, config.description, config.category, config.os].join(" ").toLowerCase().includes(search)), [search]);
+  const filteredHeuristics = useMemo(() => {
+    return heuristics.filter((entry) => entry.type.toLowerCase() === heuristicGroup?.id && [entry.name, entry.value, entry.description, ...entry.scenarios.map(({name}) => name)].join(' ').toLowerCase().includes(search))
+      .sort((a, b) => a.value.localeCompare(b.value, undefined, {numeric: true}));
+  }, [search, heuristicGroup?.id]);
+  const groupCount = heuristics.filter(({type}) => type.toLowerCase() === heuristicGroup?.id).length;
   const selectedSection = sections.find(({id}) => id === section);
-  const pageTitle = active?.name || (section === 'overview' ? 'CRADLE Library' : selectedSection?.label || 'CRADLE Library');
+  const contributionUrl = section === 'heuristics' ? '/docs/guides/contribute-heuristic' : section === 'configurations' ? '/docs/guides/contribute-configuration' : '/docs/guides/contribute-scenario';
+  const pageTitle = active?.name || (heuristicGroup ? `${heuristicGroup.label} heuristics` : undefined) || (section === 'overview' ? 'CRADLE Library' : selectedSection?.label || 'CRADLE Library');
   return <Layout title={pageTitle} description="Reusable CRADLE cyber ranges and building blocks. Discover, inspect, validate and compile published scenarios." noFooter>
     <div className={styles.library}>
       <aside className={styles.sidebar}>
         <Link to="/collection/" className={styles.sidebarBrand}><Icon name="book" size={18} />Library</Link>
         <nav aria-label="Library"><Link aria-current={section === 'overview' ? 'page' : undefined} className={section === 'overview' ? styles.currentNav : ''} to={libraryUrl()}><Icon name="overview" size={16} />Overview</Link>{sections.map(({id, label, count}) => <Link key={id} aria-current={section === id ? 'page' : undefined} className={section === id ? styles.currentNav : ''} to={libraryUrl(id)}><Icon name={id} size={16} />{label}<span>{count}</span></Link>)}</nav>
-        <div className={styles.sidebarNote}><Icon name="code" size={20} /><strong>Build on what works.</strong><p>Explore a range. Make it yours. Share it back.</p><Link to="/docs/guides/contribute-scenario">Contribute a scenario <Icon name="arrow" size={13} /></Link></div>
+        <div className={styles.sidebarNote}><Icon name="code" size={20} /><strong>Build on what works.</strong><p>Explore a range. Make it yours. Share it back.</p><Link to={contributionUrl}>Contribute {section === 'heuristics' ? 'a heuristic' : section === 'configurations' ? 'a configuration' : 'a scenario'} <Icon name="arrow" size={13} /></Link></div>
       </aside>
       <main className={styles.content}>
-        <div className={styles.breadcrumb}><Link to="/collection/"><Icon name="book" size={13} />Library</Link>{section !== 'overview' && <><span>›</span><Link to={libraryUrl(section)}>{selectedSection?.label}</Link></>}{active && <><span>›</span><span>{active.name}</span></>}</div>
+        <div className={styles.breadcrumb}><Link to="/collection/"><Icon name="book" size={13} />Library</Link>{section !== 'overview' && <><span>›</span><Link to={libraryUrl(section)}>{selectedSection?.label}</Link></>}{heuristicGroup && <><span>›</span><span>{heuristicGroup.label}</span></>}{active && <><span>›</span><span>{active.name}</span></>}</div>
         {scenarioId && !active && <p className={styles.requirements} role="status">That scenario is not in the library. Explore the available scenarios below.</p>}
         {active ? <ScenarioDetail key={active.id} scenario={active} /> : <>
-          <header className={styles.pageHeader}><div><div className={styles.sectionEyebrow}>{section === 'overview' ? 'THE CRADLE COLLECTION' : 'LIBRARY / BUILDING BLOCKS'}</div><h1>{pageTitle}</h1><p>{section === 'overview' ? 'Reusable building blocks for cyber experimentation. Discover working scenarios, inspect their specifications and compile a versioned source for your own environment.' : selectedSection?.description}</p></div>{section === 'overview' && <Link to="/docs/guides/contribute-scenario" className={styles.secondaryButton}>Contribute <Icon name="arrow" size={14} /></Link>}</header>
+          <header className={styles.pageHeader}><div><div className={styles.sectionEyebrow}>{section === 'overview' ? 'THE CRADLE COLLECTION' : 'LIBRARY / BUILDING BLOCKS'}</div><h1>{pageTitle}</h1><p>{section === 'overview' ? 'Reusable building blocks for cyber experimentation. Discover working scenarios, inspect their specifications and compile a versioned source for your own environment.' : heuristicGroup?.description || selectedSection?.description}</p></div>{['overview', 'scenarios', 'heuristics', 'configurations'].includes(section) && <Link to={contributionUrl} className={styles.secondaryButton}>Contribute <Icon name="arrow" size={14} /></Link>}</header>
           {section === 'overview' && <>
             <div className={styles.categoryGrid}>{sections.map(({id, label, description, count}) => <Link key={id} to={libraryUrl(id)} className={styles.categoryCard}><span className={styles.iconBox}><Icon name={id} size={23} /></span><h2>{label}</h2><p>{description}</p><div><span className={styles.count}>{count ? `${count} ${label.toLowerCase()}` : 'No entries yet'}</span><Icon name="arrow" size={18} /></div></Link>)}</div>
             <div className={styles.sectionHeader}><div><span className={styles.sectionEyebrow}>A PLACE TO START</span><h2>Explore the collection</h2><p>{libraryScenarios.length} specifications. A starting point for your next experiment.</p></div><Link to={libraryUrl('scenarios')} className={styles.textButton}>Browse scenarios <Icon name="arrow" size={15} /></Link></div>
@@ -156,29 +155,37 @@ export default function CollectionPage(): ReactNode {
             <div className={styles.contributionStrip}><span className={styles.iconBox}><Icon name="frameworks" size={24} /></span><div><h3>Better ranges start with shared knowledge.</h3><p>Contribute working scenarios with clear attribution and reproducible deployment requirements.</p></div><Link className={styles.textButton} to="/docs/guides/contribute-scenario">How to contribute <Icon name="arrow" size={15} /></Link></div>
           </>}
           {(section === 'scenarios' || section === 'configurations') && <>
-            <div className={styles.searchField}><Icon name="search" size={17} /><input type="search" aria-label={`Search ${section}`} placeholder={section === 'scenarios' ? 'Search scenarios, tags, domains or descriptions…' : 'Search configuration names…'} value={params.get('q') ?? query} onChange={(event) => updateQuery(event.target.value)} /><kbd>Search</kbd></div>
-            {section === 'scenarios' ? <div className={styles.filters}><Filter label="Source" options={['All', ...new Set(libraryScenarios.map(({source}) => source))]} value={sourceFilter} onChange={setSourceFilter} /><Filter label="Domain" options={['All', ...new Set(libraryScenarios.map(({category}) => category))]} value={domain} onChange={setDomain} /><div className={styles.filterRow}><span>Tags</span><div role="group" aria-label="Scenario tags"><button aria-pressed={!selectedTags.length} className={!selectedTags.length ? styles.activeFilter : ''} onClick={() => setSelectedTags([])}>All tags</button>{availableTags.map((tag) => <button key={tag} aria-pressed={selectedTags.includes(tag)} className={selectedTags.includes(tag) ? styles.activeFilter : ''} onClick={() => setSelectedTags((previous) => previous.includes(tag) ? previous.filter((value) => value !== tag) : [...previous, tag])}>{tag}</button>)}</div></div><div className={styles.tagFilterHint}><span>Match all selected tags.</span>{selectedTags.length > 0 && <button className={styles.textButton} onClick={() => setSelectedTags([])}>Clear tags ({selectedTags.length})</button>}</div></div> : <div className={styles.filters}><Filter label="OS" options={['All', ...new Set(configurations.map(({os}) => os))]} value={os} onChange={setOs} /></div>}
+            <div className={styles.searchField}><Icon name="search" size={17} /><input type="search" aria-label={`Search ${section}`} placeholder={section === 'scenarios' ? 'Search scenarios, domains or descriptions…' : 'Search configurations by name, OS or description…'} value={params.get('q') ?? query} onChange={(event) => updateQuery(event.target.value)} /><kbd>Search</kbd></div>
             <div className={styles.resultBar}><span role="status">Showing {section === 'scenarios' ? filtered.length : filteredConfigs.length} of {section === 'scenarios' ? libraryScenarios.length : configurations.length} {section}</span>{section === 'scenarios' && <label>Sort by <select value={sort} onChange={(event) => setSort(event.target.value)}><option>Name</option><option>Instances</option></select></label>}</div>
-            {section === 'scenarios' && (filtered.length ? <div className={styles.scenarioGrid}>{filtered.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} />)}</div> : <EmptyState title="No matching scenarios">Try another keyword, source, domain or tag combination. <button className={styles.textButton} onClick={() => {updateQuery(''); setSourceFilter('All'); setDomain('All'); setSelectedTags([]);}}>Clear filters</button></EmptyState>)}
-            {section === 'configurations' && (filteredConfigs.length ? <div className={styles.resourceGrid}>{filteredConfigs.map((config) => <article className={styles.configCard} key={config.name}><div className={styles.configTitle}><span className={styles.smallIcon}><Icon name={config.os === 'Windows' ? 'overview' : 'configurations'} size={19} /></span><h2>{config.name}</h2></div><span className={styles.count}>{config.os}</span><p>{config.description}</p>{config.docUrl && <Link className={styles.textButton} to={config.docUrl}>Read documentation <Icon name="arrow" size={13} /></Link>}<details><summary>Used by {config.scenarios.length} {config.scenarios.length === 1 ? 'scenario' : 'scenarios'} <Icon name="arrow" size={13} /></summary>{config.scenarios.map((scenario) => <Link key={scenario.id} to={detailUrl(scenario.id)}>{scenario.name} <Icon name="external" size={12} /></Link>)}</details></article>)}</div> : <EmptyState title="No matching configurations">Try another name or operating system.</EmptyState>)}
+            {section === 'scenarios' && (filtered.length ? <div className={styles.scenarioGrid}>{filtered.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} />)}</div> : <EmptyState title="No matching scenarios">Try another keyword. <button className={styles.textButton} onClick={() => {updateQuery('');}}>Clear filters</button></EmptyState>)}
+            {section === 'configurations' && (filteredConfigs.length ? <div className={styles.heuristicGrid}>{filteredConfigs.map((config) => <article className={styles.heuristicCard} key={config.name}>
+              <div className={styles.heuristicHeader}><span className={styles.iconBox}><Icon name="configurations" size={20} /></span><span className={styles.count}>{config.os}</span></div>
+              <div className={styles.heuristicBody}><h2>{config.name}</h2><p>{config.description}</p></div>
+              <div className={styles.resourceActions}><Link className={styles.textButton} to={config.docUrl}>Read documentation <Icon name="arrow" size={13} /></Link><a className={styles.textButton} href={config.sourceUrl}>View on GitHub <Icon name="external" size={13} /></a></div>
+              <div className={styles.heuristicUsage}><h3>Used by <span className={styles.count}>{config.scenarios.length} {config.scenarios.length === 1 ? 'scenario' : 'scenarios'}</span></h3>{config.scenarios.length ? <ul>{config.scenarios.map((scenario) => <li key={scenario.id}><Link to={detailUrl(scenario.id)}>{scenario.name}<Icon name="arrow" size={14} /></Link></li>)}</ul> : <p>No published scenarios yet.</p>}</div>
+            </article>)}</div> : <EmptyState title={configurations.length ? "No matching configurations" : "No configurations published yet"}>{search ? <>Try another name, operating system or description. <button className={styles.textButton} onClick={() => updateQuery('')}>Clear search</button></> : "Contribute a configuration article with its implementation, requirements and usage example."}</EmptyState>)}
+
           </>}
-          {section === 'tags' && <>
-            <div className={styles.searchField}><Icon name="search" size={17} /><input type="search" aria-label="Search tags" placeholder="Search tags…" value={params.get('q') ?? query} onChange={(event) => updateQuery(event.target.value)} /></div>
-            <div className={styles.resultBar}><span role="status">Showing {availableTags.filter((tag) => tag.toLowerCase().includes(search)).length} of {availableTags.length} tags</span></div>
-            {availableTags.some((tag) => tag.toLowerCase().includes(search)) ? <div className={styles.resourceGrid}>{availableTags.filter((tag) => tag.toLowerCase().includes(search)).map((tag) => {
-              const count = libraryScenarios.filter((scenario) => scenario.tags.includes(tag)).length;
-              const url = `/collection/?${new URLSearchParams({section: 'scenarios', tag})}`;
-              return <article className={styles.panel} key={tag}><Icon name="tags" /><h2><Link to={url}>{tag}</Link></h2><p>{count} {count === 1 ? 'scenario' : 'scenarios'}</p><Link className={styles.textButton} to={url}>View scenarios <Icon name="arrow" size={15} /></Link></article>;
-            })}</div> : <EmptyState title="No matching tags">Try another keyword. <button className={styles.textButton} onClick={() => updateQuery('')}>Clear search</button></EmptyState>}
+          {section === 'heuristics' && !heuristicGroup && <div className={styles.resourceCategories}>{heuristicGroups.map((group) => {
+            const count = heuristics.filter(({type}) => type.toLowerCase() === group.id).length;
+            return <article key={group.id} className={styles.categoryCard}><span className={styles.iconBox}><Icon name="heuristics" size={23} /></span><h2><Link className={styles.resourceCategoryLink} to={`/collection/?section=heuristics&framework=${group.id}`}>{group.label}</Link></h2><p>{group.description}</p><div><span className={styles.count}>{count} {count === 1 ? 'entry' : 'entries'}</span><span>Browse {group.label}s <Icon name="arrow" size={15} /></span></div><a className={`${styles.textButton} ${styles.categorySource}`} href={`https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/${group.id}`}>View on GitHub <Icon name="external" size={13} /></a></article>;
+          })}</div>}
+          {section === 'heuristics' && heuristicGroup && <>
+            <Link className={styles.textButton} to={libraryUrl('heuristics')}>← All heuristics</Link>
+            <div className={styles.searchField}><Icon name="search" size={17} /><input type="search" aria-label={`Search ${heuristicGroup.label} heuristics`} placeholder={`Search ${heuristicGroup.label}s by name or identifier…`} value={params.get('q') ?? query} onChange={(event) => updateQuery(event.target.value)} /></div>
+            <div className={styles.resultBar}><span role="status">Showing {filteredHeuristics.length} of {groupCount} {heuristicGroup.label} heuristics</span></div>
           </>}
-          {section === 'heuristics' && (heuristics.length ? <div className={styles.resourceGrid}>{heuristics.map((entry, index) => <article className={styles.panel} key={index}><Icon name="heuristics" /><h2>{entry.name}</h2><p>{entry.type} · {entry.value}</p><p>{entry.description}</p>{entry.docUrl && <Link className={styles.textButton} to={entry.docUrl}>Read documentation <Icon name="arrow" size={13} /></Link>}<p>Used by {entry.scenarios.length} scenarios</p>{entry.scenarios.map((scenario) => <Link key={scenario.id} to={detailUrl(scenario.id)}>{scenario.name} → </Link>)}</article>)}</div> : <EmptyState title="Room for the next building block">The initial scenarios do not declare heuristic annotations. Add annotations to a scenario or contribute a standalone heuristic article to grow this collection. <Link to="/docs/language/heuristics" className={styles.textButton}>Learn about heuristics <Icon name="arrow" size={15} /></Link></EmptyState>)}
-          {section === 'frameworks' && (frameworks.length ? <div className={styles.resourceGrid}>{frameworks.map((framework) => <article className={styles.panel} key={framework}><Icon name="frameworks" /><h2>{framework}</h2></article>)}</div> : <EmptyState title="Framework mappings grow with the library">No external frameworks are represented yet. Scenario annotations and standalone heuristic articles automatically populate this section. <Link to="/docs/language/heuristics" className={styles.textButton}>Explore framework annotations <Icon name="arrow" size={15} /></Link></EmptyState>)}
+          {section === 'heuristics' && heuristicGroup && (filteredHeuristics.length ? <div className={styles.heuristicGrid}>{filteredHeuristics.map((entry) => <article className={styles.heuristicCard} key={entry.type + ':' + entry.value}>
+            <div className={styles.heuristicHeader}><span className={styles.iconBox}><Icon name="heuristics" size={20} /></span></div>
+            <div className={styles.heuristicBody}><h2>{entry.name}</h2>{entry.name !== entry.value && <code className={styles.heuristicIdentifier}>{entry.value}</code>}<p>{entry.description}</p></div>
+            <div className={styles.resourceActions}>{entry.docUrl && <Link className={styles.textButton} to={entry.docUrl}>Read documentation <Icon name="arrow" size={13} /></Link>}{entry.sourceUrl && <a className={styles.textButton} href={entry.sourceUrl}>View on GitHub <Icon name="external" size={13} /></a>}</div>
+            <div className={styles.heuristicUsage}><h3>Used by <span className={styles.count}>{entry.scenarios.length} {entry.scenarios.length === 1 ? 'scenario' : 'scenarios'}</span></h3>{entry.scenarios.length ? <ul>{entry.scenarios.map((scenario) => <li key={scenario.id}><Link to={detailUrl(scenario.id)}>{scenario.name}<Icon name="arrow" size={14} /></Link></li>)}</ul> : <p>No published scenarios yet.</p>}</div>
+          </article>)}</div> : search ? <EmptyState title="No matching heuristics">Try another keyword or identifier. <button className={styles.textButton} onClick={() => updateQuery('')}>Clear search</button></EmptyState> : <EmptyState title={`No ${heuristicGroup.label} heuristics published yet`}>Publish a heuristic article with its framework mapping, implementation requirements and usage example. <Link to="/docs/guides/contribute-heuristic" className={styles.textButton}>Contribute a heuristic <Icon name="arrow" size={15} /></Link></EmptyState>)}
+          {(section === 'heuristics' || section === 'configurations') && <div className={styles.contributionStrip}><span className={styles.iconBox}><Icon name={section} size={24} /></span><div><h3>{section === 'heuristics' ? 'Share a reusable heuristic.' : 'Share a reusable configuration.'}</h3><p>Publish an article with implementation files, requirements and a usage example.</p></div><Link className={styles.textButton} to={contributionUrl}>How to contribute <Icon name="arrow" size={15} /></Link></div>}
+          {section === 'frameworks' && (frameworks.length ? <div className={styles.resourceGrid}>{frameworks.map((framework) => <article className={styles.panel} key={framework}><Icon name="frameworks" /><h2>{framework}</h2></article>)}</div> : <EmptyState title="Framework mappings grow with the library">No external frameworks are represented yet. Frameworks appear when a heuristic article is published in the library. <Link to="/docs/language/heuristics" className={styles.textButton}>Explore framework annotations <Icon name="arrow" size={15} /></Link></EmptyState>)}
         </>}
-        <footer className={styles.libraryFooter}><span>CRADLE Library</span><span>Discover. Adapt. Reproduce.</span><Link to="/docs/guides/contribute-scenario">Contribution guide ↗</Link></footer>
+        <footer className={styles.libraryFooter}><span>CRADLE Library</span><span>Discover. Adapt. Reproduce.</span><Link to={contributionUrl}>Contribution guide ↗</Link></footer>
       </main>
     </div>
   </Layout>;
-}
-function Filter({label, options, value, onChange}: {label: string; options: string[]; value: string; onChange: (value: string) => void}) {
-  return <div className={styles.filterRow}><span>{label}</span><div role="group" aria-label={label}>{options.map((option) => <button key={option} aria-pressed={value === option} className={value === option ? styles.activeFilter : ''} onClick={() => onChange(option)}>{option}</button>)}</div></div>;
 }

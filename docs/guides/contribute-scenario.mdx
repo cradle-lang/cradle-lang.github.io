@@ -47,6 +47,28 @@ This creates `library/scenarios/my-range/` from the template. Write `index.md`
 specification and put supporting images, scripts and configurations in the same
 folder. Use relative Markdown links to include those assets in the rendered page.
 
+To copy an existing scenario directory, including nested configurations,
+artifacts and scripts, use:
+
+```bash
+npm run library:new -- scenario my-range --from "/path/to/my-range"
+```
+
+On Windows, use a quoted path such as `--from "C:\Users\bryan\Documents\my-range"`.
+The first `my-range` is the destination folder name, without `.cradle`.
+The source directory must contain a top-level `scenario.cradle`, or exactly one
+top-level `.cradle` file, which is renamed in the copy. When there are multiple
+specifications, name the main one `scenario.cradle` before importing.
+
+An existing `index.md` or `index.mdx` is preserved; otherwise, a draft article is
+created. Add `--mdx` to generate MDX or convert an imported Markdown article.
+Review metadata and relative links, including any link to a renamed source.
+Supporting files need article links to become usable downloads. Existing
+destination entries are never overwritten, and the source remains unchanged.
+The import skips `.git`, `node_modules` and `__pycache__` directories and rejects
+symbolic links. Copied configs and artifacts still need the documented backend
+setup; importing files does not install them on a testbed.
+
 Fill in the front matter: `title`, `description`, original `source`, `category`,
 non-empty `tags` and `requirements`. Include validation results, dependencies, attribution and a license in the article.
 Document runtime tests and testbed/backend versions when available. Set `draft: false` when ready.
@@ -119,16 +141,14 @@ npm run library:new -- configuration my-config
 npm run library:new -- heuristic my-heuristic
 ```
 
-Configurations and heuristics are automatically collected from published CRADLE
-specifications. Add an article under `library/configurations/` to enrich a
-configuration reference, or under `library/heuristics/` to enrich a framework and
-identifier pair. Include implementation files and documentation together.
+Configurations and heuristics appear only when their own library articles are
+published. References in a scenario do not create cards. Matching scenario
+references supply usage counts and links for published entries.
 
-Configuration front matter uses `config` (the exact CRADLE key), `os` and
-`category`. Heuristic front matter uses `framework` and `identifier`. Both require
-`title` and `description`. Matching entries merge without duplicating usage
-counts. Standalone articles appear even when no scenario uses them yet.
-Frameworks are derived automatically from the combined heuristic catalog.
+Follow [Contribute a Configuration](./contribute-configuration) or
+[Contribute a Heuristic](./contribute-heuristic) for metadata, implementation files,
+examples and publication steps. Frameworks are derived from published heuristic
+articles.
 
 Start from the templates in `library/_templates/`, keep exactly one `index.md`
 or `index.mdx` per folder, and set `draft: false` only after completing the entry.

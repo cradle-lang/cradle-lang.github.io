@@ -1,4 +1,5 @@
 ---
+sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-router"
 title: Linux routing
 config: linux-router
 description: Enable IP forwarding so a Linux instance can route traffic between attached networks.
@@ -6,25 +7,44 @@ os: Linux
 category: Networking
 ---
 
-The `linux-router` configuration gives a Linux instance its routing role. It is
-referenced by both initial scenarios.
+Enable IP forwarding so a Linux instance can route traffic between attached networks.
 
-## Use in a specification
+## Implementation
 
-```cradle
-instance("router") >
-    os("linux", "20.04"),
-    config("linux-router").
-```
+- Sets `net.ipv4.ip_forward=1` using sysctl.
+- Ensures a NAT POSTROUTING rule returns locally originated traffic before adding a MASQUERADE rule. This preserves the router's own source addresses while enabling NAT for forwarded traffic.
+- This module enables forwarding and NAT; route entries are provided separately by the scenario/backend.
+
+Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-router/ansible/linux-router.j2).
+
+The module is resolved from `configs/linux-router/` in the configured `config_dir`.
 
 ## Requirements
 
-The deployment configuration library must supply `linux-router`. The backend
-must provide the instance with the interfaces declared by the scenario. Routes,
-firewall rules and external access remain part of the testbed's network design.
+- A Linux guest with administrator privileges, sysctl and iptables. The template does not install iptables.
+- A backend/controller with the Ansible sysctl and iptables modules used by the template, and a guest that permits changing its network namespace rules.
 
-## Implementation files
+## Use in a specification
 
-When contributing or maintaining the configuration, place its implementation,
-Ansible templates and supporting assets alongside this article. Reference those
-files with relative Markdown links and document how the testbed installs them.
+Add this configuration to an instance whose operating system and network are defined by your scenario:
+
+```cradle
+instance("host") >
+    config("linux-router").
+```
+
+## Example and verification
+
+After provisioning, run these checks inside the guest:
+
+```bash
+sysctl net.ipv4.ip_forward
+sudo iptables -t nat -S POSTROUTING
+ip route
+```
+
+IP forwarding is 1. The local-source RETURN exemption precedes the MASQUERADE rule. Routes should match the scenario topology.
+
+## Attribution and licensing
+
+Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-router). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

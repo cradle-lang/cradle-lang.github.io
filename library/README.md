@@ -38,6 +38,36 @@ ID; choose it before publication.
 npm run library:new -- scenario my-range
 ```
 
+To import an existing scenario directory instead of the template specification:
+
+```bash
+npm run library:new -- scenario my-range --from "/path/to/my-range"
+```
+
+On Windows, quote the source path, for example:
+
+```powershell
+npm run library:new -- scenario my-range --from "C:\Users\bryan\Documents\my-range"
+```
+
+`my-range` is the new folder name, without `.cradle`; `--from` is a directory,
+resolved from your current working directory. The command copies its complete
+contents, including nested configs, artifacts, scripts and binary files. It skips
+`.git`, `node_modules` and `__pycache__` directories and rejects symbolic links;
+include actual supporting files inside your source folder.
+
+The source must have a top-level `scenario.cradle`, or exactly one top-level
+`.cradle` file, which is renamed to `scenario.cradle` in the copied entry. If
+there are multiple specifications, name the main one `scenario.cradle` first.
+The source folder is unchanged, and existing destination entries are rejected.
+
+An existing `index.md` or `index.mdx` is preserved; having both is an error.
+Otherwise, the command generates a draft article. Add `--mdx` to generate MDX
+or convert an imported `index.md` to `index.mdx`. Review imported metadata and
+links, especially links to a renamed specification. Link supporting files from
+the article so readers can download them. Copying configs or artifacts does not
+automatically install or register them with CradleXC or the target backend.
+
 This creates `library/scenarios/my-range/index.md` and `scenario.cradle` without
 overwriting an existing entry. To create MDX instead, use
 `npm run library:new -- scenario my-range --mdx` as the initial command. Keep
@@ -274,6 +304,9 @@ npm run library:new -- configuration my-config
 npm run library:new -- heuristic my-heuristic
 ```
 
+Both commands also accept `--from "/path/to/module"` to copy the module's full
+contents alongside the article. No `.cradle` file is required for these kinds.
+
 Keep the article and assets together under `library/configurations/my-config/`
 or `library/heuristics/my-heuristic/`. All entries require `title` and
 `description`. Configuration metadata requires `config` (the exact
@@ -283,20 +316,21 @@ or `library/heuristics/my-heuristic/`. All entries require `title` and
 framework matching ignores case. Fill in the template, link implementation
 assets, set `draft: false` and follow the same preview, check and PR steps.
 
-## Automatic discovery and manual enrichment
+## Published resources and scenario usage
 
-Published `.cradle` specifications populate configuration references and heuristic
-annotations automatically. Usage counts and links to scenarios are computed from
-the specifications; never enter them manually.
+Configuration and heuristic cards come only from published articles under
+`library/configurations/` and `library/heuristics/`. A `config()` or
+`heuristic()` reference in a scenario does not create an entry. Article metadata
+supplies the title, description, OS and framework information.
 
-Add an article under `library/configurations/` with a matching `config` to enrich
-an automatically discovered reference with its description, OS and documentation.
-The same rule applies to a heuristic's `framework` + `identifier` pair. Matching
-entries are merged, not duplicated. Standalone articles also appear with zero
-scenario usages, so contributors can publish reusable building blocks before
-adding a scenario that uses them. Removing an article leaves any discovered
-reference intact. Removing the last usage removes an automatic-only reference.
-Frameworks are derived from the combined heuristic catalog.
+Usage counts and scenario links are computed from matching specification
+references. Entries can be published before any scenario uses them. Removing an
+article or setting `draft: true` removes its card even if references remain in
+scenario files. Scenario details still display their own annotations.
+Frameworks are derived from published heuristic articles.
+
+See [Contribute a Configuration](../docs/guides/contribute-configuration.mdx) and
+[Contribute a Heuristic](../docs/guides/contribute-heuristic.mdx) for full examples.
 
 ## Downloads
 
