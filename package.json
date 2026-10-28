@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test:collection": "node --test scripts/collection.test.mjs scripts/library.test.mjs scripts/new-library-entry.test.mjs",
+    "test:collection": "node --test scripts/collection.test.mjs scripts/library.test.mjs scripts/new-library-entry.test.mjs scripts/sync-scenario-library.test.mjs",
     "test:library-build": "node --test scripts/library-build.test.mjs",
     "typecheck": "npm run generate-library && tsc --noEmit",
     "generate-library": "node scripts/generate-library.mjs",
