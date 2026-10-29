@@ -31,10 +31,10 @@ jobs:
           persist-credentials: false
       - name: Verify source read credentials
         env:
-          SOURCE_TOKEN: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          SOURCE_TOKEN: ${{ secrets.CRADLE_LANG_TOKEN }}
         run: |
           if [ -z "$SOURCE_TOKEN" ]; then
-            echo 'Configure SCENARIO_LIBRARY_READ_TOKEN with Actions read and Contents read on cradle-lang/scenario-lib.'
+            echo 'Configure CRADLE_LANG_TOKEN with Actions read and Contents read on cradle-lang/scenario-lib.'
             exit 1
           fi
       - name: Verify source validation and select its artifact
@@ -45,7 +45,7 @@ jobs:
           SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
           SOURCE_SHA: ${{ github.event.client_payload.source_sha }}
         with:
-          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          github-token: ${{ secrets.CRADLE_LANG_TOKEN }}
           script: |
             const {sourceRunId, verifySourceRun, selectBundleArtifact} = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scenario-sync-source.mjs`);
             const source = {owner: 'cradle-lang', repo: 'scenario-lib'};
@@ -69,7 +69,7 @@ jobs:
         if: steps.source.outputs.current == 'true'
         uses: actions/download-artifact@v4
         with:
-          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          github-token: ${{ secrets.CRADLE_LANG_TOKEN }}
           repository: cradle-lang/scenario-lib
           run-id: ${{ steps.source.outputs.run-id }}
           artifact-ids: ${{ steps.source.outputs.artifact-id }}
@@ -110,7 +110,7 @@ jobs:
         env:
           SOURCE_SHA: ${{ steps.source.outputs.sha }}
         with:
-          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          github-token: ${{ secrets.CRADLE_LANG_TOKEN }}
           script: |
             const {data: branch} = await github.rest.repos.getBranch({owner: 'cradle-lang', repo: 'scenario-lib', branch: 'main'});
             const current = branch.commit.sha === process.env.SOURCE_SHA;
@@ -121,7 +121,7 @@ jobs:
         if: steps.freshness.outputs.current == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.WEBSITE_PR_TOKEN || secrets.CRADLE_LANG_TOKEN || github.token }}
+          token: ${{ secrets.CRADLE_LANG_TOKEN }}
           branch: scenario-library-sync
           base: main
           delete-branch: true

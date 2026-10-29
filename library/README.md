@@ -37,15 +37,17 @@ source removals do not automatically delete previously imported website folders.
 manual review. Artwork files are not in the source's two-file bundle, so imported
 articles use built-in artwork rather than copying thumbnails.
 
-Configure these website Actions secrets:
+Use one token stored as **`CRADLE_LANG_TOKEN` in both this website repository
+and `cradle-lang/scenario-lib`**. Select both repositories when configuring the
+token, with Contents: Read and write, Pull requests: Read and write,
+Metadata: Read-only, and Actions: Read and write.
 
-- `SCENARIO_LIBRARY_READ_TOKEN`: Actions read and Contents read on
-  `cradle-lang/scenario-lib`, for verifying runs and downloading artifacts.
-- `WEBSITE_PR_TOKEN` (optional): Contents write and Pull requests write on this
-  website. The workflow otherwise uses the existing `CRADLE_LANG_TOKEN`, then
-  falls back to `GITHUB_TOKEN`. A PAT/App token lets the resulting PR trigger CI;
-  the built-in token also requires “Allow GitHub Actions to create and approve
-  pull requests” in the website's Actions settings.
+The source notifier uses it to send the repository dispatch. The receiver uses
+it to verify source runs, download artifacts, push the sync branch and open the
+review PR. No separate `SCENARIO_LIBRARY_READ_TOKEN`, `WEBSITE_PR_TOKEN` or
+`WEBSITE_SYNC_TOKEN` secret is needed. An organization secret shared with both
+repositories is also supported; a repository secret stored only in the website
+is not available in scenario-lib. The PAT/App token allows PR CI to trigger.
 
 To import the latest validated snapshot after first installing the receiver,
 or to retry a missed notification, open **Actions → Sync validated scenario
