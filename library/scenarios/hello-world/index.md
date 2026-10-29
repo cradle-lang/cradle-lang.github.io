@@ -13,7 +13,7 @@ requirements: CXC build tools, an Ubuntu 20.04 image, Vagrant with libvirt or an
   appropriately configured OpenStack deployment, cradle-lib, and network access
   during provisioning to download Docker images.
 artwork: network
-draft: true
+draft: false
 sourceUrl: https://github.com/cradle-lang/scenario-lib/tree/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world
 ---
 
