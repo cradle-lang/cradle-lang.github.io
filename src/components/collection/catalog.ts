@@ -4,6 +4,7 @@ export type Scenario = {
   id: string;
   name: string;
   source: string;
+  sourceUrl?: string;
   category: string;
   description: string;
   file: string;

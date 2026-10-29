@@ -3,7 +3,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import {useHistory, useLocation} from '@docusaurus/router';
 import useIsBrowser from '@docusaurus/useIsBrowser';
-import {scenarioSource, validationWorkflow} from '../components/collection/catalog';
+import {collectionRepository, scenarioSource, validationWorkflow} from '../components/collection/catalog';
 import {configurations, frameworks, heuristics, heuristicUsages, libraryScenarios, type LibraryScenario} from '../components/collection/library';
 import Icon from '../components/collection/LibraryIcon';
 import ScenarioArtwork from '../components/collection/ScenarioArtwork';
@@ -72,7 +72,7 @@ function ScenarioDetail({scenario}: {scenario: LibraryScenario}) {
   return <>
     <header className={styles.detailHeader}>
       <div><div className={styles.titleRow}><h1>{scenario.name}</h1><span className={styles.sourceBadge}>{scenario.source}</span></div><p>{scenario.description}</p><ScenarioStatus scenario={scenario} /><Link className={styles.guideLink} to={scenario.docUrl}>Read scenario guide <Icon name="book" size={13} /></Link></div>
-      <div className={styles.headerActions}><Link className={styles.primaryButton} to={`/workbench/?scenario=${scenario.id}`}>Open in Workbench <Icon name="arrow" size={15} /></Link><div><button className={styles.secondaryButton} onClick={() => downloadTextFile(scenario.file, 'text/plain;charset=utf-8', scenarioSource(scenario))}>Download .cradle</button><a className={styles.secondaryButton} href="https://github.com/cradle-lang/cradle-lib/tree/main">View on GitHub <Icon name="external" size={13} /></a></div></div>
+      <div className={styles.headerActions}><Link className={styles.primaryButton} to={`/workbench/?scenario=${scenario.id}`}>Open in Workbench <Icon name="arrow" size={15} /></Link><div><button className={styles.secondaryButton} onClick={() => downloadTextFile(scenario.file, 'text/plain;charset=utf-8', scenarioSource(scenario))}>Download .cradle</button><a className={styles.secondaryButton} href={scenario.sourceUrl || `${collectionRepository}/tree/main/library/scenarios/${scenario.id}`}>View on GitHub <Icon name="external" size={13} /></a></div></div>
     </header>
     <div ref={tabsRef} className={styles.tabs} role="tablist" aria-label="Scenario details">{detailTabs.map((name) => <button key={name} id={`detail-tab-${name}`} role="tab" aria-selected={tab === name} aria-controls="scenario-panel" tabIndex={tab === name ? 0 : -1} onKeyDown={tabKey} className={tab === name ? styles.activeTab : ''} onClick={() => setTab(name)}>{name}</button>)}</div>
     <section id="scenario-panel" role="tabpanel" aria-labelledby={`detail-tab-${tab}`} tabIndex={0} className={styles.tabPanel}>

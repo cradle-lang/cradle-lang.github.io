@@ -2,6 +2,7 @@
 title: Hello World
 description: A compact CRADLE scenario combining local and cradle-lib configurations, CVE heuristics, and an event object on one Ubuntu instance.
 source: CRADLE scenario library
+sourceUrl: https://github.com/cradle-lang/scenario-lib/tree/main/scenarios/hello-world
 category: Networking
 tags:
   - hello-world
@@ -95,6 +96,8 @@ not been verified as part of preparing this article. Record those results and
 the backend version before publishing the entry.
 
 ## Attribution and licensing
+
+[View the upstream Hello World scenario](https://github.com/cradle-lang/scenario-lib/tree/main/scenarios/hello-world).
 
 This article is based on the scenario's <a href={require('!!file-loader!./README.md').default} download="README.md">README</a> and accompanying
 specification. The supplied README does not identify an individual contributor
