@@ -1,0 +1,46 @@
+// Minimal CRADLE scenario: provision one VM and run one local object.
+
+metadata() >
+    name("HelloWorld"),
+    eventType("sequence"),
+    repositoryLocal("."),
+    object("hello").
+
+instances() >
+    instance("hello").
+
+instance("hello") >
+    os("ubuntu", "20.04"),
+    config("hello-world"),
+    config("linux-unzip"),
+    heuristic("cve", "CVE-2021-44228"),
+    heuristic("cve", "CVE-2017-7494"),
+    object("hello").
+
+networks() >
+    network("lan").
+
+network("lan") >
+    subnet("10.42.0.0/24"),
+    endpoint("hello", "10.42.0.10").
+
+events() >
+    preEvent(),
+    mainEvent(),
+    postEvent().
+
+mainEvent() >
+    event("say-hello").
+
+event("say-hello") >
+    instance("hello"),
+    needRoot(false),
+    subject("bash", ""),
+    runObject("hello", ""),
+    pauseBeforeRun(0),
+    pauseAfterRun(0),
+    scheduleExecution("2026-01-01T00:00:00+00:00"),
+    description("Run the Hello World object").
+
+object("hello") >
+    location("${uriLocal}/objects/artifact/hello.sh").

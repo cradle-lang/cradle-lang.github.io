@@ -73,6 +73,18 @@ overwriting an existing entry. To create MDX instead, use
 `npm run library:new -- scenario my-range --mdx` as the initial command. Keep
 exactly one `index.md` or `index.mdx` in the folder.
 
+To import an existing specification, pass its file path instead of a folder name:
+
+```bash
+npm run library:new -- scenario ~/Downloads/Railway/Railway.cradle
+```
+
+This creates a draft in `library/scenarios/railway/`, deriving the lowercase folder
+name from the filename and copying the source to `scenario.cradle`. The optional
+`--mdx` flag works here too. Add supporting configs, artifacts and other assets
+separately; only the specified source file is imported. Existing entries are
+never overwritten.
+
 Alternatively, copy `library/_templates/scenario/` to
 `library/scenarios/my-range/`. Both approaches create a draft, excluded from the
 catalog in development and production. Docusaurus allows direct draft article
@@ -99,6 +111,24 @@ requirements: Requires the documented backend, images, named configurations and 
 draft: true
 ---
 ```
+
+### Choose the specification filename
+
+A scenario specification can have any filename ending in `.cradle`. Set
+`entrypoint: HelloWorld.cradle` in the front matter of `index.md` or `index.mdx`
+to select it. A relative path such as `entrypoint: specs/MyRange.cradle` is also
+supported; it must point to a file inside the scenario folder.
+
+The website selects the entrypoint in this order: the article's `entrypoint`,
+the colocated `README.md` front matter's `entrypoint`, `scenario.cradle`, then
+the only top-level `.cradle` file. If several files exist without a default,
+set `entrypoint` explicitly. An explicit entrypoint that is missing or invalid
+is an error; the website does not silently substitute another file.
+
+Keep the article's download link pointed at the chosen file, for example
+`[Download the specification](./HelloWorld.cradle)`. Catalogue downloads,
+Workbench and compiler workflows use that same specification. Template and
+import commands still supply `scenario.cradle` by default.
 
 All six descriptive fields above are required. `tags` must be a non-empty list.
 Quote YAML values containing a colon followed by a space. Do not add `id` or
@@ -173,7 +203,9 @@ The thumbnail does not automatically appear inside the written article. To show
 it there too, add `![Training network diagram](./images/thumbnail.webp)` in the
 Markdown body. Keep the image path consistent with your front matter.
 
-Supported formats are PNG, JPEG, WebP and GIF. Use a landscape image, preferably
+Supported formats are PNG, JPEG, WebP, GIF and SVG. Use a path relative to the
+scenario folder, such as `thumbnail: ./preview.svg`, rather than an absolute
+filesystem path. Use a landscape image, preferably
 1200 × 675 pixels (16:9), and keep important content near the centre because
 containers crop to fit. Aim for a small optimized file, ideally under 500 KB.
 Use images you have permission to publish and record attribution in your article.
@@ -287,11 +319,11 @@ artifact repositories.
 | Symptom | What to check |
 | --- | --- |
 | Template command says the entry exists | Choose a new name or edit the existing folder; the command never overwrites it. |
-| Scenario missing from the list | Set `draft: false`; use `library/scenarios/<name>/index.md` or `index.mdx`, with a complete `scenario.cradle` beside it. Restart the server if needed. |
+| Scenario missing from the list | Set `draft: false`; use `library/scenarios/<name>/index.md` or `index.mdx`, with a complete `.cradle` specification selected by `entrypoint` or the filename defaults above. Restart the server if needed. |
 | Metadata generation fails | Read the entry path and field in the error. Complete required fields, use valid YAML, remove `id`/`slug`, and use a lowercase folder name. |
 | Guide crashes with a missing metadata or `id` error after a tooling update | Stop the development server, run `npm run clear`, then `npm run start`. Plugin/configuration changes require a fresh server; do not run a production build alongside the development server in the same checkout. |
 | Article build fails | Check the reported Markdown/MDX line, code fences and relative attachment paths. Filenames are case-sensitive in CI. |
-| Production download test fails | Keep a relative Markdown link to `./scenario.cradle` in the article and rebuild before rerunning `test:library-build`. |
+| Production download test fails | Keep a relative Markdown link to the selected specification in the article and rebuild before rerunning `test:library-build`. |
 | Topology does not match | Inspect parser diagnostics in Workbench and validate the source with CradleXC; a website build alone does not prove compiler or runtime correctness. |
 | Local preview works but live entry is missing | Confirm the entire folder was committed, merged to upstream `main`, and the Pages workflow for that commit succeeded. Refresh the page afterward. |
 
@@ -306,6 +338,21 @@ npm run library:new -- heuristic my-heuristic
 
 Both commands also accept `--from "/path/to/module"` to copy the module's full
 contents alongside the article. No `.cradle` file is required for these kinds.
+
+To import an implementation file, pass its path instead of the folder name:
+
+```bash
+npm run library:new -- configuration ~/Downloads/LinuxRouter.yml
+npm run library:new -- heuristic ~/Downloads/CWE-89.json
+```
+
+The folder name is derived from the filename (`linux-router` or `cwe-89`). The
+file is copied unchanged into `assets/` inside the new entry, and the draft
+article includes a download link. Only that file is imported; add dependencies
+separately. Use `./filename` for a file without an extension. Both commands
+support `--mdx` and refuse to overwrite existing entries. Review the configuration
+key and OS, or the heuristic framework and identifier, before publishing; file
+contents are not parsed to populate those fields.
 
 Keep the article and assets together under `library/configurations/my-config/`
 or `library/heuristics/my-heuristic/`. All entries require `title` and

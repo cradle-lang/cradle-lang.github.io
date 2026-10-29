@@ -4,7 +4,7 @@ description: Describe what this working cyber range teaches or demonstrates.
 source: Your organization
 category: Enterprise
 tags: [Networking]
-requirements: List the supported testbed, images, configuration library and artifact dependencies.
+requirements: List the configuration library and artifact dependencies.
 # Built-in choices: auto, network, enterprise, monitoring.
 artwork: auto
 # Optional PNG/JPEG/WebP/GIF (1200 x 675 recommended; centre important content).

@@ -32,9 +32,24 @@ export function parseLibraryArgs(args) {
   return {kind, slug, options};
 }
 
-export async function createLibraryEntry(kind, slug, {root = siteRoot, mdx = false, from} = {}) {
+export async function createLibraryEntry(kind, input, {root = siteRoot, mdx = false, from} = {}) {
+  let slug = input;
+  let sourceFile;
+  let sourceContent;
+  const isFileInput = typeof input === 'string' && (/[\\/]/.test(input) || path.extname(input));
+  if (Object.hasOwn(kinds, kind) && isFileInput && from === undefined) {
+    const filename = path.resolve(input);
+    if (kind === 'scenario' && !/\.cradle$/i.test(filename)) throw new Error('Scenario imports require a .cradle file.');
+    sourceFile = path.basename(filename);
+    slug = path.parse(sourceFile).name.replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    sourceContent = await readFile(filename);
+    if (!sourceContent.length || (kind === 'scenario' && !sourceContent.toString('utf8').trim())) {
+      throw new Error(`Source is empty: ${filename}`);
+    }
+  }
   if (!Object.hasOwn(kinds, kind) || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug || '')) {
-    throw new Error('Use scenario, configuration or heuristic, followed by a lowercase folder name with hyphens.');
+    throw new Error('Use scenario, configuration or heuristic, followed by a lowercase folder name with hyphens or a file path.');
   }
   const relative = `library/${kinds[kind]}/${slug}`;
   const destination = path.resolve(root, relative);
@@ -109,6 +124,16 @@ export async function createLibraryEntry(kind, slug, {root = siteRoot, mdx = fal
       if (kind === 'configuration') markdown = markdown.replace(/^config: .+$/m, `config: ${slug}`);
       await writeFile(article, markdown);
     }
+    if (sourceFile) {
+      if (kind === 'scenario') await writeFile(path.join(destination, 'scenario.cradle'), sourceContent);
+      else {
+        await mkdir(path.join(destination, 'assets'));
+        await writeFile(path.join(destination, 'assets', sourceFile), sourceContent);
+        const article = path.join(destination, 'index.md');
+        const markdown = await readFile(article, 'utf8');
+        await writeFile(article, markdown + `\n## Imported file\n\n[Download the imported file](./assets/${encodeURIComponent(sourceFile)}).\n`);
+      }
+    }
     if (mdx && importedArticle !== 'index.mdx') await rename(path.join(destination, 'index.md'), path.join(destination, 'index.mdx'));
   } catch (error) {
     // Only remove the new directory reserved by this invocation.
@@ -126,6 +151,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   } catch (error) {
     console.error(error.code === 'EEXIST' ? 'That library entry already exists; its files have not been changed.' : error.message);
     console.error('Usage: npm run library:new -- <scenario|configuration|heuristic> <lowercase-folder-name> [--mdx] [--from <directory>]');
+    console.error('   or: npm run library:new -- <scenario|configuration|heuristic> <file-path> [--mdx]');
+    console.error('Scenario imports require a .cradle file.');
     process.exitCode = 1;
   }
 }

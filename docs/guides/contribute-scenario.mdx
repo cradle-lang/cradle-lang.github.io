@@ -132,6 +132,13 @@ npm run library:new -- scenario my-range
 Replace the comment-only `scenario.cradle` stub with a complete specification
 and add supporting files before validation or article generation.
 
+The website also supports specifications with other filenames. For a website
+entry, set `entrypoint: MyRange.cradle` in the article's front matter or its
+colocated `README.md`. Without that field, the website uses `scenario.cradle`
+or the only top-level `.cradle` file. Download links should point to the selected
+file. The scenario-lib import and export commands described above still
+normalize their website output to `scenario.cradle`.
+
 ## 4. Review the draft
 
 Review `scenarios/my-range/index.md` against the specification and supporting

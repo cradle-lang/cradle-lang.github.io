@@ -1,4 +1,4 @@
-import {readdir, readFile, writeFile, mkdir, stat} from 'node:fs/promises';
+import {readdir, readFile, writeFile, mkdir, stat, realpath} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {DEFAULT_PARSE_FRONT_MATTER} from '@docusaurus/utils';
@@ -9,6 +9,37 @@ const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 function required(data, key, file) {
   if (typeof data[key] !== 'string' || !data[key].trim()) throw new Error(`${file}: ${key} must be a non-empty string`);
   return data[key].trim();
+}
+
+async function scenarioEntrypoint(root, prefix, data, files, docPath) {
+  let entrypoint = data.entrypoint;
+  if (entrypoint === undefined && files.includes('README.md')) {
+    const filePath = `${prefix}/README.md`;
+    const {frontMatter} = await DEFAULT_PARSE_FRONT_MATTER({
+      filePath, fileContent: await readFile(path.join(root, filePath), 'utf8'),
+    });
+    entrypoint = frontMatter.entrypoint;
+  }
+  if (entrypoint === undefined) {
+    const candidates = files.filter((file) => file.endsWith('.cradle'));
+    if (files.includes('scenario.cradle')) entrypoint = 'scenario.cradle';
+    else if (candidates.length === 1) [entrypoint] = candidates;
+    else throw new Error(`${docPath}: add a .cradle file or set entrypoint to the main specification`);
+  }
+  if (typeof entrypoint !== 'string' || !entrypoint.trim() ||
+      path.posix.isAbsolute(entrypoint) || path.win32.isAbsolute(entrypoint) ||
+      /[\\?#\0]/.test(entrypoint) || entrypoint.split('/').includes('..') ||
+      !entrypoint.endsWith('.cradle')) {
+    throw new Error(`${docPath}: entrypoint must be a relative .cradle path inside this scenario folder`);
+  }
+  const directory = await realpath(path.resolve(root, prefix));
+  const filename = path.resolve(directory, entrypoint);
+  const resolved = await realpath(filename).catch(() => null);
+  if (!resolved || !resolved.startsWith(`${directory}${path.sep}`) ||
+      !(await stat(resolved)).isFile()) {
+    throw new Error(`${docPath}: entrypoint must reference an existing .cradle file inside this scenario folder: ${entrypoint}`);
+  }
+  return path.relative(directory, filename).split(path.sep).join('/');
 }
 
 export async function readLibrary(root = siteRoot) {
@@ -54,15 +85,16 @@ export async function readLibrary(root = siteRoot) {
           const thumbnail = required(data, 'thumbnail', docPath);
           const directoryPath = path.resolve(root, prefix);
           const imagePath = path.resolve(directoryPath, thumbnail);
-          if (!imagePath.startsWith(`${directoryPath}${path.sep}`) || !/\.(png|jpe?g|webp|gif)$/i.test(thumbnail)) throw new Error(`${docPath}: thumbnail must be a PNG, JPEG, WebP or GIF inside this scenario folder`);
+          if (path.isAbsolute(thumbnail) || !imagePath.startsWith(`${directoryPath}${path.sep}`) || !/\.(png|jpe?g|webp|gif|svg)$/i.test(thumbnail)) throw new Error(`${docPath}: thumbnail must be a relative PNG, JPEG, WebP, GIF or SVG path inside this scenario folder`);
           if (!(await stat(imagePath).catch(() => null))?.isFile()) throw new Error(`${docPath}: thumbnail file does not exist: ${thumbnail}`);
           entry.thumbnailPath = `${prefix}/${path.relative(directoryPath, imagePath).split(path.sep).join('/')}`;
           entry.thumbnailAlt = required(data, 'thumbnailAlt', docPath);
         }
-        entry.file = 'scenario.cradle';
-        entry.sourcePath = `${prefix}/scenario.cradle`;
-        entry.spec = await readFile(path.join(root, entry.sourcePath), 'utf8').catch(() => {throw new Error(`${docPath}: add scenario.cradle beside the Markdown file`);});
-        if (!entry.spec.trim()) throw new Error(`${docPath}: scenario.cradle must not be empty`);
+        const entrypoint = await scenarioEntrypoint(root, prefix, data, files, docPath);
+        entry.file = path.posix.basename(entrypoint);
+        entry.sourcePath = `${prefix}/${entrypoint}`;
+        entry.spec = await readFile(path.join(root, entry.sourcePath), 'utf8');
+        if (!entry.spec.trim()) throw new Error(`${docPath}: ${entrypoint} must not be empty`);
         if (data.deployment) throw new Error(`${docPath}: remove deployment metadata; the library supports validation and compilation only`);
       } else if (kind === 'configurations') {
         entry.key = required(data, 'config', docPath);
@@ -92,7 +124,12 @@ export async function generateLibrary(root = siteRoot) {
   const assetsDestination = path.join(root, 'src/data/library-assets.generated.ts');
   const imports = result.scenarios.map((entry, index) => `import asset${index} from ${JSON.stringify(`../../${entry.sourcePath}`)};`);
   const thumbnails = result.scenarios.filter((entry) => entry.thumbnailPath);
-  const thumbnailImports = thumbnails.map((entry, index) => `import thumbnail${index} from ${JSON.stringify(`../../${entry.thumbnailPath}`)};`);
+  const thumbnailImports = thumbnails.map((entry, index) => {
+    const source = `../../${entry.thumbnailPath}`;
+    // SVG imports normally become React components; thumbnails need image URLs.
+    if (/\.svg$/i.test(source)) return `const thumbnail${index}: string = require(${JSON.stringify(`!!file-loader?name=assets/images/[name]-[contenthash].[ext]!${source}`)}).default;`;
+    return `import thumbnail${index} from ${JSON.stringify(source)};`;
+  });
   const assets = `${[...imports, ...thumbnailImports].join('\n')}\n\nexport const scenarioAssets: Record<string, string> = {\n${result.scenarios.map((entry, index) => `  ${JSON.stringify(entry.id)}: asset${index},`).join('\n')}\n};\n\nexport const scenarioThumbnails: Record<string, string> = {\n${thumbnails.map((entry, index) => `  ${JSON.stringify(entry.id)}: thumbnail${index},`).join('\n')}\n};\n`;
   if (await readFile(assetsDestination, 'utf8').catch(() => '') !== assets) await writeFile(assetsDestination, assets);
   return result;

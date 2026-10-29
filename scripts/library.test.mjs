@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {cp, mkdir, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile} from 'node:fs/promises';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
@@ -43,11 +43,11 @@ test('a new Markdown/MDX folder is discovered without a code or workflow registr
     const generated = JSON.parse(await readFile(path.join(temporary, 'src/data/library.generated.json'), 'utf8'));
     assert.deepEqual(generated, result);
     const assetModule = await readFile(path.join(temporary, 'src/data/library-assets.generated.ts'), 'utf8');
-    assert.ok(assetModule.includes('../../library/scenarios/new-range/scenario.cradle'));
+    assert.ok(assetModule.includes('../../library/scenarios/new-range/HelloWorld.cradle'));
     assert.doesNotMatch(assetModule, /localhost|127\.0\.0\.1/);
     const resolved = spawnSync(process.execPath, [path.join(root, 'scripts/resolve-library-scenario.mjs'), 'new-range', temporary], {encoding: 'utf8'});
     assert.equal(resolved.status, 0, resolved.stderr);
-    assert.equal(resolved.stdout.trim(), path.join(temporary, 'library/scenarios/new-range/scenario.cradle'));
+    assert.equal(resolved.stdout.trim(), path.join(temporary, 'library/scenarios/new-range/HelloWorld.cradle'));
     const unpublished = spawnSync(process.execPath, [path.join(root, 'scripts/resolve-library-scenario.mjs'), 'draft-range', temporary], {encoding: 'utf8'});
     assert.notEqual(unpublished.status, 0, 'draft scenarios cannot be compiled as published entries');
   } finally {await rm(temporary, {recursive: true, force: true});}
@@ -56,7 +56,7 @@ test('a new Markdown/MDX folder is discovered without a code or workflow registr
 test('only published articles populate resources while scenario usages remain linked', async () => {
   const {scenarios} = await readLibrary(root);
   const source = scenarios.find(({id}) => id === 'hello-world');
-  const parsed = parseCradleForWorkbench(source.spec);
+  const parsed = parseCradleForWorkbench(await readFile(path.join(root, 'src/components/workbench/data/hello-world.cradle'), 'utf8'));
   parsed.instances[0].heuristics.push({type: 'CWE', value: 'CWE-89'});
   parsed.instances[1].heuristics.push({type: 'cwe', value: 'CWE-89'});
   const entry = {...source, parsed};
@@ -130,7 +130,73 @@ test('the contributor command creates Markdown/MDX drafts and never overwrites a
     assert.equal((await readLibrary(temporary)).scenarios.length, 0, 'a new template must never appear as a runnable scenario');
     await assert.rejects(createLibraryEntry('scenario', 'my-range', {root: temporary}), /EEXIST/);
     assert.equal(await readFile(destination, 'utf8'), original);
-    await assert.rejects(createLibraryEntry('configuration', '../escape', {root: temporary}), /lowercase folder name/);
+    await assert.rejects(createLibraryEntry('configuration', 'Invalid slug', {root: temporary}), /lowercase folder name/);
+  } finally {await rm(temporary, {recursive: true, force: true});}
+});
+
+test('scenario file imports preserve source, create drafts, and reject unsafe or missing inputs', async () => {
+  const {createLibraryEntry} = await import('./new-library-entry.mjs');
+  const temporary = await mkdtemp(path.join(tmpdir(), 'cradle-library-import-'));
+  try {
+    const source = path.join(temporary, 'Railway.cradle');
+    const spec = await readFile(path.join(root, 'src/components/workbench/data/hello-world.cradle'), 'utf8');
+    await writeFile(source, spec);
+    assert.equal(await createLibraryEntry('scenario', source, {root: temporary, mdx: true}), 'library/scenarios/railway');
+    const folder = path.join(temporary, 'library/scenarios/railway');
+    assert.equal(await readFile(path.join(folder, 'scenario.cradle'), 'utf8'), spec);
+    const markdown = await readFile(path.join(folder, 'index.mdx'), 'utf8');
+    assert.match(markdown, /title: "Railway"/);
+    assert.match(markdown, /draft: true/);
+    assert.equal((await readLibrary(temporary)).scenarios.length, 0);
+    await writeFile(source, 'changed source');
+    await assert.rejects(createLibraryEntry('scenario', source, {root: temporary}), /EEXIST/);
+    assert.equal(await readFile(path.join(folder, 'scenario.cradle'), 'utf8'), spec);
+    await assert.rejects(createLibraryEntry('scenario', path.join(temporary, 'Missing.cradle'), {root: temporary}), /ENOENT/);
+    const empty = path.join(temporary, 'Empty.cradle');
+    await writeFile(empty, '  \n');
+    await assert.rejects(createLibraryEntry('scenario', empty, {root: temporary}), /Source is empty/);
+    const invalid = path.join(temporary, '---.cradle');
+    await writeFile(invalid, spec);
+    await assert.rejects(createLibraryEntry('scenario', invalid, {root: temporary}), /lowercase folder name/);
+    await assert.rejects(createLibraryEntry('scenario', path.join(temporary, 'source.yml'), {root: temporary}), /require a .cradle file/);
+    assert.deepEqual(await readdir(path.join(temporary, 'library/scenarios')), ['railway']);
+  } finally {await rm(temporary, {recursive: true, force: true});}
+});
+
+test('configuration and heuristic imports preserve files and link them from draft articles', async () => {
+  const {createLibraryEntry} = await import('./new-library-entry.mjs');
+  const temporary = await mkdtemp(path.join(tmpdir(), 'cradle-library-resource-import-'));
+  try {
+    for (const [kind, filename, slug, mdx] of [
+      ['configuration', 'Linux Router.yml', 'linux-router', false],
+      ['heuristic', 'CWE-89.json', 'cwe-89', true],
+      ['configuration', 'index.md', 'index', true],
+      ['heuristic', 'Mapping.bin', 'mapping', false],
+    ]) {
+      const source = path.join(temporary, filename);
+      const content = Buffer.from([0, 127, 128, 255, 10]);
+      await writeFile(source, content);
+      const relative = await createLibraryEntry(kind, source, {root: temporary, mdx});
+      assert.equal(relative, `library/${kind === 'configuration' ? 'configurations' : 'heuristics'}/${slug}`);
+      const folder = path.join(temporary, relative);
+      assert.deepEqual(await readFile(path.join(folder, 'assets', filename)), content);
+      const markdown = await readFile(path.join(folder, `index.${mdx ? 'mdx' : 'md'}`), 'utf8');
+      assert.match(markdown, /draft: true/);
+      assert.ok(markdown.includes(`](./assets/${encodeURIComponent(filename)})`));
+      if (kind === 'configuration') assert.ok(markdown.includes(`config: ${slug}`));
+      else assert.match(markdown, /framework: cwe\nidentifier: CWE-89/);
+      await writeFile(source, 'changed');
+      await assert.rejects(createLibraryEntry(kind, source, {root: temporary}), /EEXIST/);
+      assert.deepEqual(await readFile(path.join(folder, 'assets', filename)), content);
+      assert.equal(await readFile(path.join(folder, `index.${mdx ? 'mdx' : 'md'}`), 'utf8'), markdown);
+      await assert.rejects(createLibraryEntry(kind, path.join(temporary, 'missing.yml'), {root: temporary}), /ENOENT/);
+      const empty = path.join(temporary, 'empty.json');
+      await writeFile(empty, '');
+      await assert.rejects(createLibraryEntry(kind, empty, {root: temporary}), /Source is empty/);
+    }
+    const catalog = await readLibrary(temporary);
+    assert.equal(catalog.configurations.length, 0);
+    assert.equal(catalog.heuristics.length, 0);
   } finally {await rm(temporary, {recursive: true, force: true});}
 });
 
@@ -138,7 +204,7 @@ test('metadata annotations retain usages without creating unpublished library en
   const {scenarios} = await readLibrary(root);
   const source = scenarios.find(({id}) => id === 'hello-world');
   assert.ok(source);
-  const spec = source.spec.replace('metadata() >', 'metadata() >\n    heuristic("cwe", "CWE-89"),\n    heuristic("ttp", "T1059"),');
+  const spec = (await readFile(path.join(root, 'src/components/workbench/data/hello-world.cradle'), 'utf8')).replace('metadata() >', 'metadata() >\n    heuristic("cwe", "CWE-89"),\n    heuristic("ttp", "T1059"),');
   const parsed = parseCradleForWorkbench(spec);
   const result = mergeResources([{...source, parsed}], {configurations: [], heuristics: []});
   assert.deepEqual(result.frameworks, []);
@@ -153,10 +219,10 @@ test('scenario artwork supports presets and colocated thumbnails with required a
     const folder = path.join(temporary, 'library/scenarios/custom-art');
     await cp(path.join(root, 'library/scenarios/hello-world'), folder, {recursive: true});
     const articlePath = path.join(folder, 'index.md');
-    const original = (await readFile(articlePath, 'utf8')).replace(/^artwork:[^\n]*\n/m, '');
+    const original = (await readFile(articlePath, 'utf8')).replace(/^(artwork|thumbnail|thumbnailAlt):[^\n]*\n/gm, '');
     await mkdir(path.join(folder, 'images'));
     await writeFile(path.join(folder, 'images/thumbnail.png'), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=', 'base64'));
-    const setFields = (fields) => writeFile(articlePath, original.replace('source: CRADLE', `source: CRADLE\n${fields}`));
+    const setFields = (fields) => writeFile(articlePath, original.replace(/^source:.*$/m, `source: CRADLE\n${fields}`));
     for (const artwork of ['auto', 'network', 'enterprise', 'monitoring']) {
       await setFields(`artwork: ${artwork}`);
       assert.equal((await readLibrary(temporary)).scenarios[0].artwork, artwork);
@@ -176,8 +242,8 @@ test('scenario artwork supports presets and colocated thumbnails with required a
     await assert.rejects(readLibrary(temporary), /inside this scenario folder/);
     await setFields('thumbnail: ./missing.png\nthumbnailAlt: Missing');
     await assert.rejects(readLibrary(temporary), /thumbnail file does not exist/);
-    await setFields('thumbnail: ./thumbnail.svg\nthumbnailAlt: Unsupported');
-    await assert.rejects(readLibrary(temporary), /PNG, JPEG, WebP or GIF/);
+    await setFields('thumbnail: ./thumbnail.bmp\nthumbnailAlt: Unsupported');
+    await assert.rejects(readLibrary(temporary), /PNG, JPEG, WebP, GIF or SVG/);
     await setFields('');
     assert.equal((await readLibrary(temporary)).scenarios[0].artwork, 'auto');
   } finally {await rm(temporary, {recursive: true, force: true});}

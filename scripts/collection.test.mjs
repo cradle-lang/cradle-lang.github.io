@@ -19,7 +19,7 @@ test('collection links resolve to unique, parseable specifications', async () =>
   assert.equal(new Set(catalog.map(({id}) => id)).size, catalog.length);
   for (const scenario of catalog) {
     assert.match(scenario.id, /^[a-z0-9-]+$/);
-    assert.match(scenario.file, /^[a-z0-9-]+\.cradle$/);
+    assert.match(scenario.file, /^[^/\\]+\.cradle$/);
     for (const field of ['name', 'source', 'category', 'description', 'requirements']) {
       assert.ok(scenario[field]?.trim(), `${scenario.id} needs ${field}`);
     }
@@ -34,9 +34,9 @@ test('collection links resolve to unique, parseable specifications', async () =>
   }
 });
 
-test('published examples retain the topology and events offered by Workbench', async () => {
+test('built-in Workbench examples remain available independently of collection entries', async () => {
   for (const [id, instances, networks, events] of [['hello-world', 2, 1, 1], ['sme', 14, 5, 4]]) {
-    const parsed = parseCradleForWorkbench(await readFile(new URL(`library/scenarios/${id}/scenario.cradle`, root), 'utf8'));
+    const parsed = parseCradleForWorkbench(await readFile(new URL(`src/components/workbench/data/${id}.cradle`, root), 'utf8'));
     assert.equal(parsed.instances.length, instances);
     assert.equal(parsed.networks.length, networks);
     assert.equal(parsed.events.length, events);
@@ -68,12 +68,12 @@ if (args[0] === '--version') console.log('cxc test-version');
     assert.equal(success.status, 0, success.stderr);
     const calls = (await readFile(log, 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
     assert.deepEqual(calls.map(([action]) => action), ['validate', 'compile', '--version']);
-    assert.ok(calls[0].includes(fileURLToPath(new URL('library/scenarios/hello-world/scenario.cradle', root))), 'relative includes need the original source directory');
+    assert.ok(calls[0].includes(fileURLToPath(new URL(catalog.find(({id}) => id === 'hello-world').sourcePath, root))), 'relative includes need the original source directory');
     assert.equal(await readFile(path.join(output, 'scenario.yml'), 'utf8'), 'scenario: compiled\n');
     assert.match(await readFile(path.join(output, 'revision.txt'), 'utf8'), /^[a-f0-9]{40}\n$/);
     const report = await readFile(path.join(output, 'report.md'), 'utf8');
     assert.match(report, /CradleXC validation: \*\*Passed\*\*\. Compilation: \*\*Passed\*\*/);
-    assert.match(report, /2 instances · 1 networks · 1 events/);
+    assert.match(report, /1 instances · 1 networks · 1 events/);
     assert.match(report, /cxc test-version/);
     assert.match(report, /### Instances[\s\S]*### Networks[\s\S]*### Events[\s\S]*### Objects/);
     assert.ok(report.includes((await readFile(path.join(output, 'revision.txt'), 'utf8')).trim()));
@@ -96,20 +96,18 @@ if (args[0] === '--version') console.log('cxc test-version');
 });
 
 
-test('Cron sample exposes its upstream heuristic without event artifacts', () => {
-  const scenario = catalog.find(({id}) => id === 'cron-heuristic');
+test('published Hello World includes its local modules and event object', () => {
+  const scenario = catalog.find(({id}) => id === 'hello-world');
   assert.ok(scenario);
+  assert.equal(scenario.file, 'HelloWorld.cradle');
   const parsed = parseCradleForWorkbench(scenario.spec);
-  assert.equal(parsed.instances.length, 4);
-  assert.equal(parsed.networks.length, 2);
-  assert.equal(parsed.events.length, 0);
-  assert.equal(parsed.objects.length, 0);
-  const target = parsed.instances.find(({id}) => id === 'cron-host');
-  const baseline = parsed.instances.find(({id}) => id === 'baseline-host');
-  const observer = parsed.instances.find(({id}) => id === 'observer');
-  assert.ok(target.heuristics.some(({type, value}) => type === 'ttp' && value === 'T1053.003'));
-  assert.equal(baseline.heuristics.length, 0);
-  assert.deepEqual(target.configs, baseline.configs);
-  assert.equal(observer.networks.length, 2);
-  assert.ok(observer.configs.includes('linux-tcpdump'));
+  assert.equal(parsed.instances.length, 1);
+  assert.equal(parsed.networks.length, 1);
+  assert.equal(parsed.events.length, 1);
+  const host = parsed.instances[0];
+  assert.equal(host.id, 'hello');
+  assert.ok(host.configs.includes('hello-world'));
+  assert.ok(host.configs.includes('linux-unzip'));
+  assert.ok(host.heuristics.some(({type, value}) => type === 'cve' && value === 'CVE-2021-44228'));
+  assert.ok(parsed.objects.some(({id}) => id === 'hello'));
 });
