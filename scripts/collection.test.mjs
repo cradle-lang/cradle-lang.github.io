@@ -1,21 +1,28 @@
 import assert from 'node:assert/strict';
-import {readFile, mkdtemp, mkdir, writeFile, rm} from 'node:fs/promises';
+import {cp, readFile, mkdtemp, mkdir, writeFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import test from 'node:test';
+import test, {after} from 'node:test';
 import ts from 'typescript';
 import {readLibrary} from './generate-library.mjs';
 
 const root = new URL('../', import.meta.url);
 const {scenarios: catalog} = await readLibrary(fileURLToPath(root));
+// Compiler/sample tests publish their own copy so source drafts can be synced
+// without requiring the live collection to contain any published scenarios.
+const sampleRoot = await mkdtemp(path.join(fileURLToPath(root), '.collection-fixture-'));
+after(() => rm(sampleRoot, {recursive: true, force: true}));
+await cp(new URL('library/scenarios/hello-world', root), path.join(sampleRoot, 'library/scenarios/hello-world'), {recursive: true});
+const sampleArticle = path.join(sampleRoot, 'library/scenarios/hello-world/index.md');
+await writeFile(sampleArticle, (await readFile(sampleArticle, 'utf8')).replace(/^draft:.*$/m, 'draft: false'));
+const {scenarios: sampleCatalog} = await readLibrary(sampleRoot);
 const parserTs = await readFile(new URL('src/components/workbench/utils/cradleParser.ts', root), 'utf8');
 const {outputText} = ts.transpileModule(parserTs, {compilerOptions: {module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022}});
 const {parseCradleForWorkbench} = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
 
 test('collection links resolve to unique, parseable specifications', async () => {
-  assert.ok(catalog.length > 0);
   assert.equal(new Set(catalog.map(({id}) => id)).size, catalog.length);
   for (const scenario of catalog) {
     assert.match(scenario.id, /^[a-z0-9-]+$/);
@@ -63,12 +70,12 @@ if (args[0] === '--version') console.log('cxc test-version');
     await writeFile(path.join(bin, 'cxc'), mock, {mode: 0o755});
     const env = {...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}`, CALL_LOG: log};
     const script = fileURLToPath(new URL('scripts/compile-collection-scenario.sh', root));
-    const run = (id, extra = {}) => spawnSync('bash', [script, id, fileURLToPath(root), output], {env: {...env, ...extra}, encoding: 'utf8'});
+    const run = (id, extra = {}) => spawnSync('bash', [script, id, sampleRoot, output], {env: {...env, ...extra}, encoding: 'utf8'});
     const success = run('hello-world');
     assert.equal(success.status, 0, success.stderr);
     const calls = (await readFile(log, 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
     assert.deepEqual(calls.map(([action]) => action), ['validate', 'compile', '--version']);
-    assert.ok(calls[0].includes(fileURLToPath(new URL(catalog.find(({id}) => id === 'hello-world').sourcePath, root))), 'relative includes need the original source directory');
+    assert.ok(calls[0].includes(path.join(sampleRoot, sampleCatalog.find(({id}) => id === 'hello-world').sourcePath)), 'relative includes need the original source directory');
     assert.equal(await readFile(path.join(output, 'scenario.yml'), 'utf8'), 'scenario: compiled\n');
     assert.match(await readFile(path.join(output, 'revision.txt'), 'utf8'), /^[a-f0-9]{40}\n$/);
     const report = await readFile(path.join(output, 'report.md'), 'utf8');
@@ -96,10 +103,10 @@ if (args[0] === '--version') console.log('cxc test-version');
 });
 
 
-test('published Hello World includes its local modules and event object', () => {
-  const scenario = catalog.find(({id}) => id === 'hello-world');
+test('Hello World source includes its local modules and event object', () => {
+  const scenario = sampleCatalog.find(({id}) => id === 'hello-world');
   assert.ok(scenario);
-  assert.equal(scenario.file, 'HelloWorld.cradle');
+  assert.ok(scenario.file.endsWith('.cradle'));
   const parsed = parseCradleForWorkbench(scenario.spec);
   assert.equal(parsed.instances.length, 1);
   assert.equal(parsed.networks.length, 1);

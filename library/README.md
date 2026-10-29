@@ -1,5 +1,76 @@
 # Contribute to the CRADLE Library
 
+## Automatic imports from scenario-lib
+
+`Sync validated scenario library` receives the `scenario-library-updated`
+repository dispatch emitted by `cradle-lang/scenario-lib`. It accepts only a
+successful `.github/workflows/validate.yml` **push to source main**, checks that
+the validated SHA is still current, and downloads that run's exact
+`website-scenarios` artifact. PR validations and arbitrary repositories/workflows
+cannot supply a snapshot. Expired bundles require a new source validation run.
+
+The receiver imports the bundle into:
+
+```text
+library/
+  scenario-library.json           # Source SHA/run ID and complete search catalog
+  scenarios/<id>/
+    index.md                     # Website article, including sourceUrl
+    scenario.cradle              # Exact validated source text
+```
+
+The existing library generator populates `src/data/library.generated.json`
+and static download assets from these folders. The sync catalog's `searchText`
+feeds both the collection search and Workbench library browser, so metadata,
+article terms, config names and CVE/TTP IDs in the specification are searchable.
+GitHub links use the original scenario folder at the verified source commit.
+The manifest keeps drafts; generated public entries exclude them. An all-draft
+snapshot is valid and does not publish drafts automatically.
+
+The receiver runs sync tests, TypeScript checks, collection tests, the production
+build and library output checks, then rechecks source freshness and opens/updates
+one PR from **`scenario-library-sync`** into **`main`**. Merge that review PR to
+publish through the existing Pages workflow. Future source merges repeat this
+process automatically. Other website scenarios and supporting files are kept;
+source removals do not automatically delete previously imported website folders.
+`validation-smoke-test` is rejected. Existing `index.mdx` conflicts require a
+manual review. Artwork files are not in the source's two-file bundle, so imported
+articles use built-in artwork rather than copying thumbnails.
+
+Use one token stored as **`CRADLE_LANG_TOKEN` in both this website repository
+and `cradle-lang/scenario-lib`**. Select both repositories when configuring the
+token, with Contents: Read and write, Pull requests: Read and write,
+Metadata: Read-only, and Actions: Read and write.
+
+The source notifier uses it to send the repository dispatch. The receiver uses
+it to verify source runs, download artifacts, push the sync branch and open the
+review PR. No separate `SCENARIO_LIBRARY_READ_TOKEN`, `WEBSITE_PR_TOKEN` or
+`WEBSITE_SYNC_TOKEN` secret is needed. An organization secret shared with both
+repositories is also supported; a repository secret stored only in the website
+is not available in scenario-lib. The PAT/App token allows PR CI to trigger.
+
+To import the latest validated snapshot after first installing the receiver,
+or to retry a missed notification, open **Actions → Sync validated scenario
+library → Run workflow** and enter the successful source-main validation run ID.
+It must still match source `main` and have an unexpired artifact.
+
+To preview a previously downloaded, verified bundle locally:
+
+```bash
+SCENARIO_BUNDLE=/path/to/bundle.json SOURCE_SHA=<full-source-sha> SOURCE_RUN_ID=<run-id> npm run library:sync
+npm run typecheck
+npm run test:scenario-sync
+npm run test:collection
+npm run build
+npm run test:library-build
+```
+
+The local importer verifies bundle identity against the supplied SHA; the Actions
+receiver additionally verifies that SHA and run through the GitHub API. It never
+executes CRADLE source or provisions a scenario.
+
+## Manual contributions
+
 Follow these steps to publish a scenario on the website. Create a folder, add
 your complete CRADLE source and supporting files, and write `index.md` or
 `index.mdx`. Docusaurus converts the article to HTML and discovers published

@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import Link from '@docusaurus/Link';
 import {libraryScenarios} from './library';
 import type {Scenario} from './catalog';
+import {matchesScenarioSearch} from './search';
 import Icon from './LibraryIcon';
 import ScenarioArtwork from './ScenarioArtwork';
 import styles from './LibraryBrowser.module.css';
@@ -24,7 +25,7 @@ export default function LibraryBrowser({onLoad}: {onLoad: (scenario: Scenario) =
   const filtered = libraryScenarios.filter((scenario) =>
     (source === 'All' || source === scenario.source) &&
     (domain === 'All' || domain === scenario.category) &&
-    [scenario.name, scenario.description, ...scenario.tags].join(' ').toLowerCase().includes(query.trim().toLowerCase()));
+    matchesScenarioSearch(scenario, query));
   return <>
     <button ref={opener} type="button" className={styles.trigger} onClick={() => setOpen(true)}><Icon name="book" size={15} />Browse library <span aria-hidden="true">⌄</span></button>
     <dialog ref={dialog} className={styles.dialog} aria-labelledby="library-browser-title" onClose={() => {setOpen(false); opener.current?.focus();}}>

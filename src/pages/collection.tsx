@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import {useHistory, useLocation} from '@docusaurus/router';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import {collectionRepository, scenarioSource, validationWorkflow} from '../components/collection/catalog';
+import {matchesScenarioSearch} from '../components/collection/search';
 import {configurations, frameworks, heuristics, heuristicUsages, libraryScenarios, type LibraryScenario} from '../components/collection/library';
 import Icon from '../components/collection/LibraryIcon';
 import ScenarioArtwork from '../components/collection/ScenarioArtwork';
@@ -126,7 +127,7 @@ export default function CollectionPage(): ReactNode {
     setQuery(value);
     if (params.has('q')) {params.delete('q'); history.replace({pathname: location.pathname, search: params.toString()});}
   }
-  const filtered = libraryScenarios.filter((scenario) => [scenario.name, scenario.category, scenario.description].join(' ').toLowerCase().includes(search)).sort((a, b) => sort === 'Instances' ? b.parsed.instances.length - a.parsed.instances.length : a.name.localeCompare(b.name));
+  const filtered = libraryScenarios.filter((scenario) => matchesScenarioSearch(scenario, search)).sort((a, b) => sort === 'Instances' ? b.parsed.instances.length - a.parsed.instances.length : a.name.localeCompare(b.name));
   const filteredConfigs = useMemo(() => configurations.filter((config) => [config.name, config.title, config.description, config.category, config.os].join(" ").toLowerCase().includes(search)), [search]);
   const filteredHeuristics = useMemo(() => {
     return heuristics.filter((entry) => entry.type.toLowerCase() === heuristicGroup?.id && [entry.name, entry.value, entry.description, ...entry.scenarios.map(({name}) => name)].join(' ').toLowerCase().includes(search))

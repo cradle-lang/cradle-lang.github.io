@@ -45,6 +45,10 @@ async function scenarioEntrypoint(root, prefix, data, files, docPath) {
 export async function readLibrary(root = siteRoot) {
   const sourceRevision = /^[a-f0-9]{40}$/i.test(process.env.GITHUB_SHA || '') ? process.env.GITHUB_SHA : 'main';
   const result = {sourceRevision, scenarios: [], configurations: [], heuristics: []};
+  const snapshotText = await readFile(path.join(root, 'library/scenario-library.json'), 'utf8').catch(error => {if (error.code === 'ENOENT') return null; throw error;});
+  const snapshot = snapshotText === null ? null : JSON.parse(snapshotText);
+  if (snapshot && (snapshot.schemaVersion !== 1 || snapshot.sourceRepository !== 'cradle-lang/scenario-lib' || !Array.isArray(snapshot.catalog))) throw new Error('Invalid scenario library sync catalog.');
+  const searchEntries = new Map((snapshot?.catalog ?? []).map(entry => [entry.id, entry]));
   for (const kind of kinds) {
     const directory = path.join(root, 'library', kind);
     const folders = await readdir(directory, {withFileTypes: true}).catch((error) => {
@@ -95,6 +99,8 @@ export async function readLibrary(root = siteRoot) {
         entry.sourcePath = `${prefix}/${entrypoint}`;
         entry.spec = await readFile(path.join(root, entry.sourcePath), 'utf8');
         if (!entry.spec.trim()) throw new Error(`${docPath}: ${entrypoint} must not be empty`);
+        entry.searchText = searchEntries.get(entry.id)?.searchText ?? [entry.id, entry.name, entry.description, entry.source, entry.category, entry.requirements, ...entry.tags, entry.spec].join(' ').normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
+        if (typeof entry.searchText !== 'string') throw new Error(`${docPath}: searchText must be a string`);
         if (data.deployment) throw new Error(`${docPath}: remove deployment metadata; the library supports validation and compilation only`);
       } else if (kind === 'configurations') {
         entry.key = required(data, 'config', docPath);
