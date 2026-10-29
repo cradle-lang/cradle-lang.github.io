@@ -7,6 +7,7 @@ export type Scenario = {
   sourceUrl?: string;
   category: string;
   description: string;
+  searchText?: string;
   file: string;
   tags: string[];
   artwork: string;

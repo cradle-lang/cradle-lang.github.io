@@ -1,0 +1,151 @@
+name: Sync validated scenario library
+
+on:
+  repository_dispatch:
+    types: [scenario-library-updated]
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful scenario-lib main validation run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scenario-library-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Verify source read credentials
+        env:
+          SOURCE_TOKEN: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+        run: |
+          if [ -z "$SOURCE_TOKEN" ]; then
+            echo 'Configure SCENARIO_LIBRARY_READ_TOKEN with Actions read and Contents read on cradle-lang/scenario-lib.'
+            exit 1
+          fi
+      - name: Verify source validation and select its artifact
+        id: source
+        uses: actions/github-script@v7
+        env:
+          SOURCE_RUN_ID: ${{ github.event.client_payload.source_run_id || inputs.source_run_id }}
+          SOURCE_REPOSITORY: ${{ github.event.client_payload.source_repository }}
+          SOURCE_SHA: ${{ github.event.client_payload.source_sha }}
+        with:
+          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          script: |
+            const {sourceRunId, verifySourceRun, selectBundleArtifact} = await import(`${process.env.GITHUB_WORKSPACE}/scripts/scenario-sync-source.mjs`);
+            const source = {owner: 'cradle-lang', repo: 'scenario-lib'};
+            const runId = sourceRunId(process.env.SOURCE_RUN_ID);
+            const {data: run} = await github.rest.actions.getWorkflowRun({...source, run_id: runId});
+            if (context.eventName === 'repository_dispatch' && (!process.env.SOURCE_REPOSITORY || !process.env.SOURCE_SHA)) throw new Error('Dispatch must include source_repository and source_sha.');
+            const sha = verifySourceRun(run, context.eventName === 'repository_dispatch' ? {requestedRepository: process.env.SOURCE_REPOSITORY, requestedSha: process.env.SOURCE_SHA} : {});
+            const {data: branch} = await github.rest.repos.getBranch({...source, branch: 'main'});
+            if (branch.commit.sha !== sha) {
+              core.notice('Skipping a stale source revision. Use the latest successful main validation run.');
+              core.setOutput('current', 'false');
+              return;
+            }
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {...source, run_id: runId});
+            const artifact = selectBundleArtifact(artifacts);
+            core.setOutput('current', 'true');
+            core.setOutput('sha', sha);
+            core.setOutput('run-id', runId);
+            core.setOutput('artifact-id', artifact.id);
+      - name: Download the verified bundle
+        if: steps.source.outputs.current == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          repository: cradle-lang/scenario-lib
+          run-id: ${{ steps.source.outputs.run-id }}
+          artifact-ids: ${{ steps.source.outputs.artifact-id }}
+          merge-multiple: true
+          path: ${{ runner.temp }}/scenario-bundle
+      - uses: actions/setup-node@v4
+        if: steps.source.outputs.current == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked website dependencies
+        if: steps.source.outputs.current == 'true'
+        run: npm ci --ignore-scripts
+      - name: Test scenario sync
+        if: steps.source.outputs.current == 'true'
+        run: npm run test:scenario-sync
+      - name: Import scenario files and searchable database
+        if: steps.source.outputs.current == 'true'
+        env:
+          SCENARIO_BUNDLE: ${{ runner.temp }}/scenario-bundle/bundle.json
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+          SOURCE_RUN_ID: ${{ steps.source.outputs.run-id }}
+        run: npm run library:sync
+      - name: Check TypeScript and collection behavior
+        if: steps.source.outputs.current == 'true'
+        run: |
+          npm run typecheck
+          npm run test:collection
+      - name: Build and verify website output
+        if: steps.source.outputs.current == 'true'
+        run: |
+          npm run build
+          npm run test:library-build
+      - name: Recheck source main before opening the PR
+        id: freshness
+        if: steps.source.outputs.current == 'true'
+        uses: actions/github-script@v7
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        with:
+          github-token: ${{ secrets.SCENARIO_LIBRARY_READ_TOKEN }}
+          script: |
+            const {data: branch} = await github.rest.repos.getBranch({owner: 'cradle-lang', repo: 'scenario-lib', branch: 'main'});
+            const current = branch.commit.sha === process.env.SOURCE_SHA;
+            core.setOutput('current', String(current));
+            if (!current) core.notice('Source main advanced during the build; the newer notification will refresh the snapshot.');
+      - name: Open or update the scenario sync PR
+        id: review
+        if: steps.freshness.outputs.current == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.WEBSITE_PR_TOKEN || secrets.CRADLE_LANG_TOKEN || github.token }}
+          branch: scenario-library-sync
+          base: main
+          delete-branch: true
+          add-paths: |
+            library/scenarios/*/index.md
+            library/scenarios/*/scenario.cradle
+            library/scenario-library.json
+          commit-message: Sync validated scenario library
+          title: Sync validated scenario library
+          body: |
+            Imports the validated scenario snapshot from cradle-lang/scenario-lib.
+
+            Source commit: ${{ steps.source.outputs.sha }}
+            Validation run: https://github.com/cradle-lang/scenario-lib/actions/runs/${{ steps.source.outputs.run-id }}
+
+            Each imported folder contains index.md and scenario.cradle. The searchable catalog is stored in library/scenario-library.json. Draft flags are preserved, validation-smoke-test is excluded, and other website scenarios/supporting files are retained.
+
+            TypeScript, collection tests, the production build, and library output checks passed before this PR was created. Merge this PR to publish through the existing Pages workflow.
+      - name: Report sync result
+        if: steps.freshness.outputs.current == 'true'
+        uses: actions/github-script@v7
+        env:
+          REVIEW_URL: ${{ steps.review.outputs.pull-request-url }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        with:
+          script: |
+            await core.summary.addHeading('Scenario library imported').addRaw(`Source: ${process.env.SOURCE_SHA}\n\n${process.env.REVIEW_URL ? `Review PR: ${process.env.REVIEW_URL}` : 'No file changes require a PR.'}\n\nDrafts stay out of the public collection. Publishing happens after the review PR merges.`).write();

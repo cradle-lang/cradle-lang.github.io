@@ -22,11 +22,16 @@ async function article(rootPath, kind, id, data, extension = 'md') {
   await writeFile(path.join(folder, `index.${extension}`), `---\n${JSON.stringify(data)}\n---\n\nA contributor-written article.\n`);
   return folder;
 }
+async function publishFixture(folder) {
+  const filename = path.join(folder, 'index.md');
+  await writeFile(filename, (await readFile(filename, 'utf8')).replace(/^draft:.*$/m, 'draft: false'));
+}
 
 test('a new Markdown/MDX folder is discovered without a code or workflow registry', async () => {
   const temporary = await mkdtemp(path.join(tmpdir(), 'cradle-library-'));
   try {
     await cp(path.join(root, 'library/scenarios/hello-world'), path.join(temporary, 'library/scenarios/new-range'), {recursive: true});
+    await publishFixture(path.join(temporary, 'library/scenarios/new-range'));
     const config = await article(temporary, 'configurations', 'documented-router', {title: 'Custom router guide', description: 'An authored description', config: 'linux-router', os: 'Linux', category: 'Networking'}, 'mdx');
     await writeFile(path.join(config, 'setup.yml'), 'tasks: []\n');
     await article(temporary, 'configurations', 'standalone', {title: 'Standalone', description: 'Reusable before any scenario needs it', config: 'standalone-config', os: 'Windows'});
@@ -43,19 +48,18 @@ test('a new Markdown/MDX folder is discovered without a code or workflow registr
     const generated = JSON.parse(await readFile(path.join(temporary, 'src/data/library.generated.json'), 'utf8'));
     assert.deepEqual(generated, result);
     const assetModule = await readFile(path.join(temporary, 'src/data/library-assets.generated.ts'), 'utf8');
-    assert.ok(assetModule.includes('../../library/scenarios/new-range/HelloWorld.cradle'));
+    assert.ok(assetModule.includes(`../../${result.scenarios[0].sourcePath}`));
     assert.doesNotMatch(assetModule, /localhost|127\.0\.0\.1/);
     const resolved = spawnSync(process.execPath, [path.join(root, 'scripts/resolve-library-scenario.mjs'), 'new-range', temporary], {encoding: 'utf8'});
     assert.equal(resolved.status, 0, resolved.stderr);
-    assert.equal(resolved.stdout.trim(), path.join(temporary, 'library/scenarios/new-range/HelloWorld.cradle'));
+    assert.equal(resolved.stdout.trim(), path.join(temporary, result.scenarios[0].sourcePath));
     const unpublished = spawnSync(process.execPath, [path.join(root, 'scripts/resolve-library-scenario.mjs'), 'draft-range', temporary], {encoding: 'utf8'});
     assert.notEqual(unpublished.status, 0, 'draft scenarios cannot be compiled as published entries');
   } finally {await rm(temporary, {recursive: true, force: true});}
 });
 
 test('only published articles populate resources while scenario usages remain linked', async () => {
-  const {scenarios} = await readLibrary(root);
-  const source = scenarios.find(({id}) => id === 'hello-world');
+  const source = {id: 'example', name: 'Example', description: 'Fixture scenario'};
   const parsed = parseCradleForWorkbench(await readFile(path.join(root, 'src/components/workbench/data/hello-world.cradle'), 'utf8'));
   parsed.instances[0].heuristics.push({type: 'CWE', value: 'CWE-89'});
   parsed.instances[1].heuristics.push({type: 'cwe', value: 'CWE-89'});
@@ -201,9 +205,7 @@ test('configuration and heuristic imports preserve files and link them from draf
 });
 
 test('metadata annotations retain usages without creating unpublished library entries', async () => {
-  const {scenarios} = await readLibrary(root);
-  const source = scenarios.find(({id}) => id === 'hello-world');
-  assert.ok(source);
+  const source = {id: 'example', name: 'Example', description: 'Fixture scenario'};
   const spec = (await readFile(path.join(root, 'src/components/workbench/data/hello-world.cradle'), 'utf8')).replace('metadata() >', 'metadata() >\n    heuristic("cwe", "CWE-89"),\n    heuristic("ttp", "T1059"),');
   const parsed = parseCradleForWorkbench(spec);
   const result = mergeResources([{...source, parsed}], {configurations: [], heuristics: []});
@@ -218,6 +220,7 @@ test('scenario artwork supports presets and colocated thumbnails with required a
   try {
     const folder = path.join(temporary, 'library/scenarios/custom-art');
     await cp(path.join(root, 'library/scenarios/hello-world'), folder, {recursive: true});
+    await publishFixture(folder);
     const articlePath = path.join(folder, 'index.md');
     const original = (await readFile(articlePath, 'utf8')).replace(/^(artwork|thumbnail|thumbnailAlt):[^\n]*\n/gm, '');
     await mkdir(path.join(folder, 'images'));

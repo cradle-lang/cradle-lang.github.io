@@ -37,6 +37,9 @@ jobs:
       - name: Test scenario collection
         run: npm run test:collection
 
+      - name: Test scenario library sync
+        run: npm run test:scenario-sync
+
       - name: Build documentation
         run: npm run build
 

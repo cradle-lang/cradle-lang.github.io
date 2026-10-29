@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "library:sync": "node scripts/import-scenario-bundle.mjs",
+    "test:scenario-sync": "node --test scripts/scenario-sync.test.mjs",
     "test:collection": "node --test scripts/collection.test.mjs scripts/library.test.mjs scripts/new-library-entry.test.mjs scripts/library-entrypoint.test.mjs scripts/library-thumbnails.test.mjs",
     "test:library-build": "node --test scripts/library-build.test.mjs",
     "typecheck": "npm run generate-library && tsc --noEmit",
