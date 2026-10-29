@@ -14,7 +14,7 @@ requirements: CXC build tools, an Ubuntu 20.04 image, Vagrant with libvirt or an
   during provisioning to download Docker images.
 artwork: network
 draft: true
-sourceUrl: https://github.com/cradle-lang/scenario-lib/tree/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world
+sourceUrl: https://github.com/cradle-lang/scenario-lib/tree/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world
 ---
 
 Hello World is a compact end-to-end CRADLE example for beginners. It demonstrates how to combine scenario-local configurations and heuristics with modules from the remote `cradle-lib` repository, then run a local object as an event. The scenario is testbed-independent and has no committed deployment profile.
@@ -22,11 +22,11 @@ Hello World is a compact end-to-end CRADLE example for beginners. It demonstrate
 ## What is included
 
 - [HelloWorld.cradle](<./scenario.cradle>): the scenario specification, including its instance, network, module references, and event definition.
-- [Local configuration](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/configs/hello-world/ansible/hello-world.j2>): writes a readiness marker during provisioning.
-- [Local CVE manifest](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/heuristics/cve/CVE-2021-44228/manifest.json>) and [Ansible template](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/heuristics/cve/CVE-2021-44228/ansible/CVE-2021-44228.j2>): supply the scenario-local `cve/CVE-2021-44228` heuristic.
-- [Event object](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/objects/artifact/hello.sh>): the script run by `mainEvent()`.
-- [README](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/README.md>): the original setup and run instructions.
-- [Topology preview](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/preview.svg>): the supplied scenario illustration.
+- [Local configuration](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/configs/hello-world/ansible/hello-world.j2>): writes a readiness marker during provisioning.
+- [Local CVE manifest](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/heuristics/cve/CVE-2021-44228/manifest.json>) and [Ansible template](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/heuristics/cve/CVE-2021-44228/ansible/CVE-2021-44228.j2>): supply the scenario-local `cve/CVE-2021-44228` heuristic.
+- [Event object](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/objects/artifact/hello.sh>): the script run by `mainEvent()`.
+- [README](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/README.md>): the original setup and run instructions.
+- [Topology preview](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/preview.svg>): the supplied scenario illustration.
 
 The specification also reuses the `linux-unzip` configuration and the `cve/CVE-2017-7494` heuristic from remote `cradle-lib`.
 
@@ -72,10 +72,10 @@ The supplied README documents the build command and expected marker files but do
 
 ## Attribution and licensing
 
-This article is based on the scenario's [README](<https://github.com/cradle-lang/scenario-lib/blob/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world/README.md>) and accompanying specification. The supplied README does not identify an individual contributor or state a redistribution license. Confirm attribution and licensing for the scenario, included assets, and reused `cradle-lib` modules before publication.
+This article is based on the scenario's [README](<https://github.com/cradle-lang/scenario-lib/blob/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world/README.md>) and accompanying specification. The supplied README does not identify an individual contributor or state a redistribution license. Confirm attribution and licensing for the scenario, included assets, and reused `cradle-lib` modules before publication.
 
 ## Article generation notes
 
 This is an AI-generated draft requiring human review. The article generator did not run compiler, deployment or runtime tests; any recorded results above come from the supplied files. Context limits omitted 0 text files and truncated 0 files. Image and binary contents were not inspected.
 
-[Full scenario folder and supporting files](<https://github.com/cradle-lang/scenario-lib/tree/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world>). Supporting files remain in the source repository and may require GitHub access.
+[Full scenario folder and supporting files](<https://github.com/cradle-lang/scenario-lib/tree/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world>). Supporting files remain in the source repository and may require GitHub access.

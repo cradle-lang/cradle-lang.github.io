@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "cradle-lang/scenario-lib",
-  "sourceRevision": "6f86215cc8b9b91fa38838e81c330baf7a9a6326",
-  "sourceRunId": 40827459890,
+  "sourceRevision": "fc53b4b8a357d11628f8b0bd177789c91f45bdee",
+  "sourceRunId": 40830167264,
   "catalog": [
     {
       "id": "hello-world",
-      "sourceUrl": "https://github.com/cradle-lang/scenario-lib/tree/6f86215cc8b9b91fa38838e81c330baf7a9a6326/scenarios/hello-world",
+      "sourceUrl": "https://github.com/cradle-lang/scenario-lib/tree/fc53b4b8a357d11628f8b0bd177789c91f45bdee/scenarios/hello-world",
       "title": "Hello World scenario",
       "description": "A compact CRADLE scenario combining local and cradle-lib configurations, CVE heuristics, and an event object on one Ubuntu instance.",
       "source": "CRADLE scenario library",
