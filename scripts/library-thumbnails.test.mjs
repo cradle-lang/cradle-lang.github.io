@@ -28,6 +28,6 @@ test('SVG thumbnails generate an image URL and require local files and alternati
   await assert.rejects(readLibrary(root), /thumbnail file does not exist/);
   for (const thumbnail of ['../outside.svg', path.join(folder, 'preview.svg'), './unsupported.bmp']) {
     await article({thumbnail});
-    await assert.rejects(readLibrary(root), /relative PNG, JPEG, WebP, GIF or SVG path/);
+    await assert.rejects(readLibrary(root), /relative PNG, JPEG, WebP, GIF, SVG or AVIF path/);
   }
 });

@@ -246,7 +246,7 @@ test('scenario artwork supports presets and colocated thumbnails with required a
     await setFields('thumbnail: ./missing.png\nthumbnailAlt: Missing');
     await assert.rejects(readLibrary(temporary), /thumbnail file does not exist/);
     await setFields('thumbnail: ./thumbnail.bmp\nthumbnailAlt: Unsupported');
-    await assert.rejects(readLibrary(temporary), /PNG, JPEG, WebP, GIF or SVG/);
+    await assert.rejects(readLibrary(temporary), /PNG, JPEG, WebP, GIF, SVG or AVIF/);
     await setFields('');
     assert.equal((await readLibrary(temporary)).scenarios[0].artwork, 'auto');
   } finally {await rm(temporary, {recursive: true, force: true});}
