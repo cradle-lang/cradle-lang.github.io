@@ -52,6 +52,7 @@ const sidebars: SidebarsConfig = {
         'guides/contribute-scenario',
         'guides/contribute-heuristic',
         'guides/contribute-configuration',
+        'guides/contribute-cve',
       ],
     },
 
