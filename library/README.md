@@ -520,3 +520,20 @@ validation and its report, not to deliver the specification download.
 
 Markdown links to `.cradle` files automatically download the specification rather
 than opening raw source. Library articles do not display an editing link.
+
+## Validated TTP library sync
+
+TTP implementations and articles are authored under `heuristics/ttp/` in
+cradle-lang/cradle-lib. Successful full main validation exports `website-ttps`
+and notifies `.github/workflows/sync-ttp-library.yml`. The receiver verifies the
+source and artifact, imports articles with commit-pinned module links, tests and
+builds the website, and opens/updates the `ttp-library-sync` review PR.
+
+Only `library/heuristics/ttp-t*/index.md` and `library/ttp-library.json` are committed.
+Implementation files stay upstream. Removed managed entries are drafted; CVE and
+manual articles remain. Merge the review PR and confirm Pages deployment to publish
+articles with `draft: false`. Configure `CRADLE_LANG_TOKEN` for source Actions/Contents
+read and website Contents/Pull requests write. For recovery, manually dispatch the
+receiver with a successful current-main full validation `source_run_id`.
+
+See the [TTP contributor guide](../docs/guides/contribute-ttp.mdx).

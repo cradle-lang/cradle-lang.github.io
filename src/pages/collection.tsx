@@ -149,9 +149,9 @@ export default function CollectionPage(): ReactNode {
   const groupCount = heuristics.filter(({type}) => type.toLowerCase() === heuristicGroup?.id).length;
   const selectedSection = sections.find(({id}) => id === section);
   const contributionUrl = section === 'heuristics'
-    ? heuristicGroup?.id === 'cve' ? '/docs/guides/contribute-cve' : '/docs/guides/contribute-heuristic'
+    ? heuristicGroup?.id === 'cve' ? '/docs/guides/contribute-cve' : heuristicGroup?.id === 'ttp' ? '/docs/guides/contribute-ttp' : '/docs/guides/contribute-heuristic'
     : section === 'configurations' ? '/docs/guides/contribute-configuration' : '/docs/guides/contribute-scenario';
-  const contributionLabel = section === 'heuristics' ? heuristicGroup?.id === 'cve' ? 'a CVE' : 'a heuristic' : section === 'configurations' ? 'a configuration' : 'a scenario';
+  const contributionLabel = section === 'heuristics' ? heuristicGroup?.id === 'cve' ? 'a CVE' : heuristicGroup?.id === 'ttp' ? 'a TTP heuristic' : 'a heuristic' : section === 'configurations' ? 'a configuration' : 'a scenario';
   const pageTitle = active?.name || (heuristicGroup ? `${heuristicGroup.label} heuristics` : undefined) || (section === 'overview' ? 'CRADLE Library' : selectedSection?.label || 'CRADLE Library');
   return <Layout title={pageTitle} description="Reusable CRADLE cyber ranges and building blocks. Discover, inspect and check the syntax and structure of published scenarios." noFooter>
     <div className={styles.library}>

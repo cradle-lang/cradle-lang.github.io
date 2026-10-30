@@ -43,6 +43,9 @@ jobs:
       - name: Test CVE library sync
         run: npm run test:cve-sync
 
+      - name: Test TTP library sync
+        run: npm run test:ttp-sync
+
       - name: Build documentation
         run: npm run build
 
