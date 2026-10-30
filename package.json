@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "library:sync-cves": "node scripts/import-cve-bundle.mjs",
+    "test:cve-sync": "node --test scripts/cve-sync.test.mjs",
     "library:sync": "node scripts/import-scenario-bundle.mjs",
     "test:scenario-sync": "node --test scripts/scenario-sync.test.mjs",
     "test:collection": "node --test scripts/collection.test.mjs scripts/library.test.mjs scripts/new-library-entry.test.mjs scripts/library-entrypoint.test.mjs scripts/library-thumbnails.test.mjs",

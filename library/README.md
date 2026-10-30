@@ -1,5 +1,61 @@
 # Contribute to the CRADLE Library
 
+## Automatic CVE documentation imports
+
+`Sync validated CVE library` receives `cve-library-updated` from
+`cradle-lang/cradle-lib-cve`, which is the CVE authoring source. Its old mirror
+job from cradle-lib is removed by the companion source change. Configurations,
+TTPs and scenario synchronization retain their existing workflows.
+
+The receiver accepts only successful `.github/workflows/validate-cves.yml` runs
+on source main, triggered by push or manual dispatch. Both validate/export every
+CVE, including drafts. PR/fork/non-main runs cannot provide content. It checks
+the exact artifact/run/SHA and source freshness before import and again before PR
+creation. The artifact is named `website-cves` and expires after 14 days.
+
+Each entry supplies `index.md` and the module folder URL, with internal CVE identity
+and provenance metadata for automation. No module implementation files are copied.
+Imported
+articles go to `library/heuristics/cve-cve-YYYY-NNNN/index.md`; provenance and the
+catalogue go to `library/cve-library.json`. Runtime templates/assets remain in
+cradle-lib-cve, with article links pinned to its source commit. `draft: true`
+entries stay out of the public collection. Missing previously managed CVEs are
+drafted to retire them while retaining assets; manual articles and TTPs are not
+retired. Existing matching CVE articles migrate on first sync.
+
+The receiver runs `test:cve-sync`, TypeScript, collection tests, the production
+build and library-output checks, then opens/updates a review PR from the plain
+branch `cve-library-sync`. Merge it to publish through the Pages workflow.
+CI checks documentation/module structure, not provisioning/runtime behavior.
+
+Merge this receiver before the companion source workflows. Configure
+`CRADLE_LANG_TOKEN` here with Actions/Contents read on cradle-lib-cve and
+Contents/Pull requests write on this repository. The source repository needs the
+same secret with Contents write here to dispatch the update. The code does not
+create secrets or repository rules; require source validation and website build
+checks in repository settings.
+
+To retry, manually run this receiver with `source_run_id` set to the latest
+successful full main validation. If its artifact expired, manually run
+`Validate CVE library` on source main, then use that run ID. Its successful run
+also sends the notification automatically.
+
+For local verification with an exported bundle:
+
+```powershell
+$env:CVE_BUNDLE = '/path/to/bundle.json'
+$env:SOURCE_SHA = '<full-source-sha>'
+$env:SOURCE_RUN_ID = '<validated-run-id>'
+npm run library:sync-cves
+npm run test:cve-sync
+npm run typecheck
+npm run build
+```
+
+The single contributor command with `--generate-index` and the heuristic template
+are documented in
+[cradle-lib-cve/CONTRIBUTING.md](https://github.com/cradle-lang/cradle-lib-cve/blob/main/CONTRIBUTING.md).
+
 ## Automatic imports from scenario-lib
 
 `Sync validated scenario library` receives the `scenario-library-updated`
