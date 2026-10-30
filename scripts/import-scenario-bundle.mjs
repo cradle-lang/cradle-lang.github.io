@@ -29,7 +29,8 @@ async function checkTarget(root, relative, directory = false) {
 }
 
 async function writeChanged(filename, contents) {
-  if (await readFile(filename, 'utf8').catch(error => {if (error.code === 'ENOENT') return null; throw error;}) === contents) return false;
+  const existing = await readFile(filename).catch(error => {if (error.code === 'ENOENT') return null; throw error;});
+  if (existing?.equals(Buffer.isBuffer(contents) ? contents : Buffer.from(contents))) return false;
   await mkdir(path.dirname(filename), {recursive: true});
   const temporary = path.join(path.dirname(filename), `.scenario-sync-${randomUUID()}.tmp`);
   try {
@@ -73,12 +74,28 @@ export async function importScenarioBundle({root = siteRoot, bundle, expectedRev
     if (!info.draft && !record.tags.length) throw new Error(`${entry.id}: published scenarios require tags.`);
     record.draft = info.draft;
     record.searchText = text(info.searchText, `${entry.id}: searchText`);
-    if (metadata.id !== undefined || metadata.slug !== undefined || metadata.deployment !== undefined || metadata.entrypoint !== undefined || metadata.thumbnail !== undefined || metadata.thumbnailAlt !== undefined) throw new Error(`${entry.id}: bundle article has unsupported metadata or local artwork.`);
+    if (metadata.id !== undefined || metadata.slug !== undefined || metadata.deployment !== undefined || metadata.entrypoint !== undefined) throw new Error(`${entry.id}: bundle article has unsupported metadata.`);
     // Existing website folders may retain a README pointing to a named source.
     // Explicitly select this snapshot's scenario.cradle without deleting assets.
     const article = entry.article.replace(/^---\n/, '---\nentrypoint: scenario.cradle\n');
     const directory = `library/scenarios/${entry.id}`;
     await checkTarget(root, directory, true);
+    const assets = entry.assets ?? [];
+    if (!Array.isArray(assets) || assets.length > 1) throw new Error(`${entry.id}: only the declared thumbnail image may be bundled.`);
+    if (metadata.thumbnail !== undefined) {
+      const thumbnail = text(metadata.thumbnail, `${entry.id}: thumbnail`);
+      text(metadata.thumbnailAlt, `${entry.id}: thumbnailAlt`);
+      const decoded = decodeURIComponent(thumbnail);
+      const image = path.posix.normalize(decoded);
+      if (/[\\?#:]/.test(decoded) || path.posix.isAbsolute(image) || image.startsWith('../') || !/\.(png|jpe?g|webp|gif|svg|avif)$/i.test(image)) throw new Error(`${entry.id}: unsafe thumbnail path.`);
+      const asset = assets[0];
+      if (!asset || asset.path !== image || typeof asset.base64 !== 'string' || asset.base64.length > 7 * 1024 * 1024) throw new Error(`${entry.id}: missing or invalid thumbnail image.`);
+      const contents = Buffer.from(asset.base64, 'base64');
+      if (!contents.length || contents.length > 5 * 1024 * 1024 || contents.toString('base64') !== asset.base64) throw new Error(`${entry.id}: invalid thumbnail encoding or size.`);
+      const relative = `${directory}/${image}`;
+      await checkTarget(root, relative);
+      plans.push({filename: path.join(root, relative), contents});
+    } else if (assets.length || metadata.thumbnailAlt !== undefined) throw new Error(`${entry.id}: thumbnail assets and alt text require thumbnail metadata.`);
     for (const [name, contents] of [['scenario.cradle', entry.spec], ['index.md', article]]) {
       const relative = `${directory}/${name}`;
       await checkTarget(root, relative);

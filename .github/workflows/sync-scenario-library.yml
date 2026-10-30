@@ -126,8 +126,7 @@ jobs:
           base: main
           delete-branch: true
           add-paths: |
-            library/scenarios/*/index.md
-            library/scenarios/*/scenario.cradle
+            library/scenarios/
             library/scenario-library.json
           commit-message: Sync validated scenario library
           title: Sync validated scenario library

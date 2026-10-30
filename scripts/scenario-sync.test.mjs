@@ -69,6 +69,33 @@ test('imports files and searchable metadata, preserves drafts/assets, and repeat
   assert.equal((await importInto(root, value)).changedFiles, 0);
 });
 
+test('copies thumbnail bytes and metadata and preserves them on repeated syncs', async t => {
+  const root = await fixture(t);
+  const value = bundle([{id: 'railway', draft: false}]);
+  const image = Buffer.from([0, 128, 255, 10]);
+  value.scenarios[0].article = value.scenarios[0].article.replace('---\n', '---\nthumbnail: ./images/cover%20photo.avif\nthumbnailAlt: Custom artwork\n');
+  value.scenarios[0].assets = [{path: 'images/cover photo.avif', base64: image.toString('base64')}];
+  await importInto(root, value);
+  assert.deepEqual(await readFile(path.join(root, 'library/scenarios/railway/images/cover photo.avif')), image);
+  const generated = await generateLibrary(root);
+  assert.equal(generated.scenarios[0].thumbnailAlt, 'Custom artwork');
+  assert.equal(generated.scenarios[0].thumbnailPath, 'library/scenarios/railway/images/cover photo.avif');
+  assert.equal((await importInto(root, value)).changedFiles, 0);
+  for (const mutate of [
+    entry => {entry.assets = [];},
+    entry => {entry.assets[0].path = '../escape.png';},
+    entry => {entry.assets[0].base64 = 'invalid!';},
+    entry => {entry.article = entry.article.replace('./images/cover%20photo.avif', '../escape.avif');},
+    entry => {entry.article = entry.article.replace('thumbnailAlt: Custom artwork\n', '');},
+  ]) {
+    const invalid = structuredClone(value);
+    mutate(invalid.scenarios[0]);
+    const empty = await fixture(t);
+    await assert.rejects(importInto(empty, invalid));
+    assert.deepEqual(await readdir(empty), []);
+  }
+});
+
 test('an all-draft or empty source snapshot produces a valid empty public database', async t => {
   const root = await fixture(t);
   await importInto(root, bundle([{id: 'draft-example', draft: true}]));
@@ -143,5 +170,6 @@ test('receiver wiring uses verified artifact IDs, freshness checks, scoped commi
   assert.equal(steps.find(step => step.id === 'review').with.branch, 'scenario-library-sync');
   assert.equal(steps.find(step => step.id === 'review').if, "steps.freshness.outputs.current == 'true'");
   assert.ok(steps.find(step => step.id === 'review').with['add-paths'].includes('library/scenario-library.json'));
+  assert.ok(steps.find(step => step.id === 'review').with['add-paths'].split('\n').includes('library/scenarios/'));
   assert.ok(steps.find(step => step.id === 'freshness').with.script.includes('branch.commit.sha === process.env.SOURCE_SHA'));
 });

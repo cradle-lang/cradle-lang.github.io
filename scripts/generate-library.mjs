@@ -88,8 +88,8 @@ export async function readLibrary(root = siteRoot) {
         if (data.thumbnail !== undefined) {
           const thumbnail = required(data, 'thumbnail', docPath);
           const directoryPath = path.resolve(root, prefix);
-          const imagePath = path.resolve(directoryPath, thumbnail);
-          if (path.isAbsolute(thumbnail) || !imagePath.startsWith(`${directoryPath}${path.sep}`) || !/\.(png|jpe?g|webp|gif|svg)$/i.test(thumbnail)) throw new Error(`${docPath}: thumbnail must be a relative PNG, JPEG, WebP, GIF or SVG path inside this scenario folder`);
+          const imagePath = path.resolve(directoryPath, decodeURIComponent(thumbnail));
+          if (path.isAbsolute(thumbnail) || !imagePath.startsWith(`${directoryPath}${path.sep}`) || !/\.(png|jpe?g|webp|gif|svg|avif)$/i.test(thumbnail)) throw new Error(`${docPath}: thumbnail must be a relative PNG, JPEG, WebP, GIF, SVG or AVIF path inside this scenario folder`);
           if (!(await stat(imagePath).catch(() => null))?.isFile()) throw new Error(`${docPath}: thumbnail file does not exist: ${thumbnail}`);
           entry.thumbnailPath = `${prefix}/${path.relative(directoryPath, imagePath).split(path.sep).join('/')}`;
           entry.thumbnailAlt = required(data, 'thumbnailAlt', docPath);

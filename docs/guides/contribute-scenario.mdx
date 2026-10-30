@@ -184,12 +184,11 @@ The optional `artwork` field selects `auto`, `network`, `enterprise` or
 `monitoring`. `auto` uses light blue artwork for one network and dark blue
 artwork for multiple networks.
 
-A source scenario can use a local PNG, JPEG, WebP or GIF `thumbnail` with
-`thumbnailAlt`. However, the website handoff exports only `index.md` and
-`scenario.cradle`: it omits custom thumbnails, converts image embeds to source
-image links and rewrites supporting-file links to the source commit. The synced
-website entry uses built-in artwork. Keep supporting assets in scenario-lib so
-readers can retrieve them from those links.
+A source scenario can use a local PNG, JPEG, WebP, GIF, SVG or AVIF `thumbnail`
+with `thumbnailAlt`. The website handoff preserves both fields and copies the
+thumbnail image (up to 5 MiB) alongside `index.md` and `scenario.cradle`, including
+images in subfolders. Scenarios without a thumbnail use built-in artwork. Other
+image embeds and supporting-file links point to the source commit in scenario-lib.
 
 ## 5. Check the contribution
 
