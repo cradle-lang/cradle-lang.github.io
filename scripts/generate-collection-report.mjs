@@ -23,7 +23,7 @@ const compiler = (await readFile(path.join(output, 'compiler-version.txt'), 'utf
 const report = [
   '## Scenario validation report',
   `Scenario: ${text(scenario.name)} (${text(id)})`,
-  'CradleXC validation: **Passed**. Compilation: **Passed**.',
+  'Syntax and structure validation: **Passed**. This checks syntax and structure only.',
   `Source revision: ${text(revision)}  \nCompiler: ${text(compiler)}`,
   `${parsed.instances.length} instances · ${parsed.networks.length} networks · ${parsed.events.length} events · ${parsed.objects.length} objects`,
   'The following static relationships are read from the source using the Workbench parser. They do not certify runtime availability. No infrastructure was provisioned and no events were executed.',
@@ -35,6 +35,6 @@ const report = [
   table(['Event', 'Instance', 'Action or description', 'Depends on'], parsed.events.map((event) => [event.id, event.instance, event.runObject?.name ? `Run object ${event.runObject.name}` : event.subject?.cmd ? `Run ${event.subject.cmd}` : event.description, event.dependencies.join(', ') || 'No dependency'])),
   '### Objects',
   parsed.objects.map((object) => text(object.id)).join(', ') || 'No objects declared.',
-  'Download the published specification using Download .cradle at the top of its collection page. This workflow publishes a report only; compiled YAML and source bundles are not uploaded.',
+  'Download the published specification using Download .cradle at the top of its collection page. This workflow publishes a report only; source bundles are not uploaded.',
 ].join('\n\n');
 await writeFile(path.join(output, 'report.md'), `${report}\n`);
