@@ -40,6 +40,9 @@ jobs:
       - name: Test scenario library sync
         run: npm run test:scenario-sync
 
+      - name: Test CVE library sync
+        run: npm run test:cve-sync
+
       - name: Build documentation
         run: npm run build
 
