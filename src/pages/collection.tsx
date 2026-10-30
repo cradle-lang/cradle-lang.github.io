@@ -5,6 +5,7 @@ import {useHistory, useLocation} from '@docusaurus/router';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import {collectionRepository, scenarioSource, validationWorkflow} from '../components/collection/catalog';
 import {matchesScenarioSearch} from '../components/collection/search';
+import {configurationUsages} from '../components/collection/resources';
 import {configurations, frameworks, heuristics, heuristicUsages, libraryScenarios, type LibraryScenario} from '../components/collection/library';
 import Icon from '../components/collection/LibraryIcon';
 import ScenarioArtwork from '../components/collection/ScenarioArtwork';
@@ -25,7 +26,7 @@ const heuristicGroups = [
   {id: 'ttp', label: 'TTP', description: 'Tactics, techniques and procedures for modelling adversary behavior.'},
   {id: 'cve', label: 'CVE', description: 'Known vulnerabilities with documented implementations and requirements.'},
 ] as const;
-const detailTabs = ['Overview', 'Report', 'Topology', 'Components', 'Events', 'Heuristics', 'Provenance', 'Source'] as const;
+const detailTabs = ['Overview', 'Report', 'Topology', 'Components', 'Configurations', 'Events', 'Heuristics', 'Provenance', 'Source'] as const;
 type DetailTab = typeof detailTabs[number];
 function libraryUrl(section: Section = 'overview') {return `/collection/${section === 'overview' ? '' : `?section=${section}`}`;}
 function detailUrl(id: string) {return `/collection/?scenario=${id}`;}
@@ -56,6 +57,7 @@ function ScenarioDetail({scenario}: {scenario: LibraryScenario}) {
   const [selection, setSelection] = useState<Selection>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const ownHeuristics = heuristicUsages.filter((entry) => entry.scenario.id === scenario.id);
+  const ownConfigurations = useMemo(() => configurationUsages(scenario.parsed), [scenario.parsed]);
   function showReport() {
     setTab('Report');
     tabsRef.current?.querySelector<HTMLButtonElement>('#detail-tab-Report')?.focus();
@@ -88,9 +90,13 @@ function ScenarioDetail({scenario}: {scenario: LibraryScenario}) {
       {tab === 'Report' && <><div className={styles.panelHeading}><div><h2>Static scenario report</h2><p>Relationships declared in the published source, using the same text summary as Workbench. This report does not indicate a successful compiler check or runtime execution.</p></div><Metrics scenario={scenario} /></div><ScenarioSummary parsed={scenario.parsed} /></>}
       {tab === 'Topology' && <><div className={styles.panelHeading}><div><h2>Network topology</h2><p>Pan, zoom and select a component to explore the range.</p></div><Metrics scenario={scenario} /></div><div className={styles.topology}><TopologyView parsed={scenario.parsed} showLabels showObjects nodePositions={nodePositions} networkPositions={networkPositions} onNodeMove={(id, position) => setNodePositions((previous) => ({...previous, [id]: position}))} onNetworkMove={(id, position) => setNetworkPositions((previous) => ({...previous, [id]: position}))} onSelect={setSelection} /></div>{selection && <p className={styles.selection}><strong>{selection.type}:</strong> {selection.id}</p>}</>}
       {tab === 'Components' && <><div className={styles.panelHeading}><div><h2>Range components</h2><p>Instances and the configuration building blocks they use.</p></div><span className={styles.count}>{scenario.parsed.instances.length} instances</span></div><div className={styles.tableWrap}><table className={styles.table}><thead><tr><th>Instance</th><th>Operating system</th><th>Configurations</th></tr></thead><tbody>{scenario.parsed.instances.map((instance) => <tr key={instance.id}><td><Icon name="monitor" size={15} /> <strong>{instance.id}</strong></td><td>{instance.os?.name || 'Unspecified'} {instance.os?.version}</td><td><div className={styles.configTags}>{instance.configs.map((config) => <Link key={config} to={`/collection/?section=configurations&q=${encodeURIComponent(config)}`}>{config}</Link>)}{!instance.configs.length && <span>None declared</span>}</div></td></tr>)}</tbody></table></div></>}
+      {tab === 'Configurations' && <><div className={styles.panelHeading}><div><h2>Scenario configurations</h2><p>All configurations referenced in this specification, with instance usage derived automatically from the source.</p></div><span className={styles.count}>{ownConfigurations.length} configurations</span></div>{ownConfigurations.length ? <div className={styles.tableWrap}><table className={styles.table}><thead><tr><th scope="col">Configuration</th><th scope="col">Used by instances</th><th scope="col">Documentation</th></tr></thead><tbody>{ownConfigurations.map((config) => {
+        const documented = configurations.find(({name}) => name === config.name);
+        return <tr key={config.name}><th scope="row"><code>{config.name}</code></th><td>{config.instances.map((id, index) => <span key={id}>{index > 0 && ', '}<code>{id}</code></span>)}</td><td>{documented ? <Link to={documented.docUrl}>Read configuration guide</Link> : 'No published guide'}</td></tr>;
+      })}</tbody></table></div> : <EmptyState title="No configurations declared">This specification does not assign configurations to any instances.</EmptyState>}</>}
       {tab === 'Events' && <><div className={styles.panelHeading}><div><h2>Event sequence</h2><p>Actions and dependencies declared by the scenario.</p></div><span className={styles.count}>{scenario.parsed.events.length} events</span></div><div className={styles.events}>{scenario.parsed.events.map((event, index) => <article key={event.id}><span className={styles.eventNumber}>{String(index + 1).padStart(2, '0')}</span><div><h3>{event.description || event.id}</h3><code>{event.id}</code><p>Instance: <strong>{event.instance || 'Unspecified'}</strong>{event.runObject?.name && <> · Object: {event.runObject.name}</>}</p>{event.dependencies.length > 0 && <span className={styles.dependency}>Depends on {event.dependencies.join(', ')}</span>}</div></article>)}</div></>}
       {tab === 'Heuristics' && (ownHeuristics.length ? <div className={styles.resourceGrid}>{ownHeuristics.map((entry, index) => <div className={styles.panel} key={index}><Icon name="heuristics" /><h3>{entry.value}</h3><p>{entry.type} · {entry.component}</p></div>)}</div> : <EmptyState title="No heuristic annotations">This specification does not declare heuristic mappings. You can add them when adapting the scenario in Workbench.</EmptyState>)}
-      {tab === 'Provenance' && <div className={styles.panel}><h2>Versioned at the source.</h2><p>Inspect the original source and validation history for this scenario.</p><dl className={styles.provenance}><div><dt>Contributor / source</dt><dd>{scenario.source}</dd></div><div><dt>Scenario identifier</dt><dd><code>{scenario.id}</code></dd></div><div><dt>Source file</dt><dd><code>{scenario.file}</code></dd></div><div><dt>Validation history</dt><dd><a href={validationWorkflow}>View GitHub workflow runs ↗</a></dd></div></dl><p>Validate a specific Git commit through the workflow. Its run summary records validation and compilation results, the source revision, compiler version and a static scenario report. This does not verify runtime dependencies or execute events.</p></div>}
+      {tab === 'Provenance' && <div className={styles.panel}><h2>Versioned at the source.</h2><p>Inspect the original source and validation history for this scenario.</p><dl className={styles.provenance}><div><dt>Contributor / source</dt><dd>{scenario.source}</dd></div><div><dt>Scenario identifier</dt><dd><code>{scenario.id}</code></dd></div><div><dt>Source file</dt><dd><code>{scenario.file}</code></dd></div><div><dt>Validation history</dt><dd><a href={validationWorkflow}>View GitHub workflow runs ↗</a></dd></div></dl><p>Validate a specific Git commit through the workflow. It checks syntax and structure only. Its run summary records the validation result, source revision, compiler version and a static scenario report. This does not verify runtime dependencies or execute events.</p></div>}
       {tab === 'Source' && <><div className={styles.panelHeading}><div><h2>CRADLE specification</h2><p>The same source is used by Workbench and the Download .cradle button at the top.</p></div></div><pre className={styles.sourceCode}><code>{scenarioSource(scenario)}</code></pre></>}
     </section>
   </>;
@@ -98,9 +104,16 @@ function ScenarioDetail({scenario}: {scenario: LibraryScenario}) {
 function CompilePanel({scenario, onReport}: {scenario: LibraryScenario; onReport: () => void}) {
   return <div className={`${styles.panel} ${styles.compilePanel}`}>
     <span className={styles.iconBox}><Icon name="code" /></span>
-    <h3>Validate and inspect.</h3>
-    <p>Check this specification with GitHub Actions. Select <code>{scenario.id}</code> and a Git revision to validate and compile the source, then inspect the run’s static report.</p>
-    <a className={styles.primaryButton} href={validationWorkflow}>Validate specification <Icon name="external" size={14} /></a>
+    <h3>Check syntax and structure.</h3>
+    <p>This checks syntax and structure only, using CXC in GitHub Actions. Opening the workflow does not start a validation run.</p>
+    <a className={styles.primaryButton} href={validationWorkflow}>Open validation workflow <Icon name="external" size={14} /></a>
+    <ol className={styles.validationSteps}>
+      <li>Sign in to GitHub with repository write access.</li>
+      <li>Click <strong>Run workflow</strong> and select the <code>main</code> branch.</li>
+      <li>Set <strong>scenario</strong> to <code>{scenario.id}</code> and <strong>revision</strong> to <code>main</code> (or the Git revision to check).</li>
+      <li>Click GitHub’s <strong>Run workflow</strong>, then open the new run to read its results.</li>
+    </ol>
+    <small>If Run workflow is unavailable, ask a repository maintainer to run validation.</small>
     <button className={styles.textButton} onClick={onReport}>View static report <Icon name="arrow" size={15} /></button>
     <small>Read the validation results, source revision and compiler version in GitHub’s run summary. Use Download .cradle at the top for the specification.</small>
     <small>This checks the specification only. It does not provision infrastructure, run events or verify that runtime images, configurations and artifacts are available.</small>
@@ -137,7 +150,7 @@ export default function CollectionPage(): ReactNode {
   const selectedSection = sections.find(({id}) => id === section);
   const contributionUrl = section === 'heuristics' ? '/docs/guides/contribute-heuristic' : section === 'configurations' ? '/docs/guides/contribute-configuration' : '/docs/guides/contribute-scenario';
   const pageTitle = active?.name || (heuristicGroup ? `${heuristicGroup.label} heuristics` : undefined) || (section === 'overview' ? 'CRADLE Library' : selectedSection?.label || 'CRADLE Library');
-  return <Layout title={pageTitle} description="Reusable CRADLE cyber ranges and building blocks. Discover, inspect, validate and compile published scenarios." noFooter>
+  return <Layout title={pageTitle} description="Reusable CRADLE cyber ranges and building blocks. Discover, inspect and check the syntax and structure of published scenarios." noFooter>
     <div className={styles.library}>
       <aside className={styles.sidebar}>
         <Link to="/collection/" className={styles.sidebarBrand}><Icon name="book" size={18} />Library</Link>

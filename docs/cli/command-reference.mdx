@@ -22,7 +22,7 @@ cxc <command> --help
 For example:
 
 ```bash
-cxc compile --help
+cxc validate --help
 ```
 
 :::note
@@ -34,7 +34,6 @@ Command options can change between CradleXC releases. Use the built-in `--help` 
 | Command | Purpose |
 | --- | --- |
 | `cxc validate` | Parse and validate CRADLE source syntax and structure. |
-| `cxc compile` | Compile CRADLE source into structured YAML. |
 | `cxc dump-ir` | Display CradleXC's intermediate representation. |
 | `cxc build` | Generate target-specific files through a backend plugin. |
 | `cxc rebuild` | Compare a scenario with the previous build and regenerate its complete file set. |
@@ -69,44 +68,9 @@ cxc validate -i <scenario.cradle> --json
 cxc validate -i scenarios/HelloWorld.cradle
 ```
 
-Use this command before compilation to identify syntax problems in the source scenario.
+This checks syntax and structure only. It does not verify that every referenced configuration or heuristic is available, or that provisioning and events will succeed.
 
-For more information, see [Validate and Compile](../getting-started/validate-and-compile).
-
----
-
-## `cxc compile`
-
-Compiles a CRADLE scenario into structured YAML.
-
-### Usage
-
-```bash
-cxc compile \
-  -i <scenario.cradle> \
-  -o <output.yml>
-```
-
-### Example
-
-```bash
-cxc compile \
-  -i scenarios/HelloWorld.cradle \
-  -o HelloWorld.yml
-```
-
-The input is the human-authored `.cradle` scenario.
-
-The output is the compiled YAML representation produced by CradleXC.
-
-### Common arguments
-
-| Argument | Purpose |
-| --- | --- |
-| `-i` | Specifies the input `.cradle` file. |
-| `-o` | Specifies the output YAML file. |
-
-For more information, see [Validate and Compile](../getting-started/validate-and-compile).
+For more information, see [Validate a Scenario](../getting-started/validate-and-compile).
 
 ---
 
@@ -133,7 +97,7 @@ This command is useful when:
 - investigating compiler behavior
 - developing or debugging backend integration
 
-`cxc dump-ir` does not replace validation or compilation.
+`cxc dump-ir` produces deployment IR JSON for inspection. Use `cxc validate` for syntax and structure checks; a validation-only workflow does not need to generate IR.
 
 For more information, see [Inspect Output](../getting-started/inspect-output).
 
@@ -459,10 +423,6 @@ cxc validate --help
 ```
 
 ```bash
-cxc compile --help
-```
-
-```bash
 cxc build --help
 ```
 
@@ -472,14 +432,6 @@ For normal CRADLE scenario development:
 
 ```bash
 cxc validate -i scenarios/HelloWorld.cradle
-```
-
-Then compile:
-
-```bash
-cxc compile \
-  -i scenarios/HelloWorld.cradle \
-  -o HelloWorld.yml
 ```
 
 If you need to inspect the intermediate representation:
@@ -515,14 +467,6 @@ The overall workflow is:
 
   <span>↓</span>
 
-  <div><code>cxc compile</code></div>
-
-  <span>↓</span>
-
-  <div>Compiled representation</div>
-
-  <span>↓</span>
-
   <div className="architecture-flow-step-backend"><code>cxc build</code></div>
 
   <span>↓</span>
@@ -539,16 +483,9 @@ The overall workflow is:
 
   <div className="cxc-command-card">
     <div className="cxc-command-description">
-      Validate CRADLE source syntax.
+      Validate CRADLE source syntax and structure.
     </div>
     <code>cxc validate</code>
-  </div>
-
-  <div className="cxc-command-card">
-    <div className="cxc-command-description">
-      Compile CRADLE source into YAML.
-    </div>
-    <code>cxc compile</code>
   </div>
 
   <div className="cxc-command-card">
@@ -620,7 +557,7 @@ The overall workflow is:
 - [CLI Configuration](./configuration)
 - [Backend Discovery](./backend-discovery)
 - [CLI Outputs](./outputs)
-- [Validate and Compile](../getting-started/validate-and-compile)
+- [Validate a Scenario](../getting-started/validate-and-compile)
 - [Inspect Output](../getting-started/inspect-output)
 - [Use a Backend](../getting-started/use-a-backend)
 - [Troubleshooting](../guides/troubleshooting)

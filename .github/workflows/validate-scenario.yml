@@ -1,4 +1,4 @@
-name: Validate and compile collection scenario
+name: Check collection scenario syntax and structure
 
 on:
   workflow_dispatch:
@@ -41,10 +41,11 @@ jobs:
         run: |
           echo 'deb [trusted=yes] https://repo.cradle-lang.org/apt/ /' | sudo tee /etc/apt/sources.list.d/cradle.list
           sudo apt-get update
-          sudo apt-get install -y cxc
-      - name: Validate and compile
+          sudo apt-get install -y cxc-core
+          cxc --version
+      - name: Check syntax and structure
         env:
           SCENARIO: ${{ inputs.scenario }}
         run: |
-          bash tooling/scripts/compile-collection-scenario.sh "$SCENARIO" "$GITHUB_WORKSPACE/scenario" "$GITHUB_WORKSPACE/scenario-output"
+          bash tooling/scripts/validate-collection-scenario.sh "$SCENARIO" "$GITHUB_WORKSPACE/scenario" "$GITHUB_WORKSPACE/scenario-output"
           cat "$GITHUB_WORKSPACE/scenario-output/report.md" >> "$GITHUB_STEP_SUMMARY"

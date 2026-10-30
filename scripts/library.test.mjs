@@ -14,8 +14,23 @@ async function loadTS(relative) {
   const {outputText} = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022}});
   return import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
 }
-const {mergeResources} = await loadTS('src/components/collection/resources.ts');
+const {mergeResources, configurationUsages} = await loadTS('src/components/collection/resources.ts');
 const {parseCradleForWorkbench} = await loadTS('src/components/workbench/utils/cradleParser.ts');
+
+test('scenario configuration list includes undocumented configs and all consuming instances', () => {
+  const parsed = parseCradleForWorkbench(`
+instances() > instance("host-a"), instance("host-b").
+instance("host-a") > config("shared"), config("local-only"), config("shared").
+instance("host-b") > config("shared").
+`);
+  assert.deepEqual(configurationUsages(parsed), [
+    {name: 'local-only', instances: ['host-a']},
+    {name: 'shared', instances: ['host-a', 'host-b']},
+  ]);
+  parsed.instances[1].configs.push('new-config');
+  assert.deepEqual(configurationUsages(parsed).find(({name}) => name === 'new-config'), {name: 'new-config', instances: ['host-b']});
+  assert.deepEqual(configurationUsages({...parsed, instances: []}), []);
+});
 async function article(rootPath, kind, id, data, extension = 'md') {
   const folder = path.join(rootPath, 'library', kind, id);
   await mkdir(folder, {recursive: true});

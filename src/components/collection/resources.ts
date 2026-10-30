@@ -2,6 +2,19 @@ import type {Scenario} from './catalog';
 import type {ParsedCradle} from '../workbench/types/workbench';
 
 export type LibraryScenario = Scenario & {parsed: ParsedCradle};
+
+export function configurationUsages(parsed: ParsedCradle) {
+  const usages = new Map<string, string[]>();
+  for (const instance of parsed.instances) {
+    for (const config of new Set(instance.configs)) {
+      const instances = usages.get(config) || [];
+      if (!instances.includes(instance.id)) instances.push(instance.id);
+      usages.set(config, instances);
+    }
+  }
+  return [...usages].map(([name, instances]) => ({name, instances}))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
 type Article = {name: string; description: string; docUrl: string; sourceUrl?: string};
 export type DocumentedResources = {
   configurations: (Article & {key: string; os: string; category: string})[];

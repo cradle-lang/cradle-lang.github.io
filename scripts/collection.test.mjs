@@ -50,7 +50,7 @@ test('built-in Workbench examples remain available independently of collection e
   }
 });
 
-test('the compilation workflow validates and compiles without invoking runtime tooling', async () => {
+test('the validation workflow checks syntax and structure only', async () => {
   const temporary = await mkdtemp(path.join(tmpdir(), 'cradle-compilation-'));
   try {
     const bin = path.join(temporary, 'bin');
@@ -62,24 +62,22 @@ const fs = require('node:fs');
 const args = process.argv.slice(2);
 fs.appendFileSync(process.env.CALL_LOG, JSON.stringify(args)+'\\n');
 if (args[0] === 'validate' && process.env.FAIL_VALIDATE) process.exit(1);
-if (args[0] === 'compile') {
-  fs.writeFileSync(args[args.indexOf('-o')+1], 'scenario: compiled\\n');
-}
+if (!['validate', '--version'].includes(args[0])) process.exit(2);
 if (args[0] === '--version') console.log('cxc test-version');
 `;
     await writeFile(path.join(bin, 'cxc'), mock, {mode: 0o755});
     const env = {...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}`, CALL_LOG: log};
-    const script = fileURLToPath(new URL('scripts/compile-collection-scenario.sh', root));
+    const script = fileURLToPath(new URL('scripts/validate-collection-scenario.sh', root));
     const run = (id, extra = {}) => spawnSync('bash', [script, id, sampleRoot, output], {env: {...env, ...extra}, encoding: 'utf8'});
     const success = run('hello-world');
     assert.equal(success.status, 0, success.stderr);
     const calls = (await readFile(log, 'utf8')).trim().split('\n').map((line) => JSON.parse(line));
-    assert.deepEqual(calls.map(([action]) => action), ['validate', 'compile', '--version']);
+    assert.deepEqual(calls.map(([action]) => action), ['validate', '--version']);
     assert.ok(calls[0].includes(path.join(sampleRoot, sampleCatalog.find(({id}) => id === 'hello-world').sourcePath)), 'relative includes need the original source directory');
-    assert.equal(await readFile(path.join(output, 'scenario.yml'), 'utf8'), 'scenario: compiled\n');
+    await assert.rejects(readFile(path.join(output, 'deployment-ir.json')), {code: 'ENOENT'});
     assert.match(await readFile(path.join(output, 'revision.txt'), 'utf8'), /^[a-f0-9]{40}\n$/);
     const report = await readFile(path.join(output, 'report.md'), 'utf8');
-    assert.match(report, /CradleXC validation: \*\*Passed\*\*\. Compilation: \*\*Passed\*\*/);
+    assert.match(report, /Syntax and structure validation: \*\*Passed\*\*\. This checks syntax and structure only\./);
     assert.match(report, /1 instances · 1 networks · 1 events/);
     assert.match(report, /cxc test-version/);
     assert.match(report, /### Instances[\s\S]*### Networks[\s\S]*### Events[\s\S]*### Objects/);
@@ -93,6 +91,7 @@ if (args[0] === '--version') console.log('cxc test-version');
     assert.equal(await readFile(log, 'utf8'), '');
     const workflow = await readFile(new URL('.github/workflows/validate-scenario.yml', root), 'utf8');
     assert.match(workflow, /runs-on: ubuntu-latest/);
+    assert.match(workflow, /apt-get install -y cxc-core/);
     assert.doesNotMatch(workflow, /self-hosted|secrets\.|environment:/);
     assert.doesNotMatch(workflow, /upload-artifact/);
     assert.match(workflow, /report\.md.*GITHUB_STEP_SUMMARY/);
