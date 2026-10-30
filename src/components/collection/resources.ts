@@ -34,7 +34,9 @@ export function mergeResources(libraryScenarios: LibraryScenario[], documents: D
       name: article.name,
       description: article.description,
       docUrl: article.docUrl,
-      sourceUrl: article.sourceUrl || `https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/${encodeURIComponent(type.toLowerCase())}/${encodeURIComponent(value)}`,
+      sourceUrl: article.sourceUrl || (type.toLowerCase() === 'cve'
+        ? `https://github.com/cradle-lang/cradle-lib-cve/tree/main/${encodeURIComponent(value)}`
+        : `https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/${encodeURIComponent(type.toLowerCase())}/${encodeURIComponent(value)}`),
       usages,
       scenarios: libraryScenarios.filter((scenario) => usages.some((usage) => usage.scenario.id === scenario.id)),
     };

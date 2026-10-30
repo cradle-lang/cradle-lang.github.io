@@ -104,7 +104,7 @@ test('module links survive a catalog generated without optional source URLs', ()
   const result = mergeResources([], documents);
   assert.equal(result.configurations[0].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-tellerApp');
   assert.equal(result.heuristics[0].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1053.003');
-  assert.equal(result.heuristics[1].sourceUrl, 'https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/cve/CVE-2024-1086');
+  assert.equal(result.heuristics[1].sourceUrl, 'https://github.com/cradle-lang/cradle-lib-cve/tree/main/CVE-2024-1086');
 });
 
 test('invalid or ambiguous contributor entries fail with actionable paths', async () => {
