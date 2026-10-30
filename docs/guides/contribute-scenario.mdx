@@ -1,172 +1,294 @@
 ---
-title: Contribute a Cyber Range
+title: Contribute a Scenario
 sidebar_position: 8
 ---
 
-# Contribute a Cyber Range
+# Contribute a Scenario
 
-Contribute scenarios to [cradle-lang/scenario-lib](https://github.com/cradle-lang/scenario-lib.git).
-Keep the CRADLE specification, configuration modules, heuristics, scripts and
-artifacts together in that repository. Validated contributions reach the
-[Cyber Range Collection](/collection/) through a separate website review PR.
+Add an existing CRADLE scenario to the [Cyber Range Collection](/collection/)
+through [cradle-lang/scenario-lib](https://github.com/cradle-lang/scenario-lib).
 
-This guide follows scenario-lib's LLM-assisted article workflow. The LLM writes
-an `index.md` draft from your existing scenario files; it does not generate or
-validate a working CRADLE specification. You can also write the article manually
-using the command in [Import without an LLM](#import-without-an-llm).
-See the [scenario-lib README](https://github.com/cradle-lang/scenario-lib#readme)
-for the full repository reference.
+By the end of this guide, you will:
 
-## 1. Prepare your checkout
+1. Import an existing CRADLE scenario and its supporting files.
+2. Optionally use AI to draft its Collection article.
+3. Review and validate the contribution.
+4. Open a draft pull request ready for review.
+5. Understand how the scenario reaches the website after approval.
 
-Install Git, **Node.js 22 or newer**, and npm. Fork
-[scenario-lib](https://github.com/cradle-lang/scenario-lib.git) if you do not have
-write access. Replace `YOUR-GITHUB-USERNAME` with your account; contributors
-with write access can clone upstream instead:
+:::info Start with a completed scenario
+This guide assumes you already have a completed CRADLE scenario. AI generates
+**documentation only**. It does not create, validate or test the scenario.
+You are responsible for verifying the article against the actual files.
+:::
 
-```bash
+## Before you start
+
+You need:
+
+- Git, **Node.js 22 or newer**, and npm.
+- A GitHub account.
+- A completed CRADLE specification and its supporting files.
+- Permission to redistribute the code and assets you contribute.
+- Optionally, [CradleXC](/docs/getting-started/install-cradlexc) for local compiler validation.
+- An OpenAI-compatible LLM server **only if you choose AI article generation**.
+
+Run all commands from the **scenario-lib repository root** unless stated
+otherwise. Scenario folders belong in `scenarios/`; `library/scenarios/` is the
+website's import destination.
+
+### Choose how to create the article
+
+| Approach | What you do |
+| --- | --- |
+| **AI-assisted** | Use an OpenAI-compatible server to draft `index.md`, then verify and edit it. Follow step 2. |
+| **Manual** | Import the same files and write the article yourself, or preserve an existing article. Skip step 2; no `.env`, API key or LLM server is needed. |
+
+## Contribution workflow
+
+**You control the contribution:**
+
+<div className="architecture-flow architecture-workflow">
+  <div>Scenario files</div>
+  <span>↓</span>
+  <div>Import and review article</div>
+  <span>↓</span>
+  <div>Local validation</div>
+  <span>↓</span>
+  <div>Draft PR</div>
+</div>
+
+**CI, maintainers and website automation handle review and publication:**
+
+<div className="architecture-flow architecture-workflow">
+  <div>CI validation and scenario PR review</div>
+  <span>↓</span>
+  <div>Scenario PR merged and main validated</div>
+  <span>↓</span>
+  <div>Website PR created and reviewed</div>
+  <span>↓</span>
+  <div>Website PR merged and Collection published</div>
+</div>
+
+## 1. Set up the repository
+
+Fork [scenario-lib](https://github.com/cradle-lang/scenario-lib) if you do not
+have write access. Replace `YOUR-GITHUB-USERNAME` with your account; contributors
+with write access can clone upstream instead.
+
+These commands work in PowerShell, Bash and Zsh:
+
+```sh
 git clone https://github.com/YOUR-GITHUB-USERNAME/scenario-lib.git
 cd scenario-lib
 git switch -c add-my-range
 npm ci
 ```
 
-For an existing checkout, start from an up-to-date `main` and create a contribution
-branch. Run the remaining commands from the **scenario-lib repository root**.
-Scenario folders belong in `scenarios/`; `library/scenarios/` is the website's
-import destination.
+For an existing checkout, start from an up-to-date `main` and create a
+contribution branch. You should now have a checkout with dependencies installed
+and a branch for your contribution.
 
-## 2. Configure the LLM connection
+## 2. Configure AI article generation
 
-Create `.env` beside `package.json` by copying `.env.example` if `.env` does not
-already exist. In Bash or Zsh:
+**Manual authors:** skip to [Import the scenario](#3-import-the-scenario).
+
+Create `.env` beside `package.json` without overwriting an existing file, then
+open it in your editor.
+
+### PowerShell
+
+```powershell
+if (!(Test-Path -LiteralPath .env)) {
+    Copy-Item -LiteralPath .env.example -Destination .env
+}
+notepad .env
+```
+
+### Bash / Zsh
 
 ```bash
 if [ ! -f .env ]; then
   cp .env.example .env
 fi
+nano .env
 ```
 
-Edit `.env` with your server's API base URL, model and key. For example:
+Enter your server's API base URL, an available model and your key. Replace the
+example values with your own connection details:
 
 ```dotenv
-SERVER="https://soclaas-api.comp.nus.edu.sg/v1"
-REMOTE_LLM_MODEL="qwen3.6:35b"
+SERVER="https://your-llm-server.example/v1"
+REMOTE_LLM_MODEL="your-model-name"
 REMOTE_LLM_API_KEY="your-key-here"
 ```
 
-Use a model available on your server. The endpoint must support OpenAI-compatible
-Chat Completions. Include `/v1` in `SERVER` when your server requires it. If
-`REMOTE_LLM_MODEL` is omitted, the generator selects the first model returned by
-`GET /models`. The key may be empty only when the server allows unauthenticated
-access. Shell environment variables take precedence over `.env`.
+The server must support OpenAI-compatible Chat Completions. See
+[LLM configuration details](#llm-configuration-details) for endpoint, model and
+input-limit options.
 
-The generator sends selected scenario text to this server. Keep credentials out
-of the scenario files and never commit `.env`; it is ignored by Git. Image and
-binary contents are not sent, and hidden files and TOML files are excluded.
-The default input limit is 100000 characters, configurable with
-`LLM_MAX_INPUT_CHARS`; review the command's omitted/truncated-file report.
+:::warning Credentials and scenario content
+Never commit `.env` or put credentials inside scenario files. `.env` is ignored
+by Git. Generation sends selected scenario text to your configured server;
+check that you have permission to share that content with the server.
+:::
 
-## 3. Import a scenario and generate its article
+## 3. Import the scenario
 
-Prepare a source folder such as `~/Downloads/MyRange` containing a complete
-specification and its supporting files. Then import it under a new folder ID:
+Prepare a source folder containing the completed specification and supporting
+files. For the simplest import, name the main specification `scenario.cradle`.
+Choose a new folder ID using lowercase letters, digits and hyphens, such as
+`my-range`.
+
+**Run only one of the following import alternatives for a given ID.**
+
+### AI-assisted import
+
+#### PowerShell
+
+```powershell
+npm run library:new -- scenario my-range --from "C:\path\to\MyRange" --generate-index
+```
+
+#### Bash / Zsh
 
 ```bash
 npm run library:new -- scenario my-range --from "$HOME/Downloads/MyRange" --generate-index
 ```
 
-This creates `scenarios/my-range/`, copies selected source files and generates
-`index.md` with **`draft: true`**. IDs use lowercase letters, digits and hyphens.
-Existing scenario folders are never overwritten; choose another ID or edit the
-existing folder directly. The original source folder is unchanged.
+### Manual import
 
-The source must contain `scenario.cradle` or exactly one top-level `.cradle` file.
-A uniquely named specification such as `MyRange.cradle` is copied as
-`scenario.cradle`. If several specifications exist, name the main one
-`scenario.cradle` before importing and review links to any renamed file.
+Omit `--generate-index` to create a starter article or preserve an existing one,
+without contacting an LLM.
 
-The importer copies top-level specifications, README/article files, images and
-supported scripts. It also copies these folders recursively:
+#### PowerShell
 
-- `config/`, `configs/`, `configuration/`, `configurations/`.
-- `heuristic/`, `heuristics/`, `artifact/`, `artifacts/`.
-- `script/`, `scripts/`, `img/`, `imgs/`, `image/`, `images/`.
-
-TOML files, `.git`, `node_modules` and `__pycache__` are skipped. Other top-level
-files and folders, such as `objects/`, must be added manually when needed.
-Selected symbolic links are rejected. Check that every runtime dependency is
-included or documented.
-
-An authored `index.md` or `index.mdx` in the source is preserved during import.
-To generate or replace the article for an existing scenario, use:
-
-```bash
-npm run library:describe -- my-range --force
+```powershell
+npm run library:new -- scenario my-range --from "C:\path\to\MyRange"
 ```
 
-`--force` permits replacement of an existing article. Without it, the command
-preserves an existing article and reports an error. Failed generation keeps the
-copied source files and current article intact. Invalid formatting or local
-links receive one correction attempt before generation fails.
-
-### Import without an LLM
-
-Omit `--generate-index` to import the same source and create a draft article
-from the template, or preserve an existing article:
+#### Bash / Zsh
 
 ```bash
 npm run library:new -- scenario my-range --from "$HOME/Downloads/MyRange"
 ```
 
-This command needs no `.env`, API key or LLM server. Write
-`scenarios/my-range/index.md` yourself, then continue with the review and
-validation steps below. Run only one of the import alternatives for a given ID.
+### Check the result
 
-To start from an empty template instead of importing a folder:
+You should now have a folder like this, depending on the supporting files in
+your source:
 
-```bash
-npm run library:new -- scenario my-range
+```text
+scenarios/
+└── my-range/
+    ├── scenario.cradle
+    ├── index.md
+    ├── configs/
+    ├── heuristics/
+    └── scripts/
 ```
 
-Replace the comment-only `scenario.cradle` stub with a complete specification
-and add supporting files before validation or article generation.
+New starter and AI-generated articles contain **`draft: true`**. An authored
+`index.md` or `index.mdx` is preserved, including its metadata, even when you use
+`--generate-index`. Check its draft status yourself.
 
-The website also supports specifications with other filenames. For a website
-entry, set `entrypoint: MyRange.cradle` in the article's front matter or its
-colocated `README.md`. Without that field, the website uses `scenario.cradle`
-or the only top-level `.cradle` file. Download links should point to the selected
-file. The scenario-lib import and export commands described above still
-normalize their website output to `scenario.cradle`.
+The source folder is unchanged, and existing scenario folders are never
+overwritten. The importer copies selected files, so compare the imported folder
+with your source and add any missing dependencies. A uniquely named specification
+such as `MyRange.cradle` keeps its filename; article links must match it.
+See [What the importer copies](#what-the-importer-copies) for the selection rules.
 
-## 4. Review the draft
+## 4. Review the article
 
-Review `scenarios/my-range/index.md` against the specification and supporting
-files. LLM generation does not run compiler, deployment or runtime tests. Correct
-unsupported claims and distinguish intended behavior from recorded test results.
-Complete the purpose, topology, exercise sequence, setup, expected results,
-dependencies, validation evidence, attribution and licensing sections.
+Edit `scenarios/my-range/index.md`, whether it came from AI, a starter template
+or your source folder.
 
-Published articles require these front matter fields:
+:::warning Verify every claim
+AI drafts documentation only. Verify every claim against the specification and
+supporting files. Describe intended behavior separately from recorded test
+results; generation is not evidence of successful validation or deployment.
+:::
 
-```yaml
+### What should be in `index.md`?
+
+The file has two parts: **front matter**, which controls its Collection metadata,
+and **article content**, which explains the scenario to readers. Use this example
+as a starting point and replace its guidance with scenario-specific information:
+
+```markdown
 ---
 title: My Range
-description: Describe what this scenario demonstrates.
-source: Original author or organization
+description: Short summary of the scenario.
+source: Original author or organisation
 category: ICS
-tags: [Example, Training]
-requirements: Document the backend, images, configs and artifact dependencies.
+tags: [Training, Network Security]
+requirements: Required backend, images, configs and other dependencies.
 draft: true
 ---
+
+# My Range
+
+## Overview
+Explain what the scenario represents and what it is intended to demonstrate.
+
+## Topology
+Describe the main networks, systems and relationships between them.
+
+## Scenario or Exercise Flow
+Explain the exercise sequence, including important events and stages.
+
+## Setup and Requirements
+List the software, backend, images, configs, heuristics and other dependencies,
+and explain any setup required.
+
+## Expected Results
+Explain the intended results of validation, compilation or deployment.
+Separate these expectations from observed results.
+
+## Validation
+Record checks actually run and their results: CradleXC validation, dependency
+validation, backend compilation, runtime deployment or exercise testing.
+Include relevant versions and evidence. State which checks have not been run.
+Do not present AI-generated or inferred behavior as tested.
+
+## Supporting Files
+[Download the specification](./scenario.cradle)
+
+Link to the configs, heuristics, scripts and artifacts readers need.
+
+## Attribution and Licensing
+State the original source, authorship and relevant licence information.
 ```
 
-`tags` must be a non-empty list. Do not add `id` or `slug`; the folder supplies
-the scenario ID. Keep exactly one article and use **`index.md` for website
-export**; convert an `index.mdx` article before exporting.
+The exact headings do not have to match this example. The article should give
+readers enough information to understand the scenario, its dependencies, how it
+is intended to work and what has actually been validated. Record unknown details
+as undocumented or unverified rather than inventing them.
+
+### Front matter and publication status
+
+| Field | Purpose |
+| --- | --- |
+| `title` | Scenario name shown on the website. |
+| `description` | Short Collection summary. |
+| `source` | Original author, organisation or source. |
+| `category` | Main scenario category. |
+| `tags` | Search/filter terms; use a non-empty list. |
+| `requirements` | Important runtime and dependency requirements. |
+| `draft` | `true` keeps the entry hidden; `false` makes it eligible for publication. |
+
+Published articles require all six descriptive fields above. Set `draft`
+explicitly: **`draft: true` keeps the entry hidden while it still undergoes
+validation; `draft: false` makes it eligible for publication after review**.
+Omitting `draft` is treated as published. A GitHub draft PR and the article's
+`draft` field are separate controls.
+
+Do not add `id` or `slug`; the folder supplies the scenario ID. Keep exactly one
+article and use **`index.md` for website export**; convert an `index.mdx` article
+before exporting.
 
 Retain the specification download and link supporting files relative to the
-scenario folder:
+scenario folder, using their actual filenames:
 
 ```markdown
 [Download the specification](./scenario.cradle)
@@ -174,63 +296,80 @@ scenario folder:
 ![Topology](./images/topology.png)
 ```
 
-Use only files you can redistribute and record their authorship and license.
-Keep `draft: true` until the entry is ready, then set `draft: false` for website
-publication. Drafts still undergo catalogue, compiler and dependency checks.
+### Article review checklist
 
-### Artwork and supporting files on the website
+Before submitting, confirm that:
 
-The optional `artwork` field selects `auto`, `network`, `enterprise` or
-`monitoring`. `auto` uses light blue artwork for one network and dark blue
-artwork for multiple networks.
+- [ ] The purpose matches the actual scenario.
+- [ ] The topology, systems and exercise sequence are accurate.
+- [ ] Setup instructions and runtime requirements are documented.
+- [ ] Expected behavior is presented as tested only when supported by evidence.
+- [ ] Required configs, heuristics, scripts and artifacts are included or their external dependencies are documented.
+- [ ] Attribution, licensing and redistribution permissions are correct.
+- [ ] Links to the specification and supporting files work.
+- [ ] Front matter is complete and `draft` has the intended value.
 
-A source scenario can use a local PNG, JPEG, WebP, GIF, SVG or AVIF `thumbnail`
-with `thumbnailAlt`. The website handoff preserves both fields and copies the
-thumbnail image (up to 5 MiB) alongside `index.md` and `scenario.cradle`, including
-images in subfolders. Scenarios without a thumbnail use built-in artwork. Other
-image embeds and supporting-file links point to the source commit in scenario-lib.
-
-## 5. Check the contribution
+## 5. Validate the contribution
 
 After reviewing the article and editing metadata, update the tracked catalogue
-and run the local checks:
+and run the repository checks. These commands work in PowerShell, Bash and Zsh:
 
-```bash
+```sh
 npm run catalog:update
 npm run check
 npm run library:catalog
 ```
 
-`npm run check` checks articles, the root catalogue and script tests. It does not
-run CXC or a simulation. `library:catalog` generates the published-article
-catalogue in ignored `dist/catalog.json`; commit the root `catalog.json` instead.
+`npm run check` checks articles, the root catalogue and script tests.
+`library:catalog` generates the published-article catalogue in ignored
+`dist/catalog.json`; commit the root **`catalog.json`** instead. With
+`draft: true`, your scenario belongs in the root catalogue but is excluded from
+the published-article catalogue.
 
-For compiler and configuration/heuristic dependency checks, install
-[CradleXC](/docs/getting-started/install-cradlexc), ensure `cxc` is on your PATH,
-and clone the shared library if you do not already have a checkout:
+### Compiler and dependency validation
 
-```bash
+For local validation, install [CradleXC](/docs/getting-started/install-cradlexc),
+ensure `cxc` is on your PATH, and clone the shared libraries if you do not already
+have checkouts:
+
+```sh
 git clone https://github.com/cradle-lang/cradle-lib.git .reference-cradle-lib
-npm run library:validate -- --library .reference-cradle-lib --scenario my-range
+git clone https://github.com/cradle-lang/cradle-lib-cve.git .reference-cradle-lib-cve
+npm run library:validate -- --library .reference-cradle-lib --cve-library .reference-cradle-lib-cve --scenario my-range
 ```
 
-Skip the clone when that folder exists. Validation checks the specification and
-resolves configuration and heuristic modules from the scenario and cradle-lib.
-Reports are written to `scenario-output/validation.json` and
-`scenario-output/validation.md`. The command fails if CXC is unavailable; if you
-cannot run it locally, state that in the PR and inspect the mandatory GitHub
-validation results.
+Skip each clone if its folder already exists, or supply paths to your existing
+checkouts. Validation checks the specification and resolves configuration and
+heuristic modules from the scenario and shared libraries. Reports are written to
+`scenario-output/validation.json` and `scenario-output/validation.md`.
 
-These checks do not provision machines, verify runtime images, execute scripts
-or run exercise events. Document any separate runtime tests and the compiler,
-backend and testbed versions used.
+The command fails if CXC is unavailable. If you cannot run it locally, state
+that in the PR and inspect the required GitHub validation results.
 
-## 6. Submit and publish
+:::info Validation is not runtime testing
+These checks validate source and dependencies. They do not deploy or execute the
+cyber range, provision machines, verify runtime images, render or execute Ansible
+templates, run scripts or exercise events. Record any separate compilation and
+runtime tests, including compiler, backend and testbed versions.
+:::
 
-Commit the complete scenario folder and updated root catalogue. Review the
-staged files before committing:
+## 6. Open a draft PR
 
-```bash
+### Before opening your PR
+
+- [ ] `scenario.cradle` or the named main specification is included and complete.
+- [ ] `index.md` has been reviewed against the scenario.
+- [ ] Required supporting files are included and external dependencies are documented.
+- [ ] No credentials, `.env`, `node_modules`, generated reports or export bundles are staged.
+- [ ] The root `catalog.json` is updated.
+- [ ] `npm run check` and `npm run library:catalog` pass.
+- [ ] Local CXC and dependency validation passes, or the PR explains that it was not run and why.
+- [ ] The article's `draft` field is set correctly.
+
+Stage the complete scenario folder and updated root catalogue. Inspect the staged
+files before committing. These commands work in PowerShell, Bash and Zsh:
+
+```sh
 git add scenarios/my-range/ catalog.json
 git diff --cached
 git status --short
@@ -238,27 +377,146 @@ git commit -m "Add my-range scenario"
 git push -u origin add-my-range
 ```
 
-Open a PR into **`cradle-lang/scenario-lib`'s `main`**. List the checks actually
-run and any compiler or runtime checks not run. Resolve failing CI before merge.
-Keep `.env`, generated reports, `node_modules` and export bundles out of the
-commit.
+Open a pull request targeting **`cradle-lang/scenario-lib`'s `main`** and select
+**Create draft pull request**. Complete the repository's
+[PR template](https://github.com/cradle-lang/scenario-lib/blob/main/.github/pull_request_template.md):
+replace placeholders, list included files and dependencies, record actual checks
+and evidence, and explain checks not run or known limitations. Keep compilation
+and runtime evidence separate from repository checks.
 
-With the repository's website integration configured, publication proceeds as
-follows:
+You should now have a draft PR containing the scenario folder, reviewed article
+and catalogue changes. Inspect its CI results and resolve failures. When ready,
+mark the PR ready for review; maintainers decide whether to merge it.
 
-1. Maintainers merge the scenario PR into scenario-lib's `main`.
-2. **Validate scenarios** checks all scenarios, including drafts, with CXC and
-   dependency validation.
-3. After successful validation of the latest `main`, the notification workflow
-   sends the validated revision and run ID to the website.
-4. The website verifies the snapshot, builds it and opens or updates a review PR.
-5. Maintainers review and merge the website PR. Its Pages workflow publishes
-   entries with `draft: false`.
+## 7. What happens after submission
 
-A scenario merge alone does not publish the website. After the website deployment
-succeeds, verify the entry at
-`https://cradle-lang.org/collection/?scenario=my-range` and its article at
-`https://cradle-lang.org/library/scenarios/my-range`. Check the specification
-download and supporting-file links. See the
-[website handoff documentation](https://github.com/cradle-lang/scenario-lib#website-handoff-after-merging-to-main)
-for integration setup and retry instructions.
+CI validates your contribution and maintainers review it. After the scenario PR
+is merged and validation passes on the latest `main`, configured automation opens
+or updates a **separate website PR**. Maintainers review and merge that PR; its
+GitHub Pages workflow publishes entries with **`draft: false`**.
+
+A scenario merge alone does not publish the website. After deployment succeeds,
+check the Collection entry (`/collection/?scenario=my-range`), article
+(`/library/scenarios/my-range`), specification download and supporting-file links,
+replacing `my-range` with your ID.
+
+Maintainers can find integration setup, validation snapshot details and retry
+instructions in the
+[website handoff documentation](https://github.com/cradle-lang/scenario-lib#website-handoff-after-merging-to-main).
+
+## Troubleshooting
+
+| Problem | What to check or do |
+| --- | --- |
+| `library:new` says the scenario exists | Choose a new ID or edit the existing folder. Imports never overwrite it. |
+| Multiple `.cradle` files found | Name the main specification `scenario.cradle` in the source folder before importing; review links if you rename it. |
+| AI article generation fails | Check `.env`, the server URL, model and API access. Copied files and the current article remain available; see [Regenerate an article](#regenerate-an-article). |
+| `library:describe --force` removed edits | `--force` replaces the article. Restore edits from your saved copy or Git history. |
+| `cxc` not found | Install CradleXC and check PATH, or state that local validation was not run and inspect PR validation results. |
+| `npm run check` reports a stale catalogue | Run `npm run catalog:update`, then rerun `npm run check`. |
+| A supporting file is missing | Compare against the [import selection rules](#what-the-importer-copies); add required files manually. |
+| The scenario does not appear on the website | Check `draft: false`, source validation, and website PR/build/deployment status. |
+
+See the [scenario-lib README](https://github.com/cradle-lang/scenario-lib#readme)
+for the complete tooling and validation reference.
+
+## Optional customization
+
+### Add a thumbnail
+
+Set `thumbnail` to a local PNG, JPEG, WebP, GIF, SVG or AVIF inside the scenario
+folder and provide descriptive `thumbnailAlt` text:
+
+```yaml
+thumbnail: ./images/topology.png
+thumbnailAlt: Network topology for My Range
+```
+
+Website handoff preserves these fields and copies the selected image (up to
+5 MiB), including images in subfolders. Other image embeds and supporting-file
+links point to the source commit in scenario-lib.
+
+The AI generator receives image paths, not image contents. If it does not select
+a thumbnail, generation picks a local image automatically when available,
+preferring preview/thumbnail/cover/topology/diagram filenames. Review the chosen
+image and its alt text yourself.
+
+### Choose built-in artwork
+
+Without a thumbnail, the website uses built-in artwork. The optional `artwork`
+field accepts `auto`, `network`, `enterprise` or `monitoring`. `auto` uses light
+blue artwork for one network and dark blue artwork for multiple networks.
+
+## Advanced and reference information
+
+### LLM configuration details
+
+- `SERVER` is the API base URL. Include `/v1` when your server requires it;
+  generation calls `POST /chat/completions` relative to that base.
+- If `REMOTE_LLM_MODEL` is omitted, the generator selects the first model returned
+  by `GET /models`.
+- `REMOTE_LLM_API_KEY` may be empty only when the server allows unauthenticated access.
+- Shell environment variables take precedence over `.env`.
+- Image and binary contents are not sent. Hidden files and TOML files are excluded.
+- The default input budget is 100000 characters. Set `LLM_MAX_INPUT_CHARS` to an
+  integer from 5000 to 1000000 to adjust it. Review the command's
+  omitted/truncated-file report and fill any resulting gaps in the article.
+
+### What the importer copies
+
+The importer selects top-level `.cradle` files, README/article files, images and
+supported shell, PowerShell, batch, Python and JavaScript scripts. It also copies
+these folders recursively, including binary supporting files:
+
+- `config/`, `configs/`, `configuration/`, `configurations/`.
+- `heuristic/`, `heuristics/`, `artifact/`, `artifacts/`.
+- `script/`, `scripts/`, `img/`, `imgs/`, `image/`, `images/`.
+
+TOML files, `.git`, `node_modules` and `__pycache__` are skipped. Other top-level
+files and folders, such as `objects/`, must be added manually when needed.
+Selected symbolic links are rejected; replace them with actual files or folders.
+Copying files does not install their dependencies on a backend.
+
+### Advanced import behavior
+
+The source must contain `scenario.cradle` or exactly one top-level `.cradle`
+file. When multiple specifications exist, `scenario.cradle` selects the main one.
+Import preserves filenames and authored article links. **Only website export**
+normalizes the selected main specification to `scenario.cradle` and adapts article
+links for the website copy.
+
+For a named main specification, `entrypoint: MyRange.cradle` can be supplied in
+the article's front matter or colocated `README.md`. Without an explicit
+entrypoint, the website uses `scenario.cradle` or the only top-level `.cradle`
+file. Download links in the source article should point to the actual file.
+See the [native README reference](https://github.com/cradle-lang/scenario-lib#native-readme-scenarios)
+for existing scenarios that use README metadata instead of an article.
+
+To start from an empty template instead of importing a folder, run this in
+PowerShell, Bash or Zsh:
+
+```sh
+npm run library:new -- scenario my-range
+```
+
+Replace the comment-only `scenario.cradle` stub with a completed specification
+and add supporting files before validation or article generation.
+
+### Regenerate an article
+
+Use `library:describe` for an existing scenario. Without `--force`, it reports
+an error rather than replacing an existing article.
+
+:::warning Save your edits first
+`--force` replaces the current article. Commit or save manual edits before
+running this command.
+:::
+
+```sh
+npm run library:describe -- my-range --force
+```
+
+Failed generation keeps copied source files and the current article intact.
+Invalid formatting or local links receive one correction attempt before
+generation fails. Review a regenerated article and rerun the validation steps
+before submitting it.
