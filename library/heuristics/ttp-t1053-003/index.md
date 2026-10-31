@@ -1,16 +1,15 @@
 ---
 title: "T1053.003: Scheduled Task/Job: Cron"
-framework: "ttp"
-identifier: "T1053.003"
-description: "Adversaries may abuse the cron utility to execute malicious code on a recurring schedule or at system startup to establish persistence and maintain access to compromised Linux systems."
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1053.003"
+description: Adversaries may abuse the `cron` utility to execute malicious code
+  on a recurring schedule or at system startup to establish persistence and
+  maintain access to compromised Linux systems.
+framework: ttp
+identifier: T1053.003
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/9c94e9ee1cd87044ecfca230b7ae206243510c2b/heuristics/ttp/T1053.003
 ---
 
-## Use in a specification
-
-```cradle
-heuristic("ttp", "T1053.003").
-```
+# T1053.003: Scheduled Task/Job: Cron
 
 ## Overview
 
@@ -24,10 +23,19 @@ Adversaries may abuse the `cron` utility to execute malicious code on a recurrin
 
 ## Structure
 
-- [`ansible/`](https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1053.003/ansible): Contains the Ansible task list template (`T1053.003.j2`).
+- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/9c94e9ee1cd87044ecfca230b7ae206243510c2b/heuristics/ttp/T1053.003/ansible>): Contains the Ansible task list template (`T1053.003.j2`).
 
 ## Verification & Artifacts
 
 - **Beacon Script**: `/usr/local/bin/cxc-cron-beacon.sh`
 - **Crontab Entry**: View root crontab using `crontab -l -u root`
 - **Execution Log**: Inspect `/var/log/cxc-cron-beacon.log` for periodic beacon messages
+
+## Use in a specification
+
+Attach this heuristic to an existing compatible instance. Consult the module's manifest and documented backend requirements for its operating system and configuration dependencies. This fragment is not a complete scenario:
+
+```cradle
+instance("host") >
+    heuristic("ttp", "T1053.003").
+```
