@@ -5,7 +5,7 @@ config: win-dotnet8
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-dotnet8
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-dotnet8
 ---
 
 Installs the .NET 8 SDK
@@ -15,7 +15,7 @@ Installs the .NET 8 SDK
 - Creates `C:\Temp`, downloads the x64 .NET SDK 8.0.100 installer and runs it with `/quiet /norestart`.
 - The template installs the SDK, not only the runtime.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-dotnet8/ansible/win-dotnet8.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-dotnet8/ansible/win-dotnet8.j2>).
 
 The module is resolved from `configs/win-dotnet8/` in the configured `config_dir`.
 
@@ -44,4 +44,4 @@ The SDK list includes 8.0.100.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-dotnet8>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-dotnet8>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

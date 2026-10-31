@@ -5,7 +5,7 @@ config: linux-docker
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-docker
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-docker
 ---
 
 Installs Docker and its dependencies
@@ -16,7 +16,7 @@ Installs Docker and its dependencies
 - Configures the Docker Ubuntu APT repository for the guest distribution release and amd64, then installs docker-ce, docker-ce-cli and containerd.io.
 - Adds the existing `vagrant` user to the docker group and enables and starts Docker.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-docker/ansible/linux-docker.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-docker/ansible/linux-docker.j2>).
 
 The module is resolved from `configs/linux-docker/` in the configured `config_dir`.
 
@@ -50,4 +50,4 @@ Docker reports its version and daemon information, the service is active and vag
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-docker>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-docker>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

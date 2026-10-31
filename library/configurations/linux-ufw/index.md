@@ -5,7 +5,7 @@ config: linux-ufw
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ufw
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-ufw
 ---
 
 Installs UFW and allows SSH
@@ -15,7 +15,7 @@ Installs UFW and allows SSH
 - Installs UFW, adds a TCP port 22 allow rule and enables the firewall.
 - No additional application-specific allow rules are added.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ufw/ansible/linux-ufw.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-ufw/ansible/linux-ufw.j2>).
 
 The module is resolved from `configs/linux-ufw/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ UFW reports active and shows a TCP/22 allow rule.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ufw>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-ufw>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

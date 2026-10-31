@@ -5,7 +5,7 @@ config: win-nodejs
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-nodejs
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-nodejs
 ---
 
 Installs Node.js
@@ -14,7 +14,7 @@ Installs Node.js
 
 - Installs the `nodejs` Chocolatey package with `state: present`.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-nodejs/ansible/win-nodejs.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-nodejs/ansible/win-nodejs.j2>).
 
 The module is resolved from `configs/win-nodejs/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ Both commands report versions after the installed paths are available in the ver
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-nodejs>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-nodejs>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

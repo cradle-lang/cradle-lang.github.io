@@ -5,7 +5,7 @@ config: python-modbus-tcp-win
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp-win
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-modbus-tcp-win
 ---
 
 Installs pyModbusTCP into the shared Windows runtime
@@ -15,7 +15,7 @@ Installs pyModbusTCP into the shared Windows runtime
 - Installs `pyModbusTCP==0.2.0` using the shared Windows runtime at `C:\ProgramData\cxc\python\python.exe`.
 - Writes `C:\ProgramData\cxc\python-modbus-tcp.installed` after a successful install and uses that marker to skip subsequent runs. A marker does not independently verify that the packages remain installed.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp-win/ansible/python-modbus-tcp-win.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-modbus-tcp-win/ansible/python-modbus-tcp-win.j2>).
 
 The module is resolved from `configs/python-modbus-tcp-win/` in the configured `config_dir`.
 
@@ -46,4 +46,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-modbus-tcp-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

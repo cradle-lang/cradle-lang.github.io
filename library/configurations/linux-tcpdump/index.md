@@ -5,7 +5,7 @@ config: linux-tcpdump
 os: Linux
 category: Linux — observability
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-tcpdump
 ---
 
 Installs tcpdump plus a bundled capture script and service
@@ -16,7 +16,7 @@ Installs tcpdump plus a bundled capture script and service
 - Replaces `/home/<user>` paths in the script with the backend's `linux_guest_home_dir` value.
 - The script captures all interfaces into 30-second pcap segments under the selected home directory's `network/` folder. It does not install the tcpdump executable.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump/ansible/linux-tcpdump.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump/files>) are required by the tasks described above.
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-tcpdump/ansible/linux-tcpdump.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-tcpdump/files>) are required by the tasks described above.
 
 The module is resolved from `configs/linux-tcpdump/` in the configured `config_dir`.
 
@@ -49,4 +49,4 @@ The tools exist and the service is active. After at least 30 seconds, check the 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-tcpdump>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

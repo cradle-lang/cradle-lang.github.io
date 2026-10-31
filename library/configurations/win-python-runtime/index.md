@@ -5,7 +5,7 @@ config: win-python-runtime
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python-runtime
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python-runtime
 ---
 
 ## Use in a specification

@@ -5,7 +5,7 @@ config: win-routing
 os: Windows
 category: Networking
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-routing
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-routing
 ---
 
 Generate Windows routes from the compiler's resolved instance topology.
@@ -15,7 +15,7 @@ Generate Windows routes from the compiler's resolved instance topology.
 - The `.j2` file is a sentinel for the compiler's configuration-existence check and is never rendered.
 - Supported backend assemblers special-case this config name and generate route tasks from the compiler's resolved per-instance route list. No static destination or gateway is stored in the module.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-routing/ansible/win-routing.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-routing/ansible/win-routing.j2>).
 
 The module is resolved from `configs/win-routing/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ The guest routing table contains the destinations and next hops calculated for t
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-routing>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-routing>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

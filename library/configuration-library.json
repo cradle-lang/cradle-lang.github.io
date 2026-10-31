@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "cradle-lang/cradle-lib",
-  "sourceRevision": "4a54c498b9854c972607584df8146aeb4ae386ac",
-  "sourceRunId": 41150783973,
+  "sourceRevision": "7bd5d625461879dbecb51b284d91f85fa8475be9",
+  "sourceRunId": 41164580880,
   "entries": [
     {
       "id": "agent-entry",
@@ -12,7 +12,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Attacker / offensive",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/agent-entry"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/agent-entry"
     },
     {
       "id": "attacker",
@@ -22,7 +22,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Attacker / offensive",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/attacker"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/attacker"
     },
     {
       "id": "benign-firefox-win",
@@ -32,7 +32,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/benign-firefox-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/benign-firefox-win"
     },
     {
       "id": "linux-apache2",
@@ -42,7 +42,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-apache2"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-apache2"
     },
     {
       "id": "linux-auditd",
@@ -52,7 +52,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-auditd"
     },
     {
       "id": "linux-dns",
@@ -62,7 +62,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-dns"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-dns"
     },
     {
       "id": "linux-docker",
@@ -72,7 +72,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-docker"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-docker"
     },
     {
       "id": "linux-mail",
@@ -82,7 +82,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mail"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-mail"
     },
     {
       "id": "linux-msf",
@@ -92,7 +92,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Attacker / offensive",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-msf"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-msf"
     },
     {
       "id": "linux-mysql",
@@ -102,7 +102,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mysql"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-mysql"
     },
     {
       "id": "linux-netcat",
@@ -112,7 +112,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-netcat"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-netcat"
     },
     {
       "id": "linux-nmap",
@@ -122,7 +122,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-nmap"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-nmap"
     },
     {
       "id": "linux-ntp",
@@ -132,7 +132,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ntp"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-ntp"
     },
     {
       "id": "linux-python3",
@@ -142,7 +142,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-python3"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-python3"
     },
     {
       "id": "linux-router",
@@ -152,7 +152,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Networking",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-router"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-router"
     },
     {
       "id": "linux-routing",
@@ -162,7 +162,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Networking",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-routing"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-routing"
     },
     {
       "id": "linux-smb",
@@ -172,7 +172,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-smb"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-smb"
     },
     {
       "id": "linux-sysdig",
@@ -182,7 +182,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-sysdig"
     },
     {
       "id": "linux-tcpdump",
@@ -192,7 +192,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-tcpdump"
     },
     {
       "id": "linux-ufw",
@@ -202,7 +202,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ufw"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-ufw"
     },
     {
       "id": "linux-unzip",
@@ -212,7 +212,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-unzip"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-unzip"
     },
     {
       "id": "linux-vsftpd",
@@ -222,7 +222,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-vsftpd"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-vsftpd"
     },
     {
       "id": "net-tools",
@@ -232,7 +232,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/net-tools"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/net-tools"
     },
     {
       "id": "python-benign-mail-packages",
@@ -242,7 +242,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-mail-packages"
     },
     {
       "id": "python-benign-mail-packages-win",
@@ -252,7 +252,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-mail-packages-win"
     },
     {
       "id": "python-benign-web-packages",
@@ -262,7 +262,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-web-packages"
     },
     {
       "id": "python-benign-web-packages-win",
@@ -272,7 +272,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-web-packages-win"
     },
     {
       "id": "python-influxdb",
@@ -282,7 +282,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-influxdb"
     },
     {
       "id": "python-influxdb-win",
@@ -292,7 +292,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-influxdb-win"
     },
     {
       "id": "python-modbus-tcp",
@@ -302,7 +302,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-modbus-tcp"
     },
     {
       "id": "python-modbus-tcp-win",
@@ -312,7 +312,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-modbus-tcp-win"
     },
     {
       "id": "python-snap7",
@@ -322,7 +322,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-snap7"
     },
     {
       "id": "python-snap7-win",
@@ -332,7 +332,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-snap7-win"
     },
     {
       "id": "python-wxpython-win",
@@ -342,7 +342,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-wxpython-win"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-wxpython-win"
     },
     {
       "id": "python3-pip",
@@ -352,7 +352,7 @@
       "draft": false,
       "os": "Linux",
       "category": "Linux — services & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python3-pip"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python3-pip"
     },
     {
       "id": "win-allow-ports",
@@ -362,7 +362,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — system & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-allow-ports"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-allow-ports"
     },
     {
       "id": "win-audit",
@@ -372,7 +372,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-audit"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-audit"
     },
     {
       "id": "win-chocolatey",
@@ -382,7 +382,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-chocolatey"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-chocolatey"
     },
     {
       "id": "win-dotnet8",
@@ -392,7 +392,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-dotnet8"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-dotnet8"
     },
     {
       "id": "win-icmpv4",
@@ -402,7 +402,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — system & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-icmpv4"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-icmpv4"
     },
     {
       "id": "win-myl",
@@ -412,7 +412,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-myl"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-myl"
     },
     {
       "id": "win-nodejs",
@@ -422,7 +422,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-nodejs"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-nodejs"
     },
     {
       "id": "win-pktmon",
@@ -432,7 +432,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-pktmon"
     },
     {
       "id": "win-power-option",
@@ -442,7 +442,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — system & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-power-option"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-power-option"
     },
     {
       "id": "win-pyenv",
@@ -452,7 +452,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pyenv"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-pyenv"
     },
     {
       "id": "win-python",
@@ -462,7 +462,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python"
     },
     {
       "id": "win-python-runtime",
@@ -472,7 +472,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python-runtime"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python-runtime"
     },
     {
       "id": "win-routing",
@@ -482,7 +482,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Networking",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-routing"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-routing"
     },
     {
       "id": "win-sysmon",
@@ -492,7 +492,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — observability",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-sysmon"
     },
     {
       "id": "win-tellerapp",
@@ -502,7 +502,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Cross-platform & decoy",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-tellerApp"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-tellerApp"
     },
     {
       "id": "win-winrar",
@@ -512,7 +512,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — tooling",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrar"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-winrar"
     },
     {
       "id": "win-winrm",
@@ -522,7 +522,7 @@
       "draft": false,
       "os": "Windows",
       "category": "Windows — system & network",
-      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrm"
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-winrm"
     }
   ]
 }

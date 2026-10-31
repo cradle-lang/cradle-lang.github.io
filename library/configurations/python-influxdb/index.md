@@ -5,7 +5,7 @@ config: python-influxdb
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-influxdb
 ---
 
 Installs the pinned InfluxDB Python client
@@ -14,7 +14,7 @@ Installs the pinned InfluxDB Python client
 
 - Installs `influxdb==5.3.0` using the Ansible pip module with administrator privileges.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb/ansible/python-influxdb.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-influxdb/ansible/python-influxdb.j2>).
 
 The module is resolved from `configs/python-influxdb/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-influxdb>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

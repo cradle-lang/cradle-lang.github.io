@@ -5,7 +5,7 @@ config: linux-python3
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-python3
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-python3
 ---
 
 Ensures Python 3 is installed
@@ -15,7 +15,7 @@ Ensures Python 3 is installed
 - Checks `dpkg-query -l python3`. If that check fails, installs python3-debian, adds the deadsnakes Ubuntu PPA for the guest release and installs python3.
 - Leaves an already installed Python 3 package in place; the template does not select a specific Python version.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-python3/ansible/linux-python3.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-python3/ansible/linux-python3.j2>).
 
 The module is resolved from `configs/linux-python3/` in the configured `config_dir`.
 
@@ -46,4 +46,4 @@ The python3 package is installed and the interpreter reports a version.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-python3>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-python3>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

@@ -5,7 +5,7 @@ config: win-winrar
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrar
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-winrar
 ---
 
 Installs WinRAR
@@ -14,7 +14,7 @@ Installs WinRAR
 
 - Installs the `winrar` Chocolatey package with `state: present`. The package version is not pinned.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrar/ansible/win-winrar.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-winrar/ansible/win-winrar.j2>).
 
 The module is resolved from `configs/win-winrar/` in the configured `config_dir`.
 
@@ -43,4 +43,4 @@ WinRAR exists at the package's installed path and reports a version; adjust the 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrar>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-winrar>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

@@ -6,7 +6,7 @@ config: attacker
 os: Linux
 category: Attacker / offensive
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/attacker
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/attacker
 ---
 
 Installs a baseline attacker toolkit (nmap, netcat, curl, wget, python3/pip, Flask)
@@ -16,7 +16,7 @@ Installs a baseline attacker toolkit (nmap, netcat, curl, wget, python3/pip, Fla
 - Refreshes APT metadata and installs nmap, netcat, curl, wget, Python 3 and python3-pip.
 - Installs Flask using the Ansible pip module. No listener or attack workflow is started.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/attacker/ansible/attacker.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/attacker/ansible/attacker.j2>).
 
 The module is resolved from `configs/attacker/` in the configured `config_dir`.
 
@@ -47,4 +47,4 @@ The tools resolve and pip reports an installed Flask package.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/attacker>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/attacker>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

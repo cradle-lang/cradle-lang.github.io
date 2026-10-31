@@ -6,7 +6,7 @@ config: linux-router
 os: Linux
 category: Networking
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-router
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-router
 ---
 
 Enable IP forwarding so a Linux instance can route traffic between attached networks.
@@ -17,7 +17,7 @@ Enable IP forwarding so a Linux instance can route traffic between attached netw
 - Ensures a NAT POSTROUTING rule returns locally originated traffic before adding a MASQUERADE rule. This preserves the router's own source addresses while enabling NAT for forwarded traffic.
 - This module enables forwarding and NAT; route entries are provided separately by the scenario/backend.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-router/ansible/linux-router.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-router/ansible/linux-router.j2>).
 
 The module is resolved from `configs/linux-router/` in the configured `config_dir`.
 
@@ -49,4 +49,4 @@ IP forwarding is 1. The local-source RETURN exemption precedes the MASQUERADE ru
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-router>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-router>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

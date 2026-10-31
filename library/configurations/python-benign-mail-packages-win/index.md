@@ -5,7 +5,7 @@ config: python-benign-mail-packages-win
 os: Windows
 category: Cross-platform & decoy
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages-win
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-mail-packages-win
 ---
 
 Installs a benign set of Python mail-handling packages (Windows)
@@ -14,7 +14,7 @@ Installs a benign set of Python mail-handling packages (Windows)
 
 - Installs `IMAPClient`, `pyzmail36` using `pip` on the provisioning account's PATH.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages-win/ansible/python-benign-mail-packages-win.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-mail-packages-win/ansible/python-benign-mail-packages-win.j2>).
 
 The module is resolved from `configs/python-benign-mail-packages-win/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/python-benign-mail-packages-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

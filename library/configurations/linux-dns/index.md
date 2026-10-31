@@ -5,7 +5,7 @@ config: linux-dns
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-dns
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-dns
 ---
 
 Installs and configures Bind9 as a DNS resolver/server
@@ -15,7 +15,7 @@ Installs and configures Bind9 as a DNS resolver/server
 - Replaces `/etc/resolv.conf` with resolvers `8.8.8.8` and `1.1.1.1`.
 - Installs Bind9, then enables and restarts it. The module does not create a custom DNS zone.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-dns/ansible/linux-dns.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-dns/ansible/linux-dns.j2>).
 
 The module is resolved from `configs/linux-dns/` in the configured `config_dir`.
 
@@ -47,4 +47,4 @@ The configured resolvers appear, named-checkconf exits successfully and Bind9 re
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-dns>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-dns>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

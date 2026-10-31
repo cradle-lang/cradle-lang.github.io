@@ -5,7 +5,7 @@ config: win-myl
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-myl
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-myl
 ---
 
 Installs the myl Python package via pip
@@ -15,7 +15,7 @@ Installs the myl Python package via pip
 - Runs `pip install --user myl` under the provisioning account.
 - Does not install Python/pip or pin a myl version. Other accounts do not automatically share that user-site installation.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-myl/ansible/win-myl.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-myl/ansible/win-myl.j2>).
 
 The module is resolved from `configs/win-myl/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ pip reports myl in the provisioning account's user-site environment.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-myl>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-myl>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

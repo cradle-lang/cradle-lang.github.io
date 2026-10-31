@@ -5,7 +5,7 @@ config: linux-nmap
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-nmap
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-nmap
 ---
 
 Installs nmap
@@ -14,7 +14,7 @@ Installs nmap
 
 - Installs the APT package `nmap` with `state: present`.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-nmap/ansible/linux-nmap.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-nmap/ansible/linux-nmap.j2>).
 
 The module is resolved from `configs/linux-nmap/` in the configured `config_dir`.
 
@@ -44,4 +44,4 @@ The command reports the installed nmap version.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-nmap>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-nmap>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

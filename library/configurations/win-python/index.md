@@ -5,7 +5,7 @@ config: win-python
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python
 ---
 
 Installs Python via Chocolatey
@@ -15,7 +15,7 @@ Installs Python via Chocolatey
 - Ensures the Chocolatey package manager is present, then installs its `python` package.
 - Neither package is pinned to a version. This is separate from the bundled `win-python-runtime` used by the pinned Windows Python dependency modules.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python/ansible/win-python.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python/ansible/win-python.j2>).
 
 The module is resolved from `configs/win-python/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ Python reports an installed version. Check pip availability in the same newly op
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-python>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

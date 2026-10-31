@@ -5,7 +5,7 @@ config: win-sysmon
 os: Windows
 category: Windows — observability
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-sysmon
 ---
 
 Installs Sysmon with a bundled configuration
@@ -16,7 +16,7 @@ Installs Sysmon with a bundled configuration
 - Checks both Sysmon and Sysmon64 registry service keys. If neither exists, installs Sysmon with the supplied configuration and the `-accepteula` option.
 - On an existing installation, attempts a configuration refresh and tolerates failure. Inspect the effective service/configuration after provisioning.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon/ansible/win-sysmon.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon/files>) are required by the tasks described above.
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-sysmon/ansible/win-sysmon.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-sysmon/files>) are required by the tasks described above.
 
 The module is resolved from `configs/win-sysmon/` in the configured `config_dir`.
 
@@ -48,4 +48,4 @@ One Sysmon service is Running and the operational log is available. Generate the
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-sysmon>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

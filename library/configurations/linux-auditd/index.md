@@ -5,7 +5,7 @@ config: linux-auditd
 os: Linux
 category: Linux — observability
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-auditd
 ---
 
 Installs auditd with a bundled custom audit rules file
@@ -15,7 +15,7 @@ Installs auditd with a bundled custom audit rules file
 - Installs auditd, copies the bundled rules to `/etc/audit/rules.d/audit.rules`, then enables and restarts auditd.
 - The bundled rules begin with `-D`, clearing previously loaded rules when applied, and include watches for audit configuration and audit tooling. Review them alongside existing host audit policy.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd/ansible/linux-auditd.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd/files>) are required by the tasks described above.
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-auditd/ansible/linux-auditd.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-auditd/files>) are required by the tasks described above.
 
 The module is resolved from `configs/linux-auditd/` in the configured `config_dir`.
 
@@ -47,4 +47,4 @@ The audit subsystem responds, the intended rules appear and auditd reports activ
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/linux-auditd>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

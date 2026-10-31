@@ -5,7 +5,7 @@ config: win-audit
 os: Windows
 category: Windows — observability
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-audit
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-audit
 ---
 
 Configures the Windows advanced audit policy (logon/logoff, ...)
@@ -15,7 +15,7 @@ Configures the Windows advanced audit policy (logon/logoff, ...)
 - Uses auditpol to enable success and failure auditing for all audit categories.
 - Explicitly configures Logon success/failure and Logoff/Process Creation success auditing. The module does not configure log forwarding or retention.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-audit/ansible/win-audit.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-audit/ansible/win-audit.j2>).
 
 The module is resolved from `configs/win-audit/` in the configured `config_dir`.
 
@@ -46,4 +46,4 @@ The intended categories show enabled auditing. After a matching activity occurs,
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-audit>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-audit>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

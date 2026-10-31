@@ -5,7 +5,7 @@ config: win-chocolatey
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-chocolatey
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-chocolatey
 ---
 
 Installs the Chocolatey package manager
@@ -15,7 +15,7 @@ Installs the Chocolatey package manager
 - Runs the Chocolatey bootstrap script from chocolatey.org, with a process-scoped execution-policy bypass and TLS 1.2 enabled.
 - Skips the bootstrap when `C:\ProgramData\chocolatey\bin\choco.exe` exists.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-chocolatey/ansible/win-chocolatey.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-chocolatey/ansible/win-chocolatey.j2>).
 
 The module is resolved from `configs/win-chocolatey/` in the configured `config_dir`.
 
@@ -44,4 +44,4 @@ The Chocolatey executable reports its version.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-chocolatey>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/configs/win-chocolatey>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
