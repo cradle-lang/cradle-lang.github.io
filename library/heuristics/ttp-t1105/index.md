@@ -1,16 +1,15 @@
 ---
 title: "T1105: Ingress Tool Transfer"
-framework: "ttp"
-identifier: "T1105"
-description: "Adversaries may transfer tools or other files from an external system (e.g., C2 infrastructure or public repositories) into a compromised host environment."
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1105"
+description: Adversaries may transfer tools or other files from an external
+  system (e.g., C2 infrastructure or public repositories) into a compromised
+  host environment.
+framework: ttp
+identifier: T1105
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/9c94e9ee1cd87044ecfca230b7ae206243510c2b/heuristics/ttp/T1105
 ---
 
-## Use in a specification
-
-```cradle
-heuristic("ttp", "T1105").
-```
+# T1105: Ingress Tool Transfer
 
 ## Overview
 
@@ -24,7 +23,7 @@ Adversaries may transfer tools or other files from an external system (e.g., C2 
 
 ## Structure
 
-- [`ansible/`](https://github.com/cradle-lang/cradle-lib/tree/main/heuristics/ttp/T1105/ansible): Contains the Ansible task list template (`T1105.j2`).
+- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/9c94e9ee1cd87044ecfca230b7ae206243510c2b/heuristics/ttp/T1105/ansible>): Contains the Ansible task list template (`T1105.j2`).
 
 ## Verification
 
@@ -33,4 +32,13 @@ Check that the ingress tool binary was retrieved and marked executable:
 ```bash
 ls -la /usr/local/bin/cxc-ingress-tool
 /usr/local/bin/cxc-ingress-tool --help
+```
+
+## Use in a specification
+
+Attach this heuristic to an existing compatible instance. Consult the module's manifest and documented backend requirements for its operating system and configuration dependencies. This fragment is not a complete scenario:
+
+```cradle
+instance("host") >
+    heuristic("ttp", "T1105").
 ```
