@@ -6,7 +6,7 @@ description: Adversaries may abuse the `cron` utility to execute malicious code
 framework: ttp
 identifier: T1053.003
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/heuristics/ttp/T1053.003
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/heuristics/ttp/T1053.003
 ---
 
 # T1053.003: Scheduled Task/Job: Cron
@@ -23,7 +23,7 @@ Adversaries may abuse the `cron` utility to execute malicious code on a recurrin
 
 ## Structure
 
-- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/heuristics/ttp/T1053.003/ansible>): Contains the Ansible task list template (`T1053.003.j2`).
+- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/7bd5d625461879dbecb51b284d91f85fa8475be9/heuristics/ttp/T1053.003/ansible>): Contains the Ansible task list template (`T1053.003.j2`).
 
 ## Verification & Artifacts
 
