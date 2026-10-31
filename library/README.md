@@ -537,3 +537,27 @@ read and website Contents/Pull requests write. For recovery, manually dispatch t
 receiver with a successful current-main full validation `source_run_id`.
 
 See the [TTP contributor guide](../docs/guides/contribute-ttp.mdx).
+
+## Validated configuration library sync
+
+Configuration implementations and articles are authored under `configs/` in
+cradle-lang/cradle-lib. Contributors import with
+`npm run library:new -- configuration <name> --from <folder> --generate-index`
+using the configuration template. `validate-configs.yml` exports the separate
+`website-configurations` artifact and requests `sync-config-library.yml` after
+successful full current-main validation.
+
+The receiver verifies workflow/repository/revision/artifact/freshness, imports
+only articles and commit-pinned module links, tests and builds the website, then
+opens/updates `configuration-library-sync`. It commits configuration `index.md`
+files and `library/configuration-library.json`. Implementation files remain in
+cradle-lib. Removed managed entries are drafted; manual configurations, TTPs,
+CVEs and scenarios are preserved. Existing configuration routes remain unchanged.
+
+Merge the receiver before the source automation, then review the generated content
+PR and merge it to publish articles with `draft: false` through Pages. The existing
+CRADLE_LANG_TOKEN needs source Actions/Contents read and website Contents/Pull
+requests write. For expired-artifact recovery, manually validate source main and
+provide that successful run ID to the receiver's `source_run_id` input.
+
+See the [configuration contributor guide](../docs/guides/contribute-configuration.mdx).
