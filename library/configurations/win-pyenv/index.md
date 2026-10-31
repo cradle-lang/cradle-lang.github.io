@@ -1,10 +1,11 @@
 ---
-title: "win-pyenv"
-config: "win-pyenv"
-os: "Windows"
-category: "Windows — tooling"
-description: "Installs pyenv-win and a Python version through it"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-pyenv"
+title: win-pyenv
+description: Installs pyenv-win and a Python version through it
+config: win-pyenv
+os: Windows
+category: Windows — tooling
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pyenv
 ---
 
 Installs pyenv-win and a Python version through it
@@ -14,7 +15,7 @@ Installs pyenv-win and a Python version through it
 - Downloads and executes the pyenv-win installation script, using the provisioning account's home directory as the installation context.
 - Uses pyenv to install Python 3.10.5 and selects it as that account's global version.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-pyenv/ansible/win-pyenv.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pyenv/ansible/win-pyenv.j2>).
 
 The module is resolved from `configs/win-pyenv/` in the configured `config_dir`.
 
@@ -46,4 +47,4 @@ pyenv is available, 3.10.5 is installed and selected globally for the provisioni
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-pyenv). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pyenv>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

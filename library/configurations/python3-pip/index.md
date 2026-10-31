@@ -1,10 +1,11 @@
 ---
-title: "python3-pip"
-config: "python3-pip"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs python3-pip"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python3-pip"
+title: python3-pip
+description: Installs python3-pip
+config: python3-pip
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python3-pip
 ---
 
 Installs python3-pip
@@ -15,7 +16,7 @@ Installs python3-pip
 - If pip is still unavailable, reads `index-url` and optional `trusted-host` from `/etc/pip.conf`, downloads the pip 24.0 wheel from that index and bootstraps pip.
 - Finishes with another `python3 -m pip --version` check.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python3-pip/ansible/python3-pip.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python3-pip/ansible/python3-pip.j2>).
 
 The module is resolved from `configs/python3-pip/` in the configured `config_dir`.
 
@@ -45,4 +46,4 @@ pip reports a version and its installed location. An existing working pip instal
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python3-pip). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python3-pip>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

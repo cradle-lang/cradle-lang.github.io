@@ -1,10 +1,11 @@
 ---
-title: "python-modbus-tcp"
-config: "python-modbus-tcp"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs the pinned pyModbusTCP library"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-modbus-tcp"
+title: python-modbus-tcp
+description: Installs the pinned pyModbusTCP library
+config: python-modbus-tcp
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp
 ---
 
 Installs the pinned pyModbusTCP library
@@ -13,7 +14,7 @@ Installs the pinned pyModbusTCP library
 
 - Installs `pyModbusTCP==0.2.0` using the Ansible pip module with administrator privileges.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python-modbus-tcp/ansible/python-modbus-tcp.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp/ansible/python-modbus-tcp.j2>).
 
 The module is resolved from `configs/python-modbus-tcp/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-modbus-tcp). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

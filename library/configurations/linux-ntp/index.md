@@ -1,10 +1,11 @@
 ---
-title: "linux-ntp"
-config: "linux-ntp"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs and configures Chrony as an NTP server"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-ntp"
+title: linux-ntp
+description: Installs and configures Chrony as an NTP server
+config: linux-ntp
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ntp
 ---
 
 Installs and configures Chrony as an NTP server
@@ -14,7 +15,7 @@ Installs and configures Chrony as an NTP server
 - Installs Chrony and replaces `/etc/chrony/chrony.conf` with pool `2.debian.pool.ntp.org iburst` and `allow all`.
 - Enables and restarts the Chrony service.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-ntp/ansible/linux-ntp.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ntp/ansible/linux-ntp.j2>).
 
 The module is resolved from `configs/linux-ntp/` in the configured `config_dir`.
 
@@ -46,4 +47,4 @@ Chrony is active. Once an upstream source is reachable, sources and tracking sho
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-ntp). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ntp>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

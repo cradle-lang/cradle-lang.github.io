@@ -1,10 +1,12 @@
 ---
-title: "win-tellerApp"
-config: "win-tellerApp"
-os: "Windows"
-category: "Cross-platform & decoy"
-description: "Deploys a fake \"FinCore Systems\" banking decoy app as social-engineering/EDR bait"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-tellerApp"
+title: win-tellerApp
+description: Deploys a fake "FinCore Systems" banking decoy app as
+  social-engineering/EDR bait
+config: win-tellerApp
+os: Windows
+category: Cross-platform & decoy
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-tellerApp
 ---
 
 Deploys a fake "FinCore Systems" banking decoy app as social-engineering/EDR bait
@@ -14,7 +16,7 @@ Deploys a fake "FinCore Systems" banking decoy app as social-engineering/EDR bai
 - Creates `C:\Program Files\FinCore_Systems` and copies the guest's Notepad executable to `TellerClient_v4.exe` inside it.
 - The copied executable is a banking-application decoy. It is not a functioning banking service.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-tellerApp/ansible/win-tellerApp.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-tellerApp/ansible/win-tellerApp.j2>).
 
 The module is resolved from `configs/win-tellerApp/` in the configured `config_dir`.
 
@@ -45,4 +47,4 @@ The decoy executable exists and its hash matches the source Notepad executable u
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-tellerApp). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-tellerApp>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

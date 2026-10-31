@@ -1,10 +1,11 @@
 ---
-title: "linux-mysql"
-config: "linux-mysql"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs and starts MySQL Server"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-mysql"
+title: linux-mysql
+description: Installs and starts MySQL Server
+config: linux-mysql
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mysql
 ---
 
 Installs and starts MySQL Server
@@ -13,7 +14,7 @@ Installs and starts MySQL Server
 
 - Installs the APT package `mysql-server` with `state: present`. Starts and enables the `mysql` service.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-mysql/ansible/linux-mysql.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mysql/ansible/linux-mysql.j2>).
 
 The module is resolved from `configs/linux-mysql/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ The client prints its installed version and the service reports active.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-mysql). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mysql>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

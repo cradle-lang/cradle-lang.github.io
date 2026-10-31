@@ -1,0 +1,528 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "cradle-lang/cradle-lib",
+  "sourceRevision": "4a54c498b9854c972607584df8146aeb4ae386ac",
+  "sourceRunId": 41150783973,
+  "entries": [
+    {
+      "id": "agent-entry",
+      "module": "agent-entry",
+      "title": "agent-entry",
+      "description": "Prepare an agent entry instance with discovery, remote access, testing and scripting tools before sealing the range.",
+      "draft": false,
+      "os": "Linux",
+      "category": "Attacker / offensive",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/agent-entry"
+    },
+    {
+      "id": "attacker",
+      "module": "attacker",
+      "title": "attacker",
+      "description": "Installs a baseline attacker toolkit (nmap, netcat, curl, wget, python3/pip, Flask)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Attacker / offensive",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/attacker"
+    },
+    {
+      "id": "benign-firefox-win",
+      "module": "benign-firefox-win",
+      "title": "benign-firefox-win",
+      "description": "Installs Firefox on Windows",
+      "draft": false,
+      "os": "Windows",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/benign-firefox-win"
+    },
+    {
+      "id": "linux-apache2",
+      "module": "linux-apache2",
+      "title": "linux-apache2",
+      "description": "Installs and starts Apache HTTP Server",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-apache2"
+    },
+    {
+      "id": "linux-auditd",
+      "module": "linux-auditd",
+      "title": "linux-auditd",
+      "description": "Installs auditd with a bundled custom audit rules file",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-auditd"
+    },
+    {
+      "id": "linux-dns",
+      "module": "linux-dns",
+      "title": "linux-dns",
+      "description": "Installs and configures Bind9 as a DNS resolver/server",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-dns"
+    },
+    {
+      "id": "linux-docker",
+      "module": "linux-docker",
+      "title": "linux-docker",
+      "description": "Installs Docker and its dependencies",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-docker"
+    },
+    {
+      "id": "linux-mail",
+      "module": "linux-mail",
+      "title": "linux-mail",
+      "description": "Installs Bind9 and mail-related packages for a mail-server role",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mail"
+    },
+    {
+      "id": "linux-msf",
+      "module": "linux-msf",
+      "title": "linux-msf",
+      "description": "Installs the Metasploit Framework",
+      "draft": false,
+      "os": "Linux",
+      "category": "Attacker / offensive",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-msf"
+    },
+    {
+      "id": "linux-mysql",
+      "module": "linux-mysql",
+      "title": "linux-mysql",
+      "description": "Installs and starts MySQL Server",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mysql"
+    },
+    {
+      "id": "linux-netcat",
+      "module": "linux-netcat",
+      "title": "linux-netcat",
+      "description": "Installs netcat",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-netcat"
+    },
+    {
+      "id": "linux-nmap",
+      "module": "linux-nmap",
+      "title": "linux-nmap",
+      "description": "Installs nmap",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-nmap"
+    },
+    {
+      "id": "linux-ntp",
+      "module": "linux-ntp",
+      "title": "linux-ntp",
+      "description": "Installs and configures Chrony as an NTP server",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ntp"
+    },
+    {
+      "id": "linux-python3",
+      "module": "linux-python3",
+      "title": "linux-python3",
+      "description": "Ensures Python 3 is installed",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-python3"
+    },
+    {
+      "id": "linux-router",
+      "module": "linux-router",
+      "title": "Linux routing",
+      "description": "Enable IP forwarding so a Linux instance can route traffic between attached networks.",
+      "draft": false,
+      "os": "Linux",
+      "category": "Networking",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-router"
+    },
+    {
+      "id": "linux-routing",
+      "module": "linux-routing",
+      "title": "linux-routing",
+      "description": "Generate Linux routes from the compiler's resolved instance topology.",
+      "draft": false,
+      "os": "Linux",
+      "category": "Networking",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-routing"
+    },
+    {
+      "id": "linux-smb",
+      "module": "linux-smb",
+      "title": "linux-smb",
+      "description": "Installs and configures Samba (SMB file sharing)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-smb"
+    },
+    {
+      "id": "linux-sysdig",
+      "module": "linux-sysdig",
+      "title": "linux-sysdig",
+      "description": "Installs sysdig from a vendored package release",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig"
+    },
+    {
+      "id": "linux-tcpdump",
+      "module": "linux-tcpdump",
+      "title": "linux-tcpdump",
+      "description": "Installs tcpdump plus a bundled capture script and service",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-tcpdump"
+    },
+    {
+      "id": "linux-ufw",
+      "module": "linux-ufw",
+      "title": "linux-ufw",
+      "description": "Installs UFW and allows SSH",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-ufw"
+    },
+    {
+      "id": "linux-unzip",
+      "module": "linux-unzip",
+      "title": "linux-unzip",
+      "description": "Installs unzip",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-unzip"
+    },
+    {
+      "id": "linux-vsftpd",
+      "module": "linux-vsftpd",
+      "title": "linux-vsftpd",
+      "description": "Installs and configures vsftpd (FTP server)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-vsftpd"
+    },
+    {
+      "id": "net-tools",
+      "module": "net-tools",
+      "title": "net-tools",
+      "description": "Installs the net-tools package (ifconfig, netstat, ...)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/net-tools"
+    },
+    {
+      "id": "python-benign-mail-packages",
+      "module": "python-benign-mail-packages",
+      "title": "python-benign-mail-packages",
+      "description": "Installs a benign set of Python mail-handling packages (Linux)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages"
+    },
+    {
+      "id": "python-benign-mail-packages-win",
+      "module": "python-benign-mail-packages-win",
+      "title": "python-benign-mail-packages-win",
+      "description": "Installs a benign set of Python mail-handling packages (Windows)",
+      "draft": false,
+      "os": "Windows",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-mail-packages-win"
+    },
+    {
+      "id": "python-benign-web-packages",
+      "module": "python-benign-web-packages",
+      "title": "python-benign-web-packages",
+      "description": "Installs a benign set of Python web packages (Linux)",
+      "draft": false,
+      "os": "Linux",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages"
+    },
+    {
+      "id": "python-benign-web-packages-win",
+      "module": "python-benign-web-packages-win",
+      "title": "python-benign-web-packages-win",
+      "description": "Installs a benign set of Python web packages (Windows)",
+      "draft": false,
+      "os": "Windows",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages-win"
+    },
+    {
+      "id": "python-influxdb",
+      "module": "python-influxdb",
+      "title": "python-influxdb",
+      "description": "Installs the pinned InfluxDB Python client",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb"
+    },
+    {
+      "id": "python-influxdb-win",
+      "module": "python-influxdb-win",
+      "title": "python-influxdb-win",
+      "description": "Installs the InfluxDB client into the shared Windows runtime",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb-win"
+    },
+    {
+      "id": "python-modbus-tcp",
+      "module": "python-modbus-tcp",
+      "title": "python-modbus-tcp",
+      "description": "Installs the pinned pyModbusTCP library",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp"
+    },
+    {
+      "id": "python-modbus-tcp-win",
+      "module": "python-modbus-tcp-win",
+      "title": "python-modbus-tcp-win",
+      "description": "Installs pyModbusTCP into the shared Windows runtime",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-modbus-tcp-win"
+    },
+    {
+      "id": "python-snap7",
+      "module": "python-snap7",
+      "title": "python-snap7",
+      "description": "Installs the pinned python-snap7 library",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7"
+    },
+    {
+      "id": "python-snap7-win",
+      "module": "python-snap7-win",
+      "title": "python-snap7-win",
+      "description": "Installs python-snap7 into the shared Windows runtime",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7-win"
+    },
+    {
+      "id": "python-wxpython-win",
+      "module": "python-wxpython-win",
+      "title": "python-wxpython-win",
+      "description": "Installs wxPython into the shared Windows runtime",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-wxpython-win"
+    },
+    {
+      "id": "python3-pip",
+      "module": "python3-pip",
+      "title": "python3-pip",
+      "description": "Installs python3-pip",
+      "draft": false,
+      "os": "Linux",
+      "category": "Linux — services & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python3-pip"
+    },
+    {
+      "id": "win-allow-ports",
+      "module": "win-allow-ports",
+      "title": "win-allow-ports",
+      "description": "Opens specific inbound firewall ports (ICMP, FTP, ...)",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — system & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-allow-ports"
+    },
+    {
+      "id": "win-audit",
+      "module": "win-audit",
+      "title": "win-audit",
+      "description": "Configures the Windows advanced audit policy (logon/logoff, ...)",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-audit"
+    },
+    {
+      "id": "win-chocolatey",
+      "module": "win-chocolatey",
+      "title": "win-chocolatey",
+      "description": "Installs the Chocolatey package manager",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-chocolatey"
+    },
+    {
+      "id": "win-dotnet8",
+      "module": "win-dotnet8",
+      "title": "win-dotnet8",
+      "description": "Installs the .NET 8 SDK",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-dotnet8"
+    },
+    {
+      "id": "win-icmpv4",
+      "module": "win-icmpv4",
+      "title": "win-icmpv4",
+      "description": "Allows inbound ICMPv4 (ping)",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — system & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-icmpv4"
+    },
+    {
+      "id": "win-myl",
+      "module": "win-myl",
+      "title": "win-myl",
+      "description": "Installs the myl Python package via pip",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-myl"
+    },
+    {
+      "id": "win-nodejs",
+      "module": "win-nodejs",
+      "title": "win-nodejs",
+      "description": "Installs Node.js",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-nodejs"
+    },
+    {
+      "id": "win-pktmon",
+      "module": "win-pktmon",
+      "title": "win-pktmon",
+      "description": "Deploys and configures the PKTMON packet-capture service",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon"
+    },
+    {
+      "id": "win-power-option",
+      "module": "win-power-option",
+      "title": "win-power-option",
+      "description": "Disables sleep and monitor timeout, keeping the instance always-on",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — system & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-power-option"
+    },
+    {
+      "id": "win-pyenv",
+      "module": "win-pyenv",
+      "title": "win-pyenv",
+      "description": "Installs pyenv-win and a Python version through it",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pyenv"
+    },
+    {
+      "id": "win-python",
+      "module": "win-python",
+      "title": "win-python",
+      "description": "Installs Python via Chocolatey",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python"
+    },
+    {
+      "id": "win-python-runtime",
+      "module": "win-python-runtime",
+      "title": "win-python-runtime",
+      "description": "Extracts a shared Python 3.10 runtime under C:\\ProgramData\\cxc",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python-runtime"
+    },
+    {
+      "id": "win-routing",
+      "module": "win-routing",
+      "title": "win-routing",
+      "description": "Generate Windows routes from the compiler's resolved instance topology.",
+      "draft": false,
+      "os": "Windows",
+      "category": "Networking",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-routing"
+    },
+    {
+      "id": "win-sysmon",
+      "module": "win-sysmon",
+      "title": "win-sysmon",
+      "description": "Installs Sysmon with a bundled configuration",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — observability",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-sysmon"
+    },
+    {
+      "id": "win-tellerapp",
+      "module": "win-tellerApp",
+      "title": "win-tellerApp",
+      "description": "Deploys a fake \"FinCore Systems\" banking decoy app as social-engineering/EDR bait",
+      "draft": false,
+      "os": "Windows",
+      "category": "Cross-platform & decoy",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-tellerApp"
+    },
+    {
+      "id": "win-winrar",
+      "module": "win-winrar",
+      "title": "win-winrar",
+      "description": "Installs WinRAR",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — tooling",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrar"
+    },
+    {
+      "id": "win-winrm",
+      "module": "win-winrm",
+      "title": "win-winrm",
+      "description": "Ensures WinRM is enabled and running",
+      "draft": false,
+      "os": "Windows",
+      "category": "Windows — system & network",
+      "sourceUrl": "https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrm"
+    }
+  ]
+}

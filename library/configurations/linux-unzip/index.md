@@ -1,10 +1,11 @@
 ---
-title: "linux-unzip"
-config: "linux-unzip"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs unzip"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-unzip"
+title: linux-unzip
+description: Installs unzip
+config: linux-unzip
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-unzip
 ---
 
 Installs unzip
@@ -13,7 +14,7 @@ Installs unzip
 
 - Installs the APT package `unzip` with `state: present`.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-unzip/ansible/linux-unzip.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-unzip/ansible/linux-unzip.j2>).
 
 The module is resolved from `configs/linux-unzip/` in the configured `config_dir`.
 
@@ -43,4 +44,4 @@ The command reports the installed unzip version.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-unzip). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-unzip>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

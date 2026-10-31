@@ -1,10 +1,11 @@
 ---
-title: "win-icmpv4"
-config: "win-icmpv4"
-os: "Windows"
-category: "Windows — system & network"
-description: "Allows inbound ICMPv4 (ping)"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-icmpv4"
+title: win-icmpv4
+description: Allows inbound ICMPv4 (ping)
+config: win-icmpv4
+os: Windows
+category: Windows — system & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-icmpv4
 ---
 
 Allows inbound ICMPv4 (ping)
@@ -13,7 +14,7 @@ Allows inbound ICMPv4 (ping)
 
 - Creates an enabled inbound ICMPv4 allow rule named `Allow incoming ICMP echo request`.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-icmpv4/ansible/win-icmpv4.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-icmpv4/ansible/win-icmpv4.j2>).
 
 The module is resolved from `configs/win-icmpv4/` in the configured `config_dir`.
 
@@ -43,4 +44,4 @@ The rule is enabled, inbound and set to Allow.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-icmpv4). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-icmpv4>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

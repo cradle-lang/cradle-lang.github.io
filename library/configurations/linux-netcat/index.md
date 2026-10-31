@@ -1,10 +1,11 @@
 ---
-title: "linux-netcat"
-config: "linux-netcat"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs netcat"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-netcat"
+title: linux-netcat
+description: Installs netcat
+config: linux-netcat
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-netcat
 ---
 
 Installs netcat
@@ -13,7 +14,7 @@ Installs netcat
 
 - Installs the APT package `netcat` with `state: present`.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-netcat/ansible/linux-netcat.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-netcat/ansible/linux-netcat.j2>).
 
 The module is resolved from `configs/linux-netcat/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ The package is installed and nc resolves to an executable. Distribution alternat
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-netcat). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-netcat>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

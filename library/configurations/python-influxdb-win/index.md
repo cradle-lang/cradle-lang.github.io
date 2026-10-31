@@ -1,10 +1,11 @@
 ---
-title: "python-influxdb-win"
-config: "python-influxdb-win"
-os: "Windows"
-category: "Windows — tooling"
-description: "Installs the InfluxDB client into the shared Windows runtime"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-influxdb-win"
+title: python-influxdb-win
+description: Installs the InfluxDB client into the shared Windows runtime
+config: python-influxdb-win
+os: Windows
+category: Windows — tooling
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb-win
 ---
 
 Installs the InfluxDB client into the shared Windows runtime
@@ -14,7 +15,7 @@ Installs the InfluxDB client into the shared Windows runtime
 - Installs `influxdb==5.3.2` using the shared Windows runtime at `C:\ProgramData\cxc\python\python.exe`.
 - Writes `C:\ProgramData\cxc\python-influxdb.installed` after a successful install and uses that marker to skip subsequent runs. A marker does not independently verify that the packages remain installed.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python-influxdb-win/ansible/python-influxdb-win.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb-win/ansible/python-influxdb-win.j2>).
 
 The module is resolved from `configs/python-influxdb-win/` in the configured `config_dir`.
 
@@ -45,4 +46,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-influxdb-win). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-influxdb-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
