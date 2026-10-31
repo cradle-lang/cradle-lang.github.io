@@ -34,7 +34,9 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "library:sync-ttps": "node scripts/import-ttp-bundle.mjs",
-    "test:ttp-sync": "node --test scripts/ttp-sync.test.mjs"
+    "test:ttp-sync": "node --test scripts/ttp-sync.test.mjs",
+    "library:sync-configs": "node scripts/import-config-bundle.mjs",
+    "test:config-sync": "node --test scripts/config-sync.test.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",

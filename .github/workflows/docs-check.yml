@@ -46,6 +46,9 @@ jobs:
       - name: Test TTP library sync
         run: npm run test:ttp-sync
 
+      - name: Test configuration library sync
+        run: npm run test:config-sync
+
       - name: Build documentation
         run: npm run build
 

@@ -1,80 +1,258 @@
 ---
 title: Contribute a Configuration
+description: Import an existing configuration module, generate its article and submit it for publication in the CRADLE library.
 sidebar_position: 10
 ---
 
 # Contribute a Configuration
 
-Share a reusable instance configuration in the [Configurations library](/collection/?section=configurations).
-Each card comes from a published article under `library/configurations/`. Adding
-a `config()` reference to a scenario does not create a library entry.
+Add a working configuration to the
+[Configurations library](/collection/?section=configurations) through
+[cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib).
+You import the implementation, generate and review its article, and open a source
+PR. After approval, automation prepares a separate website PR for publication.
 
-## Prepare your checkout
+:::info Start with a working module
+AI generates documentation only. It does not implement the configuration, render
+its templates, deploy machines or test its behavior. Verify the article against
+your files and document runtime results separately.
+:::
 
-Fork and clone the [website repository](https://github.com/cradle-lang/cradle-lang.github.io),
-install Node.js 20 or newer and npm, then run these commands from its root:
+## Before you start
 
-```bash
+You need Git, Node.js **22 or newer**, npm, a GitHub account, your implementation
+and an OpenAI-compatible LLM server for article generation. Include only files
+you have permission to redistribute.
+
+Run commands from the **cradle-lib repository root**. Modules belong under
+`configs/<name>/`. Prefer lowercase names such as `linux-my-service`; existing
+mixed-case names retain their exact spelling in `config()` and source paths.
+
+## Contribution workflow
+
+<div className="architecture-flow architecture-workflow">
+  <div>Configuration module files</div>
+  <span>↓</span>
+  <div>Import with --generate-index</div>
+  <span>↓</span>
+  <div>Review the article and source PR</div>
+  <span>↓</span>
+  <div>Merge source PR and validate main</div>
+  <span>↓</span>
+  <div>Review and merge automatic website PR</div>
+  <span>↓</span>
+  <div>Pages publishes the configuration</div>
+</div>
+
+## 1. Set up the repository
+
+Fork [cradle-lib](https://github.com/cradle-lang/cradle-lib) if you do not have
+write access. Replace `YOUR-GITHUB-USERNAME`; contributors with access can clone
+upstream instead.
+
+```sh
+git clone https://github.com/YOUR-GITHUB-USERNAME/cradle-lib.git
+cd cradle-lib
 git switch -c add-my-configuration
 npm ci
-npm run library:new -- configuration my-config
 ```
 
-This creates `library/configurations/my-config/index.md` as a draft. Use `--mdx`
-for MDX, or `--from "/path/to/module"` to import an existing module with its
-supporting files. Keep exactly one `index.md` or `index.mdx` in the entry folder.
+For an existing checkout, update `main` before creating your contribution branch.
+TTPs use `heuristics/ttp/` in the same repository; CVEs are authored separately in
+cradle-lib-cve.
 
-## Document the configuration
+### Configure article generation once
 
-Fill in the article's front matter:
+Create `.env` from `.env.example` if you do not already have one.
+
+#### PowerShell
+
+```powershell
+if (!(Test-Path -LiteralPath .env)) {
+    Copy-Item -LiteralPath .env.example -Destination .env
+}
+notepad .env
+```
+
+#### Bash / Zsh
+
+```bash
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
+nano .env
+```
+
+Configure your OpenAI-compatible Chat Completions endpoint, model and key:
+
+```dotenv
+SERVER="https://your-llm-server.example/v1"
+REMOTE_LLM_MODEL="your-model-name"
+REMOTE_LLM_API_KEY="your-key-here"
+```
+
+:::warning Credentials and module content
+Never commit `.env` or include credentials in module files. Selected text is sent
+to your configured server. Hidden and TOML files are excluded from model context;
+image and binary contents are not sent. Review reported omissions and truncation.
+:::
+
+## 2. Prepare your source folder
+
+Keep the completed implementation and supporting documentation together:
+
+```text
+MyConfiguration/
+├── README.md
+├── ansible/
+│   └── linux-my-service.j2
+└── files/
+    └── supporting-script.sh
+```
+
+The nonempty `ansible/<name>.j2` template is required and must match the exact
+configuration name. `files/` is optional. A README helps the generator understand
+implementation, requirements, parameters, verification and attribution.
+
+**Configurations do not require `manifest.json`.** Their operating systems and
+dependencies must be documented explicitly; a configuration does not imply an
+instance OS in the same way a heuristic manifest can.
+
+## 3. Import and generate the article
+
+Replace the name and source path with your own.
+
+### PowerShell
+
+```powershell
+npm run library:new -- configuration linux-my-service --from "C:\path\to\MyConfiguration" --generate-index
+```
+
+### Bash / Zsh
+
+```bash
+npm run library:new -- configuration linux-my-service --from "$HOME/Downloads/MyConfiguration" --generate-index
+```
+
+This copies your module into `configs/linux-my-service/` and generates its
+`index.md` using the
+[configuration template](https://github.com/cradle-lang/cradle-lang.github.io/blob/main/library/_templates/configuration/index.md).
+A portable copy is included at `library/_templates/configuration/index.md` in
+cradle-lib. The exact configuration name is filled in automatically.
+
+```text
+configs/linux-my-service/
+├── index.md
+├── README.md
+├── ansible/
+│   └── linux-my-service.j2
+└── files/
+    └── supporting-script.sh
+```
+
+The original source folder is unchanged. Hidden files and caches are skipped;
+other files, including binary assets, are copied. Symbolic links and special files
+are rejected. Compare the imported folder with your source.
+
+Existing destination modules are never overwritten. An authored source `index.md`
+is preserved even with `--generate-index`. Edit existing modules directly, and use
+`index.md` rather than `index.mdx`.
+
+## 4. Review the article
+
+Edit `configs/linux-my-service/index.md` and verify its implementation,
+requirements, parameters, example, verification steps, attribution and licensing.
+Do not treat generated prose as evidence of a successful test.
 
 ```yaml
 ---
-title: My configuration
-config: my-config
+title: My service configuration
+config: linux-my-service
 os: Linux
 category: Networking
-description: Explain the behavior this configuration provides.
+description: Describe what this configuration changes.
 draft: true
 ---
 ```
 
-`title`, `description` and `config` are required. Use the exact name passed to
-`config("my-config")`. Set `os` to `Linux`, `Windows`, `Cross-platform` or
-`Unspecified`, and use `category` to describe the configuration's purpose.
+Keep `config` identical to the module folder and the name in
+`config("linux-my-service")`. Set `os` to `Linux`, `Windows`, `Cross-platform` or
+`Unspecified`, and choose a meaningful category. These article fields describe the
+module; they do not configure the guest OS or install dependencies automatically.
+Do not add `id`, `slug`, `framework` or `identifier`.
 
-Explain what the configuration changes, supported OS versions, dependencies,
-parameters and backend requirements. Include a usage example:
+Generated articles always start with **`draft: true`**. Set `draft: false` when
+the article is ready for publication. A GitHub draft PR and this article flag are
+separate controls.
 
-```cradle
-instance("host") >
-    os("linux", "20.04"),
-    config("my-config").
+### The module link is automatic
+
+You do not need to enter `sourceUrl` or a GitHub module link. Automation generates
+a `configs/<name>/` link pinned to the validated source commit and rewrites
+relative article links to supporting files at the same commit.
+
+The website receives **`index.md` and the module-folder link**, with tracking
+metadata. Ansible templates, scripts and binary assets remain in cradle-lib.
+
+## 5. Open a draft source PR
+
+Before submitting, confirm that:
+
+- [ ] The folder, article `config` field and template name match exactly.
+- [ ] All required implementation files and assets are included.
+- [ ] OS, dependencies, parameters and backend requirements are accurate.
+- [ ] Verification claims have evidence; unknown details are marked clearly.
+- [ ] Attribution, licensing, links and publication status are complete.
+- [ ] No credentials, `.env`, dependencies or export bundles are staged.
+
+```sh
+git add configs/linux-my-service/
+git diff --cached
+git status --short
+git commit -m "Add configuration module and documentation"
+git push -u origin add-my-configuration
 ```
 
-Store implementation files, Ansible templates and assets alongside the article.
-Link them using relative Markdown links and explain how the testbed installs
-them in its configuration content library. Include verification steps, expected
-results, attribution and licensing. Publishing the article does not install the
-configuration in a testbed.
+Open a draft PR against **`cradle-lang/cradle-lib` → `main`**. Describe the behavior,
+included files, supported systems, checks actually run and known limitations.
+Mark it ready for review when complete.
 
-## Preview and publish
+CI validates configuration names, required templates, article metadata, local
+links and exported Markdown, and runs import/generation/export tests. TTP
+validation remains available in the same repository. Contributors do not need to
+run export or synchronization commands manually.
 
-Set `draft: false` when ready, then run:
+:::info Validation is not runtime testing
+These checks do not render or execute provisioning templates, validate every
+referenced variable or remote download, or deploy the configuration. Record
+separate runtime tests and their environment in the article and PR.
+:::
 
-```bash
-npm run generate-library
-npm run typecheck
-npm run build
-npm run start
-```
+## 6. What happens after submission
 
-Inspect the article, relative asset links and the Configurations library. Check
-search by name, operating system and description in the full list. A published entry appears even when no scenario uses
-it; matching scenarios provide usage counts and links. Removing or drafting the
-article removes its library card even if a scenario still references it.
+| Stage | What happens |
+| --- | --- |
+| **Source PR** | Validate the implementation and article; maintainers review the contribution. |
+| **Source merge** | Successful full main validation exports articles and notifies the website. |
+| **Website PR** | Import articles and module links, run website tests and a production build, then open or update a separate review PR. |
+| **Website merge and deployment** | Pages publishes articles with `draft: false` in the Configurations library. |
 
-Stop the preview with Ctrl+C, commit the complete entry folder and open a pull
-request against `main`. Describe the behavior, implementation source, supported
-systems and checks you ran. Maintainers review the contribution before it is
-published.
+A source merge alone does not publish a webpage. After deployment, inspect your
+configuration card, article and **View on GitHub** link. The example article route
+would be `/library/configurations/linux-my-service`. Existing configuration
+routes are preserved, including lowercase routes for mixed-case source names.
+
+## Troubleshooting
+
+| Problem | What to check or do |
+| --- | --- |
+| The module already exists | Edit the existing module. Imports never overwrite its folder. |
+| Template validation fails | Check the exact folder name and nonempty `ansible/<name>.j2`. |
+| Metadata validation fails | Check `config`, the allowed `os` values, a nonempty title/description/category and boolean `draft`. |
+| Article generation fails | Check endpoint/model/API access. Copied files and the starter article are preserved. |
+| An article was preserved | The source already contains `index.md`; review and edit it. |
+| A local link fails | Link an existing file or directory inside the configuration module, with the correct spelling and case. |
+| The card does not appear | Check `draft: false`, source validation, website PR merge and Pages deployment. |
+
+Maintainer recovery and automation details are documented in `docs/automation.md`
+in the cradle-lib repository.
