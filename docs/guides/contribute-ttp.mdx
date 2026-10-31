@@ -1,0 +1,323 @@
+---
+title: Contribute a TTP heuristic
+description: Import an existing TTP module, generate its article and submit it for publication in the CRADLE TTP library.
+sidebar_position: 12
+---
+
+# Contribute a TTP heuristic
+
+Add an existing TTP implementation to the
+[TTP library](/collection/?section=heuristics&framework=ttp) through
+[cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib).
+
+By the end of this guide, you will:
+
+1. Import your TTP module and its supporting files.
+2. Generate an `index.md` article using the heuristic template.
+3. Review the article and choose its publication status.
+4. Open a draft pull request for validation and review.
+5. Understand how the article reaches the website after approval.
+
+:::info Start with a working module
+This guide assumes you already have a TTP heuristic implementation. AI generates
+**documentation only**. It does not create the implementation, render its
+templates, deploy it or test the technique. Verify the article against your
+actual files and record runtime results separately.
+:::
+
+## Before you start
+
+You need:
+
+- Git, **Node.js 22 or newer**, and npm.
+- A GitHub account.
+- Your TTP module, including its manifest, Ansible template and supporting files.
+- Permission to redistribute the implementation and its assets.
+- An OpenAI-compatible LLM server configured for article generation.
+
+Run all commands from the **cradle-lib repository root** unless stated
+otherwise. Each module belongs under `heuristics/ttp/`, for example
+`heuristics/ttp/T1105/`. Use an ATT&CK technique or sub-technique ID such as
+`T1105` or `T1053.003`; the ID in
+this guide is an example.
+
+## Contribution workflow
+
+**You prepare and review the contribution:**
+
+<div className="architecture-flow architecture-workflow">
+  <div>TTP module files</div>
+  <span>↓</span>
+  <div>Import with --generate-index</div>
+  <span>↓</span>
+  <div>Review the article</div>
+  <span>↓</span>
+  <div>Draft PR</div>
+</div>
+
+**CI, maintainers and website automation handle publication:**
+
+<div className="architecture-flow architecture-workflow">
+  <div>TTP validation and PR review</div>
+  <span>↓</span>
+  <div>Source PR merged and main validated</div>
+  <span>↓</span>
+  <div>Website PR created and reviewed</div>
+  <span>↓</span>
+  <div>Website PR merged and TTP library published</div>
+</div>
+
+## 1. Set up the repository
+
+Fork [cradle-lib](https://github.com/cradle-lang/cradle-lib) if you do not
+have write access. Replace `YOUR-GITHUB-USERNAME` with your account; contributors
+with write access can clone upstream instead.
+
+These commands work in PowerShell, Bash and Zsh:
+
+```sh
+git clone https://github.com/YOUR-GITHUB-USERNAME/cradle-lib.git
+cd cradle-lib
+git switch -c add-my-ttp
+npm ci
+```
+
+For an existing checkout, start from an up-to-date `main` and create a
+contribution branch. TTP implementations are maintained in cradle-lib;
+configuration modules and CVE heuristics are separate contributions.
+
+### Configure article generation once
+
+If your checkout already has an LLM connection configured, continue to
+[Prepare your source folder](#2-prepare-your-source-folder).
+
+Create `.env` beside `package.json` without overwriting an existing file.
+
+#### PowerShell
+
+```powershell
+if (!(Test-Path -LiteralPath .env)) {
+    Copy-Item -LiteralPath .env.example -Destination .env
+}
+notepad .env
+```
+
+#### Bash / Zsh
+
+```bash
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
+nano .env
+```
+
+Enter your server's API base URL, an available model and your key:
+
+```dotenv
+SERVER="https://your-llm-server.example/v1"
+REMOTE_LLM_MODEL="your-model-name"
+REMOTE_LLM_API_KEY="your-key-here"
+```
+
+The endpoint must support OpenAI-compatible Chat Completions. Connection options
+and recovery details are in the
+[maintainer reference](https://github.com/cradle-lang/cradle-lib/blob/cee54d8026c8fed10d85016fd04ffd9be1cb715e/docs/automation.md).
+
+:::warning Credentials and module content
+Never commit `.env` or put credentials inside module files. Selected module text
+is sent to your configured server; check that you have permission to share it.
+Hidden and TOML files are excluded from LLM input, and binary/image contents are
+not sent. Review any reported omissions or truncation.
+:::
+
+## 2. Prepare your source folder
+
+Keep your completed implementation and its documentation together:
+
+```text
+MyTtp/
+├── README.md
+├── manifest.json
+├── ansible/
+│   └── T1105.j2
+└── files/
+    └── supporting-script.sh
+```
+
+`files/` is optional. A README is useful evidence for the generated article:
+describe the implementation, setup, requirements, verification steps and original
+authorship. Include only assets you can redistribute.
+
+The manifest must identify the same TTP as the template and destination folder:
+
+```json
+{
+  "framework": "ttp",
+  "value": "T1105",
+  "os": null,
+  "os_version": null,
+  "configs": []
+}
+```
+
+Set the operating system and version to your module's actual requirements, or
+use paired `null` values when neither is specified. An instance must provide an
+OS separately when the heuristic does not imply one. List required
+configuration modules in `configs`; use an empty list when none are implied.
+The required template is `ansible/<TECHNIQUE-ID>.j2` and must not be empty.
+
+## 3. Import the module and generate its article
+
+Use this command, replacing the TTP ID and source path with your own:
+
+### PowerShell
+
+```powershell
+npm run library:new -- ttp T1105 --from "C:\path\to\MyTtp" --generate-index
+```
+
+### Bash / Zsh
+
+```bash
+npm run library:new -- ttp T1105 --from "$HOME/Downloads/MyTtp" --generate-index
+```
+
+The command copies the module into `heuristics/ttp/` as a new module folder and generates its
+article from the supplied README, manifest and implementation. It uses the
+[website's heuristic template](https://github.com/cradle-lang/cradle-lang.github.io/blob/main/library/_templates/heuristic/index.md),
+with a portable copy at `library/_templates/heuristic/index.md` in cradle-lib.
+The generator fills in the TTP identity automatically.
+
+You should now have:
+
+```text
+heuristics/ttp/T1105/
+├── index.md
+├── README.md
+├── manifest.json
+├── ansible/
+│   └── T1105.j2
+└── files/
+    └── supporting-script.sh
+```
+
+Your original folder is unchanged. Hidden files and caches are skipped during
+import; other files, including binary assets, are preserved. Selected symbolic
+links are rejected. Compare the imported folder with your source to confirm that
+all required files are present.
+
+Existing module folders are never overwritten. If your source already contains
+an authored `index.md`, it is preserved even with `--generate-index`; review its
+metadata and publication status yourself. Use `index.md` rather than `index.mdx`.
+
+## 4. Review the article
+
+Edit `heuristics/ttp/T1105/index.md` and verify it against the implementation. The
+heuristic template covers:
+
+- **Mapping and implementation:** the ATT&CK technique, affected behavior and what this module sets up.
+- **Use and requirements:** compatible systems, dependencies, backend requirements, CRADLE usage and verification steps.
+- **Attribution and licensing:** original authors, sources and redistribution terms.
+
+Describe expected behavior separately from observed results. Record the versions
+and environment used for any actual tests. Mark undocumented or unverified details
+clearly rather than treating AI-generated prose as evidence.
+
+### Front matter and publication status
+
+The generated article starts with metadata like this:
+
+```yaml
+---
+title: My TTP module
+description: Short summary of the implementation and its purpose.
+framework: ttp
+identifier: T1105
+draft: true
+---
+```
+
+Keep `framework: ttp` and the exact module identifier. Do not add `id` or `slug`;
+the website derives its article ID from the TTP identifier.
+
+**Generated articles always start as drafts.** Keep `draft: true` while preparing
+the article; set `draft: false` when it is ready for publication after review.
+A GitHub draft PR and the article's `draft` field are separate controls.
+
+### The module link is automatic
+
+You do not need to enter a GitHub module link or `sourceUrl`. During website
+handoff, automation generates the module-folder URL and pins it to the validated
+source commit. Relative article links to supporting files are rewritten to that
+same commit.
+
+The website receives **`index.md` and the module-folder link**, with internal
+identity/provenance metadata. Manifests, Ansible templates, scripts and binaries
+stay in cradle-lib; they are not copied into the website.
+
+## 5. Open a draft PR
+
+Before submitting, confirm that:
+
+- [ ] The manifest and template match the TTP identifier.
+- [ ] Required implementation files and assets are included.
+- [ ] `index.md` accurately describes the module and its requirements.
+- [ ] Claimed test results have supporting evidence.
+- [ ] Attribution, licensing and file links are complete.
+- [ ] `draft` has the intended value.
+- [ ] No credentials, `.env`, `node_modules` or export bundles are staged.
+
+Stage the complete module folder and inspect it before committing:
+
+```sh
+git add heuristics/ttp/T1105/
+git diff --cached
+git status --short
+git commit -m "Add TTP module and documentation"
+git push -u origin add-my-ttp
+```
+
+Open a pull request targeting **`cradle-lang/cradle-lib`'s `main`** and select
+**Create draft pull request**. Describe the module, included files, requirements,
+checks actually run and known limitations. Mark it ready for review when the
+contribution and its CI checks are ready.
+
+GitHub automatically checks module identities, manifest structure, required
+templates, article links, exported Markdown and manifest-implied configurations.
+It also runs the import, generation and export tests. You do not need to run
+website export or synchronization commands to submit your contribution.
+
+:::info Validation is not runtime testing
+Repository checks do not render or execute provisioning templates, deploy machines,
+verify remote downloads or verify technique behavior. Record separate runtime tests
+and their results in the article and PR.
+:::
+
+## 6. What happens after submission
+
+| Stage | What happens |
+| --- | --- |
+| **TTP PR** | CI checks your module and article; maintainers review the contribution. |
+| **Source merge** | Full validation runs on `main`. A successful run sends the validated documentation to the website automation. |
+| **Website PR** | Automation imports the article and source link, runs website tests and a production build, then opens or updates a separate review PR. |
+| **Website merge and deployment** | Maintainers merge the website PR. A successful Pages deployment publishes articles with `draft: false`. |
+
+A source merge alone does not publish the webpage. After website deployment,
+find your module in the [TTP library](/collection/?section=heuristics&framework=ttp).
+Check its article and **View on GitHub** link. For the example identifier, the
+article path would be `/library/heuristics/ttp-t1105`; use your actual ID.
+
+## Troubleshooting
+
+| Problem | What to check or do |
+| --- | --- |
+| The module already exists | Edit the existing module or choose the correct new TTP ID. Imports never overwrite a folder. |
+| The manifest or template is rejected | Check `framework: ttp`, the exact TTP ID, paired OS/version values, `configs`, and `ansible/<TECHNIQUE-ID>.j2`. |
+| Article generation fails | Check the server URL, model and API access. Copied files and the starter article are retained; use the maintainer recovery reference to retry generation. |
+| The article was preserved instead of generated | Your source contains an authored `index.md`. Import preserves it; review and edit that article. |
+| A local article link fails validation | Use an existing file or directory inside the TTP module and check its spelling and case. |
+| The TTP does not appear on the website | Check `draft: false`, source validation, the website review PR and Pages deployment status. |
+
+See [cradle-lib's contributor guide](https://github.com/cradle-lang/cradle-lib/blob/cee54d8026c8fed10d85016fd04ffd9be1cb715e/CONTRIBUTING.md)
+for the source instructions. Integration setup and recovery are in the
+[maintainer reference](https://github.com/cradle-lang/cradle-lib/blob/cee54d8026c8fed10d85016fd04ffd9be1cb715e/docs/automation.md).

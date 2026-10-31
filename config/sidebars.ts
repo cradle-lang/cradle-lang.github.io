@@ -53,6 +53,7 @@ const sidebars: SidebarsConfig = {
         'guides/contribute-heuristic',
         'guides/contribute-configuration',
         'guides/contribute-cve',
+        'guides/contribute-ttp',
       ],
     },
 
