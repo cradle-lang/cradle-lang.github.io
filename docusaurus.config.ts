@@ -207,13 +207,12 @@ const config: Config = {
           position: 'left',
           label: 'Documentation',
         },
-        // Uncomment when the Library is ready to appear in navigation.
-        // {
-        //   to: '/collection/',
-        //   label: 'Library',
-        //   activeBaseRegex: '/(collection|library)(/|$)',
-        //   position: 'left',
-        // },
+        {
+          to: '/collection/',
+          label: 'Library',
+          activeBaseRegex: '/(collection|library)(/|$)',
+          position: 'left',
+        },
         {
           to: '/workbench/',
           label: 'Workbench',
@@ -224,12 +223,11 @@ const config: Config = {
           label: 'Releases',
           position: 'left',
         },
-        // Uncomment when the blog is ready to appear in navigation.
-        // {
-        //   to: '/blog/',
-        //   label: 'Blog',
-        //   position: 'left',
-        // },
+        {
+          to: '/blog/',
+          label: 'Blog',
+          position: 'left',
+        },
         {
           type: 'custom-version-dropdown',
           position: 'right',
@@ -277,11 +275,10 @@ const config: Config = {
               label: 'Releases',
               to: '/releases/',
             },
-            // Uncomment alongside the Blog navbar entry above.
-            // {
-            //   label: 'Blog',
-            //   to: '/blog/',
-            // },
+            {
+              label: 'Blog',
+              to: '/blog/',
+            },
             {
               label: 'Support and Feedback',
               to: '/docs/project/support',
