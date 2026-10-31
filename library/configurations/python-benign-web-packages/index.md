@@ -1,10 +1,11 @@
 ---
-title: "python-benign-web-packages"
-config: "python-benign-web-packages"
-os: "Linux"
-category: "Cross-platform & decoy"
-description: "Installs a benign set of Python web packages (Linux)"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-benign-web-packages"
+title: python-benign-web-packages
+description: Installs a benign set of Python web packages (Linux)
+config: python-benign-web-packages
+os: Linux
+category: Cross-platform & decoy
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages
 ---
 
 Installs a benign set of Python web packages (Linux)
@@ -13,7 +14,7 @@ Installs a benign set of Python web packages (Linux)
 
 - Installs `flask`, `requests` using the Ansible pip module with administrator privileges.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python-benign-web-packages/ansible/python-benign-web-packages.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages/ansible/python-benign-web-packages.j2>).
 
 The module is resolved from `configs/python-benign-web-packages/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-benign-web-packages). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

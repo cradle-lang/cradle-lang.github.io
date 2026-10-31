@@ -1,10 +1,11 @@
 ---
-title: "win-allow-ports"
-config: "win-allow-ports"
-os: "Windows"
-category: "Windows — system & network"
-description: "Opens specific inbound firewall ports (ICMP, FTP, ...)"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-allow-ports"
+title: win-allow-ports
+description: Opens specific inbound firewall ports (ICMP, FTP, ...)
+config: win-allow-ports
+os: Windows
+category: Windows — system & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-allow-ports
 ---
 
 Opens specific inbound firewall ports (ICMP, FTP, ...)
@@ -14,7 +15,7 @@ Opens specific inbound firewall ports (ICMP, FTP, ...)
 - Creates enabled inbound allow rules for ICMPv4 and TCP ports 21 (FTP), 80 (HTTP) and 443 (HTTPS).
 - This module only adds firewall rules; it does not install any of the corresponding services.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-allow-ports/ansible/win-allow-ports.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-allow-ports/ansible/win-allow-ports.j2>).
 
 The module is resolved from `configs/win-allow-ports/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ The four rules are enabled, inbound and set to Allow.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-allow-ports). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-allow-ports>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

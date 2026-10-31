@@ -1,10 +1,11 @@
 ---
-title: "python-snap7"
-config: "python-snap7"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs the pinned python-snap7 library"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-snap7"
+title: python-snap7
+description: Installs the pinned python-snap7 library
+config: python-snap7
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7
 ---
 
 Installs the pinned python-snap7 library
@@ -13,7 +14,7 @@ Installs the pinned python-snap7 library
 
 - Installs `python-snap7==1.3` using the Ansible pip module with administrator privileges.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python-snap7/ansible/python-snap7.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7/ansible/python-snap7.j2>).
 
 The module is resolved from `configs/python-snap7/` in the configured `config_dir`.
 
@@ -44,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-snap7). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

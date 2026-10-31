@@ -1,10 +1,11 @@
 ---
-title: "python-snap7-win"
-config: "python-snap7-win"
-os: "Windows"
-category: "Windows — tooling"
-description: "Installs python-snap7 into the shared Windows runtime"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-snap7-win"
+title: python-snap7-win
+description: Installs python-snap7 into the shared Windows runtime
+config: python-snap7-win
+os: Windows
+category: Windows — tooling
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7-win
 ---
 
 Installs python-snap7 into the shared Windows runtime
@@ -14,7 +15,7 @@ Installs python-snap7 into the shared Windows runtime
 - Installs `python-snap7==2.1.0` using the shared Windows runtime at `C:\ProgramData\cxc\python\python.exe`.
 - Writes `C:\ProgramData\cxc\python-snap7.installed` after a successful install and uses that marker to skip subsequent runs. A marker does not independently verify that the packages remain installed.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/python-snap7-win/ansible/python-snap7-win.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7-win/ansible/python-snap7-win.j2>).
 
 The module is resolved from `configs/python-snap7-win/` in the configured `config_dir`.
 
@@ -45,4 +46,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/python-snap7-win). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-snap7-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

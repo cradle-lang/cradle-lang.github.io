@@ -1,10 +1,11 @@
 ---
-title: "win-python-runtime"
-config: "win-python-runtime"
-os: "Windows"
-category: "Windows — tooling"
-description: "Extracts a shared Python 3.10 runtime under C:\\ProgramData\\cxc"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-python-runtime"
+title: win-python-runtime
+description: Extracts a shared Python 3.10 runtime under C:\ProgramData\cxc
+config: win-python-runtime
+os: Windows
+category: Windows — tooling
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-python-runtime
 ---
 
 ## Use in a specification

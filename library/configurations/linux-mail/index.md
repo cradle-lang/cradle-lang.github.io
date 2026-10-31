@@ -1,10 +1,11 @@
 ---
-title: "linux-mail"
-config: "linux-mail"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs Bind9 and mail-related packages for a mail-server role"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-mail"
+title: linux-mail
+description: Installs Bind9 and mail-related packages for a mail-server role
+config: linux-mail
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mail
 ---
 
 Installs Bind9 and mail-related packages for a mail-server role
@@ -15,7 +16,7 @@ Installs Bind9 and mail-related packages for a mail-server role
 - Writes a `deadbeef.com` DNS zone whose A and MX records use the provisioned host address. Replaces the local Bind9, Postfix and Dovecot configuration files.
 - Configures Maildir delivery, PAM/password-backed Dovecot authentication, Postfix SASL integration and the guest snakeoil TLS certificate. Enables and restarts all three services.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-mail/ansible/linux-mail.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mail/ansible/linux-mail.j2>).
 
 The module is resolved from `configs/linux-mail/` in the configured `config_dir`.
 
@@ -49,4 +50,4 @@ Configuration checks complete and all three services report active. Verify DNS r
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-mail). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-mail>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

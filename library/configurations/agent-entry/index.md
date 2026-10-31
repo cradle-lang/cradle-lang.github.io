@@ -1,10 +1,12 @@
 ---
-title: "agent-entry"
-config: "agent-entry"
-os: "Linux"
-category: "Attacker / offensive"
-description: "Prepare an agent entry instance with discovery, remote access, testing and scripting tools before sealing the range."
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/agent-entry"
+title: agent-entry
+description: Prepare an agent entry instance with discovery, remote access,
+  testing and scripting tools before sealing the range.
+config: agent-entry
+os: Linux
+category: Attacker / offensive
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/agent-entry
 ---
 
 Prepares the instance from which an autonomous agent starts, with discovery, access, testing and scripting tools installed before the range is sealed.
@@ -15,7 +17,7 @@ Prepares the instance from which an autonomous agent starts, with discovery, acc
 - The package list includes nmap, arp-scan, tcpdump, OpenSSH client, sshpass, socat, proxychains4, tmux, gobuster, DIRB, sqlmap, hydra, john, SMB/LDAP clients, python3-impacket, Python, jq and Git.
 - Installs tools before the range is sealed. It does not configure a proxy, tunnel, listener or target credentials.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/agent-entry/ansible/agent-entry.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/agent-entry/ansible/agent-entry.j2>).
 
 The module is resolved from `configs/agent-entry/` in the configured `config_dir`.
 
@@ -48,4 +50,4 @@ The commands resolve, the Impacket package is installed and the DIRB wordlist di
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/agent-entry). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/agent-entry>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

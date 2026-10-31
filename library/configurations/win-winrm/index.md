@@ -1,10 +1,11 @@
 ---
-title: "win-winrm"
-config: "win-winrm"
-os: "Windows"
-category: "Windows — system & network"
-description: "Ensures WinRM is enabled and running"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-winrm"
+title: win-winrm
+description: Ensures WinRM is enabled and running
+config: win-winrm
+os: Windows
+category: Windows — system & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrm
 ---
 
 Ensures WinRM is enabled and running
@@ -14,7 +15,7 @@ Ensures WinRM is enabled and running
 - Requests the WinRM Windows feature and starts the WinRM service.
 - Does not configure listeners, authentication policy or firewall rules. It cannot establish the initial management connection needed to run these tasks.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-winrm/ansible/win-winrm.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrm/ansible/win-winrm.j2>).
 
 The module is resolved from `configs/win-winrm/` in the configured `config_dir`.
 
@@ -45,4 +46,4 @@ WinRM is Running. Confirm that the listeners required by your backend were confi
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-winrm). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-winrm>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

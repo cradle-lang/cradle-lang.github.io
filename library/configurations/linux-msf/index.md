@@ -1,10 +1,11 @@
 ---
-title: "linux-msf"
-config: "linux-msf"
-os: "Linux"
-category: "Attacker / offensive"
-description: "Installs the Metasploit Framework"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-msf"
+title: linux-msf
+description: Installs the Metasploit Framework
+config: linux-msf
+os: Linux
+category: Attacker / offensive
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-msf
 ---
 
 Installs the Metasploit Framework
@@ -14,7 +15,7 @@ Installs the Metasploit Framework
 - Downloads Rapid7's msfinstall wrapper, makes it executable and runs it from the provisioning shell.
 - Skips the installer when `/usr/bin/msfconsole` already exists.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-msf/ansible/linux-msf.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-msf/ansible/linux-msf.j2>).
 
 The module is resolved from `configs/linux-msf/` in the configured `config_dir`.
 
@@ -46,4 +47,4 @@ The executable exists and reports a Metasploit version.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-msf). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-msf>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

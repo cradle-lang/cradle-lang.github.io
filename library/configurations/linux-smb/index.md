@@ -1,10 +1,11 @@
 ---
-title: "linux-smb"
-config: "linux-smb"
-os: "Linux"
-category: "Linux — services & network"
-description: "Installs and configures Samba (SMB file sharing)"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-smb"
+title: linux-smb
+description: Installs and configures Samba (SMB file sharing)
+config: linux-smb
+os: Linux
+category: Linux — services & network
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-smb
 ---
 
 Installs and configures Samba (SMB file sharing)
@@ -14,7 +15,7 @@ Installs and configures Samba (SMB file sharing)
 - Installs Samba and replaces `/etc/samba/smb.conf` with a WORKGROUP/user-security configuration.
 - Creates a browsable, writable, guest-enabled `shared` share at `/srv/smb/shared`, creates that directory with mode 0777 and enables/restarts smbd.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/linux-smb/ansible/linux-smb.j2).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-smb/ansible/linux-smb.j2>).
 
 The module is resolved from `configs/linux-smb/` in the configured `config_dir`.
 
@@ -46,4 +47,4 @@ The configuration contains the shared path, smbd is active and the directory mod
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/linux-smb). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-smb>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

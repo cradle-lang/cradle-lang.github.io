@@ -1,10 +1,11 @@
 ---
-title: "win-pktmon"
-config: "win-pktmon"
-os: "Windows"
-category: "Windows — observability"
-description: "Deploys and configures the PKTMON packet-capture service"
-sourceUrl: "https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-pktmon"
+title: win-pktmon
+description: Deploys and configures the PKTMON packet-capture service
+config: win-pktmon
+os: Windows
+category: Windows — observability
+draft: false
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon
 ---
 
 Deploys and configures the PKTMON packet-capture service
@@ -15,7 +16,7 @@ Deploys and configures the PKTMON packet-capture service
 - Checks the `PktmonService` registry key, creates an automatic service for `pktmon-service.exe` if absent and starts it.
 - The start task tolerates already-running and access-denied return codes. A successful provisioning run alone does not prove the service started.
 
-Source: [Ansible task template](https://github.com/cradle-lang/cradle-lib/blob/main/configs/win-pktmon/ansible/win-pktmon.j2). Supporting [assets](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-pktmon/files) are required by the tasks described above.
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon/ansible/win-pktmon.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon/files>) are required by the tasks described above.
 
 The module is resolved from `configs/win-pktmon/` in the configured `config_dir`.
 
@@ -47,4 +48,4 @@ The executable exists, the service is Running and pktmon reports its actual capt
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](https://github.com/cradle-lang/cradle-lib/tree/main/configs/win-pktmon). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-pktmon>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
