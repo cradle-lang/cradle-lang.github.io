@@ -50,6 +50,7 @@ const sidebars: SidebarsConfig = {
         },
         'guides/troubleshooting',
         'guides/contribute-scenario',
+        'guides/contribute-blog',
         'guides/contribute-heuristic',
         'guides/contribute-configuration',
         'guides/contribute-cve',
