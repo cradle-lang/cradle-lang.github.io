@@ -1,0 +1,175 @@
+---
+title: Contribute a Blog Post
+description: Create a draft, write and preview a CRADLE blog post, and submit it for review.
+---
+
+# Contribute a Blog Post
+
+Share a practical guide, experiment walkthrough, project update or perspective
+with the [CRADLE Blog](/blog/). Blog posts live in the
+[website repository](https://github.com/cradle-lang/cradle-lang.github.io).
+
+This guide takes you from a template to a reviewed pull request. You only need
+to add your article and its attachments; topic pages, article lists and search
+update automatically when the website builds.
+
+## 1. Set up the repository
+
+You need Git, Node.js 20 or newer, npm and a GitHub account. Fork the
+[website repository](https://github.com/cradle-lang/cradle-lang.github.io)
+if you do not have write access. Replace `YOUR-GITHUB-USERNAME` below with your
+account; contributors with write access can clone upstream instead.
+
+These commands work in PowerShell, Bash and Zsh:
+
+```bash
+git clone https://github.com/YOUR-GITHUB-USERNAME/cradle-lang.github.io.git
+cd cradle-lang.github.io
+git switch -c blog/my-post
+npm ci
+```
+
+For an existing checkout, start from an up-to-date `main` and create a branch.
+Run the remaining commands from the repository root.
+
+## 2. Create a draft
+
+Choose a short lowercase name with hyphens:
+
+```bash
+npm run blog:new -- my-post
+```
+
+The command uses today's local date in `YYYY-MM-DD` format, creates the post
+folder and copies the Markdown template. For example, on 2026-11-01 it creates
+`blog/2026-11-01-my-post/index.md`. The title and slug are filled in for you,
+and `draft: true` keeps the article out of the production website.
+Existing folders are never overwritten.
+
+Markdown is the default. You can specify `md` explicitly or choose `mdx` for
+React components and embedded previews:
+
+```bash
+npm run blog:new -- my-post md
+# Or, for an MDX post:
+npm run blog:new -- my-post mdx
+```
+
+Choose one format per post. MDX creates `index.mdx` from the MDX template and
+should be reviewed like code.
+
+## 3. Write your article
+
+Open the generated `index.md` or `index.mdx`. Update the front matter:
+
+```yaml
+---
+title: "What I learned building a cyber range"
+description: "A practical walkthrough of the range, its design and lessons learned."
+slug: my-post
+authors:
+  - name: Your Name
+    title: Your role or affiliation
+tags: ["Experiment design", "Networking"]
+draft: true
+---
+```
+
+- **Title and description:** give readers a clear idea of what they will learn.
+- **Slug:** use a unique, stable name. `my-post` becomes `/blog/my-post`.
+- **Authors:** credit yourself and any coauthors. You can also use an existing
+  author key from `blog/authors.yml`; reserve `authors: [cradle]` for team posts.
+- **Tags:** include at least one non-empty tag. Reuse existing topics where
+  possible or type a new name. No `tags.yml` edit is needed.
+- **Draft:** keep `true` while writing and reviewing.
+
+For example, to add a new topic called **Range automation**, include it directly
+in your post's front matter alongside an existing tag:
+
+```yaml
+tags: [project, "Range automation"]
+```
+
+`project` reuses an existing tag, while `Range automation` becomes a new topic
+automatically on the next build. You do not need to create or edit `tags.yml`.
+Use `"Range automation"` with the same spelling in future posts to reuse that topic.
+
+Start with a short introduction. Keep the template's truncation marker so
+article previews have a clear stopping point: `<!-- truncate -->` in Markdown
+or `{/* truncate */}` in MDX. Use `##` headings for sections because the post
+title is already displayed.
+
+Include enough context for readers to reproduce your work: prerequisites,
+commands, expected results and any limitations. Credit sources and contributors,
+and only include text and assets you have permission to share.
+
+### Images and attachments
+
+Put attachments in an `assets/` folder beside your article:
+
+```text
+blog/2026-11-01-my-post/
+  index.md
+  assets/
+    diagram.png
+    report.pdf
+```
+
+Reference them with relative paths and descriptive labels:
+
+```markdown
+![Network diagram showing two connected routers](./assets/diagram.png)
+
+[Read the report (PDF)](./assets/report.pdf)
+```
+
+Use fenced code blocks with a language, such as `bash`, `powershell`, `cradle`
+or `yaml`. Check the rendered article for readable code and meaningful image
+alternative text.
+
+## 4. Preview and check
+
+```bash
+npm run start
+```
+
+Open `http://localhost:3000/blog/` and your full article.
+Drafts are visible in the development server. Check the title, author, topics,
+date, code blocks, images and attachment links, including on a narrow screen.
+Stop the server with `Ctrl+C` when finished.
+
+The folder name supplies the post date. If needed, rename the folder before
+submission or set a `date` field in the front matter. Displayed calendar dates
+use UTC. A future date does not schedule publication; keep the post as a draft
+until it is ready.
+
+When ready for publication, change `draft: true` to `draft: false`, then run:
+
+```bash
+npm run build
+npm run serve
+```
+
+Open the local URL printed by the server and check the production preview.
+Resolve build errors, including missing tags, broken internal links and missing
+attachments. Drafts are excluded from the production build.
+
+## 5. Submit a pull request
+
+Stage your post folder, commit it and push your branch. Replace the example
+folder with the one the command created:
+
+```bash
+git add blog/2026-11-01-my-post
+git commit -m "Add blog post about my experiment"
+git push -u origin blog/my-post
+```
+
+Open a pull request against `main` in the
+[website repository](https://github.com/cradle-lang/cradle-lang.github.io/pulls).
+Describe the article, include any relevant sources and mention whether it is
+ready to publish. Use a draft pull request while you are still writing.
+
+Maintainers review the article and the website checks before merging. A merged
+post with `draft: false` is published by the existing website deployment workflow;
+a post with `draft: true` remains unpublished.

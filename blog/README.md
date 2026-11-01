@@ -14,12 +14,23 @@ New tags become topics automatically, with updated counts and filter chips.
 Use Markdown for ordinary articles. From the repository root:
 
 ```bash
-mkdir -p blog/2026-10-18-my-post
-cp blog/_template.md blog/2026-10-18-my-post/index.md
+npm run blog:new -- my-post
 ```
 
-Replace the date with your publication date and `my-post` with a short name.
-For React components or PDF previews, copy `_template.mdx` as `index.mdx` instead.
+Replace `my-post` with a short lowercase name separated by hyphens. The command
+automatically uses today's local date in `YYYY-MM-DD` format. For example, on
+2026-11-01 it creates `blog/2026-11-01-my-post/index.md` from `_template.md`,
+fills in the title and slug, and keeps the post as a draft. It refuses to
+overwrite an existing post folder. Markdown is the default; you can also specify
+it explicitly with `npm run blog:new -- my-post md`.
+
+For React components or PDF previews, add `mdx` to use `_template.mdx` and
+create `index.mdx` instead:
+
+```bash
+npm run blog:new -- my-post mdx
+```
+
 Keep only one `index.md` or `index.mdx` per post folder.
 
 ## 2. Fill in the details and write

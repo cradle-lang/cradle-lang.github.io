@@ -12,6 +12,7 @@
     "typecheck": "npm run generate-library && tsc --noEmit",
     "generate-library": "node scripts/generate-library.mjs",
     "library:new": "node scripts/new-library-entry.mjs",
+    "blog:new": "node scripts/new-blog-post.mjs",
     "docusaurus": "docusaurus",
     "prestart": "npm run generate-release-notes",
     "start": "docusaurus start --no-open",
