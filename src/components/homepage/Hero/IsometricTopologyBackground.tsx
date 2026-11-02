@@ -43,6 +43,23 @@ const nodes = [
 ];
 
 const eventSequencePath = 'M468 231 C526 252 559 324 584 401';
+const pingSequencePath = 'M584 457 L584 466 L398 338 L210 322 L98 254';
+const replySequencePath = 'M98 254 L210 322 L398 338 L584 466 L584 457';
+
+// Keep packet motion on the same CSS clock as routes, badges and node highlights.
+function PacketMarker({ path, className, radius }: {
+  path: string;
+  className: string;
+  radius: number;
+}): ReactNode {
+  return (
+    <circle
+      className={className}
+      r={radius}
+      style={{ offsetPath: `path('${path}')` }}
+    />
+  );
+}
 
 export function IsometricTopologyBackground(): ReactNode {
   return (
@@ -135,74 +152,24 @@ export function IsometricTopologyBackground(): ReactNode {
             d={eventSequencePath}
           />
 
-          <circle className={styles.eventMarker} r="5">
-            <animateMotion
-              path={eventSequencePath}
-              dur="13s"
-              calcMode="linear"
-              keyPoints="0;0;1;1"
-              keyTimes="0;0.19;0.35;1"
-              repeatCount="indefinite"
-            />
-
-            <animate
-              attributeName="opacity"
-              values="0;0;1;1;0;0"
-              keyTimes="0;0.18;0.2;0.34;0.36;1"
-              dur="13s"
-              repeatCount="indefinite"
-            />
-          </circle>
+          <PacketMarker className={styles.eventMarker} path={eventSequencePath} radius={5} />
         </g>
 
         <g className={styles.pingSequence}>
           <path
             className={styles.pingRoute}
-            d="M584 457 L584 466 L398 338 L210 322 L98 254"
+            d={pingSequencePath}
           />
-          <circle className={styles.pingMarker} r="4.5">
-            <animateMotion
-              path="M584 457 L584 466 L398 338 L210 322 L98 254"
-              dur="13s"
-              keyPoints="0;0;1;1"
-              keyTimes="0;0.44;0.60;1"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="opacity"
-              values="0;0;1;1;0;0"
-              keyTimes="0;0.43;0.45;0.59;0.61;1"
-              dur="13s"
-              repeatCount="indefinite"
-            />
-          </circle>
+          <PacketMarker className={styles.pingMarker} path={pingSequencePath} radius={4.5} />
         </g>
 
         <g className={styles.replySequence}>
           <path
             className={styles.replyRoute}
-            d="M98 254 L210 322 L398 338 L584 466 L584 457"
+            d={replySequencePath}
           />
 
-          <circle className={styles.replyMarker} r="4.5">
-            <animateMotion
-              path="M98 254 L210 322 L398 338 L584 466 L584 457"
-              dur="13s"
-              calcMode="linear"
-              keyPoints="0;0;1;1"
-              keyTimes="0;0.65;0.78;1"
-              repeatCount="indefinite"
-            />
-
-            <animate
-              attributeName="opacity"
-              values="0;0;1;1;0;0"
-              keyTimes="0;0.64;0.65;0.77;0.79;1"
-              dur="13s"
-              calcMode="linear"
-              repeatCount="indefinite"
-            />
-          </circle>
+          <PacketMarker className={styles.replyMarker} path={replySequencePath} radius={4.5} />
         </g>
 
         <g className={styles.completionSequence}>
@@ -211,25 +178,7 @@ export function IsometricTopologyBackground(): ReactNode {
             d={eventSequencePath}
           />
 
-          <circle className={styles.completionMarker} r="5">
-            <animateMotion
-              path={eventSequencePath}
-              dur="13s"
-              calcMode="linear"
-              keyPoints="1;1;0;0"
-              keyTimes="0;0.85;0.95;1"
-              repeatCount="indefinite"
-            />
-
-            <animate
-              attributeName="opacity"
-              values="0;0;1;1;0;0"
-              keyTimes="0;0.84;0.85;0.94;0.96;1"
-              dur="13s"
-              calcMode="linear"
-              repeatCount="indefinite"
-            />
-          </circle>
+          <PacketMarker className={styles.completionMarker} path={eventSequencePath} radius={5} />
         </g>
 
         <g className={styles.topologyCard} transform="translate(54 14)">
