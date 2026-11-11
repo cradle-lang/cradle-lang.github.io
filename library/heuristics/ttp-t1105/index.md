@@ -6,7 +6,7 @@ description: Adversaries may transfer tools or other files from an external
 framework: ttp
 identifier: T1105
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/heuristics/ttp/T1105
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/heuristics/ttp/T1105
 ---
 
 # T1105: Ingress Tool Transfer
@@ -23,7 +23,7 @@ Adversaries may transfer tools or other files from an external system (e.g., C2 
 
 ## Structure
 
-- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/heuristics/ttp/T1105/ansible>): Contains the Ansible task list template (`T1105.j2`).
+- [ansible/](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/heuristics/ttp/T1105/ansible>): Contains the Ansible task list template (`T1105.j2`).
 
 ## Verification
 
