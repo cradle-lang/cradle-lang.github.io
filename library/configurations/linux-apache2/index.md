@@ -5,7 +5,7 @@ config: linux-apache2
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-apache2
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-apache2
 ---
 
 Installs and starts Apache HTTP Server
@@ -14,7 +14,7 @@ Installs and starts Apache HTTP Server
 
 - Installs the APT package `apache2` with `state: present`. Starts and enables the `apache2` service.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-apache2/ansible/linux-apache2.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-apache2/ansible/linux-apache2.j2>).
 
 The module is resolved from `configs/linux-apache2/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ The configuration check reports syntax OK and the service reports active.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-apache2>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-apache2>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

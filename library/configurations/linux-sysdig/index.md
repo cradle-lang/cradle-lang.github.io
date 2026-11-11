@@ -5,7 +5,7 @@ config: linux-sysdig
 os: Linux
 category: Linux — observability
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-sysdig
 ---
 
 Installs sysdig from a vendored package release
@@ -16,7 +16,7 @@ Installs sysdig from a vendored package release
 - Installs `sysdig.service`, reloads systemd and starts/enables the service. The bundled service runs `/usr/bin/sysdig -w /var/log/sysdig.scap` as root.
 - Other scripts and platform packages in `files/` are not installed by this template.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig/ansible/linux-sysdig.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig/files>) are required by the tasks described above.
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-sysdig/ansible/linux-sysdig.j2>). Supporting [assets](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-sysdig/files>) are required by the tasks described above.
 
 The module is resolved from `configs/linux-sysdig/` in the configured `config_dir`.
 
@@ -49,4 +49,4 @@ Sysdig is installed, its service is active and a capture file is being written w
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-sysdig>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-sysdig>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

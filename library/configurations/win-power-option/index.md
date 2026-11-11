@@ -5,7 +5,7 @@ config: win-power-option
 os: Windows
 category: Windows — system & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-power-option
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/win-power-option
 ---
 
 Disables sleep and monitor timeout, keeping the instance always-on
@@ -16,7 +16,7 @@ Disables sleep and monitor timeout, keeping the instance always-on
 - Disables scheduled tasks whose names contain shutdown, tolerating errors in that task.
 - Sets `DisableShutdownEventTracker=1` under the Windows system-policy registry key.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-power-option/ansible/win-power-option.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/win-power-option/ansible/win-power-option.j2>).
 
 The module is resolved from `configs/win-power-option/` in the configured `config_dir`.
 
@@ -48,4 +48,4 @@ Display/standby timeouts are zero where supported, targeted shutdown tasks are d
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/win-power-option>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/win-power-option>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

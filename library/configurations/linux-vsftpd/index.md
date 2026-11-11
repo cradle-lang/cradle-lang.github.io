@@ -5,7 +5,7 @@ config: linux-vsftpd
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-vsftpd
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-vsftpd
 ---
 
 Installs and configures vsftpd (FTP server)
@@ -16,7 +16,7 @@ Installs and configures vsftpd (FTP server)
 - Creates `/srv/ftp` and a world-writable `/srv/ftp/upload` directory, then enables/restarts vsftpd.
 - The template does not create login users or set their FTP home directories.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-vsftpd/ansible/linux-vsftpd.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-vsftpd/ansible/linux-vsftpd.j2>).
 
 The module is resolved from `configs/linux-vsftpd/` in the configured `config_dir`.
 
@@ -48,4 +48,4 @@ vsftpd is active, the listed settings match the template and the upload director
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/linux-vsftpd>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/linux-vsftpd>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
