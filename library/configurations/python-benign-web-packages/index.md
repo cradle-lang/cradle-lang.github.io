@@ -5,7 +5,7 @@ config: python-benign-web-packages
 os: Linux
 category: Cross-platform & decoy
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-benign-web-packages
 ---
 
 Installs a benign set of Python web packages (Linux)
@@ -14,7 +14,7 @@ Installs a benign set of Python web packages (Linux)
 
 - Installs `flask`, `requests` using the Ansible pip module with administrator privileges.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages/ansible/python-benign-web-packages.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-benign-web-packages/ansible/python-benign-web-packages.j2>).
 
 The module is resolved from `configs/python-benign-web-packages/` in the configured `config_dir`.
 
@@ -45,4 +45,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-benign-web-packages>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-benign-web-packages>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

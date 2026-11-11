@@ -5,7 +5,7 @@ config: python-wxpython-win
 os: Windows
 category: Windows — tooling
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-wxpython-win
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-wxpython-win
 ---
 
 Installs wxPython into the shared Windows runtime
@@ -15,7 +15,7 @@ Installs wxPython into the shared Windows runtime
 - Installs `wxPython==4.2.5` using the shared Windows runtime at `C:\ProgramData\cxc\python\python.exe`.
 - Writes `C:\ProgramData\cxc\python-wxpython.installed` after a successful install and skips subsequent runs when that marker exists.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-wxpython-win/ansible/python-wxpython-win.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-wxpython-win/ansible/python-wxpython-win.j2>).
 
 The module is resolved from `configs/python-wxpython-win/` in the configured `config_dir`.
 
@@ -46,4 +46,4 @@ pip reports the installed packages and the import check exits successfully. For 
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/python-wxpython-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/python-wxpython-win>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.

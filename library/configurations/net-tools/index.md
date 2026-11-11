@@ -5,7 +5,7 @@ config: net-tools
 os: Linux
 category: Linux — services & network
 draft: false
-sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/net-tools
+sourceUrl: https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/net-tools
 ---
 
 Installs the net-tools package (ifconfig, netstat, ...)
@@ -14,7 +14,7 @@ Installs the net-tools package (ifconfig, netstat, ...)
 
 - Installs the APT package `net-tools` with `state: present`.
 
-Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/4a54c498b9854c972607584df8146aeb4ae386ac/configs/net-tools/ansible/net-tools.j2>).
+Source: [Ansible task template](<https://github.com/cradle-lang/cradle-lib/blob/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/net-tools/ansible/net-tools.j2>).
 
 The module is resolved from `configs/net-tools/` in the configured `config_dir`.
 
@@ -46,4 +46,4 @@ The package is installed and both commands resolve to executables.
 
 ## Attribution and licensing
 
-Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/4a54c498b9854c972607584df8146aeb4ae386ac/configs/net-tools>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
+Implementation: [cradle-lang/cradle-lib](<https://github.com/cradle-lang/cradle-lib/tree/d8f0f642a042d5a2dec52c455f35d0a911175fee/configs/net-tools>). A module-specific license is not declared in the inspected source. Bundled and installed third-party software retains its own license terms.
